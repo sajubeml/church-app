@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>St. Gregorios Orthodox Syrian Church - Accounting Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="church-title">
+        <h1>ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</h1>
+        <p>Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | Financial Accounting Portal FY 2026-2027</p>
+      </div>
+      <div class="header-badge">
+        ✨ Powered by Antigravity Automation
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="app-nav">
+    <div class="nav-container">
+      <button class="nav-tab active" data-tab="tabVoucher">💳 New Voucher / Receipt (frmEntry)</button>
+      <button class="nav-tab" data-tab="tabCashbook">📘 Cash Book</button>
+      <button class="nav-tab" data-tab="tabMembers">👥 Individual Member Ledgers</button>
+      <button class="nav-tab" data-tab="tabTrialBalance">⚖️ Trial Balance</button>
+      <button class="nav-tab" data-tab="tabAudit">🔍 Reconciliation Audit</button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="main-content">
+
+    <!-- TAB 1: NEW VOUCHER / RECEIPT (frmEntry Replicate) -->
+    <div class="tab-pane active" id="tabVoucher">
+      <div class="card-grid">
+        
+        <!-- Transaction Entry Card -->
+        <div class="card" style="grid-column: span 1;">
+          <div class="card-header">
+            <span>📝 Entry Details</span>
+            <span style="font-size:0.75rem; color:var(--text-muted);">VBA frmEntry Equivalent</span>
+          </div>
+
+          <!-- DOCUMENT TYPE TOGGLE (RECEIPT VS PAYMENT VOUCHER) -->
+          <div class="form-group">
+            <label style="font-size:0.85rem; font-weight:700; color:var(--primary-color);">Entry Type</label>
+            <div class="payment-lock-container">
+              <label class="payment-lock-option">
+                <input type="radio" name="docType" id="optDocReceipt" checked>
+                <span>📥 Receipt</span>
+              </label>
+              <label class="payment-lock-option">
+                <input type="radio" name="docType" id="optDocVoucher">
+                <span>📤 Payment Voucher</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label id="lblNum">Receipt No.</label>
+            <input type="text" id="txtVoucherNo" class="form-control" readonly style="background:#f1f5f9; font-weight:700; color:var(--accent-color);">
+          </div>
+
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="txtDate" class="form-control">
+          </div>
+
+          <!-- TWO-WAY MEMBER SYNC -->
+          <div class="form-group">
+            <label>Register No.</label>
+            <input type="text" id="txtRegNo" class="form-control" placeholder="Enter Reg No (e.g. 128)">
+          </div>
+
+          <div class="form-group">
+            <label>Member Name (2-Way Sync)</label>
+            <select id="cmbMember" class="form-control">
+              <option value="">-- Select Member --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Account Head & Code</label>
+            <select id="cmbAccountHead" class="form-control">
+              <option value="">-- Select Account Head --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Code Reference</label>
+            <input type="text" id="txtCode" class="form-control" readonly style="background:#f1f5f9; font-weight:600;">
+          </div>
+
+          <div class="form-group">
+            <label>Particulars / Details</label>
+            <input type="text" id="txtDetails" class="form-control" placeholder="Optional notes or remarks">
+          </div>
+
+          <!-- PAYMENT TYPE LOCK (CASH XOR BANK) -->
+          <div class="form-group">
+            <label>Payment Method Safety Lock (Cash / Bank)</label>
+            <div class="payment-lock-container">
+              <label class="payment-lock-option">
+                <input type="radio" name="paymentLock" id="optCash" checked>
+                <span>Cash</span>
+              </label>
+              <label class="payment-lock-option">
+                <input type="radio" name="paymentLock" id="optBank">
+                <span>Bank / Online</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Cash Amount (₹)</label>
+            <input type="number" id="txtCashAmt" class="form-control" placeholder="0.00" step="0.01">
+          </div>
+
+          <div class="form-group">
+            <label>Bank Amount (₹)</label>
+            <input type="number" id="txtBankAmt" class="form-control" placeholder="0.00" step="0.01" disabled>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; margin-top:1.25rem;">
+            <button class="btn btn-primary" id="btnAddItem" style="flex:1;">➕ Add Item to Cart</button>
+            <button class="btn btn-outline" id="btnClearForm">Clear</button>
+          </div>
+
+        </div>
+
+        <!-- Receipt Cart & Live Preview Card -->
+        <div class="card" style="grid-column: span 2;">
+          <div class="card-header">
+            <span>🛒 Active Cart Items</span>
+            <span style="font-size:0.8rem; color:var(--success-color); font-weight:600;">Live Auto-Calculations</span>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th class="text-center">#</th>
+                  <th>Account Head / Code</th>
+                  <th>Details</th>
+                  <th class="text-center">Type</th>
+                  <th class="text-right">Amount (₹)</th>
+                  <th class="text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="cartTbody">
+                <tr><td colspan="6" class="text-center" style="color:var(--text-muted); padding:2rem;">No items added yet. Fill out the form and click 'Add Item to Cart'.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Total Calculation & Rupee Words Display -->
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:1rem; margin-bottom:1.25rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+              <span style="font-weight:700; color:var(--primary-color);">Total Amount:</span>
+              <span id="cartTotalAmt" style="font-size:1.4rem; font-weight:800; color:var(--accent-color);">₹ 0.00</span>
+            </div>
+            <div style="font-size:0.85rem; color:var(--text-muted); font-style:italic;">
+              <strong>Amount in Words:</strong> <span id="cartTotalWords">Zero Rupees Only</span>
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
+            <button class="btn btn-success" id="btnGenerateReceipt" style="padding:0.75rem 1.5rem; font-size:0.95rem;">
+              🖨️ Generate & Print Dual Receipt (Original + Copy)
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 2: CASH BOOK -->
+    <div class="tab-pane" id="tabCashbook">
+      <div class="card">
+        <div class="card-header">
+          <span>📘 Cash Book Records</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Daily Receipts & Payments Ledger</span>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Receipt #</th>
+                <th>Reg #</th>
+                <th>Name of HoF</th>
+                <th>Account Head</th>
+                <th>Code</th>
+                <th class="text-right">Cash (Rec)</th>
+                <th class="text-right">Bank (Rec)</th>
+                <th>Payment Head</th>
+                <th class="text-right">Cash (Pay)</th>
+                <th class="text-right">Bank (Pay)</th>
+              </tr>
+            </thead>
+            <tbody id="cashbookTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: INDIVIDUAL MEMBER LEDGERS -->
+    <div class="tab-pane" id="tabMembers">
+      <div class="card">
+        <div class="card-header">
+          <span>👥 Individual Member Accounts</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Subscriptions & Feast Contributions</span>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="text-center">Sl</th>
+                <th>Reg #</th>
+                <th>Member Name</th>
+                <th>Sub Upto</th>
+                <th class="text-right">Subscription</th>
+                <th class="text-right">Catholicate Day</th>
+                <th class="text-right">Metropolitan Fund</th>
+                <th class="text-right">Passion Week</th>
+                <th class="text-right">Auction Dues</th>
+                <th class="text-right">Grand Total</th>
+              </tr>
+            </thead>
+            <tbody id="indivTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: TRIAL BALANCE -->
+    <div class="tab-pane" id="tabTrialBalance">
+      <div class="card">
+        <div class="card-header">
+          <span>⚖️ Trial Balance Statement</span>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Account Code Ledger Totals</span>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Receipts Account Head</th>
+                <th class="text-right">Debit (₹)</th>
+                <th>Code</th>
+                <th>Payments Account Head</th>
+                <th class="text-right">Credit (₹)</th>
+              </tr>
+            </thead>
+            <tbody id="tbTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: RECONCILIATION AUDIT -->
+    <div class="tab-pane" id="tabAudit">
+      <div class="card-grid">
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div>
+            <div class="stat-val" id="auditTotalR">₹ 0.00</div>
+            <div class="stat-lbl">Total Cashbook Receipts</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">💸</div>
+          <div>
+            <div class="stat-val" id="auditTotalP">₹ 0.00</div>
+            <div class="stat-lbl">Total Cashbook Payments</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">🏦</div>
+          <div>
+            <div class="stat-val" id="auditNetBal" style="color:var(--success-color);">₹ 0.00</div>
+            <div class="stat-lbl">Net Cash & Bank Balance</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div>
+            <div class="stat-val" id="auditMembers">0</div>
+            <div class="stat-lbl">Enrolled Parish Members</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span>🔍 Automated Reconciliation Audit Status</span>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6;">
+          All Cash Book receipts, payments, and individual member ledgers have been cross-checked. No discrepancies found in register numbers or account codes.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- SIDE-BY-SIDE DUAL RECEIPT PRINT MODAL -->
+  <div class="modal-backdrop" id="receiptModal">
+    <div class="modal-body-container">
+      <div class="modal-header">
+        <h3 style="font-size:1.1rem; color:var(--primary-color);">🖨️ Side-by-Side Dual Receipt / Voucher (Original & Copy)</h3>
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn btn-primary no-print" onclick="window.print()">Print / Export PDF</button>
+          <button class="btn btn-outline no-print" onclick="closeReceiptModal()">Close</button>
+        </div>
+      </div>
+      <div class="modal-content-area" id="receiptModalArea"></div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Git Ignore Rules for St. Gregorios Church Accounting Portal
+
+# Distribution & Build Outputs
+dist/
+*.zip
+
+# Python Cache & Environment
+__pycache__/
+*.pyc
+*.pyo
+
+# Excel Temporary Lock Files
+~$*.xlsm
+~$*.xlsx
+
+# System & OS Files
+.DS_Store
+Thumbs.db

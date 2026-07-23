@@ -1,0 +1,499 @@
+[
+  {
+    "B1": "Trial Balance",
+    "D1": null
+  },
+  {
+    "C2": "upto 20/7/26",
+    "D2": null,
+    "F2": null
+  },
+  {
+    "A3": "Code",
+    "B3": "Account Head",
+    "C3": "Debit (Receipts)",
+    "D3": "Code",
+    "E3": "Account Head",
+    "F3": "Credit (Payments)"
+  },
+  {
+    "A4": "RP-3.82",
+    "B4": "Monthly Subscription ( Current Year)",
+    "C4": "122600",
+    "D4": "RP-19.31",
+    "E4": "Salary Quota to Diocese(Vicar)",
+    "F4": "150060"
+  },
+  {
+    "A5": "RP-3.83",
+    "B5": "Monthly Subscription ( Pervious Year)",
+    "C5": "26300",
+    "D5": "RP-12.03 (a)",
+    "E5": "Salary to Sexton",
+    "F5": "46350"
+  },
+  {
+    "A6": "RP-3.16",
+    "B6": "Birthday Offerings",
+    "C6": "16650",
+    "D6": "RP-12.03 (b)",
+    "E6": "Salary to Watchman(Cemetry)",
+    "F6": "7050"
+  },
+  {
+    "A7": "RP-3.17",
+    "B7": "Wedding Anniversary Offerings",
+    "C7": "6800",
+    "D7": "RP-12.03 (c)",
+    "E7": "Salary to Ayah",
+    "F7": "3940"
+  },
+  {
+    "A8": "RP-3.12",
+    "B8": "Orma Qurbana/Holy Qurbana",
+    "C8": "2270",
+    "D8": "RP-12.02 (a)",
+    "E8": "Medical Allowance to Vicar",
+    "F8": "6371"
+  },
+  {
+    "A9": "RP-3.17 (a)",
+    "B9": "House Blessing",
+    "C9": "1500",
+    "D9": "RP-12.06",
+    "E9": "Medical Allowance to Sexton",
+    "F9": "2042"
+  },
+  {
+    "A10": "RP-3.14",
+    "B10": "Baptism",
+    "C10": "2500",
+    "D10": "RP-12.02",
+    "E10": "Telephone Allowance to Vicar",
+    "F10": "1500"
+  },
+  {
+    "A11": "RP-3.64",
+    "B11": "Prayer Group",
+    "C11": "650",
+    "D11": "RP-12.02",
+    "E11": "Local Travelling Allowance to Vicar",
+    "F11": "7500"
+  },
+  {
+    "A12": "RP-2.02",
+    "B12": "Donation General",
+    "C12": "14660",
+    "D12": "RP- 16.04",
+    "E12": "Church Service Expense",
+    "F12": "3049"
+  },
+  {
+    "A13": "RP-2.02(a)",
+    "B13": "Donation General-chair & tables",
+    "C13": "73710",
+    "D13": "RP- 16.11(a)",
+    "E13": "Electricity Charges - Church",
+    "F13": "10317"
+  },
+  {
+    "A14": "RP-2.16",
+    "B14": "Donation-Breakfast",
+    "C14": "89600",
+    "D14": "RP- 16.11(b)",
+    "E14": "Electricity Charges - Parsonage",
+    "F14": "11122"
+  },
+  {
+    "A15": "RP-2.211",
+    "B15": "KMDC Grant",
+    "C15": "1500000",
+    "D15": "RP- 16.08",
+    "E15": "Breakfast Expenses",
+    "F15": "62068"
+  },
+  {
+    "A16": "RP-3.05",
+    "B16": "Perunnal Vanchika (House Offertory Box)",
+    "C16": "3400",
+    "D16": "RP- 14.31",
+    "E16": "Maintenance of Church & Parsonage",
+    "F16": "86126"
+  },
+  {
+    "A17": "RP-3.10",
+    "B17": "Kanicka",
+    "C17": "13520",
+    "D17": "RP- 16.06",
+    "E17": "Passion Week Expenses",
+    "F17": "54115"
+  },
+  {
+    "A18": "RP-3.13",
+    "B18": "Kanicka-Chapel",
+    "C18": "2210",
+    "D18": "RP- 14.35",
+    "E18": "Maintenance of Cemetry",
+    "F18": "5490"
+  },
+  {
+    "A19": "RP-2.15(a)",
+    "B19": "Auction Dues - Old",
+    "C19": "77000",
+    "D19": "RP-14.05",
+    "E19": "Postage",
+    "F19": "2080"
+  },
+  {
+    "A20": "RP-2.15(b)",
+    "B20": "Petty Auction",
+    "C20": "1500",
+    "D20": "RP- 16.35",
+    "E20": "Canteen Expenses",
+    "F20": "1700"
+  },
+  {
+    "A21": "RP-10.04/05",
+    "B21": "Catholicate Day & Recessa",
+    "C21": "28850",
+    "D21": "RP-14.06",
+    "E21": "Printing & Stationery",
+    "F21": "2544"
+  },
+  {
+    "A22": "RP-10.08",
+    "B22": "Metropolitan Fund",
+    "C22": "12250",
+    "D22": "RP- 16.36",
+    "E22": "Cemetry Development",
+    "F22": "500"
+  },
+  {
+    "A23": "RP-10.13",
+    "B23": "Mission Sunday",
+    "C23": "9050",
+    "D23": "RP- 16.89",
+    "E23": "Gift & Mementoes",
+    "F23": "4232"
+  },
+  {
+    "A24": "RP-10.15",
+    "B24": "Seminary Day",
+    "C24": "5850",
+    "D24": "RP- 14.04",
+    "E24": "Audit Fee",
+    "F24": "35400"
+  },
+  {
+    "A25": "RP-10.10",
+    "B25": "Priest Welfare Fund",
+    "C25": "7000",
+    "D25": "RP- 13.02",
+    "E25": "Bank Charges",
+    "F25": "259"
+  },
+  {
+    "A26": "RP-10.17",
+    "B26": "Old Cover Collection Dues",
+    "C26": "6600",
+    "D26": "RP- 16.50",
+    "E26": "St. George Feast",
+    "F26": "10183"
+  },
+  {
+    "A27": "RP-10.14",
+    "B27": "Sunday School Day Collection",
+    "C27": "4250",
+    "D27": "RP-18.16",
+    "E27": "Asset Purchase",
+    "F27": "177000"
+  },
+  {
+    "A28": "RP-3.35",
+    "B28": "St. George Feast",
+    "C28": "900",
+    "D28": "RP-18.23",
+    "E28": "Electrical Equipments",
+    "F28": "9590"
+  },
+  {
+    "A29": "RP-3.31",
+    "B29": "St. Thomas Feast",
+    "C29": "400",
+    "F29": null
+  },
+  {
+    "A30": "RP-3.32",
+    "B30": "St. Mary's Feast",
+    "C30": "900",
+    "F30": null
+  },
+  {
+    "A31": "RP-2.13",
+    "B31": "Passion Week Collection",
+    "C31": "80506",
+    "F31": null
+  },
+  {
+    "A32": "RP-8.03",
+    "B32": "Interest Received SB Account",
+    "C32": "5365",
+    "F32": null
+  },
+  {
+    "A33": null,
+    "C33": null,
+    "F33": null
+  },
+  {
+    "A34": null,
+    "B34": "TOTAL RECEIPTS",
+    "C34": "2116791",
+    "D34": null,
+    "E34": "TOTAL PAYMENTS",
+    "F34": "700588"
+  },
+  {
+    "A35": null,
+    "B35": null,
+    "C35": null,
+    "D35": null,
+    "E35": null,
+    "F35": null
+  },
+  {
+    "C36": null,
+    "D36": null,
+    "F36": null
+  },
+  {
+    "C37": null,
+    "D37": null,
+    "F37": null
+  },
+  {
+    "C38": null,
+    "D38": null,
+    "F38": null
+  },
+  {
+    "C39": null,
+    "D39": null
+  },
+  {
+    "C40": null,
+    "D40": null,
+    "F40": null
+  },
+  {
+    "C41": null,
+    "D41": null
+  },
+  {
+    "C42": null,
+    "D42": null
+  },
+  {
+    "C43": null,
+    "D43": null
+  },
+  {
+    "C44": null,
+    "D44": null
+  },
+  {
+    "C45": null,
+    "D45": null
+  },
+  {
+    "C46": null,
+    "D46": null
+  },
+  {
+    "C47": null,
+    "D47": null
+  },
+  {
+    "C48": null,
+    "D48": null
+  },
+  {
+    "C49": null
+  },
+  {
+    "C50": null
+  },
+  {
+    "C51": null
+  },
+  {
+    "C52": null
+  },
+  {
+    "C53": null
+  },
+  {},
+  {
+    "C55": null
+  },
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {}
+]

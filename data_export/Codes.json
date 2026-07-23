@@ -1,0 +1,1140 @@
+[
+  {
+    "A1": "St. Gregorios Orthodox Syrian Church and Pilgrim Centre",
+    "B1": null,
+    "C1": null,
+    "D1": null,
+    "E1": null,
+    "F1": null,
+    "G1": null,
+    "H1": null,
+    "I1": null
+  },
+  {
+    "A2": "Government House Road, Nazarbad, Mysuru, Karnataka 570 010",
+    "B2": null,
+    "C2": null,
+    "D2": null,
+    "E2": null,
+    "F2": null,
+    "G2": null,
+    "H2": null,
+    "I2": null
+  },
+  {
+    "A3": "New Codes as per the direction of MOSC FY 2026-2027",
+    "B3": null,
+    "C3": null,
+    "D3": null,
+    "E3": null,
+    "F3": null,
+    "G3": null,
+    "H3": null,
+    "I3": null
+  },
+  {
+    "A4": "RECEIPTS ",
+    "B4": null,
+    "C4": null,
+    "D4": null
+  },
+  {
+    "A5": "New Codes",
+    "B5": "Particulars",
+    "C5": null,
+    "D5": "Old Codes"
+  },
+  {
+    "A6": "RP-1.01",
+    "B6": "Cash Balances",
+    "C6": "Receipt",
+    "D6": "1300"
+  },
+  {
+    "A7": "RP-1.02",
+    "B7": "Balances in SB Accounts",
+    "C7": "Receipt",
+    "D7": "1000"
+  },
+  {
+    "A8": null,
+    "B8": "Donations",
+    "C8": null,
+    "D8": null
+  },
+  {
+    "A9": "RP-2.02",
+    "B9": "General Donations",
+    "C9": "Receipt",
+    "D9": "2301"
+  },
+  {
+    "A10": "RP-2.06",
+    "B10": "Parish Day",
+    "C10": "Receipt",
+    "D10": "2305"
+  },
+  {
+    "A11": "RP-2.09",
+    "B11": "Church Celebrations (other than perunnal)",
+    "C11": "Receipt",
+    "D11": "2308"
+  },
+  {
+    "A12": "RP-2.10",
+    "B12": "Meeting and conventions",
+    "C12": "Receipt",
+    "D12": "2309"
+  },
+  {
+    "A13": "RP-2.11",
+    "B13": "Christmas Carol",
+    "C13": "Receipt",
+    "D13": "2310"
+  },
+  {
+    "A14": "RP-2.12",
+    "B14": "Parish Day",
+    "C14": "Receipt",
+    "D14": "2311"
+  },
+  {
+    "A15": "RP-2.13",
+    "B15": "Lent and Passion Week",
+    "C15": "Receipt",
+    "D15": "2312"
+  },
+  {
+    "A16": "RP-2.14",
+    "B16": "Marriage Receipts",
+    "C16": "Receipt",
+    "D16": "2313"
+  },
+  {
+    "A17": "RP-2.15",
+    "B17": "Harvest Festival  Receipts _ Auctions _Current Year",
+    "C17": "Receipt",
+    "D17": "2314"
+  },
+  {
+    "A18": "RP-2.15 (a)",
+    "B18": "Harvest Festival  Receipts _ Auction Dues _ Previous Years",
+    "C18": "Receipt",
+    "D18": null
+  },
+  {
+    "A19": "RP-2.15 (b)",
+    "B19": "Petty Auctions _Current Year",
+    "C19": "Receipt",
+    "D19": null
+  },
+  {
+    "A20": "RP-2.16",
+    "B20": "Annadhanam and feast _Breakfast Donation",
+    "C20": "Receipt",
+    "D20": "2315"
+  },
+  {
+    "A21": "RP-2.17",
+    "B21": "Receipt of Agricultural Produces",
+    "C21": "Receipt",
+    "D21": "2316"
+  },
+  {
+    "A22": "RP-2.18",
+    "B22": "Donation In Kind",
+    "C22": "Receipt",
+    "D22": null
+  },
+  {
+    "A23": "RP-2.19",
+    "B23": "Receipt from Tomb/Grave : Cemetry",
+    "C23": "Receipt",
+    "D23": "2234"
+  },
+  {
+    "A24": "RP-2.20",
+    "B24": "Other Donations (Farewell) ",
+    "C24": "Receipt",
+    "D24": "2317"
+  },
+  {
+    "A25": "RP-3.52 ",
+    "B25": "Certificate Fee",
+    "C25": "Receipt",
+    "D25": null
+  },
+  {
+    "A26": null,
+    "B26": "Church Receipts : Bhandaram Collections",
+    "C26": null,
+    "D26": null
+  },
+  {
+    "A27": "RP-3.03",
+    "B27": "Bhandaram Receipts : Church ( koodaaram + Wooden Cash Box)",
+    "C27": "Receipt",
+    "D27": "2101"
+  },
+  {
+    "A28": "RP-3.04",
+    "B28": "Kurishinthotti : Infront if Church",
+    "C28": "Receipt",
+    "D28": "2102"
+  },
+  {
+    "A29": "RP-3.05",
+    "B29": "Others (specify) : Perunnal Vanchika ( House Offertory Box)",
+    "C29": "Receipt",
+    "D29": "2103"
+  },
+  {
+    "A30": "RP-3.10",
+    "B30": "Qurbana Receipts: Qurbana Kannikka Church ",
+    "C30": "Receipt",
+    "D30": "2110"
+  },
+  {
+    "A31": "RP-3.10 (a)",
+    "B31": "Qurbana Receipts:  Cemetry Chapel",
+    "C31": "Receipt",
+    "D31": null
+  },
+  {
+    "A32": "RP-3.12",
+    "B32": "Church (Orma Qurbana + Special Qurbaba)",
+    "C32": "Receipt",
+    "D32": "2121"
+  },
+  {
+    "A33": "RP-3.14",
+    "B33": "Baptism",
+    "C33": "Receipt",
+    "D33": "2123"
+  },
+  {
+    "A34": "RP-3.15",
+    "B34": "Funeral",
+    "C34": "Receipt",
+    "D34": "2124"
+  },
+  {
+    "A35": "RP-3.16",
+    "B35": "Birthday Contributions",
+    "C35": "Receipt",
+    "D35": "2125"
+  },
+  {
+    "A36": "RP-3.17",
+    "B36": "Other offerings : Weeding Anniversary",
+    "C36": "Receipt",
+    "D36": "2126"
+  },
+  {
+    "A37": "RP-3.17 (a)",
+    "B37": "House Blessings",
+    "C37": "Receipt",
+    "D37": null
+  },
+  {
+    "A38": "RP-3.18",
+    "B38": "Offerings for Ritual Articles : Candles, Oil, Kunturikkam",
+    "C38": "Receipt",
+    "D38": "2127"
+  },
+  {
+    "A39": null,
+    "B39": "Receipts for Festivals",
+    "C39": null,
+    "D39": "2160"
+  },
+  {
+    "A40": "RP-3.31",
+    "B40": "July 3rd Festival : St. Thomas",
+    "C40": "Receipt",
+    "D40": "2161"
+  },
+  {
+    "A41": "RP-3.32",
+    "B41": "August 15  Festival : St. Mary",
+    "C41": "Receipt",
+    "D41": "2162"
+  },
+  {
+    "A42": "RP-3.32 (a)",
+    "B42": "Sep 1-8 Festival : St. Mary",
+    "C42": "Receipt",
+    "D42": null
+  },
+  {
+    "A43": "RP-3.33",
+    "B43": "Church Festival: St Gregorios",
+    "C43": "Receipt",
+    "D43": "2163"
+  },
+  {
+    "A44": "RP-3.35",
+    "B44": "Others : St George",
+    "C44": "Receipt",
+    "D44": "2165"
+  },
+  {
+    "A45": null,
+    "B45": "Receipts for Spiritual Organizations",
+    "C45": null,
+    "D45": null
+  },
+  {
+    "A46": "RP-3.61",
+    "B46": "Sunday School",
+    "C46": "Receipt",
+    "D46": "2181"
+  },
+  {
+    "A47": "RP-3.64",
+    "B47": "MMVS",
+    "C47": "Receipt",
+    "D47": "2183"
+  },
+  {
+    "A48": "RP-3.64",
+    "B48": "Prarthanayogam",
+    "C48": "Receipt",
+    "D48": "2184"
+  },
+  {
+    "A49": "RP-3.66",
+    "B49": "OVBS",
+    "C49": "Receipt",
+    "D49": "2186"
+  },
+  {
+    "A50": "RP-3.67",
+    "B50": "MGOCSM & OCYM",
+    "C50": "Receipt",
+    "D50": "2187"
+  },
+  {
+    "A51": "RP-3.68",
+    "B51": "St. Joseph Forum",
+    "C51": "Receipt",
+    "D51": null
+  },
+  {
+    "A52": "RP-3.69",
+    "B52": "St. Dionysious Forum",
+    "C52": "Receipt",
+    "D52": null
+  },
+  {
+    "A53": null,
+    "B53": "Monthly subscription",
+    "C53": null,
+    "D53": null,
+    "E53": null
+  },
+  {
+    "A54": "RP-3.82",
+    "B54": "subscription For the current year",
+    "C54": "Receipt",
+    "D54": "2212",
+    "E54": null
+  },
+  {
+    "A55": "RP-3.83",
+    "B55": "subscription Outstanding from previous year",
+    "C55": "Receipt",
+    "D55": "2213",
+    "E55": null
+  },
+  {
+    "A56": "RP-3.84",
+    "B56": "Advance for next year",
+    "C56": "Receipt",
+    "D56": "2214",
+    "E56": null
+  },
+  {
+    "A57": "RP-8.03",
+    "B57": "Savings Bank Interest",
+    "C57": "Receipt",
+    "D57": "2401"
+  },
+  {
+    "A58": "RP-9.10",
+    "B58": "Advances ",
+    "C58": "Receipt",
+    "D58": "3200"
+  },
+  {
+    "A59": "RP-9.13",
+    "B59": "Advances from Trustees",
+    "C59": "Receipt",
+    "D59": "3203"
+  },
+  {
+    "A60": "RP-9.14",
+    "B60": "Advance from others",
+    "C60": "Receipt",
+    "D60": "3204"
+  },
+  {
+    "A61": "RP-9.15",
+    "B61": "Loan/Advances from Church Members",
+    "C61": "Receipt",
+    "D61": "3103"
+  },
+  {
+    "A62": "RP-10.03",
+    "B62": "For Malankara Metropolitan",
+    "C62": "Receipt",
+    "D62": null
+  },
+  {
+    "A63": "RP-10.04",
+    "B63": "Catholicate Day Collection",
+    "C63": "Receipt",
+    "D63": "2801"
+  },
+  {
+    "A64": "RP-10.05",
+    "B64": "Recceessa",
+    "C64": "Receipt",
+    "D64": "2802"
+  },
+  {
+    "A65": "RP-10.07",
+    "B65": "For Diocession Office",
+    "C65": "Receipt",
+    "D65": null
+  },
+  {
+    "A66": "RP-10.08",
+    "B66": "Diocesan Day Collection : Metropolitan Fund",
+    "C66": "Receipt",
+    "D66": "2807"
+  },
+  {
+    "A67": "RP-10.09",
+    "B67": "Vivaha Kaimuthu",
+    "C67": "Receipt",
+    "D67": "2803"
+  },
+  {
+    "A68": "RP-10.10",
+    "B68": "Other Collections : Priest Welfare Fund",
+    "C68": "Receipt",
+    "D68": null
+  },
+  {
+    "A69": "RP-10.12",
+    "B69": "For Other Offices",
+    "C69": "Receipt",
+    "D69": null
+  },
+  {
+    "A70": "RP-10.13",
+    "B70": "Mission Sunday collection",
+    "C70": "Receipt",
+    "D70": "2804"
+  },
+  {
+    "A71": "RP-10.14",
+    "B71": "Sunday school day collection",
+    "C71": "Receipt",
+    "D71": "2805"
+  },
+  {
+    "A72": "RP-10.15",
+    "B72": "Seminary day collection",
+    "C72": "Receipt",
+    "D72": "2806"
+  },
+  {
+    "A73": "RP-10.16",
+    "B73": "Gerbo Sunday Collection: Leprosy",
+    "C73": "Receipt",
+    "D73": "2808"
+  },
+  {
+    "A74": "RP-10.17",
+    "B74": "Other collections ( Old Cover Collection Dues)",
+    "C74": "Receipt",
+    "D74": "2809"
+  },
+  {
+    "A75": "PAYMENTS",
+    "B75": null,
+    "C75": null,
+    "D75": null
+  },
+  {
+    "A76": "New Codes",
+    "B76": "Particulars",
+    "C76": null,
+    "D76": "Old Codes"
+  },
+  {
+    "A77": "RP-11.02",
+    "B77": "General Donations Paid",
+    "C77": "Payment",
+    "D77": null
+  },
+  {
+    "A78": null,
+    "B78": "EMPLOYEE BENEFIT EXPENSES",
+    "C78": null,
+    "D78": null
+  },
+  {
+    "A79": null,
+    "B79": "Allowances to Priest",
+    "C79": null,
+    "D79": null
+  },
+  {
+    "A80": "RP-12.02",
+    "B80": "Annual Travelling Allowance to Vicar",
+    "C80": "Payment",
+    "D80": "4231"
+  },
+  {
+    "A81": "RP-12.02 ",
+    "B81": "Leave Salary to Vicar",
+    "C81": "Payment",
+    "D81": "4231"
+  },
+  {
+    "A82": "RP-12.02",
+    "B82": "Gift Purse to Vicar",
+    "C82": "Payment",
+    "D82": "4231"
+  },
+  {
+    "A83": "RP-12.03",
+    "B83": "Salary and allowances to others",
+    "C83": "Payment",
+    "D83": "4232"
+  },
+  {
+    "A84": "RP-12.06",
+    "B84": "Allowances to Kapyar",
+    "C84": "Payment",
+    "D84": "4235"
+  },
+  {
+    "A85": "RP-12.07",
+    "B85": "Honorarium - Guest Preist",
+    "C85": "Payment",
+    "D85": "4236"
+  },
+  {
+    "A86": "RP-13.02",
+    "B86": "Bank Charges",
+    "C86": "Payment",
+    "D86": "4503"
+  },
+  {
+    "A87": null,
+    "B87": "Administrative Expenses",
+    "C87": null,
+    "D87": null
+  },
+  {
+    "A88": "RP-14.03",
+    "B88": "Travelling Expenses",
+    "C88": "Payment",
+    "D88": "4551"
+  },
+  {
+    "A89": "RP-14.04",
+    "B89": "Auditors Remuneration",
+    "C89": "Payment",
+    "D89": "4552"
+  },
+  {
+    "A90": "RP-14.05",
+    "B90": "Postage and Telephone",
+    "C90": "Payment",
+    "D90": "4553"
+  },
+  {
+    "A91": "RP-14.06",
+    "B91": "Printing and Stationery",
+    "C91": "Payment",
+    "D91": "4554"
+  },
+  {
+    "A92": "RP-14.07",
+    "B92": "Professional and other service charges",
+    "C92": "Payment",
+    "D92": "4555"
+  },
+  {
+    "A93": "RP-14.08",
+    "B93": "Office Expenses",
+    "C93": "Payment",
+    "D93": "4556"
+  },
+  {
+    "A94": "RP-14.09",
+    "B94": "Subscription and Periodicals",
+    "C94": "Payment",
+    "D94": "4557"
+  },
+  {
+    "A95": "RP-14.10",
+    "B95": "Insurance Charges",
+    "C95": "Payment",
+    "D95": "4558"
+  },
+  {
+    "A96": "RP-14.11",
+    "B96": "Advertisement Expenses",
+    "C96": "Payment",
+    "D96": "4559"
+  },
+  {
+    "A97": "RP-14.12",
+    "B97": "Legal Expenses",
+    "C97": "Payment",
+    "D97": "4209"
+  },
+  {
+    "A98": "RP-14.18",
+    "B98": "Other Expenses",
+    "C98": "Payment",
+    "D98": "4560"
+  },
+  {
+    "A99": null,
+    "B99": "Repairs And Maintenance",
+    "C99": null,
+    "D99": null
+  },
+  {
+    "A100": "RP-14.31",
+    "B100": "Buildings",
+    "C100": "Payment",
+    "D100": "4271"
+  },
+  {
+    "A101": "RP-14.32",
+    "B101": "Equipments",
+    "C101": "Payment",
+    "D101": "4272"
+  },
+  {
+    "A102": "RP-14.33",
+    "B102": "Computers",
+    "C102": "Payment",
+    "D102": "4273"
+  },
+  {
+    "A103": "RP-14.34",
+    "B103": "Vehicles ",
+    "C103": "Payment",
+    "D103": "4274"
+  },
+  {
+    "A104": "RP-14.35",
+    "B104": "Others",
+    "C104": "Payment",
+    "D104": "4275"
+  },
+  {
+    "A105": null,
+    "B105": "Church Expenses",
+    "C105": null,
+    "D105": null
+  },
+  {
+    "A106": "RP-16.03",
+    "B106": "Holy Qurbana Allowances : Guest Priest",
+    "C106": "Payment",
+    "D106": "4202"
+  },
+  {
+    "A107": "RP-16.04",
+    "B107": "Church Consumables/ Daily Expenses",
+    "C107": "Payment",
+    "D107": "4203"
+  },
+  {
+    "A108": "RP-16.05",
+    "B108": "Suvisheshayogam Expenses",
+    "C108": "Payment",
+    "D108": "4204"
+  },
+  {
+    "A109": "RP-16.06",
+    "B109": "Holy week and Dhyanam expenses",
+    "C109": "Payment",
+    "D109": "4205"
+  },
+  {
+    "A110": "RP-16.07",
+    "B110": " Feast Expenses",
+    "C110": "Payment",
+    "D110": "4206"
+  },
+  {
+    "A111": "RP-16.08",
+    "B111": "Food and Refreshment Expenses",
+    "C111": "Payment",
+    "D111": "4207"
+  },
+  {
+    "A112": "RP-16.09",
+    "B112": "Owned institution expenses",
+    "C112": "Payment",
+    "D112": "4208"
+  },
+  {
+    "A113": "RP-16.11",
+    "B113": "Electricity Charges",
+    "C113": "Payment",
+    "D113": "4211"
+  },
+  {
+    "A114": "RP-16.12",
+    "B114": "Fuel and Water Charges",
+    "C114": "Payment",
+    "D114": "4212"
+  },
+  {
+    "A115": "RP-16.13",
+    "B115": "Send off Expenses",
+    "C115": "Payment",
+    "D115": "4282"
+  },
+  {
+    "A116": "RP-16.14",
+    "B116": "Celebration Expenses: Harvest/ Parish Day Expenses",
+    "C116": "Payment",
+    "D116": null
+  },
+  {
+    "A117": "RP-16.15",
+    "B117": "Christmas Carol & Programme Expenses",
+    "C117": "Payment",
+    "D117": "4284"
+  },
+  {
+    "A118": "RP-16.16",
+    "B118": "Others Celebrations",
+    "C118": "Payment",
+    "D118": null
+  },
+  {
+    "A119": "RP-16.17",
+    "B119": "Others",
+    "C119": "Payment",
+    "D119": "4213"
+  },
+  {
+    "A120": null,
+    "B120": "Miscellaneous Expenses",
+    "C120": null,
+    "D120": null
+  },
+  {
+    "A121": "RP-16.31",
+    "B121": "Wages and Cooly",
+    "C121": "Payment",
+    "D121": "4251"
+  },
+  {
+    "A122": "RP-16.32",
+    "B122": "Meeting and Conference expenses",
+    "C122": "Payment",
+    "D122": "4252"
+  },
+  {
+    "A123": "RP-16.33",
+    "B123": "Cleaning Expenses",
+    "C123": "Payment",
+    "D123": "4253"
+  },
+  {
+    "A124": "RP-16.35",
+    "B124": "Canteen Payments",
+    "C124": "Payment",
+    "D124": "4255"
+  },
+  {
+    "A125": "RP-16.36",
+    "B125": "Tomb Construction",
+    "C125": "Payment",
+    "D125": "4256"
+  },
+  {
+    "A126": "RP-16.37",
+    "B126": "Vehicle Running and Maintenance Expenses",
+    "C126": "Payment",
+    "D126": "4257"
+  },
+  {
+    "A127": "RP-16.38",
+    "B127": "Others",
+    "C127": "Payment",
+    "D127": "4258"
+  },
+  {
+    "A128": null,
+    "B128": "Perunnal expenses",
+    "C128": null,
+    "D128": null
+  },
+  {
+    "A129": "RP-16.46",
+    "B129": "July 3rd Festival",
+    "C129": "Payment",
+    "D129": "4261"
+  },
+  {
+    "A130": "RP-16.47",
+    "B130": "August 15 & Sep 1-8  Festival : St Mary",
+    "C130": "Payment",
+    "D130": "4262"
+  },
+  {
+    "A131": "RP-16.48",
+    "B131": "Church Festival : Feast of St Gregorios",
+    "C131": "Payment",
+    "D131": "4263"
+  },
+  {
+    "A132": "RP-16.50",
+    "B132": "Others : St Geogre",
+    "C132": "Payment",
+    "D132": "4265"
+  },
+  {
+    "A133": "RP-16.61",
+    "B133": "Spiritual Organisations Expenses",
+    "C133": "Payment",
+    "D133": "4301"
+  },
+  {
+    "A134": "RP-16.62",
+    "B134": "Sunday School",
+    "C134": "Payment",
+    "D134": "4302"
+  },
+  {
+    "A135": "RP-16.64",
+    "B135": "MMVS",
+    "C135": "Payment",
+    "D135": "4304"
+  },
+  {
+    "A136": "RP-16.65",
+    "B136": "Prarthanayogam",
+    "C136": "Payment",
+    "D136": "4305"
+  },
+  {
+    "A137": "RP-16.67",
+    "B137": "OVBS",
+    "C137": "Payment",
+    "D137": "4307"
+  },
+  {
+    "A138": "RP-16.68",
+    "B138": "MGOCSM & OCYM",
+    "C138": "Payment",
+    "D138": "4308"
+  },
+  {
+    "A139": "RP-16.69",
+    "B139": "St. Joseph Forum",
+    "C139": "Payment",
+    "D139": "4309"
+  },
+  {
+    "A140": "RP-16.70",
+    "B140": "St. Dionysious Forum",
+    "C140": "Payment",
+    "D140": null
+  },
+  {
+    "A141": "RP-16.71",
+    "B141": "Other Spiritual organisations",
+    "C141": "Payment",
+    "D141": null
+  },
+  {
+    "A142": "RP-16.87",
+    "B142": "Other Charity : Grant to Sneha Bhavan Bilikere",
+    "C142": "Payment",
+    "D142": "4317"
+  },
+  {
+    "A143": "RP-16.89",
+    "B143": "Gifts and Compliments",
+    "C143": "Payment",
+    "D143": "4319"
+  },
+  {
+    "A144": null,
+    "B144": "ADDITION OF FIXED ASSETS",
+    "C144": null,
+    "D144": null
+  },
+  {
+    "A145": "RP-18.05",
+    "B145": "Church Building",
+    "C145": "Payment",
+    "D145": "4604"
+  },
+  {
+    "A146": "RP-18.16",
+    "B146": "Furniture and Fixtures",
+    "C146": "Payment",
+    "D146": "4615"
+  },
+  {
+    "A147": "RP-18.17",
+    "B147": "Church Equipments",
+    "C147": "Payment",
+    "D147": "4616"
+  },
+  {
+    "A148": "RP-18.18",
+    "B148": "Other Equipments",
+    "C148": "Payment",
+    "D148": "4617"
+  },
+  {
+    "A149": "RP-18.21",
+    "B149": "Computer, Software  and Peripherals",
+    "C149": "Payment",
+    "D149": "4620"
+  },
+  {
+    "A150": "RP-18.22",
+    "B150": "Website",
+    "C150": "Payment",
+    "D150": "4621"
+  },
+  {
+    "A151": "RP-18.23",
+    "B151": "Electrical Equipments",
+    "C151": "Payment",
+    "D151": "4622"
+  },
+  {
+    "A152": "RP-18.24",
+    "B152": "Machinery and equipments",
+    "C152": "Payment",
+    "D152": "4623"
+  },
+  {
+    "A153": "RP-18.25",
+    "B153": "Generator",
+    "C153": "Payment",
+    "D153": "4624"
+  },
+  {
+    "A154": "RP-18.26",
+    "B154": "Sound System",
+    "C154": "Payment",
+    "D154": "4625"
+  },
+  {
+    "A155": "RP-18.27",
+    "B155": "Renewable Energy Systems",
+    "C155": "Payment",
+    "D155": null
+  },
+  {
+    "A156": "RP-18.28",
+    "B156": "Books",
+    "C156": "Payment",
+    "D156": "4626"
+  },
+  {
+    "A157": "RP-18.29",
+    "B157": "Building under Construction",
+    "C157": "Payment",
+    "D157": "4627"
+  },
+  {
+    "A158": null,
+    "B158": "Repayment of Loans and Borrowings",
+    "C158": null,
+    "D158": null
+  },
+  {
+    "A159": "RP-18.82",
+    "B159": "Repayament to Trustee",
+    "C159": "Payment",
+    "D159": null
+  },
+  {
+    "A160": "RP-18.83",
+    "B160": "Loan from  Church Members",
+    "C160": "Payment",
+    "D160": "4857"
+  },
+  {
+    "A161": null,
+    "B161": "To Malankara Metropolitan",
+    "C161": null,
+    "D161": null
+  },
+  {
+    "A162": "RP-19.03",
+    "B162": "Catholicate Day Collection",
+    "C162": "Payment",
+    "D162": "4001"
+  },
+  {
+    "A163": "RP-19.04",
+    "B163": "Recceessa",
+    "C163": "Payment",
+    "D163": "4002"
+  },
+  {
+    "A164": null,
+    "B164": "To Diocession Office",
+    "C164": null,
+    "D164": null
+  },
+  {
+    "A165": "RP-19.11",
+    "B165": "Diocesan Day Dollection",
+    "C165": "Payment",
+    "D165": "4003"
+  },
+  {
+    "A166": "RP-19.12",
+    "B166": "Vivaha Kaimuthu",
+    "C166": "Payment",
+    "D166": "4004"
+  },
+  {
+    "A167": "RP-19.15",
+    "B167": "Other Collections : Priest Welfare Fund",
+    "C167": "Payment",
+    "D167": "4008"
+  },
+  {
+    "A168": null,
+    "B168": "To Other Offices",
+    "C168": null,
+    "D168": null
+  },
+  {
+    "A169": "RP-19.21",
+    "B169": "Mission Sunday collection",
+    "C169": "Payment",
+    "D169": "4009"
+  },
+  {
+    "A170": "RP-19.22",
+    "B170": "Sunday school day collection",
+    "C170": "Payment",
+    "D170": "4010"
+  },
+  {
+    "A171": "RP-19.23",
+    "B171": "Seminary day collection",
+    "C171": "Payment",
+    "D171": "4011"
+  },
+  {
+    "A172": "RP-19.24",
+    "B172": "Gerbo Sunday Collection",
+    "C172": "Payment",
+    "D172": "4012"
+  },
+  {
+    "A173": "RP-19.25",
+    "B173": "Other collections",
+    "C173": "Payment",
+    "D173": "4013"
+  },
+  {
+    "A174": null,
+    "B174": "Inter Accounts Payments to Diocese",
+    "C174": null,
+    "D174": null
+  },
+  {
+    "A175": "RP-19.31",
+    "B175": "Monthly Quota of Churches (Priest Salary Quota to Diocese)",
+    "C175": "Payment",
+    "D175": "4031"
+  },
+  {
+    "A176": "RP-19.32",
+    "B176": "Methrasana Vihitham: Annual Kaimuth to Thirumeni",
+    "C176": "Payment",
+    "D176": "4032"
+  },
+  {
+    "C177": null
+  },
+  {
+    "C178": null
+  },
+  {
+    "A179": "Monthly Payments",
+    "B179": null,
+    "C179": null
+  },
+  {
+    "A180": "RP-19.31",
+    "B180": "Salary Quota to Diocese (Vicar)",
+    "C180": "Payment"
+  },
+  {
+    "A181": "RP-12.03 (a)",
+    "B181": "Salary to Sexton _ Eldhos ",
+    "C181": "Payment"
+  },
+  {
+    "A182": "RP-12.03 (b)",
+    "B182": "Salary to Watchman(Cemetry) _ Lakshmi",
+    "C182": "Payment"
+  },
+  {
+    "A183": "RP-12.03 (c)",
+    "B183": "Salary to Ayah _ Rani",
+    "C183": "Payment"
+  },
+  {
+    "A184": "RP-12.06",
+    "B184": "Medical Allowance to Sexton",
+    "C184": "Payment"
+  },
+  {
+    "A185": "RP-12.02 (a)",
+    "B185": "Medical Allowance to Vicar",
+    "C185": "Payment"
+  },
+  {
+    "A186": "RP-12.02 ",
+    "B186": "Telephone Allowance to Vicar",
+    "C186": "Payment"
+  },
+  {
+    "A187": "RP-12.02 ",
+    "B187": "Local Travelling Allowance to Vicar",
+    "C187": "Payment"
+  },
+  {
+    "C188": null
+  },
+  {
+    "C189": null
+  },
+  {
+    "C190": null
+  },
+  {
+    "C191": null
+  }
+]

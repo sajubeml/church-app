@@ -1,0 +1,1414 @@
+[
+  {
+    "A1": null,
+    "B1": "St. Gregorios Orthodox Syrian Church and Pilgrim Centre",
+    "C1": null,
+    "D1": null,
+    "E1": null,
+    "F1": null,
+    "G1": null,
+    "H1": null,
+    "I1": null,
+    "J1": null,
+    "K1": null
+  },
+  {
+    "A2": null,
+    "B2": "Government House Road, Nazarbad, Mysuru, Karnataka 570 010",
+    "C2": null,
+    "D2": null,
+    "E2": null,
+    "F2": null,
+    "G2": null,
+    "H2": null,
+    "I2": null,
+    "J2": null,
+    "K2": null
+  },
+  {
+    "A3": null,
+    "B3": "BUDGETED AND ACTUALS FOR  FY 2026-2027",
+    "C3": null,
+    "D3": null,
+    "E3": null,
+    "F3": null,
+    "G3": null,
+    "H3": null,
+    "I3": null,
+    "J3": null,
+    "K3": null
+  },
+  {
+    "A4": null,
+    "B4": "Receipts",
+    "C4": null,
+    "D4": null,
+    "E4": null,
+    "F4": null,
+    "G4": null,
+    "H4": "Payments",
+    "I4": null,
+    "J4": null,
+    "K4": null
+  },
+  {
+    "A5": "Sl. No",
+    "B5": "Head of Account",
+    "C5": "Code",
+    "D5": "2026-2027",
+    "E5": "2026-2027",
+    "F5": null,
+    "G5": "Sl. No",
+    "H5": "Head of Account",
+    "I5": "Code",
+    "J5": "2026-2027",
+    "K5": "2026-2027"
+  },
+  {
+    "A6": null,
+    "B6": null,
+    "C6": null,
+    "D6": "Budgeted",
+    "E6": "Actual",
+    "F6": null,
+    "G6": null,
+    "H6": null,
+    "I6": null,
+    "J6": "Budgeted",
+    "K6": "Actual"
+  },
+  {
+    "A7": "1",
+    "B7": "Opening Balance   -  Cash",
+    "C7": "RP-1.01",
+    "D7": "9879",
+    "F7": null,
+    "G7": null,
+    "H7": "Salaries & Allowances",
+    "I7": null,
+    "J7": null,
+    "K7": null
+  },
+  {
+    "A8": "2",
+    "B8": "                            -  Bank",
+    "C8": "RP-1.02",
+    "D8": "651682",
+    "F8": null,
+    "G8": "1",
+    "H8": "Salary Quota to Diocese(Vicar)",
+    "I8": "RP-19.31",
+    "J8": "600240",
+    "K8": "150060"
+  },
+  {
+    "A9": "3",
+    "B9": "Monthly Subscription ( Current Year)",
+    "C9": "RP-3.82",
+    "D9": "310000",
+    "E9": "125000",
+    "F9": null,
+    "G9": "2",
+    "H9": "Salary to Sexton",
+    "I9": "RP-12.03 (a)",
+    "J9": "185400",
+    "K9": "46350"
+  },
+  {
+    "A10": "4",
+    "B10": "Monthly Subscription ( Pervious Year)",
+    "C10": "RP-3.83",
+    "D10": "20000",
+    "E10": "27500",
+    "F10": null,
+    "G10": "3",
+    "H10": "Salary to Watchman(Cemetry)",
+    "I10": "RP-12.03 (b)",
+    "J10": "28200",
+    "K10": "7050"
+  },
+  {
+    "A11": "5",
+    "B11": "Birthday Offerings",
+    "C11": "RP-3.16",
+    "D11": "50000",
+    "E11": "16650",
+    "F11": null,
+    "G11": "4",
+    "H11": "Salary to Ayah",
+    "I11": "RP-12.03 (c)",
+    "J11": "35160",
+    "K11": "12850"
+  },
+  {
+    "A12": "6",
+    "B12": "Wedding Anniversary Offerings",
+    "C12": "RP-3.17",
+    "D12": "20000",
+    "E12": "6800",
+    "F12": null,
+    "G12": "5",
+    "H12": "Medical Allowance to Vicar",
+    "I12": "RP-12.02 (a)",
+    "J12": "28350",
+    "K12": "6371"
+  },
+  {
+    "A13": "7",
+    "B13": "Orma Qurbana/Holy Qurbana",
+    "C13": "RP-3.12",
+    "D13": "46000",
+    "E13": "2270",
+    "F13": null,
+    "G13": "6",
+    "H13": "Medical Allowance to Sexton",
+    "I13": "RP-12.06",
+    "J13": "7725",
+    "K13": "2042"
+  },
+  {
+    "A14": "8",
+    "B14": "House Blessing",
+    "C14": "RP-3.17 (a)",
+    "D14": "1000",
+    "E14": "1500",
+    "F14": null,
+    "G14": "7",
+    "H14": "Telephone Allowance to Vicar",
+    "I14": "RP-12.02 ",
+    "J14": "6000",
+    "K14": null
+  },
+  {
+    "A15": "9",
+    "B15": "Marriage Bann",
+    "C15": "RP-2.14",
+    "D15": "1000",
+    "E15": null,
+    "F15": null,
+    "G15": "8",
+    "H15": "Local Travelling Allowance to Vicar",
+    "I15": "RP-12.02 ",
+    "J15": "30000",
+    "K15": null
+  },
+  {
+    "A16": "10",
+    "B16": "Marriage Celebration Fee",
+    "C16": "RP-2.14",
+    "D16": "20000",
+    "E16": null,
+    "F16": null,
+    "G16": "9",
+    "H16": "Annual Travelling Allowance to Vicar",
+    "I16": "RP-12.02",
+    "J16": "8000",
+    "K16": null
+  },
+  {
+    "A17": "11",
+    "B17": "Baptism",
+    "C17": "RP-3.14",
+    "D17": "10000",
+    "E17": "2500",
+    "F17": null,
+    "G17": "10",
+    "H17": "Leave Salary to Vicar",
+    "I17": "RP-12.02 ",
+    "J17": "28350",
+    "K17": null
+  },
+  {
+    "A18": "12",
+    "B18": "Cemetry Receipt",
+    "C18": "RP-2.19",
+    "D18": "100000",
+    "E18": null,
+    "F18": null,
+    "G18": "11",
+    "H18": "Gift Purse to Vicar",
+    "I18": "RP-12.02",
+    "J18": "17000",
+    "K18": null
+  },
+  {
+    "A19": "13",
+    "B19": "Sunday School",
+    "C19": "RP-3.61",
+    "D19": "8000",
+    "E19": "1500",
+    "F19": null,
+    "G19": null,
+    "H19": "Parish Expenses",
+    "I19": null,
+    "J19": null,
+    "K19": null
+  },
+  {
+    "A20": "14",
+    "B20": "OVBS",
+    "C20": "RP-3.66",
+    "D20": "65000",
+    "E20": null,
+    "F20": null,
+    "G20": "12",
+    "H20": "Kaimuthu to Thirumeni",
+    "I20": null,
+    "J20": "20000",
+    "K20": null
+  },
+  {
+    "A21": "15",
+    "B21": "Prayer Group",
+    "C21": "RP-3.64",
+    "D21": "30000",
+    "E21": "650",
+    "F21": null,
+    "G21": "13",
+    "H21": "Kaimuthu to Visiting priest",
+    "I21": null,
+    "J21": "10000",
+    "K21": null
+  },
+  {
+    "A22": "16",
+    "B22": "Miscellaneous Income",
+    "C22": null,
+    "D22": "4000",
+    "F22": null,
+    "G22": "14",
+    "H22": "Church Service Expense",
+    "I22": "RP- 16.04",
+    "J22": "130000",
+    "K22": "3049"
+  },
+  {
+    "A23": "17",
+    "B23": "Certificate Fee",
+    "C23": "RP-3.52 ",
+    "D23": "2000",
+    "E23": null,
+    "F23": null,
+    "G23": "15",
+    "H23": "Electricity Charges - Church",
+    "I23": "RP- 16.11(a)",
+    "J23": "35000",
+    "K23": "10317"
+  },
+  {
+    "A24": null,
+    "B24": "Donations",
+    "C24": null,
+    "D24": null,
+    "F24": null,
+    "G24": "16",
+    "H24": "Electricity Charges - Parsonage",
+    "I24": "RP- 16.11(b)",
+    "J24": "35000",
+    "K24": "11122"
+  },
+  {
+    "A25": "18",
+    "B25": "Donations-Marriage",
+    "C25": "RP-2.14",
+    "D25": "40000",
+    "E25": null,
+    "F25": null,
+    "G25": "17",
+    "H25": "Elecricity Charges - Cemetry ",
+    "I25": "RP- 16.11(c)",
+    "J25": "1500",
+    "K25": "148"
+  },
+  {
+    "A26": "19",
+    "B26": "Donation General",
+    "C26": "RP-2.02",
+    "D26": "340000",
+    "E26": "47290",
+    "F26": null,
+    "G26": "18",
+    "H26": "Breakfast Expenses",
+    "I26": "RP- 16.08",
+    "J26": "400000",
+    "K26": "62068"
+  },
+  {
+    "A27": null,
+    "B27": "Donation General-chair & tables",
+    "C27": "RP-2.02(a)",
+    "D27": null,
+    "E27": "73710",
+    "F27": null,
+    "G27": "19",
+    "H27": "Church Renovation Expenses",
+    "I27": "RP- 14.31",
+    "J27": "0",
+    "K27": "86126"
+  },
+  {
+    "A28": "20",
+    "B28": "Donation-Breakfast",
+    "C28": "RP-2.16",
+    "D28": "500000",
+    "E28": "89600",
+    "F28": null,
+    "G28": "20",
+    "H28": "Maintenance of Church & Parsonage",
+    "I28": "RP- 14.31",
+    "J28": "750000",
+    "K28": "86126"
+  },
+  {
+    "A29": "21",
+    "B29": "Donation- Others (Farewell)",
+    "C29": "RP-2.20",
+    "D29": "0",
+    "F29": null,
+    "G29": "21",
+    "H29": "Passion Week Expenses",
+    "I29": "RP- 16.06",
+    "J29": "40000",
+    "K29": "54115"
+  },
+  {
+    "A30": "22",
+    "B30": "Donation - Cemetry",
+    "C30": "RP-2.19",
+    "D30": null,
+    "E30": null,
+    "F30": null,
+    "G30": "22",
+    "H30": "Maintenance of Cemetry",
+    "I30": "RP- 14.35",
+    "J30": "30000",
+    "K30": "5490"
+  },
+  {
+    "A31": "23",
+    "B31": "KMDC Grant",
+    "C31": "RP-2.211",
+    "D31": null,
+    "E31": "1500000",
+    "F31": null,
+    "G31": "23",
+    "H31": "Postage",
+    "I31": "RP-14.05",
+    "J31": "5000",
+    "K31": "2080"
+  },
+  {
+    "A32": null,
+    "B32": "Offerings ",
+    "C32": null,
+    "D32": null,
+    "F32": null,
+    "G32": "24",
+    "H32": "Canteen Expenses",
+    "I32": "RP- 16.35",
+    "J32": "10000",
+    "K32": "1700"
+  },
+  {
+    "A33": "24",
+    "B33": "Kurishinthothi &",
+    "C33": "RP-3.03",
+    "D33": null,
+    "E33": "35722",
+    "F33": null,
+    "G33": "25",
+    "H33": "Printing & Stationery",
+    "I33": "RP-14.06",
+    "J33": "60000",
+    "K33": "2544"
+  },
+  {
+    "A34": "25",
+    "B34": "Koodaram",
+    "C34": "RP-3.04",
+    "D34": "160000",
+    "E34": "34601",
+    "F34": null,
+    "G34": "26",
+    "H34": "Cemetry Development",
+    "I34": "RP- 16.36",
+    "J34": "650000",
+    "K34": "500"
+  },
+  {
+    "A35": "26",
+    "B35": "Perunnal Vanchika (House Offertory Box)",
+    "C35": "RP-3.05",
+    "D35": "65000",
+    "E35": "3400",
+    "F35": null,
+    "G35": "27",
+    "H35": "Grant - Sneha Bhavan",
+    "I35": "RP- 16.87",
+    "J35": "25000",
+    "K35": null
+  },
+  {
+    "A36": "27",
+    "B36": "Kanicka ",
+    "C36": "RP-3.10",
+    "D36": "425000",
+    "E36": "121365",
+    "F36": null,
+    "G36": "28",
+    "H36": "Gift & Mementoes",
+    "I36": "RP- 16.89",
+    "J36": "7000",
+    "K36": "4232"
+  },
+  {
+    "A37": "28",
+    "B37": "Kanicka-Chapel",
+    "C37": "RP-3.13",
+    "D37": "12000",
+    "E37": "2210",
+    "F37": null,
+    "G37": "29",
+    "H37": "Sunday School Expense",
+    "I37": "RP- 16.62",
+    "J37": "40000",
+    "K37": null
+  },
+  {
+    "A38": null,
+    "B38": "Auction",
+    "C38": null,
+    "D38": null,
+    "F38": null,
+    "G38": "30",
+    "H38": "OVBS",
+    "I38": "RP- 16.67",
+    "J38": "70000",
+    "K38": null
+  },
+  {
+    "A39": "29",
+    "B39": "Auction Dues - Old",
+    "C39": "RP-2.15(a)",
+    "D39": "146000",
+    "E39": "77000",
+    "F39": null,
+    "G39": "31",
+    "H39": "Prayer Group",
+    "I39": "RP- 16.65",
+    "J39": "30000",
+    "K39": null
+  },
+  {
+    "A40": "30",
+    "B40": "Auction current",
+    "C40": "RP-2.15",
+    "D40": "400000",
+    "E40": null,
+    "F40": null,
+    "G40": "32",
+    "H40": "Travelling Expenses",
+    "I40": "RP- 14.03",
+    "J40": "35000",
+    "K40": null
+  },
+  {
+    "A41": "31",
+    "B41": "Petty Auction",
+    "C41": "RP-2.15(b)",
+    "D41": "2000",
+    "E41": "1500",
+    "F41": null,
+    "G41": "33",
+    "H41": "Audit Fee",
+    "I41": "RP- 14.04",
+    "J41": "33040",
+    "K41": "35400"
+  },
+  {
+    "A42": null,
+    "B42": "Collection for  Centre/Diocese",
+    "C42": null,
+    "D42": null,
+    "F42": null,
+    "G42": "34",
+    "H42": "Bank Charges",
+    "I42": "RP- 13.02",
+    "J42": "1000",
+    "K42": "259"
+  },
+  {
+    "A43": "32",
+    "B43": "Catholicate Day & Recessa",
+    "C43": "RP-10.04/05",
+    "D43": "65000",
+    "E43": "28850",
+    "F43": null,
+    "G43": "35",
+    "H43": "St Joseph Orthodox Fellowship",
+    "I43": "RP- 16.69",
+    "J43": "3000",
+    "K43": null
+  },
+  {
+    "A44": "33",
+    "B44": "Metropolitan Fund",
+    "C44": "RP-10.08",
+    "D44": "32000",
+    "E44": "12250",
+    "F44": null,
+    "G44": "36",
+    "H44": "St Dionysius Orthodox Fellowship",
+    "I44": "RP- 16.70",
+    "J44": "3000",
+    "K44": null
+  },
+  {
+    "A45": "34",
+    "B45": "Mission Sunday",
+    "C45": "RP-10.13",
+    "D45": "15500",
+    "E45": "9050",
+    "F45": null,
+    "G45": null,
+    "H45": "Collection for  Centre/Diocese",
+    "I45": null,
+    "J45": null,
+    "K45": null
+  },
+  {
+    "A46": "35",
+    "B46": "Seminary Day",
+    "C46": "RP-10.15",
+    "D46": "15000",
+    "E46": "5850",
+    "F46": null,
+    "G46": "37",
+    "H46": "Catholicate Day & Recceessa",
+    "I46": "RP-19.03&.04",
+    "J46": "74930",
+    "K46": null
+  },
+  {
+    "A47": "36",
+    "B47": "Priest Welfare Fund ",
+    "C47": "RP-10.10",
+    "D47": "16000",
+    "E47": "7000",
+    "F47": null,
+    "G47": "38",
+    "H47": "Metropolitan Fund",
+    "I47": "RP-19.11",
+    "J47": "33900",
+    "K47": null
+  },
+  {
+    "A48": "37",
+    "B48": "Marriage Kaimuthu",
+    "C48": "RP-10.09",
+    "D48": "3000",
+    "F48": null,
+    "G48": "39",
+    "H48": "Mission Sunday",
+    "I48": "RP- 19.21",
+    "J48": "15150",
+    "K48": null
+  },
+  {
+    "A49": "38",
+    "B49": "Old Cover Collection Dues",
+    "C49": "RP-10.17",
+    "D49": "10000",
+    "E49": "6600",
+    "F49": null,
+    "G49": "40",
+    "H49": "Sunday School Cover Collection",
+    "I49": "RP- 19.22",
+    "J49": "4000",
+    "K49": null
+  },
+  {
+    "A50": "39",
+    "B50": "Sunday School Day Collection",
+    "C50": "RP-10.14",
+    "D50": "4000",
+    "E50": "2750",
+    "F50": null,
+    "G50": "41",
+    "H50": "Seminary Day",
+    "I50": "RP- 19.23",
+    "J50": "14500",
+    "K50": null
+  },
+  {
+    "A51": "40",
+    "B51": "Gerbo Sunday",
+    "C51": "RP-10.16",
+    "D51": "3000",
+    "F51": null,
+    "G51": "42",
+    "H51": "Priest Welfare Fund",
+    "I51": "RP- 19.15",
+    "J51": "15450",
+    "K51": null
+  },
+  {
+    "A52": null,
+    "B52": "Perunal Collection",
+    "C52": null,
+    "D52": null,
+    "F52": null,
+    "G52": "43",
+    "H52": "Marriage Kaimuthu",
+    "I52": "RP- 19.12",
+    "J52": "2000",
+    "K52": null
+  },
+  {
+    "A53": "41",
+    "B53": "St. George Feast",
+    "C53": "RP-3.35",
+    "D53": "17000",
+    "E53": "15000",
+    "F53": null,
+    "G53": "44",
+    "H53": "Annual Kaimuthu to Tirumeni",
+    "I53": "RP- 19.32",
+    "J53": "28350",
+    "K53": null
+  },
+  {
+    "A54": "42",
+    "B54": "St. Thomas Feast",
+    "C54": "RP-3.31",
+    "D54": null,
+    "E54": "400",
+    "F54": null,
+    "G54": "45",
+    "H54": "Gerbo Sunday",
+    "I54": "RP- 19.24",
+    "J54": "3000",
+    "K54": null
+  },
+  {
+    "A55": "43",
+    "B55": "St. Mary's Feast",
+    "C55": "RP-3.32",
+    "D55": "60000",
+    "E55": "900",
+    "F55": null,
+    "G55": null,
+    "H55": "Perunal Expense",
+    "I55": null,
+    "J55": null,
+    "K55": null
+  },
+  {
+    "A56": "44",
+    "B56": "St.Gregorios Feast ( Annual Feast)",
+    "C56": "RP-3.33",
+    "D56": "100000",
+    "F56": null,
+    "G56": "46",
+    "H56": "St. George Feast",
+    "I56": "RP- 16.50",
+    "J56": "12000",
+    "K56": "10183"
+  },
+  {
+    "A57": "45",
+    "B57": "Christmas / New Year Collection",
+    "C57": "RP-2.11",
+    "D57": "200000",
+    "F57": null,
+    "G57": "47",
+    "H57": "St. Mary's Feast",
+    "I57": "RP- 16.47",
+    "J57": "20000",
+    "K57": null
+  },
+  {
+    "A58": "46",
+    "B58": "Parish Day/Harvest / Collection",
+    "C58": "RP-2.12",
+    "D58": "100000",
+    "F58": null,
+    "G58": "48",
+    "H58": "St.Gregorios Feast ( Annual Feast)",
+    "I58": "RP- 16.48",
+    "J58": "100000",
+    "K58": null
+  },
+  {
+    "A59": "47",
+    "B59": "Passion Week Collection",
+    "C59": "RP-2.13",
+    "D59": "60000",
+    "E59": "80506",
+    "F59": null,
+    "G59": "49",
+    "H59": "Christmas & New Year Expense",
+    "I59": "RP-16.15",
+    "J59": "100000",
+    "K59": null
+  },
+  {
+    "A60": "48",
+    "B60": "Interest Received SB Account",
+    "C60": "RP-8.03",
+    "D60": "25000",
+    "E60": "5365",
+    "F60": null,
+    "G60": "50",
+    "H60": "Harvest Day/Parish Day Expense",
+    "I60": "RP-16.14",
+    "J60": "150000",
+    "K60": null
+  },
+  {
+    "A61": "49",
+    "B61": "Advance A/C Sound System",
+    "C61": null,
+    "D61": null,
+    "E61": null,
+    "F61": null,
+    "G61": null,
+    "H61": "Others",
+    "I61": null,
+    "J61": null,
+    "K61": null
+  },
+  {
+    "A62": "50",
+    "B62": "Diocesan Prayer Meeting Income",
+    "C62": null,
+    "D62": null,
+    "E62": null,
+    "F62": null,
+    "G62": "51",
+    "H62": "Miscelleaneous Expenses",
+    "I62": "RP-16.38",
+    "J62": "5000",
+    "K62": null
+  },
+  {
+    "A63": "51",
+    "B63": "IOBD Charity",
+    "C63": null,
+    "D63": null,
+    "E63": null,
+    "F63": null,
+    "G63": "52",
+    "H63": "Fixed Deposit",
+    "I63": null,
+    "J63": null,
+    "K63": null
+  },
+  {
+    "A64": "52",
+    "B64": "Fixed Deposit Withdrawn",
+    "C64": null,
+    "D64": null,
+    "E64": null,
+    "F64": null,
+    "G64": "53",
+    "H64": "Asset Purchase",
+    "I64": "RP-18.16",
+    "J64": "150000",
+    "K64": "177000"
+  },
+  {
+    "A65": null,
+    "B65": null,
+    "C65": null,
+    "D65": null,
+    "E65": null,
+    "F65": null,
+    "G65": "54",
+    "H65": "Electrical Equipments",
+    "I65": "RP-18.23",
+    "J65": null,
+    "K65": "9590"
+  },
+  {
+    "A66": null,
+    "B66": null,
+    "C66": null,
+    "D66": null,
+    "E66": null,
+    "F66": null,
+    "G66": "55",
+    "H66": "Ecumenical Meeting Expenses (UCF)",
+    "I66": null,
+    "J66": "10000",
+    "K66": null
+  },
+  {
+    "A67": null,
+    "B67": null,
+    "C67": null,
+    "D67": null,
+    "E67": null,
+    "F67": null,
+    "G67": "56",
+    "H67": "Diocesan Prayer Meeting Expenses",
+    "I67": "RP-16.32",
+    "J67": null,
+    "K67": null
+  },
+  {
+    "A68": null,
+    "B68": null,
+    "C68": null,
+    "D68": null,
+    "E68": null,
+    "F68": null,
+    "G68": "57",
+    "H68": "Farewell Expenses",
+    "I68": null,
+    "J68": null,
+    "K68": null
+  },
+  {
+    "A69": null,
+    "B69": null,
+    "C69": null,
+    "D69": null,
+    "E69": null,
+    "F69": null,
+    "G69": "58",
+    "H69": "Transport Charges ( Ex. Vicar)",
+    "I69": null,
+    "J69": null,
+    "K69": null
+  },
+  {
+    "A70": null,
+    "B70": null,
+    "C70": null,
+    "D70": null,
+    "E70": null,
+    "F70": null,
+    "G70": "59",
+    "H70": "IOBD Charity",
+    "I70": null,
+    "J70": null,
+    "K70": null
+  },
+  {
+    "A71": null,
+    "B71": null,
+    "C71": null,
+    "D71": null,
+    "E71": null,
+    "F71": null,
+    "G71": "60",
+    "H71": "Closing BalanceBalance   -  Cash",
+    "I71": null,
+    "J71": null,
+    "K71": null
+  },
+  {
+    "A72": null,
+    "B72": null,
+    "C72": null,
+    "D72": null,
+    "E72": null,
+    "F72": null,
+    "G72": "61",
+    "H72": null,
+    "I72": null,
+    "J72": null,
+    "K72": null
+  },
+  {
+    "A73": null,
+    "B73": null,
+    "C73": null,
+    "D73": null,
+    "E73": null,
+    "F73": null,
+    "G73": "62",
+    "H73": null,
+    "I73": null,
+    "J73": null,
+    "K73": null
+  },
+  {
+    "A74": null,
+    "B74": "TOTAL",
+    "C74": null,
+    "D74": "4164061",
+    "E74": "2345289",
+    "F74": null,
+    "G74": null,
+    "H74": "TOTAL",
+    "I74": null,
+    "J74": "4136245",
+    "K74": "786772",
+    "L74": null,
+    "M74": null,
+    "N74": null,
+    "O74": null,
+    "P74": null,
+    "Q74": null,
+    "R74": null,
+    "S74": null,
+    "T74": null,
+    "U74": null,
+    "V74": null,
+    "W74": null,
+    "X74": null,
+    "Y74": null,
+    "Z74": null,
+    "AA74": null,
+    "AB74": null,
+    "AC74": null,
+    "AD74": null,
+    "AE74": null,
+    "AF74": null,
+    "AG74": null,
+    "AH74": null,
+    "AI74": null,
+    "AJ74": null
+  },
+  {
+    "A75": null,
+    "D75": null,
+    "E75": null,
+    "F75": null,
+    "G75": null,
+    "H75": null,
+    "I75": null,
+    "J75": null,
+    "K75": null
+  },
+  {
+    "A76": null,
+    "D76": null,
+    "E76": null,
+    "F76": null,
+    "G76": null,
+    "K76": null
+  },
+  {
+    "A77": null,
+    "D77": null,
+    "F77": null,
+    "G77": null,
+    "K77": null
+  },
+  {
+    "A78": null,
+    "D78": null,
+    "F78": null,
+    "G78": null,
+    "K78": null
+  },
+  {
+    "A79": null,
+    "D79": null,
+    "F79": null,
+    "G79": null,
+    "K79": null
+  },
+  {
+    "A80": null,
+    "B80": "Fr. Sijin Mathew",
+    "C80": null,
+    "D80": null,
+    "E80": null,
+    "F80": null,
+    "G80": null,
+    "H80": "Saju Jacob",
+    "I80": null,
+    "J80": null,
+    "K80": null
+  },
+  {
+    "A81": null,
+    "B81": "Vicar",
+    "C81": null,
+    "D81": null,
+    "E81": null,
+    "F81": null,
+    "G81": null,
+    "H81": "Trustee",
+    "I81": null,
+    "J81": null,
+    "K81": null
+  },
+  {
+    "A82": null,
+    "B82": null,
+    "C82": null,
+    "D82": null,
+    "E82": null,
+    "F82": null,
+    "G82": null,
+    "H82": null,
+    "I82": null,
+    "J82": null,
+    "K82": null
+  },
+  {
+    "F83": null,
+    "H83": null,
+    "I83": null
+  },
+  {
+    "F84": null,
+    "H84": null,
+    "I84": null
+  },
+  {
+    "F85": null,
+    "H85": null,
+    "I85": null
+  },
+  {
+    "F86": null
+  },
+  {
+    "F87": null
+  },
+  {
+    "F88": null
+  },
+  {
+    "F89": null
+  },
+  {
+    "F90": null
+  },
+  {
+    "F91": null
+  },
+  {
+    "F92": null
+  },
+  {
+    "F93": null
+  },
+  {
+    "F94": null
+  },
+  {
+    "F95": null
+  },
+  {
+    "F96": null
+  },
+  {
+    "F97": null
+  },
+  {
+    "F98": null
+  },
+  {
+    "F99": null
+  },
+  {
+    "F100": null
+  },
+  {
+    "F101": null
+  },
+  {
+    "F102": null
+  },
+  {
+    "F103": null
+  },
+  {
+    "F104": null
+  },
+  {
+    "F105": null
+  },
+  {
+    "F106": null
+  },
+  {
+    "F107": null
+  },
+  {
+    "F108": null
+  },
+  {
+    "F109": null
+  },
+  {
+    "F110": null
+  },
+  {
+    "F111": null
+  },
+  {
+    "F112": null
+  },
+  {
+    "F113": null
+  },
+  {
+    "F114": null
+  },
+  {
+    "F115": null
+  },
+  {
+    "F116": null
+  },
+  {
+    "F117": null
+  },
+  {
+    "F118": null
+  },
+  {
+    "F119": null
+  },
+  {
+    "F120": null
+  },
+  {
+    "F121": null
+  },
+  {
+    "F122": null
+  },
+  {
+    "F123": null
+  },
+  {
+    "F124": null
+  },
+  {
+    "F125": null
+  },
+  {
+    "F126": null
+  },
+  {
+    "F127": null
+  },
+  {
+    "F128": null
+  },
+  {
+    "F129": null
+  },
+  {
+    "F130": null
+  },
+  {
+    "F131": null
+  },
+  {
+    "F132": null
+  },
+  {
+    "F133": null
+  },
+  {
+    "F134": null
+  },
+  {
+    "F135": null
+  },
+  {
+    "F136": null
+  },
+  {
+    "F137": null
+  },
+  {
+    "F138": null
+  },
+  {
+    "F139": null
+  },
+  {
+    "F140": null
+  },
+  {
+    "F141": null
+  },
+  {
+    "F142": null
+  },
+  {
+    "F143": null
+  },
+  {
+    "F144": null
+  },
+  {
+    "F145": null
+  },
+  {
+    "F146": null
+  },
+  {
+    "F147": null
+  },
+  {
+    "F148": null
+  },
+  {
+    "F149": null
+  },
+  {
+    "F150": null
+  },
+  {
+    "F151": null
+  },
+  {
+    "F152": null
+  },
+  {
+    "F153": null
+  },
+  {
+    "F154": null
+  },
+  {
+    "F155": null
+  },
+  {
+    "F156": null
+  },
+  {
+    "F157": null
+  },
+  {
+    "F158": null
+  },
+  {
+    "F159": null
+  },
+  {
+    "F160": null
+  },
+  {
+    "F161": null
+  },
+  {
+    "F162": null
+  },
+  {
+    "F163": null
+  },
+  {
+    "F164": null
+  },
+  {
+    "F165": null
+  },
+  {
+    "F166": null
+  },
+  {
+    "F167": null
+  },
+  {
+    "F168": null
+  },
+  {
+    "F169": null
+  },
+  {
+    "F170": null
+  },
+  {
+    "F171": null
+  },
+  {
+    "F172": null
+  },
+  {
+    "F173": null
+  },
+  {
+    "F174": null
+  },
+  {
+    "F175": null
+  },
+  {
+    "F176": null
+  },
+  {
+    "F177": null
+  },
+  {
+    "F178": null
+  },
+  {
+    "F179": null
+  },
+  {
+    "F180": null
+  },
+  {
+    "F181": null
+  },
+  {
+    "F182": null
+  },
+  {
+    "F183": null
+  },
+  {
+    "F184": null
+  },
+  {
+    "F185": null
+  },
+  {
+    "F186": null
+  },
+  {
+    "F187": null
+  },
+  {
+    "F188": null
+  },
+  {
+    "F189": null
+  },
+  {
+    "F190": null
+  },
+  {
+    "F191": null
+  },
+  {
+    "F192": null
+  },
+  {
+    "F193": null
+  },
+  {
+    "F194": null
+  },
+  {
+    "F195": null
+  },
+  {
+    "F196": null
+  },
+  {
+    "F197": null
+  },
+  {
+    "F198": null
+  },
+  {
+    "F199": null
+  },
+  {
+    "F200": null
+  }
+]
