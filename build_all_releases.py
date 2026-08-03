@@ -25,7 +25,7 @@ env["PATH"] = f"{env['JAVA_HOME']}\\bin;{env.get('PATH', '')}"
 # Step 3: Build Full Android APK
 print("\n--- STEP 3: Compiling FULL Android APK ---")
 subprocess.run(["py", r"C:\Users\sajub\.gemini\antigravity-ide\brain\5f917e5b-5caf-4d4c-9628-e225edcce409\scratch\copy_assets_to_android.py", "full"], cwd=base_dir, check=True)
-subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat assembleFullDebug"], cwd=os.path.join(base_dir, "android-app"), env=env, check=True)
+subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat clean assembleFullDebug"], cwd=os.path.join(base_dir, "android-app"), env=env, check=True)
 
 src_full_apk = os.path.join(base_dir, "android-app", "app", "build", "outputs", "apk", "full", "debug", "app-full-debug.apk")
 full_apk_dest = os.path.join(base_dir, "St_Gregorios_Church_Accounting.apk")
@@ -37,7 +37,7 @@ print(f"[OK] Full APK Compiled: {full_apk_dest} & {full_apk_v73} ({os.path.getsi
 # Step 4: Build Fresh Start Android APK
 print("\n--- STEP 4: Compiling FRESH START Android APK ---")
 subprocess.run(["py", r"C:\Users\sajub\.gemini\antigravity-ide\brain\5f917e5b-5caf-4d4c-9628-e225edcce409\scratch\copy_assets_to_android.py", "fresh"], cwd=base_dir, check=True)
-subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat assembleFreshDebug"], cwd=os.path.join(base_dir, "android-app"), env=env, check=True)
+subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat clean assembleFreshDebug"], cwd=os.path.join(base_dir, "android-app"), env=env, check=True)
 
 src_fresh_apk = os.path.join(base_dir, "android-app", "app", "build", "outputs", "apk", "fresh", "debug", "app-fresh-debug.apk")
 fresh_apk_dest = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Fresh_Start.apk")
