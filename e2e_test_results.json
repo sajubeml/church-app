@@ -1,0 +1,134 @@
+{
+  "passed": [
+    {
+      "category": "Navigation",
+      "element": "Portal Initial Load",
+      "status": "PASS",
+      "details": "File Loaded Successfully (file:///c:/saju_old%20pc/Church_App/anti_gravity/index.html)"
+    },
+    {
+      "category": "Header",
+      "element": "Parish Title Header",
+      "status": "PASS",
+      "details": "ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"
+    },
+    {
+      "category": "Footer",
+      "element": "Developer Branding Footer",
+      "status": "PASS",
+      "details": "4S POWER SYSTEMS Mysore mob:9980615758 present"
+    },
+    {
+      "category": "Tab 1 - frmEntry",
+      "element": "Member Dropdown Population",
+      "status": "PASS",
+      "details": "111 Parish Members Loaded"
+    },
+    {
+      "category": "Tab 1 - frmEntry",
+      "element": "Member Auto-fill Sync",
+      "status": "PASS",
+      "details": "Reg #NM auto-populated"
+    },
+    {
+      "category": "Tab 1 - frmEntry",
+      "element": "Document Type Toggle (Receipt vs Voucher)",
+      "status": "PASS",
+      "details": "Receipt: #4274 | Payment Voucher: #150"
+    },
+    {
+      "category": "Tab 1 - frmEntry",
+      "element": "Form Input Data Entry",
+      "status": "PASS",
+      "details": "Head: [RP-3.82] Monthly Subscription (Current Year), Cash: Rs. 2,500.00"
+    },
+    {
+      "category": "Tab 1 - frmEntry",
+      "element": "Add Item to Cart",
+      "status": "PASS",
+      "details": "Cart Items: 1, Total: \u20b9 2,500.00"
+    },
+    {
+      "category": "Tab 1 - frmEntry",
+      "element": "Save & Generate Voucher Modal",
+      "status": "PASS",
+      "details": "Side-by-Side Dual Receipt Voucher Modal Opened"
+    },
+    {
+      "category": "Tab 2 - Cash Book",
+      "element": "16-Column Accounting Header",
+      "status": "PASS",
+      "details": "Found 18 column header cells (Receipts 9, Payments 7)"
+    },
+    {
+      "category": "Tab 2 - Cash Book",
+      "element": "Export Buttons Presence",
+      "status": "PASS",
+      "details": "PDF & Excel Export Buttons Rendered"
+    },
+    {
+      "category": "Tab 3 - Member Ledgers",
+      "element": "Account Count & Grand Total Badge",
+      "status": "PASS",
+      "details": "113 Accounts | Total: \u20b9 12,88,472.00"
+    },
+    {
+      "category": "Tab 3 - Member Ledgers",
+      "element": "Interactive Search Filter ('Abraham')",
+      "status": "PASS",
+      "details": "Filtered Rows: 9, Badge: 9 Accounts | Total: \u20b9 46,160.00"
+    },
+    {
+      "category": "Tab 3 - Member Ledgers",
+      "element": "Non-Zero Column Visibility Toggle",
+      "status": "PASS",
+      "details": "Switched from '\ud83d\udc41\ufe0f Show Non-Zero Columns Only' to '\ud83d\udc41\ufe0f Show Non-Zero Columns Only'"
+    },
+    {
+      "category": "Tab 3 - Member Ledgers",
+      "element": "Multi-Column Sorting (Highest Grand Total)",
+      "status": "PASS",
+      "details": "Top Account Grand Total: \u20b9 6,44,236.00"
+    },
+    {
+      "category": "Tab 4 - Trial Balance",
+      "element": "Trial Balance Ledger Rendering",
+      "status": "PASS",
+      "details": "31 Trial Balance Account Rows Loaded"
+    }
+  ],
+  "failed": [
+    {
+      "category": "Tab 2 - Cash Book",
+      "element": "Unified Cash & Bank Balances",
+      "status": "FAIL",
+      "details": "Cash: \u20b9 53,867.00, Bank: \u20b9 22,41,423.00, Total: \u20b9 22,95,290.00"
+    },
+    {
+      "category": "Tab 5 - Reconciliation Audit",
+      "element": "Audit Executive Stat Cards",
+      "status": "FAIL",
+      "details": "Cash: \u20b9 53,867.00, Bank: \u20b9 22,41,423.00, Net: \u20b9 22,95,290.00"
+    },
+    {
+      "category": "Tab 5 - Reconciliation Audit",
+      "element": "Ledger Breakdown Table Reconciliation",
+      "status": "FAIL",
+      "details": "Net Cash: \u20b9 53,867.00, Net Bank: \u20b9 22,41,423.00"
+    }
+  ],
+  "untested": [
+    {
+      "category": "Hardware/Peripheral",
+      "element": "Physical Thermal Receipt Printer Hardware",
+      "status": "UNTESTED",
+      "details": "Requires physical thermal USB printer connected to client PC"
+    },
+    {
+      "category": "Database Server",
+      "element": "Remote SQL Cloud Database Sync",
+      "status": "UNTESTED",
+      "details": "Application runs in 100% offline standalone mode via local data.js"
+    }
+  ]
+}

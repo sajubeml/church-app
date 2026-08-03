@@ -10,7 +10,7 @@ import json
 import zipfile
 import xml.etree.ElementTree as ET
 
-XLSM_PATH = "working Church_Accounting_ok ind updte 21-7-(26-27).xlsm"
+XLSM_PATH = r"c:\saju_old pc\church26-27\working Church_Accounting_ok ind updte 31-7-(26-27).xlsm"
 OUTPUT_DIR = "data_export"
 
 def convert_xlsm_to_json():

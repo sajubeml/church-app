@@ -23,10 +23,17 @@ def build_executable():
         sys.exit(1)
 
     print("Building St. Gregorios Church Accounting Standalone Application...")
+    if os.path.exists(OUTPUT_EXE):
+        try:
+            os.remove(OUTPUT_EXE)
+        except Exception:
+            pass
     
     cmd = [
         CSC_PATH,
         "/target:winexe",
+        "/optimize+",
+        "/win32manifest:app.manifest",
         "/r:System.Windows.Forms.dll",
         "/r:System.Drawing.dll",
         f"/out:{OUTPUT_EXE}",

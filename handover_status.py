@@ -10,6 +10,7 @@ import os
 FILES_TO_CHECK = [
     "working Church_Accounting_ok ind updte 21-7-(26-27).xlsm",
     "St_Gregorios_Church_Accounting.exe",
+    "St_Gregorios_Church_Accounting.apk",
     "index.html",
     "styles.css",
     "app.js",

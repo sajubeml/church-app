@@ -2,23 +2,25 @@
 St. Gregorios Orthodox Syrian Church, Mysuru
 --------------------------------------------
 Package Release Distribution (Python Native)
-Replaces package_distributable.ps1
+Generates Twin Packages: Full Data vs Fresh Start (7-Day Trial)
 """
 
 import os
 import shutil
 import zipfile
 
-DIST_DIR = os.path.join("dist", "St_Gregorios_Church_Accounting_v1.0")
-ZIP_OUTPUT = os.path.join("dist", "St_Gregorios_Church_Accounting_App_v1.0.zip")
-
 FILES_TO_COPY = [
     "St_Gregorios_Church_Accounting.exe",
+    "St_Gregorios_Church_Accounting.vbs",
+    "St_Gregorios_Church_Accounting.apk",
+    "St_Gregorios_Church_Accounting_v2.0.apk",
     "Quick_Start.cmd",
+    "Start_Portal.cmd",
     "index.html",
     "styles.css",
     "app.js",
-    "data.js",
+    "church_logo.png",
+    "church_logo.jpg",
     "church_automation.py",
     "convert_xlsm_data.py",
     "build_data_js.py",
@@ -26,80 +28,88 @@ FILES_TO_COPY = [
     "package_distributable.py",
     "handover_status.py",
     "start_server.py",
+    "html2pdf.bundle.min.js",
 ]
 
-README_TEXT = """============================================================
+README_FULL_TEXT = """============================================================
  ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE
- Financial Accounting Portal - Standalone Application v1.0
+ Financial Accounting Portal - Full Release Version 1.0
 ============================================================
-
-HOW TO RUN:
-------------------------------------------------------------
-1. Simply double-click 'St_Gregorios_Church_Accounting.exe' 
-   or 'Quick_Start.cmd'.
-
-2. The application will start in the background and open 
-   your accounting portal in your browser automatically:
-   http://localhost:8080/
-
-3. Look for the application icon in your Windows System Tray
-   (bottom right near the clock) to manage or exit the app.
-
-INCLUDED FEATURES:
-------------------------------------------------------------
-• New Voucher / Receipt (frmEntry) with Member Auto-Sync
-• Payment Safety Lock (Cash XOR Bank validation)
-• Live Receipt Cart & Indian Rupee Words Conversion
-• Side-by-Side Dual Receipt (Original & Office Copy)
-• Cash Book, Individual Ledgers, Trial Balance & Auction 2025
-• Automated Reconciliation Audit Engine
-
-REQUIREMENTS:
-------------------------------------------------------------
-• Any Windows 7, 8, 10, or 11 PC.
-• Python-powered automation tools included!
-• No installation required! Portable & ready to run.
+Includes all historical parish accounting records, member ledgers,
+and trial balance data up to FY 2026-2027.
 """
 
-def package_distributable():
-    if os.path.exists("dist"):
-        shutil.rmtree("dist")
-        
-    os.makedirs(DIST_DIR, exist_ok=True)
-    print(f"Assembling Standalone Package in {DIST_DIR}...")
+README_FRESH_TEXT = """============================================================
+ ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE
+ Financial Accounting Portal - Fresh Start (7-Day Trial)
+============================================================
+Initialized with empty cashbook transactions and default account heads
+for starting a brand new financial year or clean parish installation.
+* Includes 7-Day Trial License Guard.
+"""
 
-    # Copy files
+def create_dist_package(target_dir_name, zip_name, data_file_source, readme_content):
+    dist_dir = os.path.join("dist", target_dir_name)
+    zip_output = os.path.join("dist", zip_name)
+
+    if os.path.exists(dist_dir):
+        shutil.rmtree(dist_dir)
+        
+    os.makedirs(dist_dir, exist_ok=True)
+    print(f"\nAssembling Package in {dist_dir}...")
+
+    # Copy standard files
     for f in FILES_TO_COPY:
         if os.path.exists(f):
-            shutil.copy(f, DIST_DIR)
-            print(f"  Copied: {f}")
-        else:
-            print(f"  [WARNING] File missing: {f}")
+            shutil.copy(f, dist_dir)
 
-    # Copy directory
+    # Copy data file as data.js
+    if os.path.exists(data_file_source):
+        shutil.copy(data_file_source, os.path.join(dist_dir, "data.js"))
+        print(f"  Copied dataset: {data_file_source} -> data.js")
+
+    # Copy directory data_export
     if os.path.exists("data_export"):
-        shutil.copytree("data_export", os.path.join(DIST_DIR, "data_export"))
-        print("  Copied directory: data_export/")
+        shutil.copytree("data_export", os.path.join(dist_dir, "data_export"))
+
+    # Create Receipts directory
+    os.makedirs(os.path.join(dist_dir, "Receipts"), exist_ok=True)
 
     # Write README.txt
-    readme_path = os.path.join(DIST_DIR, "README.txt")
-    with open(readme_path, "w", encoding="utf-8") as rf:
-        rf.write(README_TEXT)
-    print("  Created: README.txt")
+    with open(os.path.join(dist_dir, "README.txt"), "w", encoding="utf-8") as rf:
+        rf.write(readme_content)
 
-    # Create ZIP archive
-    print(f"\nCompressing into {ZIP_OUTPUT}...")
-    with zipfile.ZipFile(ZIP_OUTPUT, 'w', zipfile.ZIP_DEFLATED) as z:
-        for root, dirs, files in os.walk(DIST_DIR):
+    # Compress into ZIP
+    print(f"Compressing into {zip_output}...")
+    with zipfile.ZipFile(zip_output, 'w', zipfile.ZIP_DEFLATED) as z:
+        for root, dirs, files in os.walk(dist_dir):
             for file in files:
                 abs_path = os.path.join(root, file)
-                rel_path = os.path.relpath(abs_path, start=DIST_DIR)
+                rel_path = os.path.relpath(abs_path, start=dist_dir)
                 z.write(abs_path, arcname=rel_path)
 
-    zip_size_mb = os.path.getsize(ZIP_OUTPUT) / (1024.0 * 1024.0)
-    print("\n[OK] DISTRIBUTION PACKAGE CREATED SUCCESSFULLY!")
-    print(f"     ZIP File: {os.path.abspath(ZIP_OUTPUT)} ({zip_size_mb:.2f} MB)")
-    print(f"     Uncompressed Folder: {os.path.abspath(DIST_DIR)}")
+    zip_size_mb = os.path.getsize(zip_output) / (1024.0 * 1024.0)
+    print(f"[OK] Package Created: {zip_output} ({zip_size_mb:.2f} MB)")
+
+def package_distributable():
+    if not os.path.exists("dist"):
+        os.makedirs("dist")
+
+    # 1. Full Release Package
+    create_dist_package(
+        target_dir_name="St_Gregorios_Church_Accounting_v1.0",
+        zip_name="St_Gregorios_Church_Accounting_App_v1.0.zip",
+        data_file_source="data.js",
+        readme_content=README_FULL_TEXT
+    )
+
+    # 2. Fresh Start 7-Day Trial Package
+    create_dist_package(
+        target_dir_name="St_Gregorios_Church_Accounting_Fresh_Start",
+        zip_name="St_Gregorios_Church_Accounting_Fresh_Start_Trial.zip",
+        data_file_source="data_fresh.js" if os.path.exists("data_fresh.js") else "data.js",
+        readme_content=README_FRESH_TEXT
+    )
 
 if __name__ == "__main__":
     package_distributable()

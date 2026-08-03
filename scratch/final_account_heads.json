@@ -1,0 +1,847 @@
+[
+  {
+    "code": "RP-1.01",
+    "title": "Cash Balances",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-1.02",
+    "title": "Balances in SB Accounts",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.02",
+    "title": "General Donations",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.06",
+    "title": "Parish Day",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.09",
+    "title": "Church Celebrations (other than perunnal)",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.10",
+    "title": "Meeting and conventions",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.11",
+    "title": "Christmas Carol",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.12",
+    "title": "Parish Day",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.13",
+    "title": "Lent and Passion Week",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.14",
+    "title": "Marriage Receipts",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.15",
+    "title": "Harvest Festival  Receipts _ Auctions _Current Year",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.15 (a)",
+    "title": "Harvest Festival  Receipts _ Auction Dues _ Previous Years",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.15 (b)",
+    "title": "Petty Auctions _Current Year",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.16",
+    "title": "Annadhanam and feast _Breakfast Donation",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.17",
+    "title": "Receipt of Agricultural Produces",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.18",
+    "title": "Donation In Kind",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.19",
+    "title": "Receipt from Tomb/Grave : Cemetry",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-2.20",
+    "title": "Other Donations (Farewell)",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.52",
+    "title": "Certificate Fee",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.03",
+    "title": "Bhandaram Receipts : Church ( koodaaram + Wooden Cash Box)",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.04",
+    "title": "Kurishinthotti : Infront if Church",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.05",
+    "title": "Others (specify) : Perunnal Vanchika ( House Offertory Box)",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.10",
+    "title": "Qurbana Receipts: Qurbana Kannikka Church",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.10 (a)",
+    "title": "Qurbana Receipts:  Cemetry Chapel",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.12",
+    "title": "Church (Orma Qurbana + Special Qurbaba)",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.14",
+    "title": "Baptism",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.15",
+    "title": "Funeral",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.16",
+    "title": "Birthday Contributions",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.17",
+    "title": "Other offerings : Weeding Anniversary",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.17 (a)",
+    "title": "House Blessings",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.18",
+    "title": "Offerings for Ritual Articles : Candles, Oil, Kunturikkam",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.31",
+    "title": "July 3rd Festival : St. Thomas",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.32",
+    "title": "August 15  Festival : St. Mary",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.32 (a)",
+    "title": "Sep 1-8 Festival : St. Mary",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.33",
+    "title": "Church Festival: St Gregorios",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.35",
+    "title": "Others : St George",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.61",
+    "title": "Sunday School",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.64",
+    "title": "MMVS",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.64",
+    "title": "Prarthanayogam",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.66",
+    "title": "OVBS",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.67",
+    "title": "MGOCSM & OCYM",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.68",
+    "title": "St. Joseph Forum",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.69",
+    "title": "St. Dionysious Forum",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.82",
+    "title": "subscription For the current year",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.83",
+    "title": "subscription Outstanding from previous year",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.84",
+    "title": "Advance for next year",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-8.03",
+    "title": "Savings Bank Interest",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-9.10",
+    "title": "Advances",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-9.13",
+    "title": "Advances from Trustees",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-9.14",
+    "title": "Advance from others",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-9.15",
+    "title": "Loan/Advances from Church Members",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.03",
+    "title": "For Malankara Metropolitan",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.04",
+    "title": "Catholicate Day Collection",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.05",
+    "title": "Recceessa",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.07",
+    "title": "For Diocession Office",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.08",
+    "title": "Diocesan Day Collection : Metropolitan Fund",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.09",
+    "title": "Vivaha Kaimuthu",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.10",
+    "title": "Other Collections : Priest Welfare Fund",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.12",
+    "title": "For Other Offices",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.13",
+    "title": "Mission Sunday collection",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.14",
+    "title": "Sunday school day collection",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.15",
+    "title": "Seminary day collection",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.16",
+    "title": "Gerbo Sunday Collection: Leprosy",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-10.17",
+    "title": "Other collections ( Old Cover Collection Dues)",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-11.02",
+    "title": "General Donations Paid",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.02",
+    "title": "Annual Travelling Allowance to Vicar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.02",
+    "title": "Leave Salary to Vicar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.02",
+    "title": "Gift Purse to Vicar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.03",
+    "title": "Salary and allowances to others",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.06",
+    "title": "Allowances to Kapyar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.07",
+    "title": "Honorarium - Guest Preist",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-13.02",
+    "title": "Bank Charges",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.03",
+    "title": "Travelling Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.04",
+    "title": "Auditors Remuneration",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.05",
+    "title": "Postage and Telephone",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.06",
+    "title": "Printing and Stationery",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.07",
+    "title": "Professional and other service charges",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.08",
+    "title": "Office Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.09",
+    "title": "Subscription and Periodicals",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.10",
+    "title": "Insurance Charges",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.11",
+    "title": "Advertisement Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.12",
+    "title": "Legal Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.18",
+    "title": "Other Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.31",
+    "title": "Buildings",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.32",
+    "title": "Equipments",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.33",
+    "title": "Computers",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.34",
+    "title": "Vehicles",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-14.35",
+    "title": "Others",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.03",
+    "title": "Holy Qurbana Allowances : Guest Priest",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.04",
+    "title": "Church Consumables/ Daily Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.05",
+    "title": "Suvisheshayogam Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.06",
+    "title": "Holy week and Dhyanam expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.07",
+    "title": "Feast Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.08",
+    "title": "Food and Refreshment Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.09",
+    "title": "Owned institution expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.11",
+    "title": "Electricity Charges",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.12",
+    "title": "Fuel and Water Charges",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.13",
+    "title": "Send off Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.14",
+    "title": "Celebration Expenses: Harvest/ Parish Day Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.15",
+    "title": "Christmas Carol & Programme Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.16",
+    "title": "Others Celebrations",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.17",
+    "title": "Others",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.31",
+    "title": "Wages and Cooly",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.32",
+    "title": "Meeting and Conference expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.33",
+    "title": "Cleaning Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.36",
+    "title": "Tomb Construction",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.37",
+    "title": "Vehicle Running and Maintenance Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.38",
+    "title": "Others",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.46",
+    "title": "July 3rd Festival",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.47",
+    "title": "August 15 & Sep 1-8  Festival : St Mary",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.48",
+    "title": "Church Festival : Feast of St Gregorios",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.50",
+    "title": "Others : St Geogre",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.61",
+    "title": "Spiritual Organisations Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.62",
+    "title": "Sunday School",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.64",
+    "title": "MMVS",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.65",
+    "title": "Prarthanayogam",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.67",
+    "title": "OVBS",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.68",
+    "title": "MGOCSM & OCYM",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.69",
+    "title": "St. Joseph Forum",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.70",
+    "title": "St. Dionysious Forum",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.71",
+    "title": "Other Spiritual organisations",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.87",
+    "title": "Other Charity : Grant to Sneha Bhavan Bilikere",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-16.89",
+    "title": "Gifts and Compliments",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.05",
+    "title": "Church Building",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.16",
+    "title": "Furniture and Fixtures",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.17",
+    "title": "Church Equipments",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.18",
+    "title": "Other Equipments",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.21",
+    "title": "Computer, Software  and Peripherals",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.22",
+    "title": "Website",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.23",
+    "title": "Electrical Equipments",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.24",
+    "title": "Machinery and equipments",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.25",
+    "title": "Generator",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.26",
+    "title": "Sound System",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.27",
+    "title": "Renewable Energy Systems",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.28",
+    "title": "Books",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.29",
+    "title": "Building under Construction",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.82",
+    "title": "Repayament to Trustee",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-18.83",
+    "title": "Loan from  Church Members",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.03",
+    "title": "Catholicate Day Collection",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.04",
+    "title": "Recceessa",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.11",
+    "title": "Diocesan Day Dollection",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.12",
+    "title": "Vivaha Kaimuthu",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.15",
+    "title": "Other Collections : Priest Welfare Fund",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.21",
+    "title": "Mission Sunday collection",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.22",
+    "title": "Sunday school day collection",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.23",
+    "title": "Seminary day collection",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.24",
+    "title": "Gerbo Sunday Collection",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.25",
+    "title": "Other collections",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.31",
+    "title": "Monthly Quota of Churches (Priest Salary Quota to Diocese)",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.32",
+    "title": "Methrasana Vihitham: Annual Kaimuth to Thirumeni",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-19.31",
+    "title": "Salary Quota to Diocese (Vicar)",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.03 (a)",
+    "title": "Salary to Sexton _ Eldhos",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.03 (b)",
+    "title": "Salary to Watchman(Cemetry) _ Lakshmi",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.03 (c)",
+    "title": "Salary to Ayah _ Rani",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.06",
+    "title": "Medical Allowance to Sexton",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.02 (a)",
+    "title": "Medical Allowance to Vicar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.02",
+    "title": "Telephone Allowance to Vicar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.02",
+    "title": "Local Travelling Allowance to Vicar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP- 16.11(c)",
+    "title": "Elecricity Charges - Cemetry",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP- 16.11(a)",
+    "title": "Electricity Charges - Church",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP- 16.11(b)",
+    "title": "Electricity Charges - Parsonage",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-10.04/05",
+    "title": "Catholicate Day & Recessa",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-3.13",
+    "title": "Kanicka-Chapel",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP- 16.35",
+    "title": "Canteen Expenses",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-2.02(a)",
+    "title": "Donation General-chair & tables",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-12.02 (c)",
+    "title": "Telephone Allowance to Vicar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-12.02(d)",
+    "title": "Local Travelling Allowance to Vicar",
+    "category": "PAYMENT"
+  },
+  {
+    "code": "RP-2.211",
+    "title": "KMDC Grant",
+    "category": "RECEIPT"
+  },
+  {
+    "code": "RP-12.07(a)",
+    "title": "Kaimuthu to Visiting priest",
+    "category": "PAYMENT"
+  }
+]
