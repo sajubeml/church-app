@@ -262,11 +262,13 @@ async function loadAllData() {
 
       const m = await fetchJson("Members");
       const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
-      state.members = localM.length ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
+      const hasValidM = Array.isArray(localM) && localM.some(item => getColVal(item, "B"));
+      state.members = hasValidM ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
 
       const ind = await fetchJson("Individual");
       const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
-      state.individual = localInd.length ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
+      const hasValidInd = Array.isArray(localInd) && localInd.some(item => getColVal(item, "B") || getColVal(item, "C"));
+      state.individual = hasValidInd ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
 
       const tb = await fetchJson("Trial_Balance");
       const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");

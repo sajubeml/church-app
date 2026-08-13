@@ -764,8 +764,7 @@
     "L": "47",
     "M": "Excess Cash Deposited to Bank",
     "O": "cash deposited in bank",
-    "P": "25000",
-    "payments_code": "CD"
+    "P": "25000"
   },
   {
     "A": "03-04-2026",
@@ -2121,9 +2120,7 @@
     "A": "28-04-2026",
     "B": "Vr47",
     "G": "cash deposited in bank",
-    "I": "25000",
-    "receipt_account_head": "Excess Cash Deposited to Bank",
-    "receipt_code": "CD"
+    "I": "25000"
   },
   {
     "A": "30-04-2026",
@@ -2865,9 +2862,7 @@
     "K": "30-05-2026",
     "L": "90",
     "O": "cash deposited in bank",
-    "P": "20000",
-    "payments_account_head": "Excess Cash Deposited to Bank",
-    "payments_code": "CD"
+    "P": "20000"
   },
   {
     "A": "12-05-2026",
@@ -3433,9 +3428,7 @@
     "A": "30-05-2026",
     "B": "Vr89",
     "G": "Cash deposited in bank",
-    "I": "20000",
-    "receipt_account_head": "Excess Cash Deposited to Bank",
-    "receipt_code": "CD"
+    "I": "20000"
   },
   {
     "A": "30-05-2026",
@@ -3911,9 +3904,7 @@
     "K": "16-06-2026",
     "L": "105",
     "O": "cash deposited in bank",
-    "P": "35000",
-    "payments_account_head": "Excess Cash Deposited to Bank",
-    "payments_code": "CD"
+    "P": "35000"
   },
   {
     "A": "11-06-2026",
@@ -4183,9 +4174,7 @@
     "K": "29-06-2026",
     "L": "122",
     "O": "cash deposited in bank",
-    "P": "20000",
-    "payments_account_head": "Excess Cash Deposited to Bank",
-    "payments_code": "CD"
+    "P": "20000"
   },
   {
     "A": "07-06-2026",
@@ -4777,9 +4766,7 @@
     "A": "16-06-2026",
     "B": "105",
     "G": "cash deposited in bank",
-    "I": "35000",
-    "receipt_account_head": "Excess Cash Deposited to Bank",
-    "receipt_code": "CD"
+    "I": "35000"
   },
   {
     "A": "16-06-2026",
@@ -5099,8 +5086,7 @@
     "A": "29-06-2026",
     "B": "Vr122",
     "E": "Excess Cash Deposited to Bank",
-    "I": "20000",
-    "receipt_code": "CD"
+    "I": "20000"
   },
   {
     "A": "29-06-2026",
@@ -8081,13 +8067,121 @@
     "I": "500"
   },
   {
-    "A": "2026-07-30",
-    "B": "4282",
-    "C": "2",
-    "D": "Abraham.M.O",
-    "E": "Donation General-chair & tables",
-    "F": "RP-2.02(a)",
-    "G": "100 chairs",
-    "I": "59000"
+    "K": "2026-08-12",
+    "L": "184",
+    "M": "Gift & Mementoes",
+    "N": "RP-16.89",
+    "O": "birthday gift to Mary mathew vide bill",
+    "P": "970.00"
+  },
+  {
+    "K": "2026-08-12",
+    "L": "185",
+    "M": "Kaimuthu to Thirumeni",
+    "N": "RP-12.07",
+    "O": "Kaimuthu to HG DR Gheevargheese Mar Yulios vide cq no 362017",
+    "Q": "10000.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4322",
+    "C": "13",
+    "D": "Aniyan Peter",
+    "E": "Old Cover Collection Dues",
+    "F": "RP-10.17",
+    "I": "400.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4322",
+    "C": "13",
+    "D": "Aniyan Peter",
+    "E": "Monthly Subscription ( Pervious Year)",
+    "F": "RP-3.83",
+    "G": "apr 21 to mar 25",
+    "I": "9600.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4323",
+    "C": "162",
+    "D": "Jacob Oommen",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "Aug15 Palchor nercha",
+    "I": "500.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4324",
+    "C": "78",
+    "D": "Peter K. A.",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "August 15th",
+    "I": "500.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4325",
+    "C": "55",
+    "D": "Poulose M. M. Dr.",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "August 15th",
+    "I": "2000.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4326",
+    "C": "33",
+    "D": "George Pothan",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "Palchor august 15th",
+    "I": "1000.00"
+  },
+  {
+    "A": "2026-08-13",
+    "B": "4327",
+    "C": "105",
+    "D": "Thankam Panackal",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "August 15th palchor nercha",
+    "I": "5000.00"
+  },
+  {
+    "A": "2026-08-13",
+    "B": "4328",
+    "C": "173",
+    "D": "Rohith Mathews",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "august 15th palchor nercha",
+    "H": "0",
+    "I": "3000"
+  },
+  {
+    "A": "2026-08-13",
+    "B": "4329",
+    "C": "1",
+    "D": "Bibi Chandy",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "august 15th palchor nercha",
+    "H": "0",
+    "I": "5000"
+  },
+  {
+    "A": "2026-08-13",
+    "B": "4330",
+    "C": "17",
+    "D": "Saju Jacob",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "G": "",
+    "H": "100",
+    "I": ""
   }
 ]

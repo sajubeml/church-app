@@ -21,8 +21,9 @@ files_to_copy = [
 for fname in files_to_copy:
     src_path = os.path.join(src_dir, fname)
     if os.path.exists(src_path):
-        shutil.copy2(src_path, os.path.join(dest_assets, fname))
-        print(f"Copied: {fname}")
+        dest_name = "app.js" if fname == "app_cloud_v10.js" else fname
+        shutil.copy2(src_path, os.path.join(dest_assets, dest_name))
+        print(f"Copied: {fname} -> {dest_name}")
 
 if mode == "fresh":
     # Copy data_fresh.js as data.js
