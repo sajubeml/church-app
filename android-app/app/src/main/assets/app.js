@@ -30,6 +30,16 @@ const state = {
   activeAccountHeads: []
 };
 
+let cbPage = 1;
+let cbPageSize = 100;
+window.nextCbPage = function() { cbPage++; renderCashbook(); };
+window.prevCbPage = function() { if(cbPage > 1) { cbPage--; renderCashbook(); } };
+
+let indivPage = 1;
+let indivPageSize = 100;
+window.nextIndivPage = function() { indivPage++; renderIndividualLedgers(); };
+window.prevIndivPage = function() { if(indivPage > 1) { indivPage--; renderIndividualLedgers(); } };
+
 // Helper to extract column value regardless of cell key format ("B" or "B2" or "B3" or "AA4")
 function getColVal(rowObj, colLetter) {
   if (!rowObj) return "";
@@ -222,42 +232,105 @@ function verifyLicenseGuard() {
 
 async function loadAllData() {
   try {
-    // Purge outdated local storage caches if dataset updated to official 31-7 baseline
-    const CURRENT_DATA_VERSION = "2026-08-03_V7_2_RP364_KANIKA_FIX";
-    const existingVersion = localStorage.getItem("CHURCH_DATA_VERSION");
-    const savedMembersRaw = localStorage.getItem("CHURCH_MEMBERS");
+    if (window.AndroidBridge) {
+      const stateJson = window.AndroidBridge.fetchDatabaseState();
+      try {
+        const data = JSON.parse(stateJson);
+        state.cashbook = data.cashbook || [];
+        console.log("Loaded cashbook from Native Android SQLite!");
+      } catch(e) {
+        console.error("Failed to parse Android database state:", e);
+      }
 
-    if (existingVersion !== CURRENT_DATA_VERSION || (savedMembersRaw && (savedMembersRaw.includes('"59100"') || savedMembersRaw.includes('"90000"') || savedMembersRaw.includes('"94300"')))) {
-      localStorage.removeItem("CHURCH_MEMBERS");
-      localStorage.removeItem("CHURCH_CASHBOOK");
-      localStorage.setItem("CHURCH_DATA_VERSION", CURRENT_DATA_VERSION);
-      console.log("Purged stale browser localStorage cache for updated dataset V7.2.");
-    }
-
-    // 1. First try window.CHURCH_DATA (synchronous, 0-CORS file:// support)
-    if (window.CHURCH_DATA) {
-      state.members = window.CHURCH_DATA.members || [];
-      state.cashbook = window.CHURCH_DATA.cashbook || [];
-      state.individual = window.CHURCH_DATA.individual || [];
-      state.trialBalance = window.CHURCH_DATA.trialBalance || [];
-      state.codes = window.CHURCH_DATA.codes || [];
-      state.auction = window.CHURCH_DATA.auction || [];
-      state.budget = window.CHURCH_DATA.budget || [];
-      console.log("Loaded data synchronously from embedded window.CHURCH_DATA!");
-    } else {
-      // 2. Fallback to fetch API
       const fetchJson = async (name) => {
-        const res = await fetch(`data_export/${name}.json`);
-        return res.ok ? await res.json() : [];
+        if (window.AndroidBridge) {
+          const content = window.AndroidBridge.readAssetFile(`data_export/${name}.json`);
+          try { 
+            const arr = JSON.parse(content); 
+            if (Array.isArray(arr) && arr.length > 0) return arr;
+          } catch (e) { console.error("Bridge parse error:", e); }
+        }
+        try {
+          const res = await fetch(`./data_export/${name}.json`);
+          if (res.ok) {
+            const arr = await res.json();
+            if (Array.isArray(arr) && arr.length > 0) return arr;
+          }
+        } catch (e) { console.error("Fetch parse error:", e); }
+        return [];
       };
 
-      state.members = await fetchJson("Members");
-      state.cashbook = await fetchJson("Cash_Book");
-      state.individual = await fetchJson("Individual");
-      state.trialBalance = await fetchJson("Trial_Balance");
-      state.codes = await fetchJson("Codes");
-      state.auction = await fetchJson("aution25");
-      state.budget = await fetchJson("Budget");
+      const m = await fetchJson("Members");
+      const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
+      state.members = localM.length ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
+
+      const ind = await fetchJson("Individual");
+      const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
+      state.individual = localInd.length ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
+
+      const tb = await fetchJson("Trial_Balance");
+      const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
+      state.trialBalance = localTb.length ? localTb : (tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []));
+
+      const c = await fetchJson("Codes");
+      const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
+      state.codes = localC.length ? localC : (c.length ? c : (window.INITIAL_CODES || []));
+
+
+
+      const bu = await fetchJson("Budget");
+      const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
+      state.budget = localBu.length ? localBu : (bu.length ? bu : (window.INITIAL_BUDGET || []));
+
+    } else {
+      const res = await fetch('/api/data');
+      if (res.ok) {
+        const data = await res.json();
+        state.cashbook = data.cashbook || [];
+        
+        const fetchJson = async (name) => {
+          if (window.AndroidBridge) {
+            const content = window.AndroidBridge.readAssetFile(`data_export/${name}.json`);
+            try { 
+              const arr = JSON.parse(content); 
+              if (Array.isArray(arr) && arr.length > 0) return arr;
+            } catch (e) { }
+          }
+          try {
+            const res = await fetch(`./data_export/${name}.json`);
+            if (res.ok) {
+              const arr = await res.json();
+              if (Array.isArray(arr) && arr.length > 0) return arr;
+            }
+          } catch (e) { }
+          return [];
+        };
+
+        const m = await fetchJson("Members");
+        const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
+        state.members = localM.length ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
+
+        const ind = await fetchJson("Individual");
+        const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
+        state.individual = localInd.length ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
+
+        const tb = await fetchJson("Trial_Balance");
+        const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
+        state.trialBalance = localTb.length ? localTb : (tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []));
+
+        const c = await fetchJson("Codes");
+        const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
+        state.codes = localC.length ? localC : (c.length ? c : (window.INITIAL_CODES || []));
+
+
+
+        const bu = await fetchJson("Budget");
+        const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
+        state.budget = localBu.length ? localBu : (bu.length ? bu : (window.INITIAL_BUDGET || []));
+        console.log("Loaded cashbook from SQLite Backend API, other data from JSON!");
+      } else {
+        console.error("Failed to load from backend:", res.status);
+      }
     }
 
     // 3. Load LocalStorage Overrides
@@ -1456,7 +1529,7 @@ function findIndividualColKey(item) {
 
     if (
       (partStr.includes("holy qurbana") && title.includes("qurbana")) ||
-      (partStr.includes("donat") && title.includes("donat")) ||
+      (partStr.includes("donat") && title.includes("donat") && !partStr.includes("breakfast") && !partStr.includes("marriage") && !partStr.includes("cemetry")) ||
       (partStr.includes("perunnal") && title.includes("perunnal")) ||
       (partStr.includes("passion") && title.includes("passion")) ||
       (partStr.includes("george") && title.includes("george")) ||
@@ -1585,11 +1658,51 @@ function commitCartToLedgers() {
     state.currentVoucherNo++;
   }
 
-  // 4. Save updated Cash Book, Member Ledgers, and Sequence Numbers to LocalStorage
+  // 4. Save updated Cash Book, Member Ledgers to LocalStorage and Backend API
   localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
   localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
   localStorage.setItem("CHURCH_RECEIPT_NO", state.currentReceiptNo.toString());
   localStorage.setItem("CHURCH_VOUCHER_NO", state.currentVoucherNo.toString());
+
+  // Post to SQLite Backend or Android Native Bridge
+  if (window.AndroidBridge) {
+    state.cart.forEach(item => {
+      const isCash = item.paymentType === "Cash";
+      const payload = isReceipt ? {
+        date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
+        receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
+        receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
+      } : {
+        payment_date: dateStr, payment_voucher_no: docNo, 
+        payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
+        payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+      };
+      window.AndroidBridge.saveTransaction(JSON.stringify(payload), isReceipt);
+    });
+    console.log("Saved to Native Android SQLite!");
+  } else {
+    Promise.all(state.cart.map(item => {
+      const isCash = item.paymentType === "Cash";
+      const payload = isReceipt ? {
+        date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
+        receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
+        receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
+      } : {
+        payment_date: dateStr, payment_voucher_no: docNo, 
+        payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
+        payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+      };
+      const endpoint = isReceipt ? '/api/save_receipt' : '/api/save_payment';
+      return fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    })).then(() => console.log("Saved to DB!")).catch(err => {
+      console.error("[SYNC ERROR] Failed to save to server database:", err);
+      alert("⚠️ Data saved locally but could NOT sync to server database. Please check your network connection and try again.");
+    });
+  }
 
   const vInput = document.getElementById("txtVoucherNo");
   if (vInput) {
@@ -1734,7 +1847,7 @@ function triggerSystemPrint(pdfTitle) {
   if (pdfTitle) {
     document.title = getCleanPrintTitle(pdfTitle);
   }
-  if (window.AndroidBridge && typeof window.AndroidBridge.printPage === 'function') {
+  if (window.AndroidBridge) {
     window.AndroidBridge.printPage(document.title);
   } else {
     window.print();
@@ -1862,7 +1975,7 @@ function printReceiptModal() {
   document.title = pdfTitle;
 
   // 4. On Android WebView, invoke native system print directly
-  if (window.AndroidBridge && typeof window.AndroidBridge.printPage === 'function') {
+  if (window.AndroidBridge) {
     triggerSystemPrint(pdfTitle);
     return;
   }
@@ -2180,20 +2293,34 @@ function renderCashbook() {
   const isAsc = state.sortCashbookAsc;
   const col = state.sortCashbookCol;
 
+  const getPropR = (col) => {
+    if (col === "date" || col === "paydate") return "dateKey";
+    if (col === "rec" || col === "voucher") return "recNoKey";
+    if (col === "reg") return "regNoKey";
+    if (col === "name") return "nameKey";
+    if (col === "head" || col === "payhead") return "headKey";
+    if (col === "code" || col === "paycode") return "codeKey";
+    if (col === "cash" || col === "bank" || col === "amt") return "amtKey";
+    return "dateKey";
+  };
+  
+  const getPropP = (col) => {
+    if (col === "date" || col === "paydate") return "dateKey";
+    if (col === "rec" || col === "voucher") return "voucherNoKey";
+    if (col === "head" || col === "payhead") return "payHeadKey";
+    if (col === "code" || col === "paycode") return "payCodeKey";
+    if (col === "paycash" || col === "paybank" || col === "amt") return "payAmtKey";
+    return "dateKey";
+  };
+
+  const propR = getPropR(col);
+  const propP = getPropP(col);
+
   receiptRows.sort((a, b) => {
     if (a.isOpening) return -1;
     if (b.isOpening) return 1;
 
-    let valA, valB;
-    if (col === "date" || col === "paydate") { valA = a.dateKey; valB = b.dateKey; }
-    else if (col === "rec" || col === "voucher") { valA = a.recNoKey; valB = b.recNoKey; }
-    else if (col === "reg") { valA = a.regNoKey; valB = b.regNoKey; }
-    else if (col === "name") { valA = a.nameKey; valB = b.nameKey; }
-    else if (col === "head" || col === "payhead") { valA = a.headKey; valB = b.headKey; }
-    else if (col === "code" || col === "paycode") { valA = a.codeKey; valB = b.codeKey; }
-    else if (col === "cash" || col === "bank" || col === "amt") { valA = a.amtKey; valB = b.amtKey; }
-    else { valA = a.dateKey; valB = b.dateKey; }
-
+    let valA = a[propR], valB = b[propR];
     if (valA < valB) return isAsc ? -1 : 1;
     if (valA > valB) return isAsc ? 1 : -1;
 
@@ -2201,14 +2328,7 @@ function renderCashbook() {
   });
 
   paymentRows.sort((a, b) => {
-    let valA, valB;
-    if (col === "date" || col === "paydate") { valA = a.dateKey; valB = b.dateKey; }
-    else if (col === "rec" || col === "voucher") { valA = a.voucherNoKey; valB = b.voucherNoKey; }
-    else if (col === "head" || col === "payhead") { valA = a.payHeadKey; valB = b.payHeadKey; }
-    else if (col === "code" || col === "paycode") { valA = a.payCodeKey; valB = b.payCodeKey; }
-    else if (col === "paycash" || col === "paybank" || col === "amt") { valA = a.payAmtKey; valB = b.payAmtKey; }
-    else { valA = a.dateKey; valB = b.dateKey; }
-
+    let valA = a[propP], valB = b[propP];
     if (valA < valB) return isAsc ? -1 : 1;
     if (valA > valB) return isAsc ? 1 : -1;
 
@@ -2218,7 +2338,16 @@ function renderCashbook() {
   const hasOpening = receiptRows.length > 0 && receiptRows[0].isOpening;
   const maxRows = Math.max(receiptRows.length, paymentRows.length + (hasOpening ? 1 : 0));
 
-  for (let i = 0; i < maxRows; i++) {
+  const totalPages = Math.ceil(maxRows / cbPageSize) || 1;
+  if (cbPage > totalPages) cbPage = totalPages;
+  if (cbPage < 1) cbPage = 1;
+  const startIdx = (cbPage - 1) * cbPageSize;
+  const endIdx = Math.min(startIdx + cbPageSize, maxRows);
+
+  const lbl = document.getElementById("cbPageLabel");
+  if (lbl) lbl.textContent = `Page ${cbPage} of ${totalPages} (${maxRows} total rows)`;
+
+  for (let i = startIdx; i < endIdx; i++) {
     const rec = receiptRows[i] || {};
 
     // Shift payment entries down by 1 row when Opening Balance row is present at index 0
@@ -2298,6 +2427,7 @@ function setupCashbookViewListeners() {
       const parts = e.target.value.split("_");
       state.sortCashbookCol = parts[0];
       state.sortCashbookAsc = parts[1] === "asc";
+      cbPage = 1;
       renderCashbook();
     });
   }
@@ -2319,6 +2449,7 @@ function handleCashbookHeaderClick(colKey) {
     }
     sortSelect.value = valStr;
   }
+  cbPage = 1;
   renderCashbook();
 }
 
@@ -2331,6 +2462,7 @@ function setupIndividualViewListeners() {
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       state.searchIndivQuery = e.target.value;
+      indivPage = 1;
       renderIndividualLedgers();
     });
   }
@@ -2339,6 +2471,7 @@ function setupIndividualViewListeners() {
     clearBtn.addEventListener("click", () => {
       if (searchInput) searchInput.value = "";
       state.searchIndivQuery = "";
+      indivPage = 1;
       renderIndividualLedgers();
     });
   }
@@ -2373,6 +2506,7 @@ function setupIndividualViewListeners() {
       const parts = e.target.value.split("_");
       state.sortCol = parts[0];
       state.sortAsc = parts[1] === "asc";
+      indivPage = 1;
       renderIndividualLedgers();
     });
   }
@@ -2389,6 +2523,7 @@ function handleIndivHeaderClick(colKey) {
   if (sortSelect) {
     sortSelect.value = `${state.sortCol}_${state.sortAsc ? 'asc' : 'desc'}`;
   }
+  indivPage = 1;
   renderIndividualLedgers();
 }
 
@@ -2568,9 +2703,25 @@ function renderIndividualLedgers() {
   // 8. Render Table Body <tbody>
   let overallGrandTotal = 0;
   const totalCount = filteredMembers.length;
-
-  filteredMembers.forEach((m, idx) => {
+  
+  // Need to compute overall grand total for the footer regardless of pagination
+  filteredMembers.forEach(m => {
     overallGrandTotal += m.grandNum;
+  });
+
+  const totalPages = Math.ceil(totalCount / indivPageSize) || 1;
+  if (indivPage > totalPages) indivPage = totalPages;
+  if (indivPage < 1) indivPage = 1;
+  const startIdx = (indivPage - 1) * indivPageSize;
+  const endIdx = Math.min(startIdx + indivPageSize, totalCount);
+
+  const lbl = document.getElementById("indivPageLabel");
+  if (lbl) lbl.textContent = `Page ${indivPage} of ${totalPages} (${totalCount} accounts)`;
+
+  const pageMembers = filteredMembers.slice(startIdx, endIdx);
+
+  pageMembers.forEach((m, pageIdx) => {
+    const idx = startIdx + pageIdx;
     let colCellsHtml = "";
     displayCols.forEach(col => {
       const val = m.colValues[col.key];
@@ -2812,8 +2963,27 @@ function renderTrialBalance() {
 }
 
 function calculateCashbookTotals() {
-  const openingCash = window.isFreshStartBuild ? 0.0 : 9879.00;
-  const openingBank = window.isFreshStartBuild ? 0.0 : 651682.00;
+  let openingCash = 0.0;
+  let openingBank = 0.0;
+
+  if (Array.isArray(state.trialBalance)) {
+    state.trialBalance.forEach(row => {
+      const head = (getColVal(row, "B") || "").trim().toUpperCase();
+      if (head === 'CASH ACCOUNT' || head === 'CASH IN HAND' || head === 'OPENING BALANCE (CASH)') {
+        openingCash += (parseFloat(getColVal(row, "C")) || 0) - (parseFloat(getColVal(row, "F")) || 0);
+      }
+      if (head === 'BANK ACCOUNT' || head === 'CASH AT BANK' || head === 'OPENING BALANCE (BANK)') {
+        openingBank += (parseFloat(getColVal(row, "C")) || 0) - (parseFloat(getColVal(row, "F")) || 0);
+      }
+    });
+  }
+
+  // Fallback if Trial Balance is completely empty or missing these rows
+  if (openingCash === 0 && openingBank === 0 && !window.isFreshStartBuild) {
+    openingCash = 9879.00;
+    openingBank = 651682.00;
+  }
+
   let totalCashR = 0, totalBankR = 0, totalCashP = 0, totalBankP = 0;
 
   state.cashbook.forEach(row => {
@@ -2953,6 +3123,13 @@ function createCleanExportTable(tableId) {
       const hasActionBtn = cell.querySelector("button") || text === "Actions" || text === "Action" || text === "✏️ Edit" || text === "🗑️ Delete";
       if (hasActionBtn) {
         cell.remove();
+      } else {
+        if (text.startsWith("#")) {
+          const numStr = text.replace("#", "");
+          if (!isNaN(parseInt(numStr, 10))) {
+            cell.textContent = numStr;
+          }
+        }
       }
     });
   });
@@ -2964,7 +3141,36 @@ function createCleanExportTable(tableId) {
 // ----------------------------------------------------
 function exportTableToExcel(tableId, filename) {
   try {
+    let originalCbSize, originalCbPage;
+    let originalIndivSize, originalIndivPage;
+
+    if (tableId === 'cashbookTable') {
+      originalCbSize = cbPageSize;
+      originalCbPage = cbPage;
+      cbPageSize = 999999;
+      cbPage = 1;
+      renderCashbook();
+    } else if (tableId === 'indivTable') {
+      originalIndivSize = indivPageSize;
+      originalIndivPage = indivPage;
+      indivPageSize = 999999;
+      indivPage = 1;
+      renderIndividualLedgers();
+    }
+
     const cleanTable = createCleanExportTable(tableId);
+    
+    // Restore pagination immediately after scraping DOM
+    if (tableId === 'cashbookTable') {
+      cbPageSize = originalCbSize;
+      cbPage = originalCbPage;
+      renderCashbook();
+    } else if (tableId === 'indivTable') {
+      indivPageSize = originalIndivSize;
+      indivPage = originalIndivPage;
+      renderIndividualLedgers();
+    }
+
     if (!cleanTable) {
       alert("Export Error: Target table not found!");
       return;
@@ -2987,9 +3193,43 @@ function exportTableToExcel(tableId, filename) {
 
     if (window.XLSX) {
       const ws = XLSX.utils.aoa_to_sheet(churchHeaderRows);
-      XLSX.utils.sheet_add_dom(ws, cleanTable, { origin: "A5" });
+      XLSX.utils.sheet_add_dom(ws, cleanTable, { origin: "A5", raw: true });
+      
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      for (let R = 4; R <= range.e.r; ++R) {
+        for (let C = 0; C <= range.e.c; ++C) {
+          const cell_ref = XLSX.utils.encode_cell({c:C, r:R});
+          const cell = ws[cell_ref];
+          if (!cell || cell.t !== 's') continue;
+          
+          const val = String(cell.v).trim();
+          const dateRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
+          if (dateRegex.test(val)) {
+            const parts = val.split('-');
+            const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+            if (!isNaN(d.getTime())) {
+              cell.t = 'd';
+              cell.v = d;
+              cell.z = 'dd-mm-yyyy';
+            }
+          }
+        }
+      }
+
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+      
+      const bridge = window.AndroidBridge || (typeof AndroidBridge !== "undefined" ? AndroidBridge : null);
+      if (bridge && typeof bridge.shareBase64File === "function") {
+        try {
+          const base64 = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+          bridge.shareBase64File(base64, `${nameStr}.xlsx`);
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      
       XLSX.writeFile(wb, `${nameStr}.xlsx`);
       return;
     }
@@ -3049,7 +3289,36 @@ function exportTableToExcel(tableId, filename) {
 // ----------------------------------------------------
 function exportTableToPDF(tableId, filename) {
   try {
+    let originalCbSize, originalCbPage;
+    let originalIndivSize, originalIndivPage;
+
+    if (tableId === 'cashbookTable') {
+      originalCbSize = cbPageSize;
+      originalCbPage = cbPage;
+      cbPageSize = 999999;
+      cbPage = 1;
+      renderCashbook();
+    } else if (tableId === 'indivTable') {
+      originalIndivSize = indivPageSize;
+      originalIndivPage = indivPage;
+      indivPageSize = 999999;
+      indivPage = 1;
+      renderIndividualLedgers();
+    }
+
     const cleanTable = createCleanExportTable(tableId);
+
+    // Restore pagination immediately after scraping DOM
+    if (tableId === 'cashbookTable') {
+      cbPageSize = originalCbSize;
+      cbPage = originalCbPage;
+      renderCashbook();
+    } else if (tableId === 'indivTable') {
+      indivPageSize = originalIndivSize;
+      indivPage = originalIndivPage;
+      renderIndividualLedgers();
+    }
+
     if (!cleanTable) {
       alert("PDF Export Error: Target table not found!");
       return;
@@ -3076,22 +3345,17 @@ function exportTableToPDF(tableId, filename) {
       const isIndiv = (tableId === "indivTable");
       const titleLine3 = isIndiv ? "Individual Account updated upto 31-07-2026" : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
 
-      const totalCols = cleanTable.querySelector("tr")?.children?.length || 28;
+      const totalCols = 99; // Force full span across all actual columns
 
       const headerBlockHtml = `
-        <tr class="pdf-repeat-row1">
-          <th colspan="${totalCols}" style="text-align:center; font-size:15px; font-weight:800; border:none; background:#ffffff; color:#0f172a; padding:6px 0 2px 0; font-family:'Segoe UI',Arial,sans-serif;">
-            ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE
-          </th>
-        </tr>
-        <tr class="pdf-repeat-row2">
-          <th colspan="${totalCols}" style="text-align:center; font-size:11px; font-weight:600; border:none; background:#ffffff; color:#475569; padding:0 0 2px 0; font-family:'Segoe UI',Arial,sans-serif;">
-            Government House Road, Nazarbad, Mysuru, Karnataka 570 010
-          </th>
-        </tr>
-        <tr class="pdf-repeat-row3">
-          <th colspan="${totalCols}" style="text-align:center; font-size:12px; font-weight:700; border:none; background:#ffffff; color:#0f172a; padding:2px 0 10px 0; font-family:'Segoe UI',Arial,sans-serif;">
-            ${titleLine3}
+        <tr class="pdf-repeat-header">
+          <th colspan="${totalCols}" style="text-align:center; border:none; background:#ffffff; padding:10px 0 15px 0; font-family:'Segoe UI',Arial,sans-serif;">
+            <div style="text-align:center; width:100%; margin:0 auto;">
+              <img src="church_logo.png" alt="Church Logo" style="display:block; margin:0 auto 6px auto; height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; object-fit:contain; background:#fff;">
+              <div style="font-size:16px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</div>
+              <div style="font-size:11px; font-weight:600; color:#475569; margin-top:3px;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</div>
+              <div style="font-size:12px; font-weight:700; color:#0f172a; margin-top:6px; padding-top:6px; border-top:1.5px solid #cbd5e1; display:inline-block;">${titleLine3}</div>
+            </div>
           </th>
         </tr>
       `;
@@ -3113,6 +3377,15 @@ function exportTableToPDF(tableId, filename) {
       }
       overlay.style.cssText = "position:fixed; top:0; left:0; right:0; bottom:0; z-index:99999; background:#ffffff; overflow:auto; padding:60px 15px 20px 15px;";
       overlay.innerHTML = `
+        <style>
+          @media print {
+            body > *:not(#printPreviewOverlay) { display: none !important; }
+            #printPreviewOverlay { position: static !important; overflow: visible !important; height: auto !important; padding: 0 !important; zoom: 0.55; }
+            #printPreviewOverlay, #printPreviewOverlay * { visibility: visible !important; }
+            .print-preview-header { display: none !important; }
+            @page { size: A4 landscape; margin: 5mm; }
+          }
+        </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:1.1rem;">📄</span>
@@ -3132,7 +3405,7 @@ function exportTableToPDF(tableId, filename) {
       triggerSystemPrint(cleanTitle);
     };
 
-    if (window.AndroidBridge && typeof window.AndroidBridge.printPage === 'function') {
+    if (window.AndroidBridge) {
       renderInAppOverlay();
       return;
     }
@@ -3166,9 +3439,9 @@ function exportTableToPDF(tableId, filename) {
           
           @media print {
             .no-print, .print-preview-header { display: none !important; }
-            body { padding: 0 !important; margin: 0 !important; }
-            @page { size: landscape; margin: 8mm; }
-            table { page-break-inside: auto; }
+            body { padding: 0 !important; margin: 0 !important; zoom: 0.55; }
+            @page { size: A4 landscape; margin: 5mm; }
+            table { page-break-inside: auto; margin: 0 auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group !important; }
           }
@@ -3730,6 +4003,18 @@ function saveCashbookEntryChanges() {
   }
 
   localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
+
+  // Sync edited cashbook to server database
+  if (!window.AndroidBridge) {
+    fetch('/api/bulk_import', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state.cashbook)
+    }).then(() => console.log("Cashbook edit synced to DB!")).catch(err => {
+      console.error("[SYNC ERROR] Failed to sync cashbook edit to server:", err);
+    });
+  }
+
   renderAllViews();
   if (state.isAdminUnlocked) renderAdminTxnsTable();
   closeEditCashbookModal();
@@ -3739,6 +4024,18 @@ function confirmDeleteCashbookEntry(index) {
   if (confirm("Are you sure you want to delete this Cash Book transaction entry?")) {
     state.cashbook.splice(index, 1);
     localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
+
+    // Sync deletion to server database
+    if (!window.AndroidBridge) {
+      fetch('/api/bulk_import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state.cashbook)
+      }).then(() => console.log("Cashbook deletion synced to DB!")).catch(err => {
+        console.error("[SYNC ERROR] Failed to sync cashbook deletion to server:", err);
+      });
+    }
+
     renderAllViews();
     if (state.isAdminUnlocked) renderAdminTxnsTable();
   }
@@ -4338,7 +4635,7 @@ function openBackupExportModal() {
     const str = JSON.stringify(backupObj, null, 2);
 
     // 1. Android Native Bridge Share (If running inside Android APK)
-    if (window.AndroidBridge && typeof window.AndroidBridge.shareBackupJson === "function") {
+    if (window.AndroidBridge) {
       try { window.AndroidBridge.shareBackupJson(str, fileName); } catch (e) { }
     }
 
@@ -4501,6 +4798,14 @@ function processBackupRestoreData(jsonText) {
       if (Array.isArray(cbArr)) {
         state.cashbook = cbArr;
         localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
+        // Bulk import to SQLite Backend
+        fetch('/api/bulk_import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cbArr)
+        }).then(res => {
+          if (!res.ok) console.error("Failed to sync backup to SQLite DB");
+        }).catch(err => console.error("DB Sync error:", err));
       }
 
       const indArr = Array.isArray(data.individual) ? data.individual :
@@ -4516,6 +4821,26 @@ function processBackupRestoreData(jsonText) {
       if (Array.isArray(data.customAccountHeads)) {
         state.customAccountHeads = data.customAccountHeads;
         localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads));
+      }
+      if (Array.isArray(data.trialBalance)) {
+        state.trialBalance = data.trialBalance;
+        localStorage.setItem("CHURCH_TRIAL_BALANCE", JSON.stringify(state.trialBalance));
+      }
+      if (Array.isArray(data.codes)) {
+        state.codes = data.codes;
+        localStorage.setItem("CHURCH_CODES", JSON.stringify(state.codes));
+      }
+      if (Array.isArray(data.budget)) {
+        state.budget = data.budget;
+        localStorage.setItem("CHURCH_BUDGET", JSON.stringify(state.budget));
+      }
+      if (Array.isArray(data.auction)) {
+        state.auction = data.auction;
+        localStorage.setItem("CHURCH_AUCTION", JSON.stringify(state.auction));
+      }
+      if (Array.isArray(data.members)) {
+        state.members = data.members;
+        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
       }
       if (Array.isArray(data.deletedAccountHeads)) {
         state.deletedAccountHeads = data.deletedAccountHeads;
@@ -4539,11 +4864,13 @@ function processBackupRestoreData(jsonText) {
       }
 
       // Ensure CURRENT_DATA_VERSION is set so loadAllData preserves restored values
-      localStorage.setItem("CHURCH_DATA_VERSION", "2026-07-31_V6_MO_ABRAHAM_FIXED");
+      localStorage.setItem("CHURCH_DATA_VERSION", "2026-08-04_V7_4_FORCE_REFRESH");
 
-      loadAllData();
-      renderAllViews();
-      alert("✅ Backup restored successfully! All data updated.");
+      setTimeout(() => {
+        loadAllData();
+        renderAllViews();
+        alert("✅ Backup restored successfully! All data updated and synced to database.");
+      }, 500);
     }
   } catch (err) {
     console.error("Backup import error:", err);

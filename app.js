@@ -30,6 +30,16 @@ const state = {
   activeAccountHeads: []
 };
 
+let cbPage = 1;
+let cbPageSize = 100;
+window.nextCbPage = function() { cbPage++; renderCashbook(); };
+window.prevCbPage = function() { if(cbPage > 1) { cbPage--; renderCashbook(); } };
+
+let indivPage = 1;
+let indivPageSize = 100;
+window.nextIndivPage = function() { indivPage++; renderIndividualLedgers(); };
+window.prevIndivPage = function() { if(indivPage > 1) { indivPage--; renderIndividualLedgers(); } };
+
 // Helper to extract column value regardless of cell key format ("B" or "B2" or "B3" or "AA4")
 function getColVal(rowObj, colLetter) {
   if (!rowObj) return "";
@@ -222,42 +232,100 @@ function verifyLicenseGuard() {
 
 async function loadAllData() {
   try {
-    // Purge outdated local storage caches if dataset updated to official 31-7 baseline
-    const CURRENT_DATA_VERSION = "2026-08-03_V7_2_RP364_KANIKA_FIX";
-    const existingVersion = localStorage.getItem("CHURCH_DATA_VERSION");
-    const savedMembersRaw = localStorage.getItem("CHURCH_MEMBERS");
+    if (window.AndroidBridge) {
+      const stateJson = window.AndroidBridge.fetchDatabaseState();
+      try {
+        const data = JSON.parse(stateJson);
+        state.cashbook = data.cashbook || [];
+        console.log("Loaded cashbook from Native Android SQLite!");
+      } catch(e) {
+        console.error("Failed to parse Android database state:", e);
+      }
 
-    if (existingVersion !== CURRENT_DATA_VERSION || (savedMembersRaw && (savedMembersRaw.includes('"59100"') || savedMembersRaw.includes('"90000"') || savedMembersRaw.includes('"94300"')))) {
-      localStorage.removeItem("CHURCH_MEMBERS");
-      localStorage.removeItem("CHURCH_CASHBOOK");
-      localStorage.setItem("CHURCH_DATA_VERSION", CURRENT_DATA_VERSION);
-      console.log("Purged stale browser localStorage cache for updated dataset V7.2.");
-    }
-
-    // 1. First try window.CHURCH_DATA (synchronous, 0-CORS file:// support)
-    if (window.CHURCH_DATA) {
-      state.members = window.CHURCH_DATA.members || [];
-      state.cashbook = window.CHURCH_DATA.cashbook || [];
-      state.individual = window.CHURCH_DATA.individual || [];
-      state.trialBalance = window.CHURCH_DATA.trialBalance || [];
-      state.codes = window.CHURCH_DATA.codes || [];
-      state.auction = window.CHURCH_DATA.auction || [];
-      state.budget = window.CHURCH_DATA.budget || [];
-      console.log("Loaded data synchronously from embedded window.CHURCH_DATA!");
-    } else {
-      // 2. Fallback to fetch API
       const fetchJson = async (name) => {
-        const res = await fetch(`data_export/${name}.json`);
-        return res.ok ? await res.json() : [];
+        if (window.AndroidBridge) {
+          const content = window.AndroidBridge.readAssetFile(`data_export/${name}.json`);
+          try { 
+            const arr = JSON.parse(content); 
+            if (Array.isArray(arr) && arr.length > 0) return arr;
+          } catch (e) { console.error("Bridge parse error:", e); }
+        }
+        try {
+          const res = await fetch(`./data_export/${name}.json`);
+          if (res.ok) {
+            const arr = await res.json();
+            if (Array.isArray(arr) && arr.length > 0) return arr;
+          }
+        } catch (e) { console.error("Fetch parse error:", e); }
+        return [];
       };
 
-      state.members = await fetchJson("Members");
-      state.cashbook = await fetchJson("Cash_Book");
-      state.individual = await fetchJson("Individual");
-      state.trialBalance = await fetchJson("Trial_Balance");
-      state.codes = await fetchJson("Codes");
-      state.auction = await fetchJson("aution25");
-      state.budget = await fetchJson("Budget");
+      const m = await fetchJson("Members");
+      const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
+      state.members = localM.length ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
+
+      const ind = await fetchJson("Individual");
+      const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
+      state.individual = localInd.length ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
+
+      const tb = await fetchJson("Trial_Balance");
+      const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
+      state.trialBalance = localTb.length ? localTb : (tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []));
+
+      const c = await fetchJson("Codes");
+      const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
+      state.codes = localC.length ? localC : (c.length ? c : (window.INITIAL_CODES || []));
+
+
+
+      const bu = await fetchJson("Budget");
+      const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
+      state.budget = localBu.length ? localBu : (bu.length ? bu : (window.INITIAL_BUDGET || []));
+
+    } else {
+      try {
+        const res = await fetch('/api/data');
+        if (res.ok) {
+          const data = await res.json();
+          state.cashbook = data.cashbook || [];
+        } else {
+          console.error("Failed to load from backend:", res.status);
+        }
+      } catch (err) {
+        console.warn("No API backend detected, proceeding in offline mode.");
+      }
+
+      const fetchJson = async (name) => {
+        try {
+          const res = await fetch(`./data_export/${name}.json`);
+          if (res.ok) {
+            const arr = await res.json();
+            if (Array.isArray(arr) && arr.length > 0) return arr;
+          }
+        } catch (e) { }
+        return [];
+      };
+
+      const m = await fetchJson("Members");
+      const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
+      state.members = localM.length ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
+
+      const ind = await fetchJson("Individual");
+      const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
+      state.individual = localInd.length ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
+
+      const tb = await fetchJson("Trial_Balance");
+      const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
+      state.trialBalance = localTb.length ? localTb : (tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []));
+
+      const c = await fetchJson("Codes");
+      const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
+      state.codes = localC.length ? localC : (c.length ? c : (window.INITIAL_CODES || []));
+
+      const bu = await fetchJson("Budget");
+      const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
+      state.budget = localBu.length ? localBu : (bu.length ? bu : (window.INITIAL_BUDGET || []));
+      console.log("Loaded all required data!");
     }
 
     // 3. Load LocalStorage Overrides
@@ -1115,8 +1183,9 @@ function populateMemberDropdown() {
   const memberMap = new Map();
   const invalidNames = ["NAME OF HOF", "NAME", "SL. NO.", "REGISTER NO.", "REGISTER NO", "SL NO", "MEMBER NAME"];
 
-  // 1. Load from Individual Sheet (Col B = Reg No, Col C = Name of HoF)
-  state.individual.forEach(row => {
+  // 1. Load from state.members (which includes Address and Phone)
+  // We prefer state.members over individual sheet to reflect live edits
+  state.members.forEach(row => {
     const regNo = getColVal(row, "B");
     const name = getColVal(row, "C");
     if (regNo && name && !invalidNames.includes(regNo.toUpperCase()) && !invalidNames.includes(name.toUpperCase())) {
@@ -1124,32 +1193,33 @@ function populateMemberDropdown() {
     }
   });
 
-  // 2. Load from Members Sheet (Col B = Register No, Col C = Name)
-  state.members.forEach(row => {
+  // Fallback/Merge with Individual Sheet
+  state.individual.forEach(row => {
     const regNo = getColVal(row, "B");
     const name = getColVal(row, "C");
     if (regNo && name && !invalidNames.includes(regNo.toUpperCase()) && !invalidNames.includes(name.toUpperCase())) {
-      if (!memberMap.has(regNo)) {
-        memberMap.set(regNo, name);
-      }
+      if (!memberMap.has(regNo)) memberMap.set(regNo, name);
     }
   });
 
-  // Sort by Register Number numerically
   const sortedRegNos = Array.from(memberMap.keys()).sort((a, b) => {
-    const numA = parseInt(a) || 0;
-    const numB = parseInt(b) || 0;
-    return numA - numB;
+    const nameA = String(memberMap.get(a)).toLowerCase();
+    const nameB = String(memberMap.get(b)).toLowerCase();
+    return nameA.localeCompare(nameB);
   });
 
   sortedRegNos.forEach(regNo => {
     const name = memberMap.get(regNo);
     const opt = document.createElement("option");
     opt.value = regNo;
-    opt.textContent = `Reg #${regNo} - ${name}`;
+    opt.textContent = `${regNo} - ${name}`;
     opt.dataset.name = name;
     cmbMember.appendChild(opt);
   });
+
+  // Keep a global reference for the search filter
+  window.cachedMemberMap = memberMap;
+  window.cachedSortedRegNos = sortedRegNos;
 
   console.log(`Successfully populated ${sortedRegNos.length} parish members into dropdown.`);
 }
@@ -1172,8 +1242,11 @@ function setupNavigation() {
       tab.classList.add("active");
       const targetPane = document.getElementById(paneId);
       if (targetPane) targetPane.classList.add("active");
+      
       if (paneId === "tabAdmin") {
         renderAdminTab();
+      } else if (paneId === "tabMemberDirectory") {
+        renderMemberDirectory();
       }
     });
   });
@@ -1184,6 +1257,25 @@ function setupNavigation() {
 // ----------------------------------------------------
 function setupFormEventListeners() {
   const cmbMember = document.getElementById("cmbMember");
+  const txtSearchMember = document.getElementById("txtSearchMember");
+
+  // Receipt Tab Member Search Filter
+  if (txtSearchMember) {
+    txtSearchMember.addEventListener("input", (e) => {
+      const searchStr = e.target.value.toLowerCase().trim();
+      cmbMember.innerHTML = `<option value="">-- Select Member --</option>`;
+      window.cachedSortedRegNos.forEach(regNo => {
+        const name = window.cachedMemberMap.get(regNo);
+        if (regNo.toLowerCase().includes(searchStr) || name.toLowerCase().includes(searchStr)) {
+          const opt = document.createElement("option");
+          opt.value = regNo;
+          opt.textContent = `${regNo} - ${name}`;
+          opt.dataset.name = name;
+          cmbMember.appendChild(opt);
+        }
+      });
+    });
+  }
 
   // 2-Way Sync: Member Select -> Reg No
   cmbMember.addEventListener("change", (e) => {
@@ -1456,7 +1548,7 @@ function findIndividualColKey(item) {
 
     if (
       (partStr.includes("holy qurbana") && title.includes("qurbana")) ||
-      (partStr.includes("donat") && title.includes("donat")) ||
+      (partStr.includes("donat") && title.includes("donat") && !partStr.includes("breakfast") && !partStr.includes("marriage") && !partStr.includes("cemetry")) ||
       (partStr.includes("perunnal") && title.includes("perunnal")) ||
       (partStr.includes("passion") && title.includes("passion")) ||
       (partStr.includes("george") && title.includes("george")) ||
@@ -1585,11 +1677,51 @@ function commitCartToLedgers() {
     state.currentVoucherNo++;
   }
 
-  // 4. Save updated Cash Book, Member Ledgers, and Sequence Numbers to LocalStorage
+  // 4. Save updated Cash Book, Member Ledgers to LocalStorage and Backend API
   localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
   localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
   localStorage.setItem("CHURCH_RECEIPT_NO", state.currentReceiptNo.toString());
   localStorage.setItem("CHURCH_VOUCHER_NO", state.currentVoucherNo.toString());
+
+  // Post to SQLite Backend or Android Native Bridge
+  if (window.AndroidBridge) {
+    state.cart.forEach(item => {
+      const isCash = item.paymentType === "Cash";
+      const payload = isReceipt ? {
+        date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
+        receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
+        receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
+      } : {
+        payment_date: dateStr, payment_voucher_no: docNo, 
+        payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
+        payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+      };
+      window.AndroidBridge.saveTransaction(JSON.stringify(payload), isReceipt);
+    });
+    console.log("Saved to Native Android SQLite!");
+  } else {
+    Promise.all(state.cart.map(item => {
+      const isCash = item.paymentType === "Cash";
+      const payload = isReceipt ? {
+        date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
+        receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
+        receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
+      } : {
+        payment_date: dateStr, payment_voucher_no: docNo, 
+        payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
+        payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+      };
+      const endpoint = isReceipt ? '/api/save_receipt' : '/api/save_payment';
+      return fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    })).then(() => console.log("Saved to DB!")).catch(err => {
+      console.error("[SYNC ERROR] Failed to save to server database:", err);
+      alert("⚠️ Data saved locally but could NOT sync to server database. Please check your network connection and try again.");
+    });
+  }
 
   const vInput = document.getElementById("txtVoucherNo");
   if (vInput) {
@@ -1734,7 +1866,7 @@ function triggerSystemPrint(pdfTitle) {
   if (pdfTitle) {
     document.title = getCleanPrintTitle(pdfTitle);
   }
-  if (window.AndroidBridge && typeof window.AndroidBridge.printPage === 'function') {
+  if (window.AndroidBridge) {
     window.AndroidBridge.printPage(document.title);
   } else {
     window.print();
@@ -1862,7 +1994,7 @@ function printReceiptModal() {
   document.title = pdfTitle;
 
   // 4. On Android WebView, invoke native system print directly
-  if (window.AndroidBridge && typeof window.AndroidBridge.printPage === 'function') {
+  if (window.AndroidBridge) {
     triggerSystemPrint(pdfTitle);
     return;
   }
@@ -2069,8 +2201,8 @@ function renderCashbook() {
   const paymentRows = [];
 
   let totalCashR = 0, totalBankR = 0, totalCashP = 0, totalBankP = 0;
-  const openingCash = 9879.00;
-  const openingBank = 651682.00;
+  let openingCash = 0;
+  let openingBank = 0;
 
   state.cashbook.forEach(row => {
     const dtRaw = getColVal(row, "A");
@@ -2106,6 +2238,8 @@ function renderCashbook() {
     if (details.toLowerCase().includes("opening balance") || cashR === "9879" || bankR === "651682" || (headLower.includes("opening") && (cashR || bankR))) {
       head = "Opening Balance";
       isOpening = true;
+      openingCash = parseFloat(cashR) || 0;
+      openingBank = parseFloat(bankR) || 0;
     }
 
     let finalReceiptHead = head;
@@ -2180,20 +2314,34 @@ function renderCashbook() {
   const isAsc = state.sortCashbookAsc;
   const col = state.sortCashbookCol;
 
+  const getPropR = (col) => {
+    if (col === "date" || col === "paydate") return "dateKey";
+    if (col === "rec" || col === "voucher") return "recNoKey";
+    if (col === "reg") return "regNoKey";
+    if (col === "name") return "nameKey";
+    if (col === "head" || col === "payhead") return "headKey";
+    if (col === "code" || col === "paycode") return "codeKey";
+    if (col === "cash" || col === "bank" || col === "amt") return "amtKey";
+    return "dateKey";
+  };
+  
+  const getPropP = (col) => {
+    if (col === "date" || col === "paydate") return "dateKey";
+    if (col === "rec" || col === "voucher") return "voucherNoKey";
+    if (col === "head" || col === "payhead") return "payHeadKey";
+    if (col === "code" || col === "paycode") return "payCodeKey";
+    if (col === "paycash" || col === "paybank" || col === "amt") return "payAmtKey";
+    return "dateKey";
+  };
+
+  const propR = getPropR(col);
+  const propP = getPropP(col);
+
   receiptRows.sort((a, b) => {
     if (a.isOpening) return -1;
     if (b.isOpening) return 1;
 
-    let valA, valB;
-    if (col === "date" || col === "paydate") { valA = a.dateKey; valB = b.dateKey; }
-    else if (col === "rec" || col === "voucher") { valA = a.recNoKey; valB = b.recNoKey; }
-    else if (col === "reg") { valA = a.regNoKey; valB = b.regNoKey; }
-    else if (col === "name") { valA = a.nameKey; valB = b.nameKey; }
-    else if (col === "head" || col === "payhead") { valA = a.headKey; valB = b.headKey; }
-    else if (col === "code" || col === "paycode") { valA = a.codeKey; valB = b.codeKey; }
-    else if (col === "cash" || col === "bank" || col === "amt") { valA = a.amtKey; valB = b.amtKey; }
-    else { valA = a.dateKey; valB = b.dateKey; }
-
+    let valA = a[propR], valB = b[propR];
     if (valA < valB) return isAsc ? -1 : 1;
     if (valA > valB) return isAsc ? 1 : -1;
 
@@ -2201,14 +2349,7 @@ function renderCashbook() {
   });
 
   paymentRows.sort((a, b) => {
-    let valA, valB;
-    if (col === "date" || col === "paydate") { valA = a.dateKey; valB = b.dateKey; }
-    else if (col === "rec" || col === "voucher") { valA = a.voucherNoKey; valB = b.voucherNoKey; }
-    else if (col === "head" || col === "payhead") { valA = a.payHeadKey; valB = b.payHeadKey; }
-    else if (col === "code" || col === "paycode") { valA = a.payCodeKey; valB = b.payCodeKey; }
-    else if (col === "paycash" || col === "paybank" || col === "amt") { valA = a.payAmtKey; valB = b.payAmtKey; }
-    else { valA = a.dateKey; valB = b.dateKey; }
-
+    let valA = a[propP], valB = b[propP];
     if (valA < valB) return isAsc ? -1 : 1;
     if (valA > valB) return isAsc ? 1 : -1;
 
@@ -2218,7 +2359,16 @@ function renderCashbook() {
   const hasOpening = receiptRows.length > 0 && receiptRows[0].isOpening;
   const maxRows = Math.max(receiptRows.length, paymentRows.length + (hasOpening ? 1 : 0));
 
-  for (let i = 0; i < maxRows; i++) {
+  const totalPages = Math.ceil(maxRows / cbPageSize) || 1;
+  if (cbPage > totalPages) cbPage = totalPages;
+  if (cbPage < 1) cbPage = 1;
+  const startIdx = (cbPage - 1) * cbPageSize;
+  const endIdx = Math.min(startIdx + cbPageSize, maxRows);
+
+  const lbl = document.getElementById("cbPageLabel");
+  if (lbl) lbl.textContent = `Page ${cbPage} of ${totalPages} (${maxRows} total rows)`;
+
+  for (let i = startIdx; i < endIdx; i++) {
     const rec = receiptRows[i] || {};
 
     // Shift payment entries down by 1 row when Opening Balance row is present at index 0
@@ -2298,6 +2448,7 @@ function setupCashbookViewListeners() {
       const parts = e.target.value.split("_");
       state.sortCashbookCol = parts[0];
       state.sortCashbookAsc = parts[1] === "asc";
+      cbPage = 1;
       renderCashbook();
     });
   }
@@ -2319,6 +2470,7 @@ function handleCashbookHeaderClick(colKey) {
     }
     sortSelect.value = valStr;
   }
+  cbPage = 1;
   renderCashbook();
 }
 
@@ -2331,6 +2483,7 @@ function setupIndividualViewListeners() {
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       state.searchIndivQuery = e.target.value;
+      indivPage = 1;
       renderIndividualLedgers();
     });
   }
@@ -2339,6 +2492,7 @@ function setupIndividualViewListeners() {
     clearBtn.addEventListener("click", () => {
       if (searchInput) searchInput.value = "";
       state.searchIndivQuery = "";
+      indivPage = 1;
       renderIndividualLedgers();
     });
   }
@@ -2373,6 +2527,7 @@ function setupIndividualViewListeners() {
       const parts = e.target.value.split("_");
       state.sortCol = parts[0];
       state.sortAsc = parts[1] === "asc";
+      indivPage = 1;
       renderIndividualLedgers();
     });
   }
@@ -2389,6 +2544,7 @@ function handleIndivHeaderClick(colKey) {
   if (sortSelect) {
     sortSelect.value = `${state.sortCol}_${state.sortAsc ? 'asc' : 'desc'}`;
   }
+  indivPage = 1;
   renderIndividualLedgers();
 }
 
@@ -2568,9 +2724,25 @@ function renderIndividualLedgers() {
   // 8. Render Table Body <tbody>
   let overallGrandTotal = 0;
   const totalCount = filteredMembers.length;
-
-  filteredMembers.forEach((m, idx) => {
+  
+  // Need to compute overall grand total for the footer regardless of pagination
+  filteredMembers.forEach(m => {
     overallGrandTotal += m.grandNum;
+  });
+
+  const totalPages = Math.ceil(totalCount / indivPageSize) || 1;
+  if (indivPage > totalPages) indivPage = totalPages;
+  if (indivPage < 1) indivPage = 1;
+  const startIdx = (indivPage - 1) * indivPageSize;
+  const endIdx = Math.min(startIdx + indivPageSize, totalCount);
+
+  const lbl = document.getElementById("indivPageLabel");
+  if (lbl) lbl.textContent = `Page ${indivPage} of ${totalPages} (${totalCount} accounts)`;
+
+  const pageMembers = filteredMembers.slice(startIdx, endIdx);
+
+  pageMembers.forEach((m, pageIdx) => {
+    const idx = startIdx + pageIdx;
     let colCellsHtml = "";
     displayCols.forEach(col => {
       const val = m.colValues[col.key];
@@ -2812,8 +2984,26 @@ function renderTrialBalance() {
 }
 
 function calculateCashbookTotals() {
-  const openingCash = window.isFreshStartBuild ? 0.0 : 9879.00;
-  const openingBank = window.isFreshStartBuild ? 0.0 : 651682.00;
+  let openingCash = 0.0;
+  let openingBank = 0.0;
+
+  if (Array.isArray(state.trialBalance)) {
+    state.trialBalance.forEach(row => {
+      const head = (getColVal(row, "B") || "").trim().toUpperCase();
+      if (head === 'CASH ACCOUNT' || head === 'CASH IN HAND' || head === 'OPENING BALANCE (CASH)') {
+        openingCash += (parseFloat(getColVal(row, "C")) || 0) - (parseFloat(getColVal(row, "F")) || 0);
+      }
+      if (head === 'BANK ACCOUNT' || head === 'CASH AT BANK' || head === 'OPENING BALANCE (BANK)') {
+        openingBank += (parseFloat(getColVal(row, "C")) || 0) - (parseFloat(getColVal(row, "F")) || 0);
+      }
+    });
+  }
+
+  // Fallback if Trial Balance is completely empty or missing these rows
+  if (openingCash === 0 && openingBank === 0 && !window.isFreshStartBuild) {
+    // Hardcoded balances removed, relies on backup data or Trial Balance sheet
+  }
+
   let totalCashR = 0, totalBankR = 0, totalCashP = 0, totalBankP = 0;
 
   state.cashbook.forEach(row => {
@@ -2850,7 +3040,10 @@ function calculateCashbookTotals() {
     }
 
     const isValidReceipt = isOpening || Boolean(recNo) || Boolean(head) || Boolean(hof);
-    if (isValidReceipt && !isOpening) {
+    if (isOpening) {
+      if (openingCash === 0 && cashR) openingCash = parseFloat(cashR) || 0;
+      if (openingBank === 0 && bankR) openingBank = parseFloat(bankR) || 0;
+    } else if (isValidReceipt) {
       if (cashR && !isNaN(parseFloat(cashR))) totalCashR += parseFloat(cashR) || 0;
       if (bankR && !isNaN(parseFloat(bankR))) totalBankR += parseFloat(bankR) || 0;
     }
@@ -2953,6 +3146,13 @@ function createCleanExportTable(tableId) {
       const hasActionBtn = cell.querySelector("button") || text === "Actions" || text === "Action" || text === "✏️ Edit" || text === "🗑️ Delete";
       if (hasActionBtn) {
         cell.remove();
+      } else {
+        if (text.startsWith("#")) {
+          const numStr = text.replace("#", "");
+          if (!isNaN(parseInt(numStr, 10))) {
+            cell.textContent = numStr;
+          }
+        }
       }
     });
   });
@@ -2964,7 +3164,36 @@ function createCleanExportTable(tableId) {
 // ----------------------------------------------------
 function exportTableToExcel(tableId, filename) {
   try {
+    let originalCbSize, originalCbPage;
+    let originalIndivSize, originalIndivPage;
+
+    if (tableId === 'cashbookTable') {
+      originalCbSize = cbPageSize;
+      originalCbPage = cbPage;
+      cbPageSize = 999999;
+      cbPage = 1;
+      renderCashbook();
+    } else if (tableId === 'indivTable') {
+      originalIndivSize = indivPageSize;
+      originalIndivPage = indivPage;
+      indivPageSize = 999999;
+      indivPage = 1;
+      renderIndividualLedgers();
+    }
+
     const cleanTable = createCleanExportTable(tableId);
+    
+    // Restore pagination immediately after scraping DOM
+    if (tableId === 'cashbookTable') {
+      cbPageSize = originalCbSize;
+      cbPage = originalCbPage;
+      renderCashbook();
+    } else if (tableId === 'indivTable') {
+      indivPageSize = originalIndivSize;
+      indivPage = originalIndivPage;
+      renderIndividualLedgers();
+    }
+
     if (!cleanTable) {
       alert("Export Error: Target table not found!");
       return;
@@ -2987,9 +3216,71 @@ function exportTableToExcel(tableId, filename) {
 
     if (window.XLSX) {
       const ws = XLSX.utils.aoa_to_sheet(churchHeaderRows);
-      XLSX.utils.sheet_add_dom(ws, cleanTable, { origin: "A5" });
+      XLSX.utils.sheet_add_dom(ws, cleanTable, { origin: "A5", raw: true });
+      
+      const range = XLSX.utils.decode_range(ws['!ref']);
+      
+      // Merge header rows to center text across the page
+      const totalCols = range.e.c;
+      if (!ws['!merges']) ws['!merges'] = [];
+      for (let i = 0; i < 3; i++) {
+        ws['!merges'].push({ s: { r: i, c: 0 }, e: { r: i, c: totalCols } });
+      }
+      
+      for (let R = 4; R <= range.e.r; ++R) {
+        for (let C = 0; C <= range.e.c; ++C) {
+          const cell_ref = XLSX.utils.encode_cell({c:C, r:R});
+          const cell = ws[cell_ref];
+          if (!cell || cell.t !== 's') continue;
+          
+          const val = String(cell.v).trim();
+          
+          // Try parse date
+          const dateRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
+          if (dateRegex.test(val)) {
+            const parts = val.split('-');
+            const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+            if (!isNaN(d.getTime())) {
+              cell.t = 'd';
+              cell.v = d;
+              cell.z = 'dd-mm-yyyy';
+              continue;
+            }
+          }
+
+          // Try parse numbers and amounts
+          if (val.startsWith("₹")) {
+            const numVal = parseFloat(val.replace(/[₹\s,]/g, ''));
+            if (!isNaN(numVal)) {
+              cell.t = 'n';
+              cell.v = numVal;
+              cell.z = '"₹"#,##0.00';
+              continue;
+            }
+          } else {
+            // Standard number strings (like Receipt No, Reg No)
+            if (/^-?\d+(\.\d+)?$/.test(val)) {
+              cell.t = 'n';
+              cell.v = Number(val);
+            }
+          }
+        }
+      }
+
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+      
+      const bridge = window.AndroidBridge || (typeof AndroidBridge !== "undefined" ? AndroidBridge : null);
+      if (bridge && typeof bridge.shareBase64File === "function") {
+        try {
+          const base64 = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+          bridge.shareBase64File(base64, `${nameStr}.xlsx`);
+          return;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      
       XLSX.writeFile(wb, `${nameStr}.xlsx`);
       return;
     }
@@ -3049,7 +3340,36 @@ function exportTableToExcel(tableId, filename) {
 // ----------------------------------------------------
 function exportTableToPDF(tableId, filename) {
   try {
+    let originalCbSize, originalCbPage;
+    let originalIndivSize, originalIndivPage;
+
+    if (tableId === 'cashbookTable') {
+      originalCbSize = cbPageSize;
+      originalCbPage = cbPage;
+      cbPageSize = 999999;
+      cbPage = 1;
+      renderCashbook();
+    } else if (tableId === 'indivTable') {
+      originalIndivSize = indivPageSize;
+      originalIndivPage = indivPage;
+      indivPageSize = 999999;
+      indivPage = 1;
+      renderIndividualLedgers();
+    }
+
     const cleanTable = createCleanExportTable(tableId);
+
+    // Restore pagination immediately after scraping DOM
+    if (tableId === 'cashbookTable') {
+      cbPageSize = originalCbSize;
+      cbPage = originalCbPage;
+      renderCashbook();
+    } else if (tableId === 'indivTable') {
+      indivPageSize = originalIndivSize;
+      indivPage = originalIndivPage;
+      renderIndividualLedgers();
+    }
+
     if (!cleanTable) {
       alert("PDF Export Error: Target table not found!");
       return;
@@ -3076,22 +3396,17 @@ function exportTableToPDF(tableId, filename) {
       const isIndiv = (tableId === "indivTable");
       const titleLine3 = isIndiv ? "Individual Account updated upto 31-07-2026" : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
 
-      const totalCols = cleanTable.querySelector("tr")?.children?.length || 28;
+      const totalCols = 99; // Force full span across all actual columns
 
       const headerBlockHtml = `
-        <tr class="pdf-repeat-row1">
-          <th colspan="${totalCols}" style="text-align:center; font-size:15px; font-weight:800; border:none; background:#ffffff; color:#0f172a; padding:6px 0 2px 0; font-family:'Segoe UI',Arial,sans-serif;">
-            ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE
-          </th>
-        </tr>
-        <tr class="pdf-repeat-row2">
-          <th colspan="${totalCols}" style="text-align:center; font-size:11px; font-weight:600; border:none; background:#ffffff; color:#475569; padding:0 0 2px 0; font-family:'Segoe UI',Arial,sans-serif;">
-            Government House Road, Nazarbad, Mysuru, Karnataka 570 010
-          </th>
-        </tr>
-        <tr class="pdf-repeat-row3">
-          <th colspan="${totalCols}" style="text-align:center; font-size:12px; font-weight:700; border:none; background:#ffffff; color:#0f172a; padding:2px 0 10px 0; font-family:'Segoe UI',Arial,sans-serif;">
-            ${titleLine3}
+        <tr class="pdf-repeat-header">
+          <th colspan="${totalCols}" style="text-align:center; border:none; background:#ffffff; padding:10px 0 15px 0; font-family:'Segoe UI',Arial,sans-serif;">
+            <div style="text-align:center; width:100%; margin:0 auto;">
+              <img src="church_logo.png" alt="Church Logo" style="display:block; margin:0 auto 6px auto; height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; object-fit:contain; background:#fff;">
+              <div style="font-size:16px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</div>
+              <div style="font-size:11px; font-weight:600; color:#475569; margin-top:3px;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</div>
+              <div style="font-size:12px; font-weight:700; color:#0f172a; margin-top:6px; padding-top:6px; border-top:1.5px solid #cbd5e1; display:inline-block;">${titleLine3}</div>
+            </div>
           </th>
         </tr>
       `;
@@ -3113,6 +3428,15 @@ function exportTableToPDF(tableId, filename) {
       }
       overlay.style.cssText = "position:fixed; top:0; left:0; right:0; bottom:0; z-index:99999; background:#ffffff; overflow:auto; padding:60px 15px 20px 15px;";
       overlay.innerHTML = `
+        <style>
+          @media print {
+            body > *:not(#printPreviewOverlay) { display: none !important; }
+            #printPreviewOverlay { position: static !important; overflow: visible !important; height: auto !important; padding: 0 !important; zoom: 0.55; }
+            #printPreviewOverlay, #printPreviewOverlay * { visibility: visible !important; }
+            .print-preview-header { display: none !important; }
+            @page { size: A4 landscape; margin: 5mm; }
+          }
+        </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:1.1rem;">📄</span>
@@ -3132,7 +3456,7 @@ function exportTableToPDF(tableId, filename) {
       triggerSystemPrint(cleanTitle);
     };
 
-    if (window.AndroidBridge && typeof window.AndroidBridge.printPage === 'function') {
+    if (window.AndroidBridge) {
       renderInAppOverlay();
       return;
     }
@@ -3166,9 +3490,9 @@ function exportTableToPDF(tableId, filename) {
           
           @media print {
             .no-print, .print-preview-header { display: none !important; }
-            body { padding: 0 !important; margin: 0 !important; }
-            @page { size: landscape; margin: 8mm; }
-            table { page-break-inside: auto; }
+            body { padding: 0 !important; margin: 0 !important; zoom: 0.55; }
+            @page { size: A4 landscape; margin: 5mm; }
+            table { page-break-inside: auto; margin: 0 auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group !important; }
           }
@@ -3320,20 +3644,28 @@ function executePendingAction() {
     confirmDeleteAccountHead(payload);
   } else if (type === "DELETE_MEMBER") {
     confirmDeleteMember(payload);
+  } else if (type === "DIR_ADD") {
+    openDirAddMemberModal();
+  } else if (type === "DIR_EDIT") {
+    openDirEditMemberModal(payload);
+  } else if (type === "DIR_DELETE") {
+    deleteDirMemberCrud(payload);
   }
 }
 
 function confirmDeleteMember(regNo) {
-  const memberRow = state.individual.find((r, idx) => idx >= 4 && getColVal(r, "B") === regNo);
+  const memberRow = state.individual.find(r => getColVal(r, "B") === String(regNo));
   const name = memberRow ? getColVal(memberRow, "C") : regNo;
 
   if (confirm(`Are you sure you want to delete member Reg No. #${regNo} (${name})? This cannot be undone.`)) {
-    state.individual = state.individual.filter((r, idx) => {
-      if (idx < 4) return true;
-      return getColVal(r, "B") !== regNo;
-    });
-
+    state.individual = state.individual.filter(r => getColVal(r, "B") !== String(regNo));
     localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+
+    // Sync deletion to Directory
+    state.members = state.members.filter(m => getColVal(m, "B") !== String(regNo));
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+    renderMemberDirectory();
+
     populateMemberDropdown();
     renderIndividualLedgers();
     renderAudit();
@@ -3430,8 +3762,25 @@ function saveNewMemberAccount() {
   };
 
   state.individual.push(newMemberRow);
-
   localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+
+  // Sync to Directory
+  if (!state.members.some(m => getColVal(m, "B") === String(regNo))) {
+    const maxSlDir = state.members.reduce((max, m) => {
+      const a = parseInt(getColVal(m, "A"), 10);
+      return !isNaN(a) && a > max ? a : max;
+    }, 0);
+    state.members.push({
+      "A": String(maxSlDir + 1),
+      "B": regNo,
+      "C": name,
+      "D": "",
+      "E": ""
+    });
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+    renderMemberDirectory();
+  }
+
   populateMemberDropdown();
   renderIndividualLedgers();
   renderAudit();
@@ -3730,6 +4079,18 @@ function saveCashbookEntryChanges() {
   }
 
   localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
+
+  // Sync edited cashbook to server database
+  if (!window.AndroidBridge) {
+    fetch('/api/bulk_import', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state.cashbook)
+    }).then(() => console.log("Cashbook edit synced to DB!")).catch(err => {
+      console.error("[SYNC ERROR] Failed to sync cashbook edit to server:", err);
+    });
+  }
+
   renderAllViews();
   if (state.isAdminUnlocked) renderAdminTxnsTable();
   closeEditCashbookModal();
@@ -3739,6 +4100,18 @@ function confirmDeleteCashbookEntry(index) {
   if (confirm("Are you sure you want to delete this Cash Book transaction entry?")) {
     state.cashbook.splice(index, 1);
     localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
+
+    // Sync deletion to server database
+    if (!window.AndroidBridge) {
+      fetch('/api/bulk_import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state.cashbook)
+      }).then(() => console.log("Cashbook deletion synced to DB!")).catch(err => {
+        console.error("[SYNC ERROR] Failed to sync cashbook deletion to server:", err);
+      });
+    }
+
     renderAllViews();
     if (state.isAdminUnlocked) renderAdminTxnsTable();
   }
@@ -3812,9 +4185,8 @@ function renderAdminMembersTable() {
   const invalidNames = ["NAME OF HOF", "NAME", "SL. NO.", "REGISTER NO.", "REGISTER NO", "SL NO", "MEMBER NAME"];
   const membersList = [];
 
-  if (state.individual && state.individual.length > 4) {
-    const rows = state.individual.slice(4);
-    rows.forEach((r) => {
+  if (state.individual && state.individual.length > 0) {
+    state.individual.forEach((r) => {
       const regNo = getColVal(r, "B");
       const name = getColVal(r, "C");
       const subUpto = getColVal(r, "D");
@@ -4330,6 +4702,7 @@ function openBackupExportModal() {
       deletedAccountHeads: state.deletedAccountHeads || [],
       deletedMembers: state.deletedMembers || [],
       individual: state.individual || [],
+      masterMembers: state.members || [],
       adminPassword: state.adminPassword || "church123",
       currentReceiptNo: state.currentReceiptNo || 4001,
       currentVoucherNo: state.currentVoucherNo || 1
@@ -4338,7 +4711,7 @@ function openBackupExportModal() {
     const str = JSON.stringify(backupObj, null, 2);
 
     // 1. Android Native Bridge Share (If running inside Android APK)
-    if (window.AndroidBridge && typeof window.AndroidBridge.shareBackupJson === "function") {
+    if (window.AndroidBridge) {
       try { window.AndroidBridge.shareBackupJson(str, fileName); } catch (e) { }
     }
 
@@ -4501,21 +4874,65 @@ function processBackupRestoreData(jsonText) {
       if (Array.isArray(cbArr)) {
         state.cashbook = cbArr;
         localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
+        // Bulk import to SQLite Backend
+        fetch('/api/bulk_import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cbArr)
+        }).then(res => {
+          if (!res.ok) console.error("Failed to sync backup to SQLite DB");
+        }).catch(err => console.error("DB Sync error:", err));
       }
 
       const indArr = Array.isArray(data.individual) ? data.individual :
-        Array.isArray(data.members) ? data.members :
+        Array.isArray(data.members) && !data.masterMembers ? data.members :
           Array.isArray(data.Individual) ? data.Individual :
-            Array.isArray(data.Members) ? data.Members : null;
+            Array.isArray(data.Members) && !data.masterMembers ? data.Members : null;
 
       if (Array.isArray(indArr)) {
         state.individual = indArr;
         localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
       }
 
+      const masterArr = Array.isArray(data.masterMembers) ? data.masterMembers : null;
+      if (masterArr) {
+        state.members = masterArr;
+        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+      } else if (Array.isArray(indArr)) {
+        indArr.forEach(r => {
+          const reg = getColVal(r, "B");
+          const name = getColVal(r, "C");
+          if (reg && name && reg !== "Register No." && reg.toUpperCase() !== "REGISTER NO") {
+            if (!state.members.find(m => getColVal(m, "B") === reg)) {
+              state.members.push({ "A": "", "B": reg, "C": name, "D": "", "E": "" });
+            } else {
+              const ex = state.members.find(m => getColVal(m, "B") === reg);
+              ex.C = name;
+            }
+          }
+        });
+        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+      }
+
       if (Array.isArray(data.customAccountHeads)) {
         state.customAccountHeads = data.customAccountHeads;
         localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads));
+      }
+      if (Array.isArray(data.trialBalance)) {
+        state.trialBalance = data.trialBalance;
+        localStorage.setItem("CHURCH_TRIAL_BALANCE", JSON.stringify(state.trialBalance));
+      }
+      if (Array.isArray(data.codes)) {
+        state.codes = data.codes;
+        localStorage.setItem("CHURCH_CODES", JSON.stringify(state.codes));
+      }
+      if (Array.isArray(data.budget)) {
+        state.budget = data.budget;
+        localStorage.setItem("CHURCH_BUDGET", JSON.stringify(state.budget));
+      }
+      if (Array.isArray(data.auction)) {
+        state.auction = data.auction;
+        localStorage.setItem("CHURCH_AUCTION", JSON.stringify(state.auction));
       }
       if (Array.isArray(data.deletedAccountHeads)) {
         state.deletedAccountHeads = data.deletedAccountHeads;
@@ -4539,11 +4956,13 @@ function processBackupRestoreData(jsonText) {
       }
 
       // Ensure CURRENT_DATA_VERSION is set so loadAllData preserves restored values
-      localStorage.setItem("CHURCH_DATA_VERSION", "2026-07-31_V6_MO_ABRAHAM_FIXED");
+      localStorage.setItem("CHURCH_DATA_VERSION", "2026-08-04_V7_4_FORCE_REFRESH");
 
-      loadAllData();
-      renderAllViews();
-      alert("✅ Backup restored successfully! All data updated.");
+      setTimeout(() => {
+        loadAllData();
+        renderAllViews();
+        alert("✅ Backup restored successfully! All data updated and synced to database.");
+      }, 500);
     }
   } catch (err) {
     console.error("Backup import error:", err);
@@ -4592,6 +5011,329 @@ function verifyTrialActivationKey() {
   } else {
     alert("Invalid Activation Key! Please contact administrator.");
   }
+}
+
+// ----------------------------------------------------
+// MEMBER DIRECTORY CRUD OPERATIONS
+// ----------------------------------------------------
+function renderMemberDirectory() {
+  const tbody = document.querySelector("#memberDirectoryTable tbody");
+  if (!tbody) return;
+
+  // Filter out headers from Excel
+  const validMembers = state.members.filter(row => {
+    const rn = getColVal(row, "B");
+    return rn && rn !== "Register No." && rn.toUpperCase() !== "REGISTER NO";
+  });
+
+  // Sort alphabetically by Name
+  validMembers.sort((a, b) => {
+    const nameA = String(getColVal(a, "C") || "").toLowerCase();
+    const nameB = String(getColVal(b, "C") || "").toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
+  let html = "";
+  validMembers.forEach(member => {
+    const regNo = getColVal(member, "B") || "";
+    const name = getColVal(member, "C") || "";
+    const phone = getColVal(member, "D") || "";
+    const address = getColVal(member, "E") || "";
+
+    html += `
+      <tr>
+        <td style="font-weight:700;">${regNo}</td>
+        <td>${name}</td>
+        <td>${phone}</td>
+        <td>${address}</td>
+        <td style="text-align:center;">
+          <button class="btn btn-outline" style="padding:4px 8px; font-size:0.8rem; margin-right:4px;" onclick="promptAdminPassword('DIR_EDIT', '${escapeJsString(regNo)}')">✏️ Edit</button>
+          <button class="btn btn-outline" style="padding:4px 8px; font-size:0.8rem; color:#ef4444; border-color:#ef4444;" onclick="promptAdminPassword('DIR_DELETE', '${escapeJsString(regNo)}')">🗑️</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function openDirAddMemberModal() {
+  document.getElementById("memberCrudTitle").innerHTML = "➕ Add New Member";
+  document.getElementById("txtMemOriginalRegNo").value = "";
+  document.getElementById("txtMemRegNo").value = "";
+  document.getElementById("txtMemName").value = "";
+  document.getElementById("txtMemPhone").value = "";
+  document.getElementById("txtMemAddress").value = "";
+  document.getElementById("memberCrudModal").style.display = "flex";
+}
+
+function openDirEditMemberModal(regNo) {
+  const member = state.members.find(m => getColVal(m, "B") === String(regNo));
+  if (!member) return;
+
+  document.getElementById("memberCrudTitle").innerHTML = "✏️ Edit Member";
+  document.getElementById("txtMemOriginalRegNo").value = regNo;
+  document.getElementById("txtMemRegNo").value = regNo;
+  document.getElementById("txtMemName").value = getColVal(member, "C") || "";
+  document.getElementById("txtMemPhone").value = getColVal(member, "D") || "";
+  document.getElementById("txtMemAddress").value = getColVal(member, "E") || "";
+  document.getElementById("memberCrudModal").style.display = "flex";
+}
+
+function closeDirMemberCrudModal() {
+  document.getElementById("memberCrudModal").style.display = "none";
+}
+
+function saveDirMemberCrud() {
+  const originalRegNo = document.getElementById("txtMemOriginalRegNo").value.trim();
+  const regNo = document.getElementById("txtMemRegNo").value.trim();
+  const name = document.getElementById("txtMemName").value.trim();
+  const phone = document.getElementById("txtMemPhone").value.trim();
+  const address = document.getElementById("txtMemAddress").value.trim();
+
+  if (!regNo || !name) {
+    alert("Register Number and Name are required.");
+    return;
+  }
+
+  // Editing existing member
+  if (originalRegNo) {
+    const idx = state.members.findIndex(m => getColVal(m, "B") === originalRegNo);
+    if (idx !== -1) {
+      if (originalRegNo !== regNo && state.members.some(m => getColVal(m, "B") === regNo)) {
+        alert(`Register number ${regNo} is already in use.`);
+        return;
+      }
+      setColVal(state.members[idx], "B", regNo);
+      setColVal(state.members[idx], "C", name);
+      setColVal(state.members[idx], "D", phone);
+      setColVal(state.members[idx], "E", address);
+    }
+  } else {
+    // Adding new member
+    if (state.members.some(m => getColVal(m, "B") === regNo)) {
+      alert(`Register number ${regNo} is already in use.`);
+      return;
+    }
+    const maxSl = state.members.reduce((max, m) => {
+      const a = parseInt(getColVal(m, "A"), 10);
+      return !isNaN(a) && a > max ? a : max;
+    }, 0);
+
+    state.members.push({
+      "A": String(maxSl + 1),
+      "B": regNo,
+      "C": name,
+      "D": phone,
+      "E": address
+    });
+  }
+
+  // 2-Way Sync with Administration (state.individual)
+  const idxIndiv = state.individual.findIndex((r, i) => i >= 4 && getColVal(r, "B") === (originalRegNo || regNo));
+  if (idxIndiv !== -1) {
+    setColVal(state.individual[idxIndiv], "B", regNo);
+    setColVal(state.individual[idxIndiv], "C", name);
+  } else {
+    state.individual.push({
+      "A": String(state.individual.length - 3),
+      "B": regNo,
+      "C": name,
+      "D": "",
+      "AM": "0.00"
+    });
+  }
+  localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+
+  // Save to correct local storage key
+  localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+  closeDirMemberCrudModal();
+  renderMemberDirectory();
+  populateMemberDropdown();
+  if (state.isAdminUnlocked) renderAdminMembersTable();
+}
+
+function deleteDirMemberCrud(regNo) {
+  if (confirm(`Are you sure you want to completely delete member ${regNo}?`)) {
+    state.members = state.members.filter(m => getColVal(m, "B") !== String(regNo));
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+    
+    // Sync deletion to Administration
+    state.individual = state.individual.filter(r => getColVal(r, "B") !== String(regNo));
+    localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+
+    renderMemberDirectory();
+    populateMemberDropdown();
+    if (state.isAdminUnlocked) renderAdminMembersTable();
+  }
+}
+
+// ----------------------------------------------------
+// 📥/📤 MEMBER DIRECTORY IMPORT/EXPORT FUNCTIONS
+// ----------------------------------------------------
+function exportMemberDirectoryCSV() {
+  try {
+    const validMembers = state.members.filter(row => {
+      const rn = getColVal(row, "B");
+      return rn && rn !== "Register No." && rn.toUpperCase() !== "REGISTER NO";
+    });
+
+    validMembers.sort((a, b) => {
+      const nameA = String(getColVal(a, "C") || "").toLowerCase();
+      const nameB = String(getColVal(b, "C") || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+
+    let csvContent = "\ufeff"; // BOM for UTF-8 Excel compatibility
+    csvContent += "Register No.,Name,Mobile,Address\n";
+
+    validMembers.forEach(member => {
+      const regNo = String(getColVal(member, "B") || "").replace(/"/g, '""');
+      const name = String(getColVal(member, "C") || "").replace(/"/g, '""');
+      const phone = String(getColVal(member, "D") || "").replace(/"/g, '""');
+      const address = String(getColVal(member, "E") || "").replace(/"/g, '""');
+
+      csvContent += `"${regNo}","${name}","${phone}","${address}"\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `St_Gregorios_Church_Members_Directory.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (err) {
+    alert("Export failed: " + err.message);
+  }
+}
+
+function importMemberDirectoryCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const text = e.target.result;
+      const lines = parseCSVText(text);
+      if (lines.length < 2) {
+        alert("The selected CSV file appears to be empty or has no header.");
+        return;
+      }
+
+      const headers = lines[0].map(h => h.trim().toLowerCase());
+      
+      const regIdx = headers.findIndex(h => h.includes("reg") || h.includes("member no") || h.includes("no."));
+      const nameIdx = headers.findIndex(h => h.includes("name") || h.includes("hof") || h.includes("head"));
+      const phoneIdx = headers.findIndex(h => h.includes("mob") || h.includes("phone") || h.includes("cell") || h.includes("contact"));
+      const addrIdx = headers.findIndex(h => h.includes("add") || h.includes("address") || h.includes("location") || h.includes("residence"));
+
+      if (regIdx === -1 || nameIdx === -1) {
+        alert("Could not identify 'Register No.' or 'Name' columns in CSV header. Please check headers: " + lines[0].join(", "));
+        return;
+      }
+
+      let importCount = 0;
+      let updateCount = 0;
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i];
+        if (row.length < 2) continue;
+
+        const regNo = row[regIdx] ? row[regIdx].trim() : "";
+        const name = row[nameIdx] ? row[nameIdx].trim() : "";
+        const phone = phoneIdx !== -1 && row[phoneIdx] ? row[phoneIdx].trim() : "";
+        const address = addrIdx !== -1 && row[addrIdx] ? row[addrIdx].trim() : "";
+
+        if (!regNo || !name) continue;
+        if (regNo === "Register No." || regNo.toUpperCase() === "REGISTER NO") continue;
+
+        const existingIdx = state.members.findIndex(m => getColVal(m, "B") === regNo);
+        if (existingIdx !== -1) {
+          setColVal(state.members[existingIdx], "C", name);
+          setColVal(state.members[existingIdx], "D", phone);
+          setColVal(state.members[existingIdx], "E", address);
+          updateCount++;
+        } else {
+          const maxSl = state.members.reduce((max, m) => {
+            const a = parseInt(getColVal(m, "A"), 10);
+            return !isNaN(a) && a > max ? a : max;
+          }, 0);
+
+          state.members.push({
+            "A": String(maxSl + 1),
+            "B": regNo,
+            "C": name,
+            "D": phone,
+            "E": address
+          });
+          importCount++;
+        }
+
+        const idxIndiv = state.individual.findIndex((r, idx) => idx >= 4 && getColVal(r, "B") === regNo);
+        if (idxIndiv !== -1) {
+          setColVal(state.individual[idxIndiv], "C", name);
+        } else {
+          state.individual.push({
+            "A": String(state.individual.length - 3),
+            "B": regNo,
+            "C": name,
+            "D": "",
+            "AM": "0.00"
+          });
+        }
+      }
+
+      localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+      localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+      if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+
+      renderMemberDirectory();
+      populateMemberDropdown();
+      if (state.isAdminUnlocked) renderAdminMembersTable();
+
+      alert(`✅ CSV Import Complete!\n- Imported ${importCount} new members\n- Updated ${updateCount} existing member profiles.`);
+    } catch(err) {
+      alert("Error parsing CSV: " + err.message);
+    }
+  };
+  reader.readAsText(file, "UTF-8");
+  event.target.value = "";
+}
+
+function parseCSVText(text) {
+  const lines = [];
+  let row = [""];
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const next = text[i+1];
+
+    if (c === '"') {
+      if (inQuotes && next === '"') {
+        row[row.length - 1] += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (c === ',' && !inQuotes) {
+      row.push("");
+    } else if ((c === '\r' || c === '\n') && !inQuotes) {
+      if (c === '\r' && next === '\n') i++;
+      lines.push(row);
+      row = [""];
+    } else {
+      row[row.length - 1] += c;
+    }
+  }
+  if (row.length > 1 || row[0] !== "") {
+    lines.push(row);
+  }
+  return lines;
 }
 
 

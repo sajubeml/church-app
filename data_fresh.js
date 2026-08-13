@@ -640,7 +640,41 @@ window.INITIAL_INDIVIDUAL = [
     "B": "2",
     "C": "Abraham.M.O",
     "AM": "",
-    "F": ""
+    "F": "",
+    "D": "",
+    "E": "",
+    "G": "",
+    "H": "",
+    "I": "",
+    "J": "",
+    "K": "",
+    "L": "",
+    "M": "",
+    "N": "",
+    "O": "",
+    "P": "",
+    "Q": "",
+    "R": "",
+    "S": "",
+    "T": "",
+    "U": "",
+    "V": "",
+    "W": "",
+    "X": "",
+    "Y": "",
+    "Z": "",
+    "AA": "",
+    "AB": "",
+    "AC": "",
+    "AD": "",
+    "AE": "",
+    "AF": "",
+    "AG": "",
+    "AH": "",
+    "AI": "",
+    "AJ": "",
+    "AK": "",
+    "AL": ""
   },
   {
     "A": "3",
@@ -648,7 +682,8 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Ajish K Abraham Dr.",
     "V": "",
     "W": "",
-    "AM": ""
+    "AM": "",
+    "Y": ""
   },
   {
     "A": "4",
@@ -670,7 +705,8 @@ window.INITIAL_INDIVIDUAL = [
     "M": "",
     "N": "",
     "Q": "",
-    "AM": ""
+    "AM": "",
+    "AF": ""
   },
   {
     "A": "6",
@@ -711,7 +747,9 @@ window.INITIAL_INDIVIDUAL = [
     "V": "",
     "W": "",
     "AK": "",
-    "AM": ""
+    "AM": "",
+    "P": "",
+    "Y": ""
   },
   {
     "A": "9",
@@ -783,13 +821,20 @@ window.INITIAL_INDIVIDUAL = [
     "K": "",
     "V": "",
     "AF": "",
-    "AM": ""
+    "AM": "",
+    "F": "",
+    "N": "",
+    "M": "",
+    "I": "",
+    "H": "",
+    "J": ""
   },
   {
     "A": "14",
     "B": "135",
     "C": "Binu Papachan",
-    "AM": ""
+    "AM": "",
+    "F": ""
   },
   {
     "A": "15",
@@ -860,7 +905,14 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Cherian K. M.",
     "V": "",
     "AK": "",
-    "AM": ""
+    "AM": "",
+    "E": "",
+    "G": "",
+    "I": "",
+    "K": "",
+    "H": "",
+    "J": "",
+    "Q": ""
   },
   {
     "A": "21",
@@ -883,7 +935,8 @@ window.INITIAL_INDIVIDUAL = [
     "P": "",
     "W": "",
     "AH": "",
-    "AM": ""
+    "AM": "",
+    "Y": ""
   },
   {
     "A": "23",
@@ -1201,7 +1254,8 @@ window.INITIAL_INDIVIDUAL = [
     "N": "",
     "V": "",
     "AK": "",
-    "AM": ""
+    "AM": "",
+    "F": ""
   },
   {
     "A": "Sl. No.",
@@ -1321,7 +1375,8 @@ window.INITIAL_INDIVIDUAL = [
     "B": "92",
     "C": "Mariamma Philipose",
     "V": "",
-    "AM": ""
+    "AM": "",
+    "F": ""
   },
   {
     "A": "57",
@@ -1400,7 +1455,8 @@ window.INITIAL_INDIVIDUAL = [
     "V": "",
     "W": "",
     "Y": "",
-    "AM": ""
+    "AM": "",
+    "P": ""
   },
   {
     "A": "63",
@@ -1523,7 +1579,9 @@ window.INITIAL_INDIVIDUAL = [
     "N": "",
     "V": "",
     "AK": "",
-    "AM": ""
+    "AM": "",
+    "Q": "",
+    "X": ""
   },
   {
     "A": "75",
@@ -1531,7 +1589,40 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Rajan Mathai",
     "N": "",
     "V": "",
-    "AM": ""
+    "AM": "",
+    "E": "",
+    "M": "",
+    "G": "",
+    "I": "",
+    "K": "",
+    "H": "",
+    "J": "",
+    "Q": "",
+    "F": "",
+    "D": "",
+    "L": "",
+    "O": "",
+    "P": "",
+    "R": "",
+    "S": "",
+    "T": "",
+    "U": "",
+    "W": "",
+    "X": "",
+    "Y": "",
+    "Z": "",
+    "AA": "",
+    "AB": "",
+    "AC": "",
+    "AD": "",
+    "AE": "",
+    "AF": "",
+    "AG": "",
+    "AH": "",
+    "AI": "",
+    "AJ": "",
+    "AK": "",
+    "AL": ""
   },
   {
     "A": "76",
@@ -1597,7 +1688,13 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Sabu K. Chacko",
     "F": "",
     "I": "",
-    "AM": ""
+    "AM": "",
+    "E": "",
+    "G": "",
+    "K": "",
+    "H": "",
+    "J": "",
+    "Q": ""
   },
   {
     "A": "83",
@@ -1661,7 +1758,9 @@ window.INITIAL_INDIVIDUAL = [
     "F": "",
     "V": "",
     "AH": "",
-    "AM": ""
+    "AM": "",
+    "AF": "",
+    "E": ""
   },
   {
     "A": "90",
@@ -1772,7 +1871,9 @@ window.INITIAL_INDIVIDUAL = [
     "P": "",
     "V": "",
     "W": "",
-    "AM": ""
+    "AM": "",
+    "F": "",
+    "Y": ""
   },
   {
     "A": "101",
@@ -1893,7 +1994,8 @@ window.INITIAL_INDIVIDUAL = [
     "P": "",
     "V": "",
     "W": "",
-    "AM": ""
+    "AM": "",
+    "E": ""
   },
   {
     "C": "GRAND TOTAL",
@@ -1954,7 +2056,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.82",
     "B": "Monthly Subscription ( Current Year)",
-    "C": "128600.00",
+    "C": "139800.00",
     "D": "RP-12.03 (b)",
     "E": "Salary to Watchman(Cemetry)",
     "F": "9400.00"
@@ -1970,7 +2072,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.16",
     "B": "Birthday Offerings",
-    "C": "17050.00",
+    "C": "18350.00",
     "D": "RP-12.02 (a)",
     "E": "Medical Allowance to Vicar",
     "F": "7502.00"
@@ -1978,7 +2080,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.17",
     "B": "Wedding Anniversary Offerings",
-    "C": "7000.00",
+    "C": "7500.00",
     "D": "RP-12.06",
     "E": "Medical Allowance to Sexton",
     "F": "2042.00"
@@ -1986,7 +2088,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.12",
     "B": "Orma Qurbana/Holy Qurbana",
-    "C": "2270.00",
+    "C": "2420.00",
     "D": "RP-12.02 (c)",
     "E": "Telephone Allowance to Vicar",
     "F": "500.00"
@@ -2026,7 +2128,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.61",
     "B": "Sunday School",
-    "C": "1700.00",
+    "C": "2200.00",
     "D": "RP-12.07",
     "E": "Kaimuthu to Thirumeni",
     "F": ""
@@ -2066,7 +2168,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-2.02",
     "B": "Donation General",
-    "C": "47290.00",
+    "C": "69790.00",
     "D": "RP- 16.11(c)",
     "E": "Elecricity Charges - Cemetry",
     "F": "148.00"
@@ -2074,15 +2176,15 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-2.02(a)",
     "B": "Donation General-chair & tables",
-    "C": "150270.00",
+    "C": "240620.00",
     "D": "RP- 16.08",
     "E": "Breakfast Expenses",
-    "F": "77168.00"
+    "F": "86374.00"
   },
   {
     "A": "RP-2.16",
     "B": "Donation-Breakfast",
-    "C": "93800.00",
+    "C": "110800.00",
     "D": "RP- 14.31(a)",
     "E": "Church Renovation Expenses",
     "F": ""
@@ -2093,7 +2195,7 @@ window.INITIAL_TRIAL_BALANCE = [
     "C": "",
     "D": "RP- 14.31",
     "E": "Maintenance of Church & Parsonage",
-    "F": "86126.00"
+    "F": "91641.00"
   },
   {
     "A": "RP-2.211",
@@ -2106,7 +2208,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.03",
     "B": "Kurishinthothi &",
-    "C": "35722.00",
+    "C": "44807.00",
     "D": "RP- 14.35",
     "E": "Maintenance of Cemetry",
     "F": "5490.00"
@@ -2114,10 +2216,10 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.04",
     "B": "Koodaram",
-    "C": "34601.00",
+    "C": "45761.00",
     "D": "RP-14.05",
     "E": "Postage",
-    "F": "2080.00"
+    "F": "2233.00"
   },
   {
     "A": "RP-3.05",
@@ -2125,12 +2227,12 @@ window.INITIAL_TRIAL_BALANCE = [
     "C": "3400.00",
     "D": "RP- 16.35",
     "E": "Canteen Expenses",
-    "F": "1700.00"
+    "F": "2538.00"
   },
   {
     "A": "RP-3.10",
     "B": "Kanicka Church",
-    "C": "125685.00",
+    "C": "137709.00",
     "D": "RP-14.06",
     "E": "Printing & Stationery",
     "F": "12504.00"
@@ -2138,7 +2240,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.13",
     "B": "Kanicka-Chapel",
-    "C": "2210.00",
+    "C": "3430.00",
     "D": "RP- 16.36",
     "E": "Cemetry Development",
     "F": "200500.00"
@@ -2146,7 +2248,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-2.15(a)",
     "B": "Auction Dues - Old",
-    "C": "77000.00",
+    "C": "91500.00",
     "D": "RP- 16.87",
     "E": "Grant - Sneha Bhavan",
     "F": ""
@@ -2157,7 +2259,7 @@ window.INITIAL_TRIAL_BALANCE = [
     "C": "",
     "D": "RP- 16.89",
     "E": "Gift & Mementoes",
-    "F": "4232.00"
+    "F": "4532.00"
   },
   {
     "A": "RP-2.15(b)",
@@ -2170,7 +2272,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-10.04/05",
     "B": "Catholicate Day & Recessa",
-    "C": "29450.00",
+    "C": "31250.00",
     "D": "RP- 16.67",
     "E": "OVBS",
     "F": ""
@@ -2178,7 +2280,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-10.08",
     "B": "Metropolitan Fund",
-    "C": "12550.00",
+    "C": "13750.00",
     "D": "RP- 16.65",
     "E": "Prayer Group",
     "F": ""
@@ -2186,7 +2288,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-10.13",
     "B": "Mission Sunday",
-    "C": "9150.00",
+    "C": "9550.00",
     "D": "RP- 14.03",
     "E": "Travelling Expenses",
     "F": ""
@@ -2194,7 +2296,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-10.15",
     "B": "Seminary Day",
-    "C": "5950.00",
+    "C": "6450.00",
     "D": "RP- 14.04",
     "E": "Audit Fee",
     "F": "35400.00"
@@ -2202,7 +2304,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-10.10",
     "B": "Priest Welfare Fund",
-    "C": "7100.00",
+    "C": "7400.00",
     "D": "RP- 13.02",
     "E": "Bank Charges",
     "F": "312.30"
@@ -2250,7 +2352,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.31",
     "B": "St. Thomas Feast",
-    "C": "400.00",
+    "C": "600.00",
     "D": "RP-19.21",
     "E": "Mission Sunday",
     "F": ""
@@ -2258,7 +2360,7 @@ window.INITIAL_TRIAL_BALANCE = [
   {
     "A": "RP-3.32",
     "B": "St. Mary's Feast",
-    "C": "900.00",
+    "C": "6100.00",
     "D": "RP-19.22",
     "E": "Sunday School Cover Collection",
     "F": ""

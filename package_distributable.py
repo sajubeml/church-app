@@ -97,16 +97,16 @@ def package_distributable():
 
     # 1. Full Release Package
     create_dist_package(
-        target_dir_name="St_Gregorios_Church_Accounting_v1.0",
-        zip_name="St_Gregorios_Church_Accounting_App_v1.0.zip",
+        target_dir_name="St_Gregorios_Church_Accounting_v9.0",
+        zip_name="St_Gregorios_Church_Accounting_App_v9.0.zip",
         data_file_source="data.js",
         readme_content=README_FULL_TEXT
     )
 
     # 2. Fresh Start 7-Day Trial Package
     create_dist_package(
-        target_dir_name="St_Gregorios_Church_Accounting_Fresh_Start",
-        zip_name="St_Gregorios_Church_Accounting_Fresh_Start_Trial.zip",
+        target_dir_name="St_Gregorios_Church_Accounting_Fresh_Start_v9.0",
+        zip_name="St_Gregorios_Church_Accounting_Fresh_Start_Trial_v9.0.zip",
         data_file_source="data_fresh.js" if os.path.exists("data_fresh.js") else "data.js",
         readme_content=README_FRESH_TEXT
     )

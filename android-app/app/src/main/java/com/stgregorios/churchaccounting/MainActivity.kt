@@ -117,6 +117,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        // Load the cloud-hosted version instead of local assets
         webView.loadUrl("file:///android_asset/index.html")
     }
 
@@ -135,6 +136,56 @@ class MainActivity : ComponentActivity() {
                     startActivity(shareIntent)
                 } catch (e: Exception) {
                     Toast.makeText(this@MainActivity, "Share Error: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        @JavascriptInterface
+        fun shareBase64File(base64Content: String, filename: String) {
+            runOnUiThread {
+                try {
+                    val bytes = android.util.Base64.decode(base64Content, android.util.Base64.DEFAULT)
+                    val exportDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: cacheDir
+                    if (!exportDir.exists()) exportDir.mkdirs()
+
+                    val exportFile = File(exportDir, filename)
+                    exportFile.writeBytes(bytes)
+
+                    try {
+                        val pubDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                        if (pubDownloads.exists() || pubDownloads.mkdirs()) {
+                            val pubFile = File(pubDownloads, filename)
+                            pubFile.writeBytes(bytes)
+                            MediaScannerConnection.scanFile(
+                                this@MainActivity,
+                                arrayOf(pubFile.absolutePath),
+                                arrayOf("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/pdf"),
+                                null
+                            )
+                        }
+                    } catch (e: Exception) { }
+
+                    val contentUri = androidx.core.content.FileProvider.getUriForFile(
+                        this@MainActivity,
+                        "${applicationContext.packageName}.fileprovider",
+                        exportFile
+                    )
+
+                    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "*/*"
+                        putExtra(Intent.EXTRA_STREAM, contentUri)
+                        putExtra(Intent.EXTRA_SUBJECT, filename)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+
+                    Toast.makeText(this@MainActivity, "📄 File exported: $filename", Toast.LENGTH_SHORT).show()
+
+                    val chooser = Intent.createChooser(sendIntent, "Open / Share File")
+                    chooser.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    startActivity(chooser)
+
+                } catch (e: Exception) {
+                    Toast.makeText(this@MainActivity, "Export Error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -202,6 +253,138 @@ class MainActivity : ComponentActivity() {
                 } catch (e: Exception) {
                     Toast.makeText(this@MainActivity, "Print Error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
+            }
+        }
+        
+        @JavascriptInterface
+        fun readAssetFile(filename: String): String {
+            return try {
+                assets.open(filename).bufferedReader().use { it.readText() }
+            } catch (e: Exception) {
+                "[]"
+            }
+        }
+        
+        // Native Database Bridge
+        @JavascriptInterface
+        fun fetchDatabaseState(): String {
+            return try {
+                val dbHelper = ChurchDatabaseHelper(this@MainActivity)
+                val db = dbHelper.readableDatabase
+                val cursor = db.rawQuery("SELECT * FROM cashbook", null)
+                val cashbookArray = org.json.JSONArray()
+                
+                if (cursor.moveToFirst()) {
+                    do {
+                        val rowObj = org.json.JSONObject()
+                        rowObj.put("A", cursor.getString(cursor.getColumnIndexOrThrow("date")))
+                        rowObj.put("B", cursor.getString(cursor.getColumnIndexOrThrow("receipt_no")))
+                        rowObj.put("C", cursor.getString(cursor.getColumnIndexOrThrow("reg_no")))
+                        rowObj.put("D", cursor.getString(cursor.getColumnIndexOrThrow("name_of_hof")))
+                        rowObj.put("E", cursor.getString(cursor.getColumnIndexOrThrow("receipt_acct_head")))
+                        rowObj.put("F", cursor.getString(cursor.getColumnIndexOrThrow("receipt_code")))
+                        rowObj.put("G", cursor.getString(cursor.getColumnIndexOrThrow("receipt_details")))
+                        rowObj.put("H", cursor.getDouble(cursor.getColumnIndexOrThrow("receipt_cash")))
+                        rowObj.put("I", cursor.getDouble(cursor.getColumnIndexOrThrow("receipt_bank")))
+                        rowObj.put("K", cursor.getString(cursor.getColumnIndexOrThrow("payment_date")))
+                        rowObj.put("L", cursor.getString(cursor.getColumnIndexOrThrow("payment_voucher_no")))
+                        rowObj.put("M", cursor.getString(cursor.getColumnIndexOrThrow("payment_acct_head")))
+                        rowObj.put("N", cursor.getString(cursor.getColumnIndexOrThrow("payment_code")))
+                        rowObj.put("O", cursor.getString(cursor.getColumnIndexOrThrow("payment_details")))
+                        rowObj.put("P", cursor.getDouble(cursor.getColumnIndexOrThrow("payment_cash")))
+                        rowObj.put("Q", cursor.getDouble(cursor.getColumnIndexOrThrow("payment_bank")))
+                        cashbookArray.put(rowObj)
+                    } while (cursor.moveToNext())
+                }
+                cursor.close()
+                db.close()
+                
+                val resultObj = org.json.JSONObject()
+                resultObj.put("cashbook", cashbookArray)
+                resultObj.toString()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                "{}"
+            }
+        }
+        
+        @JavascriptInterface
+        fun bulkSync(jsonPayload: String): Boolean {
+            return try {
+                val jsonArray = org.json.JSONArray(jsonPayload)
+                val dbHelper = ChurchDatabaseHelper(this@MainActivity)
+                val db = dbHelper.writableDatabase
+                db.beginTransaction()
+                try {
+                    db.execSQL("DELETE FROM cashbook")
+                    for (i in 0 until jsonArray.length()) {
+                        val obj = jsonArray.getJSONObject(i)
+                        val values = android.content.ContentValues().apply {
+                            put("date", obj.optString("A", ""))
+                            put("receipt_no", obj.optString("B", ""))
+                            put("reg_no", obj.optString("C", ""))
+                            put("name_of_hof", obj.optString("D", ""))
+                            put("receipt_acct_head", obj.optString("E", ""))
+                            put("receipt_code", obj.optString("F", ""))
+                            put("receipt_details", obj.optString("G", ""))
+                            put("receipt_cash", obj.optDouble("H", 0.0))
+                            put("receipt_bank", obj.optDouble("I", 0.0))
+                            put("payment_date", obj.optString("K", ""))
+                            put("payment_voucher_no", obj.optString("L", ""))
+                            put("payment_acct_head", obj.optString("M", ""))
+                            put("payment_code", obj.optString("N", ""))
+                            put("payment_details", obj.optString("O", ""))
+                            put("payment_cash", obj.optDouble("P", 0.0))
+                            put("payment_bank", obj.optDouble("Q", 0.0))
+                        }
+                        db.insert("cashbook", null, values)
+                    }
+                    db.setTransactionSuccessful()
+                } finally {
+                    db.endTransaction()
+                    db.close()
+                }
+                true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+        }
+        
+        @JavascriptInterface
+        fun saveTransaction(jsonPayload: String, isReceipt: Boolean): Boolean {
+            return try {
+                val obj = org.json.JSONObject(jsonPayload)
+                val dbHelper = ChurchDatabaseHelper(this@MainActivity)
+                val db = dbHelper.writableDatabase
+                
+                val values = android.content.ContentValues()
+                if (isReceipt) {
+                    values.put("date", obj.optString("date", ""))
+                    values.put("receipt_no", obj.optString("receipt_no", ""))
+                    values.put("reg_no", obj.optString("reg_no", ""))
+                    values.put("name_of_hof", obj.optString("name_of_hof", ""))
+                    values.put("receipt_acct_head", obj.optString("receipt_acct_head", ""))
+                    values.put("receipt_code", obj.optString("receipt_code", ""))
+                    values.put("receipt_details", obj.optString("receipt_details", ""))
+                    values.put("receipt_cash", obj.optDouble("receipt_cash", 0.0))
+                    values.put("receipt_bank", obj.optDouble("receipt_bank", 0.0))
+                } else {
+                    values.put("payment_date", obj.optString("payment_date", ""))
+                    values.put("payment_voucher_no", obj.optString("payment_voucher_no", ""))
+                    values.put("payment_acct_head", obj.optString("payment_acct_head", ""))
+                    values.put("payment_code", obj.optString("payment_code", ""))
+                    values.put("payment_details", obj.optString("payment_details", ""))
+                    values.put("payment_cash", obj.optDouble("payment_cash", 0.0))
+                    values.put("payment_bank", obj.optDouble("payment_bank", 0.0))
+                }
+                
+                db.insert("cashbook", null, values)
+                db.close()
+                true
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
             }
         }
     }

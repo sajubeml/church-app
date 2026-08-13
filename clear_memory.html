@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clearing Local Memory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 50px;">
+    <h2>Clearing old local memory...</h2>
+    <script>
+        // Wipe all local storage to destroy the duplicated rows stuck in the browser
+        localStorage.clear();
+        
+        // Add a timestamp to index.html to completely bypass HTML cache
+        setTimeout(function() {
+            window.location.href = "index.html?refresh=" + new Date().getTime();
+        }, 1500);
+    </script>
+</body>
+</html>

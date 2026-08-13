@@ -265,6 +265,11 @@
             <tfoot id="cashbookTfoot"></tfoot>
           </table>
         </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f1f5f9; border-radius:0 0 8px 8px;">
+          <button onclick="prevCbPage()" class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;">⬅️ Previous</button>
+          <span id="cbPageLabel" style="font-weight:700; font-size:0.85rem; color:#334155;">Page 1</span>
+          <button onclick="nextCbPage()" class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;">Next ➡️</button>
+        </div>
       </div>
     </div>
 
@@ -324,6 +329,11 @@
             <tbody id="indivTbody"></tbody>
             <tfoot id="indivTfoot"></tfoot>
           </table>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f1f5f9; border-radius:0 0 8px 8px;">
+          <button onclick="prevIndivPage()" class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;">⬅️ Previous</button>
+          <span id="indivPageLabel" style="font-weight:700; font-size:0.85rem; color:#334155;">Page 1</span>
+          <button onclick="nextIndivPage()" class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;">Next ➡️</button>
         </div>
       </div>
     </div>
@@ -470,6 +480,11 @@
               </tr>
             </tfoot>
           </table>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#f1f5f9; border-radius:0 0 8px 8px;">
+          <button onclick="prevCbPage()" class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;">⬅️ Previous</button>
+          <span id="cbPageLabel" style="font-weight:700; font-size:0.85rem; color:#334155;">Page 1</span>
+          <button onclick="nextCbPage()" class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;">Next ➡️</button>
         </div>
       </div>
 
@@ -877,7 +892,7 @@
     </div>
   </div>
 
-  <script src="data.js?v=3.6"></script>
-  <script src="app.js?v=3.6"></script>
+  <!-- Application Scripts -->
+  <script src="app_cloud_v10.js"></script>
 </body>
 </html>

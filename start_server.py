@@ -2,27 +2,235 @@
 St. Gregorios Orthodox Syrian Church, Mysuru
 --------------------------------------------
 Local Web HTTP Server (Python Native)
-Replaces start_server.ps1
+With SQLite Database Backend for Cloud Sync
+Replaces start_server.ps1 & backend_server.py
 """
 
 import http.server
 import socketserver
 import os
-import webbrowser
+import json
+import sqlite3
+import socket
 
 PORT = 8088
+DB_NAME = "church_data.db"
 
-import json
+def get_db_connection():
+    db_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), DB_NAME)
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_database():
+    """Auto-create SQLite tables if they don't exist."""
+    conn = get_db_connection()
+    conn.execute('''CREATE TABLE IF NOT EXISTS cashbook (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        receipt_no TEXT,
+        reg_no TEXT,
+        name_of_hof TEXT,
+        receipt_acct_head TEXT,
+        receipt_code TEXT,
+        receipt_details TEXT,
+        receipt_cash REAL,
+        receipt_bank REAL,
+        payment_date TEXT,
+        payment_voucher_no TEXT,
+        payment_acct_head TEXT,
+        payment_code TEXT,
+        payment_details TEXT,
+        payment_cash REAL,
+        payment_bank REAL
+    )''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS members (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        reg_no TEXT UNIQUE,
+        name TEXT,
+        address TEXT,
+        phone TEXT,
+        email TEXT,
+        status TEXT
+    )''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS individual_ledgers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT,
+        receipt_no TEXT,
+        reg_no TEXT,
+        name_of_hof TEXT,
+        acct_head TEXT,
+        code TEXT,
+        details TEXT,
+        cash_amount REAL,
+        bank_amount REAL
+    )''')
+    conn.execute('''CREATE TABLE IF NOT EXISTS account_heads (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        code TEXT UNIQUE,
+        title TEXT,
+        category TEXT
+    )''')
+    conn.commit()
+    conn.close()
+    print("[DB] SQLite database initialized successfully.")
 
 class ChurchHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
-        # Prevent caching during local dev
+        # Prevent caching and allow CORS for mobile Wi-Fi access
         self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.send_header('Pragma', 'no-cache')
         self.send_header('Expires', '0')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
 
+    def do_OPTIONS(self):
+        """Handle CORS preflight requests from mobile browsers."""
+        self.send_response(200)
+        self.end_headers()
+
+    def do_GET(self):
+        if self.path == '/api/data':
+            try:
+                conn = get_db_connection()
+
+                # Fetch Cashbook and map to frontend Excel keys (A, B, C...)
+                raw_cashbook = [dict(row) for row in conn.execute('SELECT * FROM cashbook').fetchall()]
+                cashbook = []
+                for row in raw_cashbook:
+                    cashbook.append({
+                        "A": row.get("date", ""),
+                        "B": row.get("receipt_no", ""),
+                        "C": row.get("reg_no", ""),
+                        "D": row.get("name_of_hof", ""),
+                        "E": row.get("receipt_acct_head", ""),
+                        "F": row.get("receipt_code", ""),
+                        "G": row.get("receipt_details", ""),
+                        "H": row.get("receipt_cash", ""),
+                        "I": row.get("receipt_bank", ""),
+                        "K": row.get("payment_date", ""),
+                        "L": row.get("payment_voucher_no", ""),
+                        "M": row.get("payment_acct_head", ""),
+                        "N": row.get("payment_code", ""),
+                        "O": row.get("payment_details", ""),
+                        "P": row.get("payment_cash", ""),
+                        "Q": row.get("payment_bank", "")
+                    })
+
+                # Fetch Members
+                members = [dict(row) for row in conn.execute('SELECT * FROM members').fetchall()]
+
+                # Fetch Account Heads
+                heads = [dict(row) for row in conn.execute('SELECT * FROM account_heads').fetchall()]
+
+                # Fetch Individual Ledgers
+                ledgers = [dict(row) for row in conn.execute('SELECT * FROM individual_ledgers').fetchall()]
+
+                conn.close()
+
+                data = {
+                    "cashbook": cashbook,
+                    "members": members,
+                    "accountHeads": heads,
+                    "individualLedgers": ledgers
+                }
+
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps(data).encode('utf-8'))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+            return
+
+        return super().do_GET()
+
     def do_POST(self):
+        if self.path == '/api/save_receipt' or self.path == '/api/save_payment':
+            length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(length).decode('utf-8')
+            try:
+                data = json.loads(body)
+                conn = get_db_connection()
+
+                if self.path == '/api/save_receipt':
+                    conn.execute('''
+                        INSERT INTO cashbook (
+                            date, receipt_no, reg_no, name_of_hof, receipt_acct_head, receipt_code, receipt_details, receipt_cash, receipt_bank
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ''', (
+                        data.get('date'), data.get('receipt_no'), data.get('reg_no'), data.get('name_of_hof'),
+                        data.get('receipt_acct_head'), data.get('receipt_code'), data.get('receipt_details'),
+                        data.get('receipt_cash', 0), data.get('receipt_bank', 0)
+                    ))
+                else:
+                    conn.execute('''
+                        INSERT INTO cashbook (
+                            payment_date, payment_voucher_no, payment_acct_head, payment_code, payment_details, payment_cash, payment_bank
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ''', (
+                        data.get('payment_date'), data.get('payment_voucher_no'),
+                        data.get('payment_acct_head'), data.get('payment_code'), data.get('payment_details'),
+                        data.get('payment_cash', 0), data.get('payment_bank', 0)
+                    ))
+
+                conn.commit()
+                conn.close()
+
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'status': 'ok'}).encode('utf-8'))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+            return
+
+        if self.path == '/api/bulk_import':
+            length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(length).decode('utf-8')
+            try:
+                cashbook_data = json.loads(body)
+                conn = get_db_connection()
+
+                # Clear existing cashbook
+                conn.execute('DELETE FROM cashbook')
+
+                # Insert all new rows
+                for row in cashbook_data:
+                    conn.execute('''
+                        INSERT INTO cashbook (
+                            date, receipt_no, reg_no, name_of_hof, receipt_acct_head, receipt_code, receipt_details, receipt_cash, receipt_bank,
+                            payment_date, payment_voucher_no, payment_acct_head, payment_code, payment_details, payment_cash, payment_bank
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    ''', (
+                        row.get("A", ""), row.get("B", ""), row.get("C", ""), row.get("D", ""),
+                        row.get("E", ""), row.get("F", ""), row.get("G", ""), row.get("H", 0), row.get("I", 0),
+                        row.get("K", ""), row.get("L", ""), row.get("M", ""), row.get("N", ""),
+                        row.get("O", ""), row.get("P", 0), row.get("Q", 0)
+                    ))
+
+                conn.commit()
+                conn.close()
+
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'status': 'ok', 'count': len(cashbook_data)}).encode('utf-8'))
+            except Exception as e:
+                self.send_response(500)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({"error": str(e)}).encode('utf-8'))
+            return
+
         if self.path == '/api/save_print':
             length = int(self.headers.get('Content-Length', 0))
             body = self.rfile.read(length).decode('utf-8')
@@ -63,8 +271,6 @@ class ChurchHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(str(e).encode('utf-8'))
             return
 
-import socket
-
 def get_local_ip():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -77,12 +283,16 @@ def get_local_ip():
 
 def run_server():
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+    # Initialize SQLite database tables
+    init_database()
+
     handler = ChurchHTTPRequestHandler
     local_ip = get_local_ip()
 
     port = PORT
     httpd = None
-    for try_port in [8090, 8888, 8088, 8095]:
+    for try_port in [8088, 8090, 8888, 8095]:
         try:
             httpd = socketserver.TCPServer(("", try_port), handler)
             port = try_port
@@ -98,6 +308,8 @@ def run_server():
     print("  ST. GREGORIOS CHURCH ACCOUNTING MOBILE SERVER  ")
     print(f"  Desktop PC URL  : http://localhost:{port}/")
     print(f"  Mobile Wi-Fi URL: http://{local_ip}:{port}/")
+    print("  Database API    : /api/data, /api/save_receipt,")
+    print("                    /api/save_payment, /api/bulk_import")
     print("==================================================")
     print("Connect phone to same Wi-Fi and open Mobile Wi-Fi URL.")
     print("Press Ctrl+C to stop the server.\n")

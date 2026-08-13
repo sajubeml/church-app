@@ -1,7 +1,7 @@
 import json
 import os
 
-base_dir = r"c:\saju_old pc\Church_App\anti_gravity"
+base_dir = os.path.dirname(os.path.abspath(__file__))
 data_export_dir = os.path.join(base_dir, "data_export")
 
 # 1. Load full datasets

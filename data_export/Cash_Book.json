@@ -2183,11 +2183,7 @@
     "E": "Seminary Day",
     "F": "RP-10.15",
     "G": "Seminary day",
-    "I": "100",
-    "R": "142197",
-    "S": "801058",
-    "T": "132275",
-    "U": "76829"
+    "I": "100"
   },
   {
     "A": "30-04-2026",
@@ -2197,11 +2193,7 @@
     "E": "Sunday School",
     "F": "RP-3.61",
     "G": "Sunday school",
-    "I": "100",
-    "R": "cash",
-    "S": "9922",
-    "T": "Bank",
-    "U": "724229"
+    "I": "100"
   },
   {
     "A": "01-05-2026",
@@ -3673,11 +3665,7 @@
     "E": "Birthday Offerings",
     "F": "RP-3.16",
     "G": "birthday",
-    "H": "200",
-    "R": "251444",
-    "S": "880605",
-    "T": "233779",
-    "U": "164503"
+    "H": "200"
   },
   {
     "A": "31-05-2026",
@@ -3685,11 +3673,7 @@
     "E": "Kanicka Church",
     "F": "RP-3.10",
     "G": "Kanicka on 31-5-26",
-    "H": "8060",
-    "R": "cash",
-    "S": "17665",
-    "T": "Bank",
-    "U": "716102"
+    "H": "8060"
   },
   {
     "A": "01-06-2026",
@@ -5153,11 +5137,7 @@
     "E": "Auction Dues - Old",
     "F": "RP-2.15(a)",
     "G": "Auction Dues - Old",
-    "I": "500",
-    "R": "331267",
-    "S": "1023423",
-    "T": "330734",
-    "U": "278171"
+    "I": "500"
   },
   {
     "A": "46203",
@@ -5166,11 +5146,7 @@
     "F": "RP-3.10",
     "G": "Kanicka on 29 & 30-6-26",
     "H": "730",
-    "O": "internal Audit done on 4-7-26",
-    "R": "cash",
-    "S": "533",
-    "T": "Bank",
-    "U": "745252"
+    "O": "internal Audit done on 4-7-26"
   },
   {
     "A": "02-07-2026",
@@ -6863,8 +6839,7 @@
     "E": "Monthly Subscription ( Current Year)",
     "F": "RP-3.82",
     "G": "apr26 to mar27",
-    "I": "2400",
-    "H": ""
+    "I": "2400"
   },
   {
     "A": "14-07-2026",
@@ -7355,18 +7330,764 @@
     "E": "Donation General-chair & tables",
     "F": "RP-2.02(a)",
     "G": "100 chairs",
-    "H": "",
     "I": "59000"
   },
   {
-    "A": "02-08-2026",
+    "A": "2026-08-03",
+    "B": "4283",
+    "C": "150",
+    "D": "Santhosh K. A.",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "part payment of 100 chairs",
+    "I": "10000"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Monthly Subscription ( Current Year)",
+    "F": "RP-3.82",
+    "G": "apr26 to mar27",
+    "H": "6000"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Catholicate Day & Recessa",
+    "F": "RP-10.04/05",
+    "G": "catholicate",
+    "H": "600"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Mission Sunday",
+    "F": "RP-10.13",
+    "G": "mission",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Priest Welfare Fund",
+    "F": "RP-10.10",
+    "G": "priest",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "H": "300"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Seminary Day",
+    "F": "RP-10.15",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Sunday School",
+    "F": "RP-3.61",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4285",
+    "C": "103",
+    "D": "Thampan V. K. Thomas",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "1 chair",
+    "H": "590"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4285",
+    "C": "103",
+    "D": "Thampan V. K. Thomas",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "G": "kunjumol",
+    "H": "300"
+  },
+  {
+    "A": "2026-08-03",
     "B": "4286",
-    "C": "",
-    "D": "",
     "E": "Kanika Prayer Group",
     "F": "RP-3.64",
     "G": "st thomas prayer group",
-    "H": "1270",
-    "I": "0"
+    "H": "1270"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Monthly Subscription ( Current Year)",
+    "F": "RP-3.82",
+    "G": "apr26 to nov26",
+    "I": "1600"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Catholicate Day & Recessa",
+    "F": "RP-10.04/05",
+    "G": "catholicate",
+    "I": "600"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Priest Welfare Fund",
+    "F": "RP-10.10",
+    "G": "priest",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "G": "metropolitan",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Seminary Day",
+    "F": "RP-10.15",
+    "G": "seminary",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Sunday School",
+    "F": "RP-3.61",
+    "G": "sunday school",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4288",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "on 27/9/26",
+    "I": "5000"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4289",
+    "E": "Kanicka Church",
+    "F": "RP-3.10",
+    "G": "2/8/26",
+    "H": "5104"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4290",
+    "C": "15",
+    "D": "Babu George",
+    "E": "Orma Qurbana/Holy Qurbana",
+    "F": "RP-3.12",
+    "G": "orma qurbana",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4290",
+    "C": "15",
+    "D": "Babu George",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "G": "liyanna libin",
+    "H": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4291",
+    "C": "118",
+    "D": "Varghese T Koshy",
+    "E": "Wedding Anniversary Offerings",
+    "F": "RP-3.17",
+    "H": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4292",
+    "C": "57",
+    "D": "Kochumon P. K.",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "H": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "4 chairs",
+    "I": "1800"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "I": "500"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Wedding Anniversary Offerings",
+    "F": "RP-3.17",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Mission Sunday",
+    "F": "RP-10.13",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "I": "300"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Seminary Day",
+    "F": "RP-10.15",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Monthly Subscription ( Current Year)",
+    "F": "RP-3.82",
+    "G": "apr26 to mar27",
+    "I": "2400"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Wedding Anniversary Offerings",
+    "F": "RP-3.17",
+    "G": "wedding",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Catholicate Day & Recessa",
+    "F": "RP-10.04/05",
+    "G": "catholicate",
+    "I": "600"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Mission Sunday",
+    "F": "RP-10.13",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Priest Welfare Fund",
+    "F": "RP-10.10",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "I": "300"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Seminary Day",
+    "F": "RP-10.15",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Sunday School",
+    "F": "RP-3.61",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "chair 2nos",
+    "I": "1200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4295",
+    "C": "57",
+    "D": "Kochumon P. K.",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "26/7/26",
+    "H": "2000"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4296",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4297",
+    "C": "NM",
+    "D": "NM NON Members",
+    "E": "Offerings for Ritual Articles : Candles, Oil, Kunturikkam",
+    "F": "RP-3.18",
+    "H": "1130"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4298",
+    "C": "2",
+    "D": "Abraham.M.O",
+    "E": "Donation General",
+    "F": "RP-2.02",
+    "G": "100nos Holy Qubana kramam by kitheem and Asheem Alexander",
+    "H": "19500"
+  },
+  {
+    "K": "2026-08-03",
+    "L": "174",
+    "M": "Maintenance of Church & Parsonage",
+    "N": "RP-14.31",
+    "O": "Rani church surrounding cleaning less salary advance 1000",
+    "P": "2150"
+  },
+  {
+    "K": "2026-08-03",
+    "L": "175",
+    "M": "Maintenance of Church & Parsonage",
+    "N": "RP-14.31",
+    "O": "wash room cleaning tp mary",
+    "P": "2000"
+  },
+  {
+    "K": "2026-08-02",
+    "L": "176",
+    "M": "Breakfast Expenses",
+    "N": "RP-16.08",
+    "O": "idly,sambar,tea cleaning and cups",
+    "P": "3986"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4299",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "for 9/8/26(300+2000)",
+    "I": "5000"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4300",
+    "E": "Koodaram",
+    "F": "RP-3.04",
+    "G": "koodaram",
+    "H": "6950"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4300",
+    "E": "Kurishinthothi &",
+    "F": "RP-3.03",
+    "G": "big kurishinthoti",
+    "H": "9085"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4300",
+    "E": "Koodaram",
+    "F": "RP-3.04",
+    "G": "wooden box",
+    "H": "4210"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4301",
+    "E": "Kanicka Church",
+    "F": "RP-3.10",
+    "G": "6/8/26",
+    "H": "1860"
+  },
+  {
+    "K": "2026-08-06",
+    "L": "177",
+    "M": "Canteen Expenses",
+    "N": "RP-16.35",
+    "O": "purchace of dry fruits to tirumeni vide bill",
+    "P": "838"
+  },
+  {
+    "K": "2026-08-06",
+    "L": "178",
+    "M": "Gift & Mementoes",
+    "N": "RP-16.89",
+    "O": "Flower bouquet for tirumeni",
+    "P": "300"
+  },
+  {
+    "A": "2026-08-07",
+    "B": "4302",
+    "C": "NM",
+    "D": "NM NON Members",
+    "E": "Donation General",
+    "F": "RP-2.02",
+    "G": "Chetan kumar & Merlin",
+    "H": "3000"
+  },
+  {
+    "A": "2026-08-07",
+    "B": "Vr179",
+    "E": "Excess Cash Deposited to Bank",
+    "F": "CD",
+    "G": "amount deposited to sb 40888",
+    "I": "50000"
+  },
+  {
+    "K": "2026-08-07",
+    "L": "179",
+    "M": "Excess Cash Deposited to Bank",
+    "N": "CD",
+    "O": "amount deposited to sb 40888",
+    "P": "50000"
+  },
+  {
+    "A": "2026-08-08",
+    "B": "4303",
+    "C": "135",
+    "D": "Binu Papachan",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "5 chairs",
+    "I": "3000"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4304",
+    "C": "22",
+    "D": "Prasad Chacko",
+    "E": "Monthly Subscription ( Current Year)",
+    "F": "RP-3.82",
+    "G": "Oct26 to mar27",
+    "I": "1200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4304",
+    "C": "22",
+    "D": "Prasad Chacko",
+    "E": "Sunday School",
+    "F": "RP-3.61",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4304",
+    "C": "22",
+    "D": "Prasad Chacko",
+    "E": "St. Thomas Feast",
+    "F": "RP-3.31",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4304",
+    "C": "22",
+    "D": "Prasad Chacko",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "2 chairs",
+    "I": "1200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4305",
+    "C": "92",
+    "D": "Mariamma Philipose",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "2 chairs",
+    "H": "1200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4306",
+    "C": "7",
+    "D": "Ajish K Abraham Dr.",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "H": "1000"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4307",
+    "C": "103",
+    "D": "Thampan V. K. Thomas",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "H": "200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4308",
+    "C": "150",
+    "D": "Santhosh K. A.",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "part payment of 100 chairs",
+    "I": "10000"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4309",
+    "C": "69",
+    "D": "Mathew K. T.",
+    "E": "Orma Qurbana/Holy Qurbana",
+    "F": "RP-3.12",
+    "H": "50"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4310",
+    "C": "27",
+    "D": "Daniel.J",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "H": "2000"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4311",
+    "C": "144",
+    "D": "George A. M.",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4312",
+    "C": "144",
+    "D": "George A. M.",
+    "E": "Kanicka Church",
+    "F": "RP-3.10",
+    "G": "on 9/8/26",
+    "H": "5060"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4313",
+    "C": "12",
+    "D": "Anil Thomas. Dr.",
+    "E": "Auction Dues - Old",
+    "F": "RP-2.15(a)",
+    "G": "old dues cleared",
+    "I": "9500"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4314",
+    "C": "15",
+    "D": "Babu George",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "H": "500"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4315",
+    "C": "97",
+    "D": "Shanthamma Thampi",
+    "E": "Auction Dues - Old",
+    "F": "RP-2.15(a)",
+    "G": "part payment",
+    "I": "5000"
+  },
+  {
+    "K": "2026-08-09",
+    "L": "180",
+    "M": "Postage",
+    "N": "RP-14.05",
+    "P": "153"
+  },
+  {
+    "K": "2026-08-09",
+    "L": "181",
+    "M": "Maintenance of Church & Parsonage",
+    "N": "RP-14.31",
+    "O": "corporation waste collector",
+    "P": "1000"
+  },
+  {
+    "K": "2026-08-09",
+    "L": "182",
+    "M": "Maintenance of Church & Parsonage",
+    "N": "RP-14.31",
+    "O": "switch box vide bill",
+    "P": "365"
+  },
+  {
+    "K": "2026-08-09",
+    "L": "183",
+    "M": "Breakfast Expenses",
+    "N": "RP-16.08",
+    "O": "on 9/8/26",
+    "P": "5220"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4316",
+    "E": "Kanicka-Chapel",
+    "F": "RP-3.13",
+    "G": "7/8/26",
+    "H": "1220"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4317",
+    "C": "53",
+    "D": "Wilsy Joseph",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "4 chairs",
+    "I": "2360.00"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4318",
+    "C": "165",
+    "D": "Sinoy Kuriakose",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "Special qurbana 15/8/26",
+    "I": "1000"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4319",
+    "C": "17",
+    "D": "Saju Jacob",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "Palchor",
+    "H": "500"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4320",
+    "C": "17",
+    "D": "Saju Jacob",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "2/8/26",
+    "H": "4500"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4321",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "9/8/26",
+    "I": "500"
+  },
+  {
+    "A": "2026-07-30",
+    "B": "4282",
+    "C": "2",
+    "D": "Abraham.M.O",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "100 chairs",
+    "I": "59000"
   }
 ]

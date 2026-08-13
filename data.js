@@ -2188,11 +2188,7 @@ window.CHURCH_DATA = {
     "E": "Seminary Day",
     "F": "RP-10.15",
     "G": "Seminary day",
-    "I": "100",
-    "R": "142197",
-    "S": "801058",
-    "T": "132275",
-    "U": "76829"
+    "I": "100"
   },
   {
     "A": "30-04-2026",
@@ -2202,11 +2198,7 @@ window.CHURCH_DATA = {
     "E": "Sunday School",
     "F": "RP-3.61",
     "G": "Sunday school",
-    "I": "100",
-    "R": "cash",
-    "S": "9922",
-    "T": "Bank",
-    "U": "724229"
+    "I": "100"
   },
   {
     "A": "01-05-2026",
@@ -3678,11 +3670,7 @@ window.CHURCH_DATA = {
     "E": "Birthday Offerings",
     "F": "RP-3.16",
     "G": "birthday",
-    "H": "200",
-    "R": "251444",
-    "S": "880605",
-    "T": "233779",
-    "U": "164503"
+    "H": "200"
   },
   {
     "A": "31-05-2026",
@@ -3690,11 +3678,7 @@ window.CHURCH_DATA = {
     "E": "Kanicka Church",
     "F": "RP-3.10",
     "G": "Kanicka on 31-5-26",
-    "H": "8060",
-    "R": "cash",
-    "S": "17665",
-    "T": "Bank",
-    "U": "716102"
+    "H": "8060"
   },
   {
     "A": "01-06-2026",
@@ -5158,11 +5142,7 @@ window.CHURCH_DATA = {
     "E": "Auction Dues - Old",
     "F": "RP-2.15(a)",
     "G": "Auction Dues - Old",
-    "I": "500",
-    "R": "331267",
-    "S": "1023423",
-    "T": "330734",
-    "U": "278171"
+    "I": "500"
   },
   {
     "A": "46203",
@@ -5171,11 +5151,7 @@ window.CHURCH_DATA = {
     "F": "RP-3.10",
     "G": "Kanicka on 29 & 30-6-26",
     "H": "730",
-    "O": "internal Audit done on 4-7-26",
-    "R": "cash",
-    "S": "533",
-    "T": "Bank",
-    "U": "745252"
+    "O": "internal Audit done on 4-7-26"
   },
   {
     "A": "02-07-2026",
@@ -6868,8 +6844,7 @@ window.CHURCH_DATA = {
     "E": "Monthly Subscription ( Current Year)",
     "F": "RP-3.82",
     "G": "apr26 to mar27",
-    "I": "2400",
-    "H": ""
+    "I": "2400"
   },
   {
     "A": "14-07-2026",
@@ -7360,21 +7335,756 @@ window.CHURCH_DATA = {
     "E": "Donation General-chair & tables",
     "F": "RP-2.02(a)",
     "G": "100 chairs",
-    "H": "",
     "I": "59000"
   },
   {
-    "A": "02-08-2026",
+    "A": "2026-08-03",
+    "B": "4283",
+    "C": "150",
+    "D": "Santhosh K. A.",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "part payment of 100 chairs",
+    "I": "10000"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Monthly Subscription ( Current Year)",
+    "F": "RP-3.82",
+    "G": "apr26 to mar27",
+    "H": "6000"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Catholicate Day & Recessa",
+    "F": "RP-10.04/05",
+    "G": "catholicate",
+    "H": "600"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Mission Sunday",
+    "F": "RP-10.13",
+    "G": "mission",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Priest Welfare Fund",
+    "F": "RP-10.10",
+    "G": "priest",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "H": "300"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Seminary Day",
+    "F": "RP-10.15",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4284",
+    "C": "26",
+    "D": "Cherian K. M.",
+    "E": "Sunday School",
+    "F": "RP-3.61",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4285",
+    "C": "103",
+    "D": "Thampan V. K. Thomas",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "1 chair",
+    "H": "590"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4285",
+    "C": "103",
+    "D": "Thampan V. K. Thomas",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "G": "kunjumol",
+    "H": "300"
+  },
+  {
+    "A": "2026-08-03",
     "B": "4286",
-    "C": "",
-    "D": "",
     "E": "Kanika Prayer Group",
     "F": "RP-3.64",
     "G": "st thomas prayer group",
-    "H": "1270",
-    "I": "0"
-  }
-],
+    "H": "1270"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Monthly Subscription ( Current Year)",
+    "F": "RP-3.82",
+    "G": "apr26 to nov26",
+    "I": "1600"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Catholicate Day & Recessa",
+    "F": "RP-10.04/05",
+    "G": "catholicate",
+    "I": "600"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Priest Welfare Fund",
+    "F": "RP-10.10",
+    "G": "priest",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "G": "metropolitan",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Seminary Day",
+    "F": "RP-10.15",
+    "G": "seminary",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4287",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Sunday School",
+    "F": "RP-3.61",
+    "G": "sunday school",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4288",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "on 27/9/26",
+    "I": "5000"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4289",
+    "E": "Kanicka Church",
+    "F": "RP-3.10",
+    "G": "2/8/26",
+    "H": "5104"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4290",
+    "C": "15",
+    "D": "Babu George",
+    "E": "Orma Qurbana/Holy Qurbana",
+    "F": "RP-3.12",
+    "G": "orma qurbana",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4290",
+    "C": "15",
+    "D": "Babu George",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "G": "liyanna libin",
+    "H": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4291",
+    "C": "118",
+    "D": "Varghese T Koshy",
+    "E": "Wedding Anniversary Offerings",
+    "F": "RP-3.17",
+    "H": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4292",
+    "C": "57",
+    "D": "Kochumon P. K.",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "H": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "4 chairs",
+    "I": "1800"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "I": "500"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Wedding Anniversary Offerings",
+    "F": "RP-3.17",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Mission Sunday",
+    "F": "RP-10.13",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "I": "300"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4293",
+    "C": "93",
+    "D": "Biju T. Mathew",
+    "E": "Seminary Day",
+    "F": "RP-10.15",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Monthly Subscription ( Current Year)",
+    "F": "RP-3.82",
+    "G": "apr26 to mar27",
+    "I": "2400"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Wedding Anniversary Offerings",
+    "F": "RP-3.17",
+    "G": "wedding",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Catholicate Day & Recessa",
+    "F": "RP-10.04/05",
+    "G": "catholicate",
+    "I": "600"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Mission Sunday",
+    "F": "RP-10.13",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Priest Welfare Fund",
+    "F": "RP-10.10",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "I": "300"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Seminary Day",
+    "F": "RP-10.15",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Sunday School",
+    "F": "RP-3.61",
+    "I": "100"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4294",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "chair 2nos",
+    "I": "1200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4295",
+    "C": "57",
+    "D": "Kochumon P. K.",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "26/7/26",
+    "H": "2000"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4296",
+    "C": "60",
+    "D": "Sabu K. Chacko",
+    "E": "Metropolitan Fund",
+    "F": "RP-10.08",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4297",
+    "C": "NM",
+    "D": "NM NON Members",
+    "E": "Offerings for Ritual Articles : Candles, Oil, Kunturikkam",
+    "F": "RP-3.18",
+    "H": "1130"
+  },
+  {
+    "A": "2026-08-03",
+    "B": "4298",
+    "C": "2",
+    "D": "Abraham.M.O",
+    "E": "Donation General",
+    "F": "RP-2.02",
+    "G": "100nos Holy Qubana kramam by kitheem and Asheem Alexander",
+    "H": "19500"
+  },
+  {
+    "K": "2026-08-03",
+    "L": "174",
+    "M": "Maintenance of Church & Parsonage",
+    "N": "RP-14.31",
+    "O": "Rani church surrounding cleaning less salary advance 1000",
+    "P": "2150"
+  },
+  {
+    "K": "2026-08-03",
+    "L": "175",
+    "M": "Maintenance of Church & Parsonage",
+    "N": "RP-14.31",
+    "O": "wash room cleaning tp mary",
+    "P": "2000"
+  },
+  {
+    "K": "2026-08-02",
+    "L": "176",
+    "M": "Breakfast Expenses",
+    "N": "RP-16.08",
+    "O": "idly,sambar,tea cleaning and cups",
+    "P": "3986"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4299",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "for 9/8/26(300+2000)",
+    "I": "5000"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4300",
+    "E": "Koodaram",
+    "F": "RP-3.04",
+    "G": "koodaram",
+    "H": "6950"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4300",
+    "E": "Kurishinthothi &",
+    "F": "RP-3.03",
+    "G": "big kurishinthoti",
+    "H": "9085"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4300",
+    "E": "Koodaram",
+    "F": "RP-3.04",
+    "G": "wooden box",
+    "H": "4210"
+  },
+  {
+    "A": "2026-08-06",
+    "B": "4301",
+    "E": "Kanicka Church",
+    "F": "RP-3.10",
+    "G": "6/8/26",
+    "H": "1860"
+  },
+  {
+    "K": "2026-08-06",
+    "L": "177",
+    "M": "Canteen Expenses",
+    "N": "RP-16.35",
+    "O": "purchace of dry fruits to tirumeni vide bill",
+    "P": "838"
+  },
+  {
+    "K": "2026-08-06",
+    "L": "178",
+    "M": "Gift & Mementoes",
+    "N": "RP-16.89",
+    "O": "Flower bouquet for tirumeni",
+    "P": "300"
+  },
+  {
+    "A": "2026-08-07",
+    "B": "4302",
+    "C": "NM",
+    "D": "NM NON Members",
+    "E": "Donation General",
+    "F": "RP-2.02",
+    "G": "Chetan kumar & Merlin",
+    "H": "3000"
+  },
+  {
+    "A": "2026-08-07",
+    "B": "Vr179",
+    "E": "Excess Cash Deposited to Bank",
+    "F": "CD",
+    "G": "amount deposited to sb 40888",
+    "I": "50000"
+  },
+  {
+    "K": "2026-08-07",
+    "L": "179",
+    "M": "Excess Cash Deposited to Bank",
+    "N": "CD",
+    "O": "amount deposited to sb 40888",
+    "P": "50000"
+  },
+  {
+    "A": "2026-08-08",
+    "B": "4303",
+    "C": "135",
+    "D": "Binu Papachan",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "5 chairs",
+    "I": "3000"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4304",
+    "C": "22",
+    "D": "Prasad Chacko",
+    "E": "Monthly Subscription ( Current Year)",
+    "F": "RP-3.82",
+    "G": "Oct26 to mar27",
+    "I": "1200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4304",
+    "C": "22",
+    "D": "Prasad Chacko",
+    "E": "Sunday School",
+    "F": "RP-3.61",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4304",
+    "C": "22",
+    "D": "Prasad Chacko",
+    "E": "St. Thomas Feast",
+    "F": "RP-3.31",
+    "I": "200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4304",
+    "C": "22",
+    "D": "Prasad Chacko",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "2 chairs",
+    "I": "1200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4305",
+    "C": "92",
+    "D": "Mariamma Philipose",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "2 chairs",
+    "H": "1200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4306",
+    "C": "7",
+    "D": "Ajish K Abraham Dr.",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "H": "1000"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4307",
+    "C": "103",
+    "D": "Thampan V. K. Thomas",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "H": "200"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4308",
+    "C": "150",
+    "D": "Santhosh K. A.",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "part payment of 100 chairs",
+    "I": "10000"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4309",
+    "C": "69",
+    "D": "Mathew K. T.",
+    "E": "Orma Qurbana/Holy Qurbana",
+    "F": "RP-3.12",
+    "H": "50"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4310",
+    "C": "27",
+    "D": "Daniel.J",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "H": "2000"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4311",
+    "C": "144",
+    "D": "George A. M.",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "H": "100"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4312",
+    "C": "144",
+    "D": "George A. M.",
+    "E": "Kanicka Church",
+    "F": "RP-3.10",
+    "G": "on 9/8/26",
+    "H": "5060"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4313",
+    "C": "12",
+    "D": "Anil Thomas. Dr.",
+    "E": "Auction Dues - Old",
+    "F": "RP-2.15(a)",
+    "G": "old dues cleared",
+    "I": "9500"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4314",
+    "C": "15",
+    "D": "Babu George",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "H": "500"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4315",
+    "C": "97",
+    "D": "Shanthamma Thampi",
+    "E": "Auction Dues - Old",
+    "F": "RP-2.15(a)",
+    "G": "part payment",
+    "I": "5000"
+  },
+  {
+    "K": "2026-08-09",
+    "L": "180",
+    "M": "Postage",
+    "N": "RP-14.05",
+    "P": "153"
+  },
+  {
+    "K": "2026-08-09",
+    "L": "181",
+    "M": "Maintenance of Church & Parsonage",
+    "N": "RP-14.31",
+    "O": "corporation waste collector",
+    "P": "1000"
+  },
+  {
+    "K": "2026-08-09",
+    "L": "182",
+    "M": "Maintenance of Church & Parsonage",
+    "N": "RP-14.31",
+    "O": "switch box vide bill",
+    "P": "365"
+  },
+  {
+    "K": "2026-08-09",
+    "L": "183",
+    "M": "Breakfast Expenses",
+    "N": "RP-16.08",
+    "O": "on 9/8/26",
+    "P": "5220"
+  },
+  {
+    "A": "2026-08-09",
+    "B": "4316",
+    "E": "Kanicka-Chapel",
+    "F": "RP-3.13",
+    "G": "7/8/26",
+    "H": "1220"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4317",
+    "C": "53",
+    "D": "Wilsy Joseph",
+    "E": "Donation General-chair & tables",
+    "F": "RP-2.02(a)",
+    "G": "4 chairs",
+    "I": "2360.00"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4318",
+    "C": "165",
+    "D": "Sinoy Kuriakose",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "Special qurbana 15/8/26",
+    "I": "1000"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4319",
+    "C": "17",
+    "D": "Saju Jacob",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "Palchor",
+    "H": "500"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4320",
+    "C": "17",
+    "D": "Saju Jacob",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "2/8/26",
+    "H": "4500"
+  },
+  {
+    "A": "2026-08-10",
+    "B": "4321",
+    "C": "86",
+    "D": "Rajan Mathai",
+    "E": "Donation-Breakfast",
+    "F": "RP-2.16",
+    "G": "9/8/26",
+    "I": "500"
+  }],
   individual: [
   {
     "A": "St. Gregorios Orthodox Syrian Church and Pilgrim Centre"
@@ -7446,8 +8156,42 @@ window.CHURCH_DATA = {
     "A": "2",
     "B": "2",
     "C": "Abraham.M.O",
-    "AM": "59000",
-    "F": "59000"
+    "AM": "78500.00",
+    "F": "78500",
+    "D": "",
+    "E": "",
+    "G": "",
+    "H": "",
+    "I": "",
+    "J": "",
+    "K": "",
+    "L": "",
+    "M": "",
+    "N": "",
+    "O": "",
+    "P": "",
+    "Q": "",
+    "R": "",
+    "S": "",
+    "T": "",
+    "U": "",
+    "V": "",
+    "W": "",
+    "X": "",
+    "Y": "",
+    "Z": "",
+    "AA": "",
+    "AB": "",
+    "AC": "",
+    "AD": "",
+    "AE": "",
+    "AF": "",
+    "AG": "",
+    "AH": "",
+    "AI": "",
+    "AJ": "",
+    "AK": "",
+    "AL": ""
   },
   {
     "A": "3",
@@ -7455,7 +8199,8 @@ window.CHURCH_DATA = {
     "C": "Ajish K Abraham Dr.",
     "V": "2000",
     "W": "1000",
-    "AM": "3000"
+    "AM": "4000",
+    "Y": "1000"
   },
   {
     "A": "4",
@@ -7477,7 +8222,8 @@ window.CHURCH_DATA = {
     "M": "500",
     "N": "500",
     "Q": "900",
-    "AM": "19500"
+    "AM": "29000",
+    "AF": "9500"
   },
   {
     "A": "6",
@@ -7513,12 +8259,14 @@ window.CHURCH_DATA = {
     "I": "300",
     "J": "300",
     "K": "300",
-    "N": "500",
+    "N": "700",
     "Q": "300",
     "V": "1000",
     "W": "500",
     "AK": "4000",
-    "AM": "14150"
+    "AM": "14950",
+    "P": "100",
+    "Y": "500"
   },
   {
     "A": "9",
@@ -7590,13 +8338,20 @@ window.CHURCH_DATA = {
     "K": "500",
     "V": "5000",
     "AF": "300",
-    "AM": "8800"
+    "AM": "12000",
+    "F": "1800",
+    "N": "500",
+    "M": "200",
+    "I": "200",
+    "H": "300",
+    "J": "200"
   },
   {
     "A": "14",
     "B": "135",
     "C": "Binu Papachan",
-    "AM": "0"
+    "AM": "3000",
+    "F": "3000"
   },
   {
     "A": "15",
@@ -7667,7 +8422,14 @@ window.CHURCH_DATA = {
     "C": "Cherian K. M.",
     "V": "500",
     "AK": "12000",
-    "AM": "12500"
+    "AM": "19800",
+    "E": "6000",
+    "G": "600",
+    "I": "100",
+    "K": "100",
+    "H": "300",
+    "J": "100",
+    "Q": "100"
   },
   {
     "A": "21",
@@ -7690,7 +8452,8 @@ window.CHURCH_DATA = {
     "P": "50",
     "W": "500",
     "AH": "1400",
-    "AM": "6500"
+    "AM": "8500",
+    "Y": "2000"
   },
   {
     "A": "23",
@@ -7730,7 +8493,7 @@ window.CHURCH_DATA = {
     "B": "144",
     "C": "George A. M.",
     "D": "Apr 26 to march 27",
-    "E": "2400",
+    "E": "7460",
     "F": "600",
     "G": "600",
     "H": "300",
@@ -7738,10 +8501,10 @@ window.CHURCH_DATA = {
     "J": "100",
     "K": "100",
     "M": "200",
-    "N": "100",
+    "N": "200",
     "Q": "100",
     "W": "500",
-    "AM": "5100"
+    "AM": "10260"
   },
   {
     "A": "27",
@@ -8005,10 +8768,11 @@ window.CHURCH_DATA = {
     "A": "49",
     "B": "57",
     "C": "Kochumon P. K.",
-    "N": "400",
+    "N": "600",
     "V": "500",
     "AK": "15000",
-    "AM": "15900"
+    "AM": "18100",
+    "F": "2000"
   },
   {
     "A": "Sl. No.",
@@ -8128,7 +8892,8 @@ window.CHURCH_DATA = {
     "B": "92",
     "C": "Mariamma Philipose",
     "V": "500",
-    "AM": "500"
+    "AM": "1700",
+    "F": "1200"
   },
   {
     "A": "57",
@@ -8207,7 +8972,8 @@ window.CHURCH_DATA = {
     "V": "1000",
     "W": "500",
     "Y": "500",
-    "AM": "8500"
+    "AM": "8550",
+    "P": "50"
   },
   {
     "A": "63",
@@ -8319,8 +9085,8 @@ window.CHURCH_DATA = {
     "B": "22",
     "C": "Prasad Chacko",
     "D": "apr26 to sept26",
-    "E": "1200",
-    "F": "3000",
+    "E": "2400",
+    "F": "4200",
     "G": "600",
     "H": "300",
     "I": "100",
@@ -8330,7 +9096,9 @@ window.CHURCH_DATA = {
     "N": "500",
     "V": "1000",
     "AK": "4400",
-    "AM": "11400"
+    "AM": "14200",
+    "Q": "200",
+    "X": "200"
   },
   {
     "A": "75",
@@ -8338,7 +9106,40 @@ window.CHURCH_DATA = {
     "C": "Rajan Mathai",
     "N": "500",
     "V": "1100",
-    "AM": "1600"
+    "AM": "11600.00",
+    "E": "2400",
+    "M": "100",
+    "G": "600",
+    "I": "100",
+    "K": "100",
+    "H": "300",
+    "J": "100",
+    "Q": "100",
+    "F": "1200",
+    "D": "",
+    "L": "",
+    "O": "",
+    "P": "",
+    "R": "",
+    "S": "",
+    "T": "",
+    "U": "",
+    "W": "",
+    "X": "",
+    "Y": "",
+    "Z": "",
+    "AA": "",
+    "AB": "",
+    "AC": "",
+    "AD": "",
+    "AE": "",
+    "AF": "",
+    "AG": "",
+    "AH": "",
+    "AI": "",
+    "AJ": "",
+    "AK": "5000",
+    "AL": ""
   },
   {
     "A": "76",
@@ -8402,9 +9203,15 @@ window.CHURCH_DATA = {
     "A": "82",
     "B": "60",
     "C": "Sabu K. Chacko",
-    "F": "2360",
+    "F": "7360",
     "I": "200",
-    "AM": "2560"
+    "AM": "10360",
+    "E": "1600",
+    "G": "600",
+    "K": "100",
+    "H": "300",
+    "J": "100",
+    "Q": "100"
   },
   {
     "A": "83",
@@ -8448,12 +9255,12 @@ window.CHURCH_DATA = {
     "B": "150",
     "C": "Santhosh K. A.",
     "E": "2400",
-    "F": "30000",
+    "F": "50000",
     "L": "1200",
     "M": "100",
     "N": "100",
     "V": "500",
-    "AM": "34300"
+    "AM": "54300"
   },
   {
     "A": "88",
@@ -8468,7 +9275,9 @@ window.CHURCH_DATA = {
     "F": "3000",
     "V": "500",
     "AH": "5000",
-    "AM": "8500"
+    "AM": "14720",
+    "AF": "5000",
+    "E": "1220"
   },
   {
     "A": "90",
@@ -8575,11 +9384,13 @@ window.CHURCH_DATA = {
     "B": "103",
     "C": "Thampan V. K. Thomas",
     "G": "600",
-    "N": "1000",
+    "N": "1300",
     "P": "100",
     "V": "500",
     "W": "500",
-    "AM": "2700"
+    "AM": "3790",
+    "F": "590",
+    "Y": "200"
   },
   {
     "A": "101",
@@ -8666,10 +9477,10 @@ window.CHURCH_DATA = {
     "B": "118",
     "C": "Varghese T Koshy",
     "F": "4800",
-    "M": "100",
+    "M": "300",
     "N": "200",
     "V": "300",
-    "AM": "5400"
+    "AM": "5600"
   },
   {
     "A": "108",
@@ -8695,12 +9506,13 @@ window.CHURCH_DATA = {
   {
     "B": "NM",
     "C": "NM NON Members",
-    "F": "5250",
+    "F": "8250",
     "I": "500",
     "P": "1000",
     "V": "25701",
     "W": "1000",
-    "AM": "33451"
+    "AM": "37581",
+    "E": "1130"
   },
   {
     "C": "GRAND TOTAL",
@@ -8743,485 +9555,521 @@ window.CHURCH_DATA = {
 ],
   trialBalance: [
   {
-    "A": "RP-1.01",
-    "B": "Opening Balance - Cash",
-    "C": "",
-    "D": "RP-19.31",
-    "E": "Salary Quota to Diocese(Vicar)",
-    "F": "200345.00"
+    "B1": "Trial Balance",
+    "D1": null
   },
   {
-    "A": "RP-1.02",
-    "B": "- Bank",
-    "C": "",
-    "D": "RP-12.03 (a)",
-    "E": "Salary to Sexton",
-    "F": "61800.00"
+    "C2": "upto 20/7/26",
+    "D2": null,
+    "F2": null
   },
   {
-    "A": "RP-3.82",
-    "B": "Monthly Subscription ( Current Year)",
-    "C": "128600.00",
-    "D": "RP-12.03 (b)",
-    "E": "Salary to Watchman(Cemetry)",
-    "F": "9400.00"
+    "A3": "Code",
+    "B3": "Account Head",
+    "C3": "Debit (Receipts)",
+    "D3": "Code",
+    "E3": "Account Head",
+    "F3": "Credit (Payments)"
   },
   {
-    "A": "RP-3.83",
-    "B": "Monthly Subscription ( Pervious Year)",
-    "C": "27500.00",
-    "D": "RP-12.03 (c)",
-    "E": "Salary to Ayah",
-    "F": "15780.00"
+    "A4": "RP-3.82",
+    "B4": "Monthly Subscription ( Current Year)",
+    "C4": "139800",
+    "D4": "RP-19.31",
+    "E4": "Salary Quota to Diocese(Vicar)",
+    "F4": "200345"
   },
   {
-    "A": "RP-3.16",
-    "B": "Birthday Offerings",
-    "C": "17050.00",
-    "D": "RP-12.02 (a)",
-    "E": "Medical Allowance to Vicar",
-    "F": "7502.00"
+    "A5": "RP-3.83",
+    "B5": "Monthly Subscription ( Pervious Year)",
+    "C5": "26300",
+    "D5": "RP-12.03 (a)",
+    "E5": "Salary to Sexton",
+    "F5": "61800"
   },
   {
-    "A": "RP-3.17",
-    "B": "Wedding Anniversary Offerings",
-    "C": "7000.00",
-    "D": "RP-12.06",
-    "E": "Medical Allowance to Sexton",
-    "F": "2042.00"
+    "A6": "RP-3.16",
+    "B6": "Birthday Offerings",
+    "C6": "18350",
+    "D6": "RP-12.03 (b)",
+    "E6": "Salary to Watchman(Cemetry)",
+    "F6": "9400"
   },
   {
-    "A": "RP-3.12",
-    "B": "Orma Qurbana/Holy Qurbana",
-    "C": "2270.00",
-    "D": "RP-12.02 (c)",
-    "E": "Telephone Allowance to Vicar",
-    "F": "500.00"
+    "A7": "RP-3.17",
+    "B7": "Wedding Anniversary Offerings",
+    "C7": "7500",
+    "D7": "RP-12.03 (c)",
+    "E7": "Salary to Ayah",
+    "F7": "6870"
   },
   {
-    "A": "RP-3.17 (a)",
-    "B": "House Blessing",
-    "C": "1500.00",
-    "D": "RP-12.02(d)",
-    "E": "Local Travelling Allowance to Vicar",
-    "F": "2500.00"
+    "A8": "RP-3.12",
+    "B8": "Orma Qurbana/Holy Qurbana",
+    "C8": "2420",
+    "D8": "RP-12.02 (a)",
+    "E8": "Medical Allowance to Vicar",
+    "F8": "7502"
   },
   {
-    "A": "RP-2.14",
-    "B": "Marriage Bann",
-    "C": "",
-    "D": "RP-12.02(e)",
-    "E": "Annual Travelling Allowance to Vicar",
-    "F": ""
+    "A9": "RP-3.17 (a)",
+    "B9": "House Blessing",
+    "C9": "1500",
+    "D9": "RP-12.06",
+    "E9": "Medical Allowance to Sexton",
+    "F9": "2042"
   },
   {
-    "A": "RP-3.14",
-    "B": "Baptism",
-    "C": "2500.00",
-    "D": "RP-12.02(f)",
-    "E": "Leave Salary to Vicar",
-    "F": ""
+    "A10": "RP-3.14",
+    "B10": "Baptism",
+    "C10": "2500",
+    "D10": "RP-12.02 (c)",
+    "E10": "Telephone Allowance to Vicar",
+    "F10": "2000"
   },
   {
-    "A": "RP-2.19",
-    "B": "Cemetry Receipt",
-    "C": "",
-    "D": "RP-12.02(g)",
-    "E": "Gift Purse to Vicar",
-    "F": ""
+    "A11": "RP-3.61",
+    "B11": "Sunday School",
+    "C11": "700",
+    "D11": "RP-12.02(d)",
+    "E11": "Local Travelling Allowance to Vicar",
+    "F11": "10000"
   },
   {
-    "A": "RP-3.61",
-    "B": "Sunday School",
-    "C": "1700.00",
-    "D": "RP-12.07",
-    "E": "Kaimuthu to Thirumeni",
-    "F": ""
+    "A12": "RP-3.64",
+    "B12": "Kanika Prayer Group",
+    "C12": "1270",
+    "D12": "RP- 16.04",
+    "E12": "Church Service Expense",
+    "F12": "9549"
   },
   {
-    "A": "RP-3.66",
-    "B": "OVBS",
-    "C": "",
-    "D": "RP-12.07(a)",
-    "E": "Kaimuthu to Visiting priest",
-    "F": ""
+    "A13": "RP-2.02",
+    "B13": "Donation General",
+    "C13": "37160",
+    "D13": "RP- 16.11(a)",
+    "E13": "Electricity Charges - Church",
+    "F13": "10317"
   },
   {
-    "A": "RP-3.64",
-    "B": "Kanika Prayer Group",
-    "C": "1920.00",
-    "D": "RP- 16.04",
-    "E": "Church Service Expense",
-    "F": "9549.00"
+    "A14": "RP-2.02(a)",
+    "B14": "Donation General-chair & tables",
+    "C14": "181620",
+    "D14": "RP- 16.11(b)",
+    "E14": "Electricity Charges - Parsonage",
+    "F14": "11122"
   },
   {
-    "A": "",
-    "B": "Miscellaneous Income",
-    "C": "",
-    "D": "RP- 16.11(a)",
-    "E": "Electricity Charges - Church",
-    "F": "10317.00"
+    "A15": "RP-2.16",
+    "B15": "Donation-Breakfast",
+    "C15": "110800",
+    "D15": "RP- 16.08",
+    "E15": "Breakfast Expenses",
+    "F15": "86374"
   },
   {
-    "A": "RP-3.52",
-    "B": "Certificate Fee",
-    "C": "",
-    "D": "RP- 16.11(b)",
-    "E": "Electricity Charges - Parsonage",
-    "F": "11122.00"
+    "A16": "RP-2.211",
+    "B16": "KMDC Grant",
+    "C16": "1500000",
+    "D16": "RP- 14.31",
+    "E16": "Maintenance of Church & Parsonage",
+    "F16": "91641"
   },
   {
-    "A": "RP-2.02",
-    "B": "Donation General",
-    "C": "47290.00",
-    "D": "RP- 16.11(c)",
-    "E": "Elecricity Charges - Cemetry",
-    "F": "148.00"
+    "A17": "RP-3.03",
+    "B17": "Kurishinthothi &",
+    "C17": "9085",
+    "D17": "RP- 16.06",
+    "E17": "Passion Week Expenses",
+    "F17": "54115"
   },
   {
-    "A": "RP-2.02(a)",
-    "B": "Donation General-chair & tables",
-    "C": "150270.00",
-    "D": "RP- 16.08",
-    "E": "Breakfast Expenses",
-    "F": "77168.00"
+    "A18": "RP-3.04",
+    "B18": "Koodaram",
+    "C18": "11160",
+    "D18": "RP- 14.35",
+    "E18": "Maintenance of Cemetry",
+    "F18": "5490"
   },
   {
-    "A": "RP-2.16",
-    "B": "Donation-Breakfast",
-    "C": "93800.00",
-    "D": "RP- 14.31(a)",
-    "E": "Church Renovation Expenses",
-    "F": ""
+    "A19": "RP-3.05",
+    "B19": "Perunnal Vanchika (House Offertory Box)",
+    "C19": "2600",
+    "D19": "RP-14.05",
+    "E19": "Postage",
+    "F19": "2233"
   },
   {
-    "A": "RP-2.20",
-    "B": "Donation- Others (Farewell)",
-    "C": "",
-    "D": "RP- 14.31",
-    "E": "Maintenance of Church & Parsonage",
-    "F": "86126.00"
+    "A20": "RP-3.10",
+    "B20": "Kanicka Church",
+    "C20": "12024",
+    "D20": "RP- 16.35",
+    "E20": "Canteen Expenses",
+    "F20": "2538"
   },
   {
-    "A": "RP-2.211",
-    "B": "KMDC Grant",
-    "C": "1500000.00",
-    "D": "RP- 16.06",
-    "E": "Passion Week Expenses",
-    "F": "54350.00"
+    "A21": "RP-3.13",
+    "B21": "Kanicka-Chapel",
+    "C21": "3430",
+    "D21": "RP-14.06",
+    "E21": "Printing & Stationery",
+    "F21": "12504"
   },
   {
-    "A": "RP-3.03",
-    "B": "Kurishinthothi &",
-    "C": "35722.00",
-    "D": "RP- 14.35",
-    "E": "Maintenance of Cemetry",
-    "F": "5490.00"
+    "A22": "RP-2.15(a)",
+    "B22": "Auction Dues - Old",
+    "C22": "91500",
+    "D22": "RP- 16.36",
+    "E22": "Cemetry Development",
+    "F22": "200500"
   },
   {
-    "A": "RP-3.04",
-    "B": "Koodaram",
-    "C": "34601.00",
-    "D": "RP-14.05",
-    "E": "Postage",
-    "F": "2080.00"
+    "A23": "RP-2.15(b)",
+    "B23": "Petty Auction",
+    "C23": "1500",
+    "D23": "RP- 16.89",
+    "E23": "Gift & Mementoes",
+    "F23": "4532"
   },
   {
-    "A": "RP-3.05",
-    "B": "Perunnal Vanchika (House Offertory Box)",
-    "C": "3400.00",
-    "D": "RP- 16.35",
-    "E": "Canteen Expenses",
-    "F": "1700.00"
+    "A24": "RP-10.04/05",
+    "B24": "Catholicate Day & Recessa",
+    "C24": "31250",
+    "D24": "RP- 14.04",
+    "E24": "Audit Fee",
+    "F24": "35400"
   },
   {
-    "A": "RP-3.10",
-    "B": "Kanicka Church",
-    "C": "125685.00",
-    "D": "RP-14.06",
-    "E": "Printing & Stationery",
-    "F": "12504.00"
+    "A25": "RP-10.08",
+    "B25": "Metropolitan Fund",
+    "C25": "13750",
+    "D25": "RP- 13.02",
+    "E25": "Bank Charges",
+    "F25": "312.3"
   },
   {
-    "A": "RP-3.13",
-    "B": "Kanicka-Chapel",
-    "C": "2210.00",
-    "D": "RP- 16.36",
-    "E": "Cemetry Development",
-    "F": "200500.00"
+    "A26": "RP-10.13",
+    "B26": "Mission Sunday",
+    "C26": "9550",
+    "D26": "RP-14.34",
+    "E26": "Repairs And Maintenance-Vehicles",
+    "F26": "1200"
   },
   {
-    "A": "RP-2.15(a)",
-    "B": "Auction Dues - Old",
-    "C": "77000.00",
-    "D": "RP- 16.87",
-    "E": "Grant - Sneha Bhavan",
-    "F": ""
+    "A27": "RP-10.15",
+    "B27": "Seminary Day",
+    "C27": "6450",
+    "D27": "RP- 16.50",
+    "E27": "St. George Feast",
+    "F27": "10183"
   },
   {
-    "A": "RP-2.15",
-    "B": "Auction current",
-    "C": "",
-    "D": "RP- 16.89",
-    "E": "Gift & Mementoes",
-    "F": "4232.00"
+    "A28": "RP-10.10",
+    "B28": "Priest Welfare Fund",
+    "C28": "7400",
+    "D28": "RP-18.16",
+    "E28": "Asset Purchase",
+    "F28": "177000"
   },
   {
-    "A": "RP-2.15(b)",
-    "B": "Petty Auction",
-    "C": "1500.00",
-    "D": "RP- 16.62",
-    "E": "Sunday School Expense",
-    "F": ""
+    "A29": "RP-10.17",
+    "B29": "Old Cover Collection Dues",
+    "C29": "6600",
+    "D29": "RP-18.23",
+    "E29": "Electrical Equipments",
+    "F29": "9590"
   },
   {
-    "A": "RP-10.04/05",
-    "B": "Catholicate Day & Recessa",
-    "C": "29450.00",
-    "D": "RP- 16.67",
-    "E": "OVBS",
-    "F": ""
+    "A30": "RP-10.14",
+    "B30": "Sunday School Day Collection",
+    "C30": "4250",
+    "D30": null,
+    "E30": null,
+    "F30": null
   },
   {
-    "A": "RP-10.08",
-    "B": "Metropolitan Fund",
-    "C": "12550.00",
-    "D": "RP- 16.65",
-    "E": "Prayer Group",
-    "F": ""
+    "A31": "RP-3.35",
+    "B31": "St. George Feast",
+    "C31": "900",
+    "D31": null,
+    "E31": null,
+    "F31": null
   },
   {
-    "A": "RP-10.13",
-    "B": "Mission Sunday",
-    "C": "9150.00",
-    "D": "RP- 14.03",
-    "E": "Travelling Expenses",
-    "F": ""
+    "A32": "RP-3.31",
+    "B32": "St. Thomas Feast",
+    "C32": "600",
+    "D32": null,
+    "E32": null,
+    "F32": null,
+    "G32": null,
+    "H32": null
   },
   {
-    "A": "RP-10.15",
-    "B": "Seminary Day",
-    "C": "5950.00",
-    "D": "RP- 14.04",
-    "E": "Audit Fee",
-    "F": "35400.00"
+    "A33": "RP-3.32",
+    "B33": "St. Mary's Feast",
+    "C33": "6100",
+    "D33": null,
+    "E33": null,
+    "F33": null
   },
   {
-    "A": "RP-10.10",
-    "B": "Priest Welfare Fund",
-    "C": "7100.00",
-    "D": "RP- 13.02",
-    "E": "Bank Charges",
-    "F": "312.30"
+    "A34": "RP-2.13",
+    "B34": "Passion Week Collection",
+    "C34": "78106",
+    "D34": null,
+    "E34": null,
+    "F34": null
   },
   {
-    "A": "RP-10.09",
-    "B": "Marriage Kaimuthu",
-    "C": "",
-    "D": "RP- 16.69",
-    "E": "St Joseph Orthodox Fellowship",
-    "F": ""
+    "A35": "RP-8.03",
+    "B35": "Interest Received SB Account",
+    "C35": "5365",
+    "D35": null,
+    "E35": null,
+    "F35": null
   },
   {
-    "A": "RP-10.17",
-    "B": "Old Cover Collection Dues",
-    "C": "6600.00",
-    "D": "RP- 16.70",
-    "E": "St Dionysius Orthodox Fellowship",
-    "F": ""
+    "A36": null,
+    "B36": null,
+    "C36": null,
+    "D36": null,
+    "E36": null,
+    "F36": null
   },
   {
-    "A": "RP-10.14",
-    "B": "Sunday School Day Collection",
-    "C": "2750.00",
-    "D": "RP-14.34",
-    "E": "Repairs And Maintenance-Vehicles",
-    "F": "3590.00"
+    "A37": null,
+    "B37": "TOTAL RECEIPTS",
+    "C37": "2331540",
+    "D37": null,
+    "E37": "TOTAL PAYMENTS",
+    "F37": "1024559.3"
   },
   {
-    "A": "RP-10.16",
-    "B": "Gerbo Sunday",
-    "C": "",
-    "D": "RP-19.03&.04",
-    "E": "Catholicate Day & Recceessa",
-    "F": ""
+    "C38": null,
+    "D38": null,
+    "F38": null
   },
   {
-    "A": "RP-3.35",
-    "B": "St. George Feast",
-    "C": "15000.00",
-    "D": "RP-19.11",
-    "E": "Metropolitan Fund",
-    "F": ""
+    "C39": null,
+    "D39": null
   },
   {
-    "A": "RP-3.31",
-    "B": "St. Thomas Feast",
-    "C": "400.00",
-    "D": "RP-19.21",
-    "E": "Mission Sunday",
-    "F": ""
+    "C40": null,
+    "D40": null,
+    "F40": null
   },
   {
-    "A": "RP-3.32",
-    "B": "St. Mary's Feast",
-    "C": "900.00",
-    "D": "RP-19.22",
-    "E": "Sunday School Cover Collection",
-    "F": ""
+    "C41": null,
+    "D41": null
   },
   {
-    "A": "RP-3.33",
-    "B": "St.Gregorios Feast ( Annual Feast)",
-    "C": "",
-    "D": "RP-19.23",
-    "E": "Seminary Day",
-    "F": ""
+    "C42": null,
+    "D42": null
   },
   {
-    "A": "RP-2.11",
-    "B": "Christmas / New Year Collection",
-    "C": "",
-    "D": "RP-19.15",
-    "E": "Priest Welfare Fund",
-    "F": ""
+    "C43": null,
+    "D43": null
   },
   {
-    "A": "RP-2.12",
-    "B": "Parish Day/Harvest / Collection",
-    "C": "",
-    "D": "RP-19.12",
-    "E": "Marriage Kaimuthu",
-    "F": ""
+    "C44": null,
+    "D44": null
   },
   {
-    "A": "RP-2.13",
-    "B": "Passion Week Collection",
-    "C": "80506.00",
-    "D": "RP-19.32",
-    "E": "Annual Kaimuthu to Tirumeni",
-    "F": ""
+    "C45": null,
+    "D45": null
   },
   {
-    "A": "RP-8.03",
-    "B": "Interest Received SB Account",
-    "C": "5365.00",
-    "D": "RP-19.24",
-    "E": "Gerbo Sunday",
-    "F": ""
+    "C46": null,
+    "D46": null
   },
   {
-    "A": "",
-    "B": "Advance A/C Sound System",
-    "C": "",
-    "D": "RP- 16.50",
-    "E": "St. George Feast",
-    "F": "10183.00"
+    "C47": null,
+    "D47": null
   },
   {
-    "A": "",
-    "B": "Diocesan Prayer Meeting Income",
-    "C": "",
-    "D": "RP- 16.47",
-    "E": "St. Mary's Feast",
-    "F": ""
+    "C48": null,
+    "D48": null
   },
   {
-    "A": "",
-    "B": "IOBD Charity",
-    "C": "",
-    "D": "RP- 16.48",
-    "E": "St.Gregorios Feast ( Annual Feast)",
-    "F": ""
+    "C49": null
   },
   {
-    "A": "",
-    "B": "Fixed Deposit Withdrawn",
-    "C": "",
-    "D": "RP-16.15",
-    "E": "Christmas & New Year Expense",
-    "F": ""
+    "C50": null
   },
   {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "RP-16.14",
-    "E": "Harvest Day/Parish Day Expense",
-    "F": ""
+    "C51": null
   },
   {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "RP-16.38",
-    "E": "Miscellaneous Expenses",
-    "F": ""
+    "C52": null
   },
   {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "",
-    "E": "Fixed Deposit",
-    "F": ""
+    "C53": null
   },
+  {},
   {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "RP-18.16",
-    "E": "Asset Purchase",
-    "F": "177000.00"
+    "C55": null
   },
-  {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "RP-18.23",
-    "E": "Electrical Equipments",
-    "F": "9590.00"
-  },
-  {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "",
-    "E": "Ecumenical Meeting Expenses (UCF)",
-    "F": ""
-  },
-  {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "RP-16.32",
-    "E": "Diocesan Prayer Meeting Expenses",
-    "F": ""
-  },
-  {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "",
-    "E": "Farewell Expenses",
-    "F": ""
-  },
-  {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "",
-    "E": "Transport Charges ( Ex. Vicar)",
-    "F": ""
-  },
-  {
-    "A": "",
-    "B": "",
-    "C": "",
-    "D": "",
-    "E": "IOBD Charity",
-    "F": ""
-  }
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  {}
 ],
   members: [
   {
@@ -9897,7 +10745,7 @@ window.CHURCH_DATA = {
     "B9": "Monthly Subscription ( Current Year)",
     "C9": "RP-3.82",
     "D9": "310000",
-    "E9": "131000",
+    "E9": "142200",
     "F9": null,
     "G9": "2",
     "H9": "Salary to Sexton",
@@ -9923,7 +10771,7 @@ window.CHURCH_DATA = {
     "B11": "Birthday Offerings",
     "C11": "RP-3.16",
     "D11": "50000",
-    "E11": "17050",
+    "E11": "18350",
     "F11": null,
     "G11": "4",
     "H11": "Salary to Ayah",
@@ -9936,7 +10784,7 @@ window.CHURCH_DATA = {
     "B12": "Wedding Anniversary Offerings",
     "C12": "RP-3.17",
     "D12": "20000",
-    "E12": "7000",
+    "E12": "7500",
     "F12": null,
     "G12": "5",
     "H12": "Medical Allowance to Vicar",
@@ -9949,7 +10797,7 @@ window.CHURCH_DATA = {
     "B13": "Orma Qurbana/Holy Qurbana",
     "C13": "RP-3.12",
     "D13": "46000",
-    "E13": "2270",
+    "E13": "2420",
     "F13": null,
     "G13": "6",
     "H13": "Medical Allowance to Sexton",
@@ -10027,7 +10875,7 @@ window.CHURCH_DATA = {
     "B19": "Sunday School",
     "C19": "RP-3.61",
     "D19": "8000",
-    "E19": "1700",
+    "E19": "2200",
     "F19": null,
     "G19": null,
     "H19": "Parish Expenses",
@@ -10044,20 +10892,20 @@ window.CHURCH_DATA = {
     "F20": null,
     "G20": "12",
     "H20": "Kaimuthu to Thirumeni",
-    "I20": null,
+    "I20": "RP-12.07",
     "J20": "20000",
     "K20": null
   },
   {
     "A21": "15",
-    "B21": "Prayer Group",
+    "B21": "Kanika Prayer Group",
     "C21": "RP-3.64",
     "D21": "30000",
-    "E21": "650",
+    "E21": "1920",
     "F21": null,
     "G21": "13",
     "H21": "Kaimuthu to Visiting priest",
-    "I21": null,
+    "I21": "RP-12.07(a)",
     "J21": "10000",
     "K21": null
   },
@@ -10116,7 +10964,7 @@ window.CHURCH_DATA = {
     "B26": "Donation General",
     "C26": "RP-2.02",
     "D26": "340000",
-    "E26": "47290",
+    "E26": "69790",
     "F26": null,
     "G26": "18",
     "H26": "Breakfast Expenses",
@@ -10129,7 +10977,7 @@ window.CHURCH_DATA = {
     "B27": "Donation General-chair & tables",
     "C27": "RP-2.02(a)",
     "D27": null,
-    "E27": "150270",
+    "E27": "181620",
     "F27": null,
     "G27": "19",
     "H27": "Church Renovation Expenses",
@@ -10142,7 +10990,7 @@ window.CHURCH_DATA = {
     "B28": "Donation-Breakfast",
     "C28": "RP-2.16",
     "D28": "500000",
-    "E28": "93800",
+    "E28": "110800",
     "F28": null,
     "G28": "20",
     "H28": "Maintenance of Church & Parsonage",
@@ -10186,7 +11034,7 @@ window.CHURCH_DATA = {
     "H31": "Postage",
     "I31": "RP-14.05",
     "J31": "5000",
-    "K31": "2080"
+    "K31": "2233"
   },
   {
     "A32": null,
@@ -10205,7 +11053,7 @@ window.CHURCH_DATA = {
     "B33": "Kurishinthothi &",
     "C33": "RP-3.03",
     "D33": null,
-    "E33": "35722",
+    "E33": "44807",
     "F33": null,
     "G33": "25",
     "H33": "Printing & Stationery",
@@ -10218,7 +11066,7 @@ window.CHURCH_DATA = {
     "B34": "Koodaram",
     "C34": "RP-3.04",
     "D34": "160000",
-    "E34": "34601",
+    "E34": "45761",
     "F34": null,
     "G34": "26",
     "H34": "Cemetry Development",
@@ -10241,10 +11089,10 @@ window.CHURCH_DATA = {
   },
   {
     "A36": "27",
-    "B36": "Kanicka ",
+    "B36": "Kanicka Church",
     "C36": "RP-3.10",
     "D36": "425000",
-    "E36": "125685",
+    "E36": "137709",
     "F36": null,
     "G36": "28",
     "H36": "Gift & Mementoes",
@@ -10257,7 +11105,7 @@ window.CHURCH_DATA = {
     "B37": "Kanicka-Chapel",
     "C37": "RP-3.13",
     "D37": "12000",
-    "E37": "2210",
+    "E37": "3430",
     "F37": null,
     "G37": "29",
     "H37": "Sunday School Expense",
@@ -10282,7 +11130,7 @@ window.CHURCH_DATA = {
     "B39": "Auction Dues - Old",
     "C39": "RP-2.15(a)",
     "D39": "146000",
-    "E39": "77000",
+    "E39": "91500",
     "F39": null,
     "G39": "31",
     "H39": "Prayer Group",
@@ -10333,7 +11181,7 @@ window.CHURCH_DATA = {
     "B43": "Catholicate Day & Recessa",
     "C43": "RP-10.04/05",
     "D43": "65000",
-    "E43": "29450",
+    "E43": "31250",
     "F43": null,
     "G43": "35",
     "H43": "St Joseph Orthodox Fellowship",
@@ -10346,7 +11194,7 @@ window.CHURCH_DATA = {
     "B44": "Metropolitan Fund",
     "C44": "RP-10.08",
     "D44": "32000",
-    "E44": "12550",
+    "E44": "13750",
     "F44": null,
     "G44": "36",
     "H44": "St Dionysius Orthodox Fellowship",
@@ -10359,7 +11207,7 @@ window.CHURCH_DATA = {
     "B45": "Mission Sunday",
     "C45": "RP-10.13",
     "D45": "15500",
-    "E45": "9150",
+    "E45": "9550",
     "F45": null,
     "G45": "37",
     "H45": "Repairs And Maintenance-Vehicles ",
@@ -10371,7 +11219,7 @@ window.CHURCH_DATA = {
     "B46": "Seminary Day",
     "C46": "RP-10.15",
     "D46": "15000",
-    "E46": "5950",
+    "E46": "6450",
     "F46": null,
     "G46": null,
     "H46": "Collection for  Centre/Diocese",
@@ -10384,7 +11232,7 @@ window.CHURCH_DATA = {
     "B47": "Priest Welfare Fund ",
     "C47": "RP-10.10",
     "D47": "16000",
-    "E47": "7100",
+    "E47": "7400",
     "F47": null,
     "G47": "38",
     "H47": "Catholicate Day & Recceessa",
@@ -10472,7 +11320,7 @@ window.CHURCH_DATA = {
     "B54": "St. Thomas Feast",
     "C54": "RP-3.31",
     "D54": null,
-    "E54": "400",
+    "E54": "600",
     "F54": null,
     "G54": "45",
     "H54": "Annual Kaimuthu to Tirumeni",
@@ -10485,7 +11333,7 @@ window.CHURCH_DATA = {
     "B55": "St. Mary's Feast",
     "C55": "RP-3.32",
     "D55": "60000",
-    "E55": "900",
+    "E55": "6100",
     "F55": null,
     "G55": "46",
     "H55": "Gerbo Sunday",
@@ -10731,13 +11579,13 @@ window.CHURCH_DATA = {
     "B74": "TOTAL",
     "C74": null,
     "D74": "4164061",
-    "E74": "2435969",
+    "E74": "2579328",
     "F74": null,
     "G74": null,
     "H74": "TOTAL",
     "I74": null,
     "J74": "4136245",
-    "K74": "1010995.3",
+    "K74": "1011148.3",
     "L74": null,
     "M74": null,
     "N74": null,
@@ -11206,554 +12054,1142 @@ window.CHURCH_DATA = {
 ],
   codes: [
   {
-    "A": "RP-1.01",
-    "B": "Opening Balance - Cash",
-    "C": "RECEIPT"
+    "A1": "St. Gregorios Orthodox Syrian Church and Pilgrim Centre",
+    "B1": null,
+    "C1": null,
+    "D1": null,
+    "E1": null,
+    "F1": null,
+    "G1": null,
+    "H1": null,
+    "I1": null
   },
   {
-    "A": "RP-1.02",
-    "B": "- Bank",
-    "C": "RECEIPT"
+    "A2": "Government House Road, Nazarbad, Mysuru, Karnataka 570 010",
+    "B2": null,
+    "C2": null,
+    "D2": null,
+    "E2": null,
+    "F2": null,
+    "G2": null,
+    "H2": null,
+    "I2": null
   },
   {
-    "A": "RP-3.82",
-    "B": "Monthly Subscription ( Current Year)",
-    "C": "RECEIPT"
+    "A3": "New Codes as per the direction of MOSC FY 2026-2027",
+    "B3": null,
+    "C3": null,
+    "D3": null,
+    "E3": null,
+    "F3": null,
+    "G3": null,
+    "H3": null,
+    "I3": null
   },
   {
-    "A": "RP-3.83",
-    "B": "Monthly Subscription ( Pervious Year)",
-    "C": "RECEIPT"
+    "A4": "RECEIPTS ",
+    "B4": null,
+    "C4": null,
+    "D4": null
   },
   {
-    "A": "RP-3.16",
-    "B": "Birthday Offerings",
-    "C": "RECEIPT"
+    "A5": "New Codes",
+    "B5": "Particulars",
+    "C5": null,
+    "D5": "Old Codes"
   },
   {
-    "A": "RP-3.17",
-    "B": "Wedding Anniversary Offerings",
-    "C": "RECEIPT"
+    "A6": "RP-1.01",
+    "B6": "Cash Balances",
+    "C6": "Receipt",
+    "D6": "1300"
   },
   {
-    "A": "RP-3.12",
-    "B": "Orma Qurbana/Holy Qurbana",
-    "C": "RECEIPT"
+    "A7": "RP-1.02",
+    "B7": "Balances in SB Accounts",
+    "C7": "Receipt",
+    "D7": "1000"
   },
   {
-    "A": "RP-3.17 (a)",
-    "B": "House Blessing",
-    "C": "RECEIPT"
+    "A8": null,
+    "B8": "Donations",
+    "C8": null,
+    "D8": null
   },
   {
-    "A": "RP-2.14",
-    "B": "Marriage Bann",
-    "C": "RECEIPT"
+    "A9": "RP-2.02",
+    "B9": "General Donations",
+    "C9": "Receipt",
+    "D9": "2301"
   },
   {
-    "A": "RP-3.14",
-    "B": "Baptism",
-    "C": "RECEIPT"
+    "A10": "RP-2.06",
+    "B10": "Parish Day",
+    "C10": "Receipt",
+    "D10": "2305"
   },
   {
-    "A": "RP-2.19",
-    "B": "Cemetry Receipt",
-    "C": "RECEIPT"
+    "A11": "RP-2.09",
+    "B11": "Church Celebrations (other than perunnal)",
+    "C11": "Receipt",
+    "D11": "2308"
   },
   {
-    "A": "RP-3.61",
-    "B": "Sunday School",
-    "C": "RECEIPT"
+    "A12": "RP-2.10",
+    "B12": "Meeting and conventions",
+    "C12": "Receipt",
+    "D12": "2309"
   },
   {
-    "A": "RP-3.66",
-    "B": "OVBS",
-    "C": "RECEIPT"
+    "A13": "RP-2.11",
+    "B13": "Christmas Carol",
+    "C13": "Receipt",
+    "D13": "2310"
   },
   {
-    "A": "RP-3.64",
-    "B": "Kanika Prayer Group",
-    "C": "RECEIPT"
+    "A14": "RP-2.12",
+    "B14": "Parish Day",
+    "C14": "Receipt",
+    "D14": "2311"
   },
   {
-    "A": "",
-    "B": "Miscellaneous Income",
-    "C": "RECEIPT"
+    "A15": "RP-2.13",
+    "B15": "Lent and Passion Week",
+    "C15": "Receipt",
+    "D15": "2312"
   },
   {
-    "A": "RP-3.52",
-    "B": "Certificate Fee",
-    "C": "RECEIPT"
+    "A16": "RP-2.14",
+    "B16": "Marriage Receipts",
+    "C16": "Receipt",
+    "D16": "2313"
   },
   {
-    "A": "RP-2.02",
-    "B": "Donation General",
-    "C": "RECEIPT"
+    "A17": "RP-2.15",
+    "B17": "Harvest Festival  Receipts _ Auctions _Current Year",
+    "C17": "Receipt",
+    "D17": "2314"
   },
   {
-    "A": "RP-2.02(a)",
-    "B": "Donation General-chair & tables",
-    "C": "RECEIPT"
+    "A18": "RP-2.15 (a)",
+    "B18": "Harvest Festival  Receipts _ Auction Dues _ Previous Years",
+    "C18": "Receipt",
+    "D18": null
   },
   {
-    "A": "RP-2.16",
-    "B": "Donation-Breakfast",
-    "C": "RECEIPT"
+    "A19": "RP-2.15 (b)",
+    "B19": "Petty Auctions _Current Year",
+    "C19": "Receipt",
+    "D19": null
   },
   {
-    "A": "RP-2.20",
-    "B": "Donation- Others (Farewell)",
-    "C": "RECEIPT"
+    "A20": "RP-2.16",
+    "B20": "Annadhanam and feast _Breakfast Donation",
+    "C20": "Receipt",
+    "D20": "2315"
   },
   {
-    "A": "RP-2.211",
-    "B": "KMDC Grant",
-    "C": "RECEIPT"
+    "A21": "RP-2.17",
+    "B21": "Receipt of Agricultural Produces",
+    "C21": "Receipt",
+    "D21": "2316"
   },
   {
-    "A": "RP-3.03",
-    "B": "Kurishinthothi &",
-    "C": "RECEIPT"
+    "A22": "RP-2.18",
+    "B22": "Donation In Kind",
+    "C22": "Receipt",
+    "D22": null
   },
   {
-    "A": "RP-3.04",
-    "B": "Koodaram",
-    "C": "RECEIPT"
+    "A23": "RP-2.19",
+    "B23": "Receipt from Tomb/Grave : Cemetry",
+    "C23": "Receipt",
+    "D23": "2234"
   },
   {
-    "A": "RP-3.05",
-    "B": "Perunnal Vanchika (House Offertory Box)",
-    "C": "RECEIPT"
+    "A24": "RP-2.20",
+    "B24": "Other Donations (Farewell) ",
+    "C24": "Receipt",
+    "D24": "2317"
   },
   {
-    "A": "RP-3.10",
-    "B": "Kanicka Church",
-    "C": "RECEIPT"
+    "A25": "RP-3.52 ",
+    "B25": "Certificate Fee",
+    "C25": "Receipt",
+    "D25": null
   },
   {
-    "A": "RP-3.13",
-    "B": "Kanicka-Chapel",
-    "C": "RECEIPT"
+    "A26": null,
+    "B26": "Church Receipts : Bhandaram Collections",
+    "C26": null,
+    "D26": null
   },
   {
-    "A": "RP-2.15(a)",
-    "B": "Auction Dues - Old",
-    "C": "RECEIPT"
+    "A27": "RP-3.03",
+    "B27": "Bhandaram Receipts : Church ( koodaaram + Wooden Cash Box)",
+    "C27": "Receipt",
+    "D27": "2101"
   },
   {
-    "A": "RP-2.15",
-    "B": "Auction current",
-    "C": "RECEIPT"
+    "A28": "RP-3.04",
+    "B28": "Kurishinthotti : Infront if Church",
+    "C28": "Receipt",
+    "D28": "2102"
   },
   {
-    "A": "RP-2.15(b)",
-    "B": "Petty Auction",
-    "C": "RECEIPT"
+    "A29": "RP-3.05",
+    "B29": "Others (specify) : Perunnal Vanchika ( House Offertory Box)",
+    "C29": "Receipt",
+    "D29": "2103"
   },
   {
-    "A": "RP-10.04/05",
-    "B": "Catholicate Day & Recessa",
-    "C": "RECEIPT"
+    "A30": "RP-3.10",
+    "B30": "Qurbana Receipts: Qurbana Kannikka Church ",
+    "C30": "Receipt",
+    "D30": "2110"
   },
   {
-    "A": "RP-10.08",
-    "B": "Metropolitan Fund",
-    "C": "RECEIPT"
+    "A31": "RP-3.10 (a)",
+    "B31": "Qurbana Receipts:  Cemetry Chapel",
+    "C31": "Receipt",
+    "D31": null
   },
   {
-    "A": "RP-10.13",
-    "B": "Mission Sunday",
-    "C": "RECEIPT"
+    "A32": "RP-3.12",
+    "B32": "Church (Orma Qurbana + Special Qurbaba)",
+    "C32": "Receipt",
+    "D32": "2121"
   },
   {
-    "A": "RP-10.15",
-    "B": "Seminary Day",
-    "C": "RECEIPT"
+    "A33": "RP-3.14",
+    "B33": "Baptism",
+    "C33": "Receipt",
+    "D33": "2123"
   },
   {
-    "A": "RP-10.10",
-    "B": "Priest Welfare Fund",
-    "C": "RECEIPT"
+    "A34": "RP-3.15",
+    "B34": "Funeral",
+    "C34": "Receipt",
+    "D34": "2124"
   },
   {
-    "A": "RP-10.09",
-    "B": "Marriage Kaimuthu",
-    "C": "RECEIPT"
+    "A35": "RP-3.16",
+    "B35": "Birthday Contributions",
+    "C35": "Receipt",
+    "D35": "2125"
   },
   {
-    "A": "RP-10.17",
-    "B": "Old Cover Collection Dues",
-    "C": "RECEIPT"
+    "A36": "RP-3.17",
+    "B36": "Other offerings : Weeding Anniversary",
+    "C36": "Receipt",
+    "D36": "2126"
   },
   {
-    "A": "RP-10.14",
-    "B": "Sunday School Day Collection",
-    "C": "RECEIPT"
+    "A37": "RP-3.17 (a)",
+    "B37": "House Blessings",
+    "C37": "Receipt",
+    "D37": null
   },
   {
-    "A": "RP-10.16",
-    "B": "Gerbo Sunday",
-    "C": "RECEIPT"
+    "A38": "RP-3.18",
+    "B38": "Offerings for Ritual Articles : Candles, Oil, Kunturikkam",
+    "C38": "Receipt",
+    "D38": "2127"
   },
   {
-    "A": "RP-3.35",
-    "B": "St. George Feast",
-    "C": "RECEIPT"
+    "A39": null,
+    "B39": "Receipts for Festivals",
+    "C39": null,
+    "D39": "2160"
   },
   {
-    "A": "RP-3.31",
-    "B": "St. Thomas Feast",
-    "C": "RECEIPT"
+    "A40": "RP-3.31",
+    "B40": "July 3rd Festival : St. Thomas",
+    "C40": "Receipt",
+    "D40": "2161"
   },
   {
-    "A": "RP-3.32",
-    "B": "St. Mary's Feast",
-    "C": "RECEIPT"
+    "A41": "RP-3.32",
+    "B41": "August 15  Festival : St. Mary",
+    "C41": "Receipt",
+    "D41": "2162"
   },
   {
-    "A": "RP-3.33",
-    "B": "St.Gregorios Feast ( Annual Feast)",
-    "C": "RECEIPT"
+    "A42": "RP-3.32 (a)",
+    "B42": "Sep 1-8 Festival : St. Mary",
+    "C42": "Receipt",
+    "D42": null
   },
   {
-    "A": "RP-2.11",
-    "B": "Christmas / New Year Collection",
-    "C": "RECEIPT"
+    "A43": "RP-3.33",
+    "B43": "Church Festival: St Gregorios",
+    "C43": "Receipt",
+    "D43": "2163"
   },
   {
-    "A": "RP-2.12",
-    "B": "Parish Day/Harvest / Collection",
-    "C": "RECEIPT"
+    "A44": "RP-3.35",
+    "B44": "Others : St George",
+    "C44": "Receipt",
+    "D44": "2165"
   },
   {
-    "A": "RP-2.13",
-    "B": "Passion Week Collection",
-    "C": "RECEIPT"
+    "A45": null,
+    "B45": "Receipts for Spiritual Organizations",
+    "C45": null,
+    "D45": null
   },
   {
-    "A": "RP-8.03",
-    "B": "Interest Received SB Account",
-    "C": "RECEIPT"
+    "A46": "RP-3.61",
+    "B46": "Sunday School",
+    "C46": "Receipt",
+    "D46": "2181"
   },
   {
-    "A": "",
-    "B": "Advance A/C Sound System",
-    "C": "RECEIPT"
+    "A47": "RP-3.64",
+    "B47": "MMVS",
+    "C47": "Receipt",
+    "D47": "2183"
   },
   {
-    "A": "",
-    "B": "Diocesan Prayer Meeting Income",
-    "C": "RECEIPT"
+    "A48": "RP-3.64",
+    "B48": "Prarthanayogam",
+    "C48": "Receipt",
+    "D48": "2184"
   },
   {
-    "A": "",
-    "B": "IOBD Charity",
-    "C": "RECEIPT"
+    "A49": "RP-3.66",
+    "B49": "OVBS",
+    "C49": "Receipt",
+    "D49": "2186"
   },
   {
-    "A": "",
-    "B": "Fixed Deposit Withdrawn",
-    "C": "RECEIPT"
+    "A50": "RP-3.67",
+    "B50": "MGOCSM & OCYM",
+    "C50": "Receipt",
+    "D50": "2187"
   },
   {
-    "A": "RP-19.31",
-    "B": "Salary Quota to Diocese(Vicar)",
-    "C": "PAYMENT"
+    "A51": "RP-3.68",
+    "B51": "St. Joseph Forum",
+    "C51": "Receipt",
+    "D51": null
   },
   {
-    "A": "RP-12.03 (a)",
-    "B": "Salary to Sexton",
-    "C": "PAYMENT"
+    "A52": "RP-3.69",
+    "B52": "St. Dionysious Forum",
+    "C52": "Receipt",
+    "D52": null
   },
   {
-    "A": "RP-12.03 (b)",
-    "B": "Salary to Watchman(Cemetry)",
-    "C": "PAYMENT"
+    "A53": null,
+    "B53": "Monthly subscription",
+    "C53": null,
+    "D53": null,
+    "E53": null
   },
   {
-    "A": "RP-12.03 (c)",
-    "B": "Salary to Ayah",
-    "C": "PAYMENT"
+    "A54": "RP-3.82",
+    "B54": "subscription For the current year",
+    "C54": "Receipt",
+    "D54": "2212",
+    "E54": null
   },
   {
-    "A": "RP-12.02 (a)",
-    "B": "Medical Allowance to Vicar",
-    "C": "PAYMENT"
+    "A55": "RP-3.83",
+    "B55": "subscription Outstanding from previous year",
+    "C55": "Receipt",
+    "D55": "2213",
+    "E55": null
   },
   {
-    "A": "RP-12.06",
-    "B": "Medical Allowance to Sexton",
-    "C": "PAYMENT"
+    "A56": "RP-3.84",
+    "B56": "Advance for next year",
+    "C56": "Receipt",
+    "D56": "2214",
+    "E56": null
   },
   {
-    "A": "RP-12.02 (c)",
-    "B": "Telephone Allowance to Vicar",
-    "C": "PAYMENT"
+    "A57": "RP-8.03",
+    "B57": "Savings Bank Interest",
+    "C57": "Receipt",
+    "D57": "2401"
   },
   {
-    "A": "RP-12.02(d)",
-    "B": "Local Travelling Allowance to Vicar",
-    "C": "PAYMENT"
+    "A58": "RP-9.10",
+    "B58": "Advances ",
+    "C58": "Receipt",
+    "D58": "3200"
   },
   {
-    "A": "RP-12.02(e)",
-    "B": "Annual Travelling Allowance to Vicar",
-    "C": "PAYMENT"
+    "A59": "RP-9.13",
+    "B59": "Advances from Trustees",
+    "C59": "Receipt",
+    "D59": "3203"
   },
   {
-    "A": "RP-12.02(f)",
-    "B": "Leave Salary to Vicar",
-    "C": "PAYMENT"
+    "A60": "RP-9.14",
+    "B60": "Advance from others",
+    "C60": "Receipt",
+    "D60": "3204"
   },
   {
-    "A": "RP-12.02(g)",
-    "B": "Gift Purse to Vicar",
-    "C": "PAYMENT"
+    "A61": "RP-9.15",
+    "B61": "Loan/Advances from Church Members",
+    "C61": "Receipt",
+    "D61": "3103"
   },
   {
-    "A": "RP-12.07",
-    "B": "Kaimuthu to Thirumeni",
-    "C": "PAYMENT"
+    "A62": "RP-10.03",
+    "B62": "For Malankara Metropolitan",
+    "C62": "Receipt",
+    "D62": null
   },
   {
-    "A": "RP-12.07(a)",
-    "B": "Kaimuthu to Visiting priest",
-    "C": "PAYMENT"
+    "A63": "RP-10.04",
+    "B63": "Catholicate Day Collection",
+    "C63": "Receipt",
+    "D63": "2801"
   },
   {
-    "A": "RP- 16.04",
-    "B": "Church Service Expense",
-    "C": "PAYMENT"
+    "A64": "RP-10.05",
+    "B64": "Recceessa",
+    "C64": "Receipt",
+    "D64": "2802"
   },
   {
-    "A": "RP- 16.11(a)",
-    "B": "Electricity Charges - Church",
-    "C": "PAYMENT"
+    "A65": "RP-10.07",
+    "B65": "For Diocession Office",
+    "C65": "Receipt",
+    "D65": null
   },
   {
-    "A": "RP- 16.11(b)",
-    "B": "Electricity Charges - Parsonage",
-    "C": "PAYMENT"
+    "A66": "RP-10.08",
+    "B66": "Diocesan Day Collection : Metropolitan Fund",
+    "C66": "Receipt",
+    "D66": "2807"
   },
   {
-    "A": "RP- 16.11(c)",
-    "B": "Elecricity Charges - Cemetry",
-    "C": "PAYMENT"
+    "A67": "RP-10.09",
+    "B67": "Vivaha Kaimuthu",
+    "C67": "Receipt",
+    "D67": "2803"
   },
   {
-    "A": "RP- 16.08",
-    "B": "Breakfast Expenses",
-    "C": "PAYMENT"
+    "A68": "RP-10.10",
+    "B68": "Other Collections : Priest Welfare Fund",
+    "C68": "Receipt",
+    "D68": null
   },
   {
-    "A": "RP- 14.31(a)",
-    "B": "Church Renovation Expenses",
-    "C": "PAYMENT"
+    "A69": "RP-10.12",
+    "B69": "For Other Offices",
+    "C69": "Receipt",
+    "D69": null
   },
   {
-    "A": "RP- 14.31",
-    "B": "Maintenance of Church & Parsonage",
-    "C": "PAYMENT"
+    "A70": "RP-10.13",
+    "B70": "Mission Sunday collection",
+    "C70": "Receipt",
+    "D70": "2804"
   },
   {
-    "A": "RP- 16.06",
-    "B": "Passion Week Expenses",
-    "C": "PAYMENT"
+    "A71": "RP-10.14",
+    "B71": "Sunday school day collection",
+    "C71": "Receipt",
+    "D71": "2805"
   },
   {
-    "A": "RP- 14.35",
-    "B": "Maintenance of Cemetry",
-    "C": "PAYMENT"
+    "A72": "RP-10.15",
+    "B72": "Seminary day collection",
+    "C72": "Receipt",
+    "D72": "2806"
   },
   {
-    "A": "RP-14.05",
-    "B": "Postage",
-    "C": "PAYMENT"
+    "A73": "RP-10.16",
+    "B73": "Gerbo Sunday Collection: Leprosy",
+    "C73": "Receipt",
+    "D73": "2808"
   },
   {
-    "A": "RP- 16.35",
-    "B": "Canteen Expenses",
-    "C": "PAYMENT"
+    "A74": "RP-10.17",
+    "B74": "Other collections ( Old Cover Collection Dues)",
+    "C74": "Receipt",
+    "D74": "2809"
   },
   {
-    "A": "RP-14.06",
-    "B": "Printing & Stationery",
-    "C": "PAYMENT"
+    "A75": "PAYMENTS",
+    "B75": null,
+    "C75": null,
+    "D75": null
   },
   {
-    "A": "RP- 16.36",
-    "B": "Cemetry Development",
-    "C": "PAYMENT"
+    "A76": "New Codes",
+    "B76": "Particulars",
+    "C76": null,
+    "D76": "Old Codes"
   },
   {
-    "A": "RP- 16.87",
-    "B": "Grant - Sneha Bhavan",
-    "C": "PAYMENT"
+    "A77": "RP-11.02",
+    "B77": "General Donations Paid",
+    "C77": "Payment",
+    "D77": null
   },
   {
-    "A": "RP- 16.89",
-    "B": "Gift & Mementoes",
-    "C": "PAYMENT"
+    "A78": null,
+    "B78": "EMPLOYEE BENEFIT EXPENSES",
+    "C78": null,
+    "D78": null
   },
   {
-    "A": "RP- 16.62",
-    "B": "Sunday School Expense",
-    "C": "PAYMENT"
+    "A79": null,
+    "B79": "Allowances to Priest",
+    "C79": null,
+    "D79": null
   },
   {
-    "A": "RP- 16.67",
-    "B": "OVBS",
-    "C": "PAYMENT"
+    "A80": "RP-12.02",
+    "B80": "Annual Travelling Allowance to Vicar",
+    "C80": "Payment",
+    "D80": "4231"
   },
   {
-    "A": "RP- 16.65",
-    "B": "Prayer Group",
-    "C": "PAYMENT"
+    "A81": "RP-12.02 ",
+    "B81": "Leave Salary to Vicar",
+    "C81": "Payment",
+    "D81": "4231"
   },
   {
-    "A": "RP- 14.03",
-    "B": "Travelling Expenses",
-    "C": "PAYMENT"
+    "A82": "RP-12.02",
+    "B82": "Gift Purse to Vicar",
+    "C82": "Payment",
+    "D82": "4231"
   },
   {
-    "A": "RP- 14.04",
-    "B": "Audit Fee",
-    "C": "PAYMENT"
+    "A83": "RP-12.03",
+    "B83": "Salary and allowances to others",
+    "C83": "Payment",
+    "D83": "4232"
   },
   {
-    "A": "RP- 13.02",
-    "B": "Bank Charges",
-    "C": "PAYMENT"
+    "A84": "RP-12.06",
+    "B84": "Allowances to Kapyar",
+    "C84": "Payment",
+    "D84": "4235"
   },
   {
-    "A": "RP- 16.69",
-    "B": "St Joseph Orthodox Fellowship",
-    "C": "PAYMENT"
+    "A85": "RP-12.07",
+    "B85": "Honorarium - Guest Preist",
+    "C85": "Payment",
+    "D85": "4236"
   },
   {
-    "A": "RP- 16.70",
-    "B": "St Dionysius Orthodox Fellowship",
-    "C": "PAYMENT"
+    "A86": "RP-13.02",
+    "B86": "Bank Charges",
+    "C86": "Payment",
+    "D86": "4503"
   },
   {
-    "A": "RP-14.34",
-    "B": "Repairs And Maintenance-Vehicles",
-    "C": "PAYMENT"
+    "A87": null,
+    "B87": "Administrative Expenses",
+    "C87": null,
+    "D87": null
   },
   {
-    "A": "RP-19.03&.04",
-    "B": "Catholicate Day & Recceessa",
-    "C": "PAYMENT"
+    "A88": "RP-14.03",
+    "B88": "Travelling Expenses",
+    "C88": "Payment",
+    "D88": "4551"
   },
   {
-    "A": "RP-19.11",
-    "B": "Metropolitan Fund",
-    "C": "PAYMENT"
+    "A89": "RP-14.04",
+    "B89": "Auditors Remuneration",
+    "C89": "Payment",
+    "D89": "4552"
   },
   {
-    "A": "RP-19.21",
-    "B": "Mission Sunday",
-    "C": "PAYMENT"
+    "A90": "RP-14.05",
+    "B90": "Postage and Telephone",
+    "C90": "Payment",
+    "D90": "4553"
   },
   {
-    "A": "RP-19.22",
-    "B": "Sunday School Cover Collection",
-    "C": "PAYMENT"
+    "A91": "RP-14.06",
+    "B91": "Printing and Stationery",
+    "C91": "Payment",
+    "D91": "4554"
   },
   {
-    "A": "RP-19.23",
-    "B": "Seminary Day",
-    "C": "PAYMENT"
+    "A92": "RP-14.07",
+    "B92": "Professional and other service charges",
+    "C92": "Payment",
+    "D92": "4555"
   },
   {
-    "A": "RP-19.15",
-    "B": "Priest Welfare Fund",
-    "C": "PAYMENT"
+    "A93": "RP-14.08",
+    "B93": "Office Expenses",
+    "C93": "Payment",
+    "D93": "4556"
   },
   {
-    "A": "RP-19.12",
-    "B": "Marriage Kaimuthu",
-    "C": "PAYMENT"
+    "A94": "RP-14.09",
+    "B94": "Subscription and Periodicals",
+    "C94": "Payment",
+    "D94": "4557"
   },
   {
-    "A": "RP-19.32",
-    "B": "Annual Kaimuthu to Tirumeni",
-    "C": "PAYMENT"
+    "A95": "RP-14.10",
+    "B95": "Insurance Charges",
+    "C95": "Payment",
+    "D95": "4558"
   },
   {
-    "A": "RP-19.24",
-    "B": "Gerbo Sunday",
-    "C": "PAYMENT"
+    "A96": "RP-14.11",
+    "B96": "Advertisement Expenses",
+    "C96": "Payment",
+    "D96": "4559"
   },
   {
-    "A": "RP- 16.50",
-    "B": "St. George Feast",
-    "C": "PAYMENT"
+    "A97": "RP-14.12",
+    "B97": "Legal Expenses",
+    "C97": "Payment",
+    "D97": "4209"
   },
   {
-    "A": "RP- 16.47",
-    "B": "St. Mary's Feast",
-    "C": "PAYMENT"
+    "A98": "RP-14.18",
+    "B98": "Other Expenses",
+    "C98": "Payment",
+    "D98": "4560"
   },
   {
-    "A": "RP- 16.48",
-    "B": "St.Gregorios Feast ( Annual Feast)",
-    "C": "PAYMENT"
+    "A99": null,
+    "B99": "Repairs And Maintenance",
+    "C99": null,
+    "D99": null
   },
   {
-    "A": "RP-16.15",
-    "B": "Christmas & New Year Expense",
-    "C": "PAYMENT"
+    "A100": "RP-14.31",
+    "B100": "Buildings",
+    "C100": "Payment",
+    "D100": "4271"
   },
   {
-    "A": "RP-16.14",
-    "B": "Harvest Day/Parish Day Expense",
-    "C": "PAYMENT"
+    "A101": "RP-14.32",
+    "B101": "Equipments",
+    "C101": "Payment",
+    "D101": "4272"
   },
   {
-    "A": "RP-16.38",
-    "B": "Miscellaneous Expenses",
-    "C": "PAYMENT"
+    "A102": "RP-14.33",
+    "B102": "Computers",
+    "C102": "Payment",
+    "D102": "4273"
   },
   {
-    "A": "",
-    "B": "Fixed Deposit",
-    "C": "PAYMENT"
+    "A103": "RP-14.34",
+    "B103": "Vehicles ",
+    "C103": "Payment",
+    "D103": "4274"
   },
   {
-    "A": "RP-18.16",
-    "B": "Asset Purchase",
-    "C": "PAYMENT"
+    "A104": "RP-14.35",
+    "B104": "Others",
+    "C104": "Payment",
+    "D104": "4275"
   },
   {
-    "A": "RP-18.23",
-    "B": "Electrical Equipments",
-    "C": "PAYMENT"
+    "A105": null,
+    "B105": "Church Expenses",
+    "C105": null,
+    "D105": null
   },
   {
-    "A": "",
-    "B": "Ecumenical Meeting Expenses (UCF)",
-    "C": "PAYMENT"
+    "A106": "RP-16.03",
+    "B106": "Holy Qurbana Allowances : Guest Priest",
+    "C106": "Payment",
+    "D106": "4202"
   },
   {
-    "A": "RP-16.32",
-    "B": "Diocesan Prayer Meeting Expenses",
-    "C": "PAYMENT"
+    "A107": "RP-16.04",
+    "B107": "Church Consumables/ Daily Expenses",
+    "C107": "Payment",
+    "D107": "4203"
   },
   {
-    "A": "",
-    "B": "Farewell Expenses",
-    "C": "PAYMENT"
+    "A108": "RP-16.05",
+    "B108": "Suvisheshayogam Expenses",
+    "C108": "Payment",
+    "D108": "4204"
   },
   {
-    "A": "",
-    "B": "Transport Charges ( Ex. Vicar)",
-    "C": "PAYMENT"
+    "A109": "RP-16.06",
+    "B109": "Holy week and Dhyanam expenses",
+    "C109": "Payment",
+    "D109": "4205"
   },
   {
-    "A": "",
-    "B": "IOBD Charity",
-    "C": "PAYMENT"
+    "A110": "RP-16.07",
+    "B110": " Feast Expenses",
+    "C110": "Payment",
+    "D110": "4206"
+  },
+  {
+    "A111": "RP-16.08",
+    "B111": "Food and Refreshment Expenses",
+    "C111": "Payment",
+    "D111": "4207"
+  },
+  {
+    "A112": "RP-16.09",
+    "B112": "Owned institution expenses",
+    "C112": "Payment",
+    "D112": "4208"
+  },
+  {
+    "A113": "RP-16.11",
+    "B113": "Electricity Charges",
+    "C113": "Payment",
+    "D113": "4211"
+  },
+  {
+    "A114": "RP-16.12",
+    "B114": "Fuel and Water Charges",
+    "C114": "Payment",
+    "D114": "4212"
+  },
+  {
+    "A115": "RP-16.13",
+    "B115": "Send off Expenses",
+    "C115": "Payment",
+    "D115": "4282"
+  },
+  {
+    "A116": "RP-16.14",
+    "B116": "Celebration Expenses: Harvest/ Parish Day Expenses",
+    "C116": "Payment",
+    "D116": null
+  },
+  {
+    "A117": "RP-16.15",
+    "B117": "Christmas Carol & Programme Expenses",
+    "C117": "Payment",
+    "D117": "4284"
+  },
+  {
+    "A118": "RP-16.16",
+    "B118": "Others Celebrations",
+    "C118": "Payment",
+    "D118": null
+  },
+  {
+    "A119": "RP-16.17",
+    "B119": "Others",
+    "C119": "Payment",
+    "D119": "4213"
+  },
+  {
+    "A120": null,
+    "B120": "Miscellaneous Expenses",
+    "C120": null,
+    "D120": null
+  },
+  {
+    "A121": "RP-16.31",
+    "B121": "Wages and Cooly",
+    "C121": "Payment",
+    "D121": "4251"
+  },
+  {
+    "A122": "RP-16.32",
+    "B122": "Meeting and Conference expenses",
+    "C122": "Payment",
+    "D122": "4252"
+  },
+  {
+    "A123": "RP-16.33",
+    "B123": "Cleaning Expenses",
+    "C123": "Payment",
+    "D123": "4253"
+  },
+  {
+    "A124": "RP-16.35",
+    "B124": "Canteen Payments",
+    "C124": "Payment",
+    "D124": "4255"
+  },
+  {
+    "A125": "RP-16.36",
+    "B125": "Tomb Construction",
+    "C125": "Payment",
+    "D125": "4256"
+  },
+  {
+    "A126": "RP-16.37",
+    "B126": "Vehicle Running and Maintenance Expenses",
+    "C126": "Payment",
+    "D126": "4257"
+  },
+  {
+    "A127": "RP-16.38",
+    "B127": "Others",
+    "C127": "Payment",
+    "D127": "4258"
+  },
+  {
+    "A128": null,
+    "B128": "Perunnal expenses",
+    "C128": null,
+    "D128": null
+  },
+  {
+    "A129": "RP-16.46",
+    "B129": "July 3rd Festival",
+    "C129": "Payment",
+    "D129": "4261"
+  },
+  {
+    "A130": "RP-16.47",
+    "B130": "August 15 & Sep 1-8  Festival : St Mary",
+    "C130": "Payment",
+    "D130": "4262"
+  },
+  {
+    "A131": "RP-16.48",
+    "B131": "Church Festival : Feast of St Gregorios",
+    "C131": "Payment",
+    "D131": "4263"
+  },
+  {
+    "A132": "RP-16.50",
+    "B132": "Others : St Geogre",
+    "C132": "Payment",
+    "D132": "4265"
+  },
+  {
+    "A133": "RP-16.61",
+    "B133": "Spiritual Organisations Expenses",
+    "C133": "Payment",
+    "D133": "4301"
+  },
+  {
+    "A134": "RP-16.62",
+    "B134": "Sunday School",
+    "C134": "Payment",
+    "D134": "4302"
+  },
+  {
+    "A135": "RP-16.64",
+    "B135": "MMVS",
+    "C135": "Payment",
+    "D135": "4304"
+  },
+  {
+    "A136": "RP-16.65",
+    "B136": "Prarthanayogam",
+    "C136": "Payment",
+    "D136": "4305"
+  },
+  {
+    "A137": "RP-16.67",
+    "B137": "OVBS",
+    "C137": "Payment",
+    "D137": "4307"
+  },
+  {
+    "A138": "RP-16.68",
+    "B138": "MGOCSM & OCYM",
+    "C138": "Payment",
+    "D138": "4308"
+  },
+  {
+    "A139": "RP-16.69",
+    "B139": "St. Joseph Forum",
+    "C139": "Payment",
+    "D139": "4309"
+  },
+  {
+    "A140": "RP-16.70",
+    "B140": "St. Dionysious Forum",
+    "C140": "Payment",
+    "D140": null
+  },
+  {
+    "A141": "RP-16.71",
+    "B141": "Other Spiritual organisations",
+    "C141": "Payment",
+    "D141": null
+  },
+  {
+    "A142": "RP-16.87",
+    "B142": "Other Charity : Grant to Sneha Bhavan Bilikere",
+    "C142": "Payment",
+    "D142": "4317"
+  },
+  {
+    "A143": "RP-16.89",
+    "B143": "Gifts and Compliments",
+    "C143": "Payment",
+    "D143": "4319"
+  },
+  {
+    "A144": null,
+    "B144": "ADDITION OF FIXED ASSETS",
+    "C144": null,
+    "D144": null
+  },
+  {
+    "A145": "RP-18.05",
+    "B145": "Church Building",
+    "C145": "Payment",
+    "D145": "4604"
+  },
+  {
+    "A146": "RP-18.16",
+    "B146": "Furniture and Fixtures",
+    "C146": "Payment",
+    "D146": "4615"
+  },
+  {
+    "A147": "RP-18.17",
+    "B147": "Church Equipments",
+    "C147": "Payment",
+    "D147": "4616"
+  },
+  {
+    "A148": "RP-18.18",
+    "B148": "Other Equipments",
+    "C148": "Payment",
+    "D148": "4617"
+  },
+  {
+    "A149": "RP-18.21",
+    "B149": "Computer, Software  and Peripherals",
+    "C149": "Payment",
+    "D149": "4620"
+  },
+  {
+    "A150": "RP-18.22",
+    "B150": "Website",
+    "C150": "Payment",
+    "D150": "4621"
+  },
+  {
+    "A151": "RP-18.23",
+    "B151": "Electrical Equipments",
+    "C151": "Payment",
+    "D151": "4622"
+  },
+  {
+    "A152": "RP-18.24",
+    "B152": "Machinery and equipments",
+    "C152": "Payment",
+    "D152": "4623"
+  },
+  {
+    "A153": "RP-18.25",
+    "B153": "Generator",
+    "C153": "Payment",
+    "D153": "4624"
+  },
+  {
+    "A154": "RP-18.26",
+    "B154": "Sound System",
+    "C154": "Payment",
+    "D154": "4625"
+  },
+  {
+    "A155": "RP-18.27",
+    "B155": "Renewable Energy Systems",
+    "C155": "Payment",
+    "D155": null
+  },
+  {
+    "A156": "RP-18.28",
+    "B156": "Books",
+    "C156": "Payment",
+    "D156": "4626"
+  },
+  {
+    "A157": "RP-18.29",
+    "B157": "Building under Construction",
+    "C157": "Payment",
+    "D157": "4627"
+  },
+  {
+    "A158": null,
+    "B158": "Repayment of Loans and Borrowings",
+    "C158": null,
+    "D158": null
+  },
+  {
+    "A159": "RP-18.82",
+    "B159": "Repayament to Trustee",
+    "C159": "Payment",
+    "D159": null
+  },
+  {
+    "A160": "RP-18.83",
+    "B160": "Loan from  Church Members",
+    "C160": "Payment",
+    "D160": "4857"
+  },
+  {
+    "A161": null,
+    "B161": "To Malankara Metropolitan",
+    "C161": null,
+    "D161": null
+  },
+  {
+    "A162": "RP-19.03",
+    "B162": "Catholicate Day Collection",
+    "C162": "Payment",
+    "D162": "4001"
+  },
+  {
+    "A163": "RP-19.04",
+    "B163": "Recceessa",
+    "C163": "Payment",
+    "D163": "4002"
+  },
+  {
+    "A164": null,
+    "B164": "To Diocession Office",
+    "C164": null,
+    "D164": null
+  },
+  {
+    "A165": "RP-19.11",
+    "B165": "Diocesan Day Dollection",
+    "C165": "Payment",
+    "D165": "4003"
+  },
+  {
+    "A166": "RP-19.12",
+    "B166": "Vivaha Kaimuthu",
+    "C166": "Payment",
+    "D166": "4004"
+  },
+  {
+    "A167": "RP-19.15",
+    "B167": "Other Collections : Priest Welfare Fund",
+    "C167": "Payment",
+    "D167": "4008"
+  },
+  {
+    "A168": null,
+    "B168": "To Other Offices",
+    "C168": null,
+    "D168": null
+  },
+  {
+    "A169": "RP-19.21",
+    "B169": "Mission Sunday collection",
+    "C169": "Payment",
+    "D169": "4009"
+  },
+  {
+    "A170": "RP-19.22",
+    "B170": "Sunday school day collection",
+    "C170": "Payment",
+    "D170": "4010"
+  },
+  {
+    "A171": "RP-19.23",
+    "B171": "Seminary day collection",
+    "C171": "Payment",
+    "D171": "4011"
+  },
+  {
+    "A172": "RP-19.24",
+    "B172": "Gerbo Sunday Collection",
+    "C172": "Payment",
+    "D172": "4012"
+  },
+  {
+    "A173": "RP-19.25",
+    "B173": "Other collections",
+    "C173": "Payment",
+    "D173": "4013"
+  },
+  {
+    "A174": null,
+    "B174": "Inter Accounts Payments to Diocese",
+    "C174": null,
+    "D174": null
+  },
+  {
+    "A175": "RP-19.31",
+    "B175": "Monthly Quota of Churches (Priest Salary Quota to Diocese)",
+    "C175": "Payment",
+    "D175": "4031"
+  },
+  {
+    "A176": "RP-19.32",
+    "B176": "Methrasana Vihitham: Annual Kaimuth to Thirumeni",
+    "C176": "Payment",
+    "D176": "4032"
+  },
+  {
+    "C177": null
+  },
+  {
+    "C178": null
+  },
+  {
+    "A179": "Monthly Payments",
+    "B179": null,
+    "C179": null
+  },
+  {
+    "A180": "RP-19.31",
+    "B180": "Salary Quota to Diocese (Vicar)",
+    "C180": "Payment"
+  },
+  {
+    "A181": "RP-12.03 (a)",
+    "B181": "Salary to Sexton _ Eldhos ",
+    "C181": "Payment"
+  },
+  {
+    "A182": "RP-12.03 (b)",
+    "B182": "Salary to Watchman(Cemetry) _ Lakshmi",
+    "C182": "Payment"
+  },
+  {
+    "A183": "RP-12.03 (c)",
+    "B183": "Salary to Ayah _ Rani",
+    "C183": "Payment"
+  },
+  {
+    "A184": "RP-12.06",
+    "B184": "Medical Allowance to Sexton",
+    "C184": "Payment"
+  },
+  {
+    "A185": "RP-12.02 (a)",
+    "B185": "Medical Allowance to Vicar",
+    "C185": "Payment"
+  },
+  {
+    "A186": "RP-12.02 ",
+    "B186": "Telephone Allowance to Vicar",
+    "C186": "Payment"
+  },
+  {
+    "A187": "RP-12.02 ",
+    "B187": "Local Travelling Allowance to Vicar",
+    "C187": "Payment"
+  },
+  {
+    "C188": null
+  },
+  {
+    "C189": null
+  },
+  {
+    "C190": null
+  },
+  {
+    "C191": null
   }
 ],
   auction: [
