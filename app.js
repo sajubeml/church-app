@@ -1483,11 +1483,18 @@ function removeCartItem(index) {
 function clearForm() {
   state.cart = [];
   renderCartTable();
-  document.getElementById("txtRegNo").value = "";
-  document.getElementById("cmbMember").value = "";
-  document.getElementById("txtDetails").value = "";
+  const txtReg = document.getElementById("txtRegNo");
+  if (txtReg) txtReg.value = "";
+  const cmbM = document.getElementById("cmbMember");
+  if (cmbM) cmbM.value = "";
+  const txtDet = document.getElementById("txtDetails");
+  if (txtDet) txtDet.value = "";
   const amtEl = document.getElementById("txtAmount");
   if (amtEl) amtEl.value = "";
+  const txtSrcMem = document.getElementById("txtSearchMember");
+  if (txtSrcMem) txtSrcMem.value = "";
+  const txtSrcHead = document.getElementById("txtSearchAccountHead");
+  if (txtSrcHead) txtSrcHead.value = "";
 }
 
 function formatSubUptoMonthYear(val) {
@@ -1729,8 +1736,7 @@ function commitCartToLedgers() {
   }
 
   // 5. Reset Cart & Live update all table views (Cash Book, Member Ledgers, Trial Balance, Audit, Admin)
-  state.cart = [];
-  renderCartTable();
+  clearForm();
   renderAllViews();
 }
 
