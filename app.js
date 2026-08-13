@@ -233,56 +233,70 @@ function verifyLicenseGuard() {
 async function loadAllData() {
   try {
     if (window.AndroidBridge) {
-      const stateJson = window.AndroidBridge.fetchDatabaseState();
-      try {
-        const data = JSON.parse(stateJson);
-        state.cashbook = data.cashbook || [];
-        console.log("Loaded cashbook from Native Android SQLite!");
-      } catch(e) {
-        console.error("Failed to parse Android database state:", e);
-      }
-
-      const fetchJson = async (name) => {
-        if (window.AndroidBridge) {
-          const content = window.AndroidBridge.readAssetFile(`data_export/${name}.json`);
-          try { 
-            const arr = JSON.parse(content); 
-            if (Array.isArray(arr) && arr.length > 0) return arr;
-          } catch (e) { console.error("Bridge parse error:", e); }
-        }
         try {
-          const res = await fetch(`./data_export/${name}.json`);
-          if (res.ok) {
-            const arr = await res.json();
-            if (Array.isArray(arr) && arr.length > 0) return arr;
+          const stateJson = window.AndroidBridge.fetchDatabaseState();
+          const data = JSON.parse(stateJson);
+          if (data.cashbook && data.cashbook.length > 0) {
+            state.cashbook = data.cashbook;
+            calculateNextNumbers();
+            console.log("Loaded cashbook from Native Android SQLite!");
+          } else {
+            const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || [];
+            if (fallbackCb.length > 0) {
+              state.cashbook = fallbackCb;
+              calculateNextNumbers();
+              window.AndroidBridge.bulkSync(JSON.stringify(fallbackCb));
+              console.log("Populated Android SQLite DB from data.js package!");
+            }
           }
-        } catch (e) { console.error("Fetch parse error:", e); }
-        return [];
-      };
+        } catch(e) {
+          console.error("Failed to parse Android database state:", e);
+        }
 
-      const m = await fetchJson("Members");
-      const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
-      const hasValidM = Array.isArray(localM) && localM.some(item => getColVal(item, "B"));
-      state.members = hasValidM ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
+        const fetchJson = async (name) => {
+          if (window.AndroidBridge) {
+            const content = window.AndroidBridge.readAssetFile(`data_export/${name}.json`);
+            try { 
+              const arr = JSON.parse(content); 
+              if (Array.isArray(arr) && arr.length > 0) return arr;
+            } catch (e) { console.error("Bridge parse error:", e); }
+          }
+          try {
+            const res = await fetch(`./data_export/${name}.json`);
+            if (res.ok) {
+              const arr = await res.json();
+              if (Array.isArray(arr) && arr.length > 0) return arr;
+            }
+          } catch (e) { console.error("Fetch parse error:", e); }
+          return [];
+        };
 
-      const ind = await fetchJson("Individual");
-      const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
-      const hasValidInd = Array.isArray(localInd) && localInd.some(item => getColVal(item, "B") || getColVal(item, "C"));
-      state.individual = hasValidInd ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
+        const m = await fetchJson("Members");
+        const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
+        const hasValidM = Array.isArray(localM) && localM.some(item => getColVal(item, "B"));
+        const fallbackM = (window.CHURCH_DATA && window.CHURCH_DATA.members) || window.INITIAL_MEMBERS || [];
+        state.members = hasValidM ? localM : (m.length ? m : fallbackM);
 
-      const tb = await fetchJson("Trial_Balance");
-      const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
-      state.trialBalance = localTb.length ? localTb : (tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []));
+        const ind = await fetchJson("Individual");
+        const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
+        const hasValidInd = Array.isArray(localInd) && localInd.some(item => getColVal(item, "B") || getColVal(item, "C"));
+        const fallbackInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) || window.INITIAL_INDIVIDUAL || [];
+        state.individual = hasValidInd ? localInd : (ind.length ? ind : fallbackInd);
 
-      const c = await fetchJson("Codes");
-      const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
-      state.codes = localC.length ? localC : (c.length ? c : (window.INITIAL_CODES || []));
+        const tb = await fetchJson("Trial_Balance");
+        const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
+        const fallbackTb = (window.CHURCH_DATA && window.CHURCH_DATA.trialBalance) || window.INITIAL_TRIAL_BALANCE || [];
+        state.trialBalance = localTb.length ? localTb : (tb.length ? tb : fallbackTb);
 
+        const c = await fetchJson("Codes");
+        const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
+        const fallbackC = (window.CHURCH_DATA && window.CHURCH_DATA.codes) || window.INITIAL_CODES || [];
+        state.codes = localC.length ? localC : (c.length ? c : fallbackC);
 
-
-      const bu = await fetchJson("Budget");
-      const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
-      state.budget = localBu.length ? localBu : (bu.length ? bu : (window.INITIAL_BUDGET || []));
+        const bu = await fetchJson("Budget");
+        const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
+        const fallbackBu = (window.CHURCH_DATA && window.CHURCH_DATA.budget) || window.INITIAL_BUDGET || [];
+        state.budget = localBu.length ? localBu : (bu.length ? bu : fallbackBu);
 
     } else {
       try {
