@@ -248,7 +248,7 @@ def read_json_raw(filename):
     return "[]"
 
 def build_data_js():
-    pass # check_and_sync_latest_backups()
+    # check_and_sync_latest_backups()
     print("Packaging exported JSON data into data.js...")
     
     cb = read_json_raw("Cash_Book.json")

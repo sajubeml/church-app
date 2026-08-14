@@ -18,7 +18,7 @@ FILES_TO_COPY = [
     "Start_Portal.cmd",
     "index.html",
     "styles.css",
-    "app_cloud_v10.js",
+    "app.js",
     "church_logo.png",
     "church_logo.jpg",
     "church_automation.py",
@@ -61,7 +61,7 @@ def create_dist_package(target_dir_name, zip_name, data_file_source, readme_cont
     # Copy standard files
     for f in FILES_TO_COPY:
         if os.path.exists(f):
-            dest_name = "app.js" if f == "app_cloud_v10.js" else f
+            dest_name = f
             shutil.copy(f, os.path.join(dist_dir, dest_name))
 
     # Copy data file as data.js

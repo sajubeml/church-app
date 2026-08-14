@@ -769,8 +769,7 @@ window.CHURCH_DATA = {
     "L": "47",
     "M": "Excess Cash Deposited to Bank",
     "O": "cash deposited in bank",
-    "P": "25000",
-    "payments_code": "CD"
+    "P": "25000"
   },
   {
     "A": "03-04-2026",
@@ -2126,9 +2125,7 @@ window.CHURCH_DATA = {
     "A": "28-04-2026",
     "B": "Vr47",
     "G": "cash deposited in bank",
-    "I": "25000",
-    "receipt_account_head": "Excess Cash Deposited to Bank",
-    "receipt_code": "CD"
+    "I": "25000"
   },
   {
     "A": "30-04-2026",
@@ -2870,9 +2867,7 @@ window.CHURCH_DATA = {
     "K": "30-05-2026",
     "L": "90",
     "O": "cash deposited in bank",
-    "P": "20000",
-    "payments_account_head": "Excess Cash Deposited to Bank",
-    "payments_code": "CD"
+    "P": "20000"
   },
   {
     "A": "12-05-2026",
@@ -3438,9 +3433,7 @@ window.CHURCH_DATA = {
     "A": "30-05-2026",
     "B": "Vr89",
     "G": "Cash deposited in bank",
-    "I": "20000",
-    "receipt_account_head": "Excess Cash Deposited to Bank",
-    "receipt_code": "CD"
+    "I": "20000"
   },
   {
     "A": "30-05-2026",
@@ -3916,9 +3909,7 @@ window.CHURCH_DATA = {
     "K": "16-06-2026",
     "L": "105",
     "O": "cash deposited in bank",
-    "P": "35000",
-    "payments_account_head": "Excess Cash Deposited to Bank",
-    "payments_code": "CD"
+    "P": "35000"
   },
   {
     "A": "11-06-2026",
@@ -4188,9 +4179,7 @@ window.CHURCH_DATA = {
     "K": "29-06-2026",
     "L": "122",
     "O": "cash deposited in bank",
-    "P": "20000",
-    "payments_account_head": "Excess Cash Deposited to Bank",
-    "payments_code": "CD"
+    "P": "20000"
   },
   {
     "A": "07-06-2026",
@@ -4782,9 +4771,7 @@ window.CHURCH_DATA = {
     "A": "16-06-2026",
     "B": "105",
     "G": "cash deposited in bank",
-    "I": "35000",
-    "receipt_account_head": "Excess Cash Deposited to Bank",
-    "receipt_code": "CD"
+    "I": "35000"
   },
   {
     "A": "16-06-2026",
@@ -5104,8 +5091,7 @@ window.CHURCH_DATA = {
     "A": "29-06-2026",
     "B": "Vr122",
     "E": "Excess Cash Deposited to Bank",
-    "I": "20000",
-    "receipt_code": "CD"
+    "I": "20000"
   },
   {
     "A": "29-06-2026",
@@ -8084,7 +8070,126 @@ window.CHURCH_DATA = {
     "F": "RP-2.16",
     "G": "9/8/26",
     "I": "500"
-  }],
+  },
+  {
+    "K": "2026-08-12",
+    "L": "184",
+    "M": "Gift & Mementoes",
+    "N": "RP-16.89",
+    "O": "birthday gift to Mary mathew vide bill",
+    "P": "970.00"
+  },
+  {
+    "K": "2026-08-12",
+    "L": "185",
+    "M": "Kaimuthu to Thirumeni",
+    "N": "RP-12.07",
+    "O": "Kaimuthu to HG DR Gheevargheese Mar Yulios vide cq no 362017",
+    "Q": "10000.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4322",
+    "C": "13",
+    "D": "Aniyan Peter",
+    "E": "Old Cover Collection Dues",
+    "F": "RP-10.17",
+    "I": "400.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4322",
+    "C": "13",
+    "D": "Aniyan Peter",
+    "E": "Monthly Subscription ( Pervious Year)",
+    "F": "RP-3.83",
+    "G": "apr 21 to mar 25",
+    "I": "9600.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4323",
+    "C": "162",
+    "D": "Jacob Oommen",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "Aug15 Palchor nercha",
+    "I": "500.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4324",
+    "C": "78",
+    "D": "Peter K. A.",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "August 15th",
+    "I": "500.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4325",
+    "C": "55",
+    "D": "Poulose M. M. Dr.",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "August 15th",
+    "I": "2000.00"
+  },
+  {
+    "A": "2026-08-12",
+    "B": "4326",
+    "C": "33",
+    "D": "George Pothan",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "Palchor august 15th",
+    "I": "1000.00"
+  },
+  {
+    "A": "2026-08-13",
+    "B": "4327",
+    "C": "105",
+    "D": "Thankam Panackal",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "August 15th palchor nercha",
+    "I": "5000.00"
+  },
+  {
+    "A": "2026-08-13",
+    "B": "4328",
+    "C": "173",
+    "D": "Rohith Mathews",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "august 15th palchor nercha",
+    "H": "0",
+    "I": "3000"
+  },
+  {
+    "A": "2026-08-13",
+    "B": "4329",
+    "C": "1",
+    "D": "Bibi Chandy",
+    "E": "St. Mary's Feast",
+    "F": "RP-3.32",
+    "G": "august 15th palchor nercha",
+    "H": "0",
+    "I": "5000"
+  },
+  {
+    "A": "2026-08-13",
+    "B": "4330",
+    "C": "17",
+    "D": "Saju Jacob",
+    "E": "Birthday Offerings",
+    "F": "RP-3.16",
+    "G": "",
+    "H": "100",
+    "I": ""
+  }
+],
   individual: [
   {
     "A": "St. Gregorios Orthodox Syrian Church and Pilgrim Centre"
@@ -8229,7 +8334,9 @@ window.CHURCH_DATA = {
     "A": "6",
     "B": "13",
     "C": "Aniyan Peter",
-    "AM": "0"
+    "AM": "20000.0",
+    "L": "400.0",
+    "E": "9600.0"
   },
   {
     "A": "7",
@@ -8529,7 +8636,8 @@ window.CHURCH_DATA = {
     "N": "700",
     "Q": "500",
     "V": "1500",
-    "AM": "7300"
+    "AM": "9300.0",
+    "Y": "1000.0"
   },
   {
     "A": "29",
@@ -8624,7 +8732,8 @@ window.CHURCH_DATA = {
     "V": "500",
     "W": "500",
     "AK": "1000",
-    "AM": "9200"
+    "AM": "10200.0",
+    "Y": "500.0"
   },
   {
     "A": "36",
@@ -9038,7 +9147,8 @@ window.CHURCH_DATA = {
     "C": "Peter K. A.",
     "F": "3000",
     "G": "1000",
-    "AM": "4000"
+    "AM": "5000.0",
+    "Y": "500.0"
   },
   {
     "A": "69",
@@ -9066,7 +9176,8 @@ window.CHURCH_DATA = {
     "J": "100",
     "K": "100",
     "Q": "100",
-    "AM": "7500"
+    "AM": "11500.0",
+    "Y": "2000.0"
   },
   {
     "A": "72",
@@ -9106,7 +9217,7 @@ window.CHURCH_DATA = {
     "C": "Rajan Mathai",
     "N": "500",
     "V": "1100",
-    "AM": "11600.00",
+    "AM": "11600.0",
     "E": "2400",
     "M": "100",
     "G": "600",
@@ -9138,7 +9249,7 @@ window.CHURCH_DATA = {
     "AH": "",
     "AI": "",
     "AJ": "",
-    "AK": "5000",
+    "AK": "5500.0",
     "AL": ""
   },
   {
@@ -9225,7 +9336,10 @@ window.CHURCH_DATA = {
     "C": "Saju Jacob",
     "F": "3000",
     "V": "1250",
-    "AM": "4250"
+    "AM": "9450.0",
+    "N": "100.0",
+    "Y": "500.0",
+    "AK": "4500.0"
   },
   {
     "A": "85",
@@ -9406,7 +9520,8 @@ window.CHURCH_DATA = {
     "N": "200",
     "P": "500",
     "U": "2100",
-    "AM": "7000"
+    "AM": "17000.0",
+    "Y": "5000.0"
   },
   {
     "A": "102",
@@ -10073,568 +10188,781 @@ window.CHURCH_DATA = {
 ],
   members: [
   {
-    "A1": "Sl no",
-    "B1": "Register No.",
-    "C1": "Name",
-    "D1": "Mob"
+    "A": "",
+    "B": "128",
+    "C": "Abraham Thomas Dr",
+    "D": "9886627279",
+    "E": "#579, A1 Block Vijayanagar 3rd Stage Mysuru 570 030"
   },
   {
-    "A2": "1",
-    "B2": "128",
-    "C2": "Abraham Thomas Dr"
+    "A": "",
+    "B": "2",
+    "C": "Abraham.M.O",
+    "D": "9845118555",
+    "E": "Manamel Farm, Bogadi Village Mysuru 570 026"
   },
   {
-    "A3": "2",
-    "B3": "2",
-    "C3": "Abraham.M.O"
+    "A": "",
+    "B": "7",
+    "C": "Ajish K Abraham Dr.",
+    "D": "9448978022",
+    "E": "#798, 7th Cross Roopanagar, Bogadi, Mysuru 570 026"
   },
   {
-    "A4": "3",
-    "B4": "7",
-    "C4": "Ajish K Abraham Dr."
+    "A": "",
+    "B": "11",
+    "C": "Ammini Varghese",
+    "D": "9845191019",
+    "E": "#138 Grace Cottage Gangothri Layout 1st Stage, Saraswathipuram, Mysuru 570 009"
   },
   {
-    "A5": "4",
-    "B5": "11",
-    "C5": "Ammini Varghese"
+    "A": "",
+    "B": "12",
+    "C": "Anil Thomas. Dr.",
+    "D": "9343133366",
+    "E": "#11 Maret Cahammundi Vihar Layout, Nazarbad, Mysuru 570 010"
   },
   {
-    "A6": "5",
-    "B6": "12",
-    "C6": "Anil Thomas. Dr."
+    "A": "",
+    "B": "13",
+    "C": "Aniyan Peter",
+    "D": "8884106488",
+    "E": "#3618, Maruthi Extn. Hunsur 571 105"
   },
   {
-    "A7": "6",
-    "B7": "13",
-    "C7": "Aniyan Peter"
+    "A": "",
+    "B": "47",
+    "C": "Arun Varghese",
+    "D": "9845454281",
+    "E": "#596/D, Satya Marga Sidhartha Layout Mysuru 570011"
   },
   {
-    "A8": "7",
-    "B8": "47",
-    "C8": "Arun Varghese"
+    "A": "",
+    "B": "15",
+    "C": "Babu George",
+    "D": "9449823876",
+    "E": "#678, 9-B Cross Road Moksha Marga Sidhartha Nagar 2nd Stage Mysuru 570 011"
   },
   {
-    "A9": "8",
-    "B9": "15",
-    "C9": "Babu George"
+    "A": "",
+    "B": "8",
+    "C": "Baby.C.P",
+    "D": "9449822765",
+    "E": "#960, 1st Cross Agnihamsa Road, E & F Block F57, Kuvempunagar"
   },
   {
-    "A10": "9",
-    "B10": "8",
-    "C10": "Baby.C.P"
+    "A": "",
+    "B": "1",
+    "C": "Bibi Chandy",
+    "D": "9539112130",
+    "E": "#47, Manamel Ashram Road, Jayalakshmipuram Mysore 570012"
   },
   {
-    "A11": "10",
-    "B11": "1",
-    "C11": "Bibi Chandy"
+    "A": "",
+    "B": "160",
+    "C": "Biju Jacob",
+    "D": "8088130833",
+    "E": "#2377 Mundamattam House 9th Main 4th Cross Vijayanagar 2nd Stage Mysuru 570017"
   },
   {
-    "A12": "11",
-    "B12": "160",
-    "C12": "Biju Jacob"
+    "A": "",
+    "B": "172",
+    "C": "Biju M. Abraham",
+    "D": "9448322741",
+    "E": "#80, Madapurath Chammundeshary Rly, Layout Mettagalli, Mysuru 570016"
   },
   {
-    "A13": "12",
-    "B13": "172",
-    "C13": "Biju M. Abraham"
+    "A": "",
+    "B": "93",
+    "C": "Biju T. Mathew",
+    "D": "9620335201",
+    "E": "238, 20th Main Vijayanagar 2nd Stage Mysuru -570 017"
   },
   {
-    "A14": "13",
-    "B14": "93",
-    "C14": "Biju T. Mathew"
+    "A": "",
+    "B": "135",
+    "C": "Binu Papachan",
+    "D": "",
+    "E": ""
   },
   {
-    "A15": "14",
-    "B15": "135",
-    "C15": "Binu Papachan"
+    "A": "",
+    "B": "123",
+    "C": "Binu Rajan",
+    "D": "9663169550",
+    "E": "#644. RS Naidunagar 2nd Stage F.E.of Kesara, NR Mohalla +F48 Mysuru 570 007"
   },
   {
-    "A16": "15",
-    "B16": "123",
-    "C16": "Binu Rajan"
+    "A": "",
+    "B": "147",
+    "C": "Byju Jacob",
+    "D": "9995336776",
+    "E": "#75/3, 11th main Kittoor Rani Channamma Road Bogadi Mysuru 570026"
   },
   {
-    "A17": "16",
-    "B17": "147",
-    "C17": "Byju Jacob"
+    "A": "",
+    "B": "134",
+    "C": "Chacko K. C. (Roy)",
+    "D": "8050258821",
+    "E": "#40, Dinakrupa, 1st A Main 2nd cross, Mathuranagar, Mettagalli,"
   },
   {
-    "A18": "17",
-    "B18": "134",
-    "C18": "Chacko K. C. (Roy)"
+    "A": "",
+    "B": "21",
+    "C": "Chacko.T.V.",
+    "D": "9743642880",
+    "E": "#75, 3rd Cross I Block Kuvempunagar, Mysuru 570 023"
   },
   {
-    "A19": "18",
-    "B19": "21",
-    "C19": "Chacko.T.V."
+    "A": "",
+    "B": "24",
+    "C": "Chandy T.V.",
+    "D": "9742052563",
+    "E": "Sabbanahalli Village, Halebeedu Post, Bilikere Hobli, Hunsur Taluk, Mysuru \u2013 571 103,"
   },
   {
-    "A20": "19",
-    "B20": "24",
-    "C20": "Chandy T.V."
+    "A": "",
+    "B": "26",
+    "C": "Cherian K. M.",
+    "D": "9341620987",
+    "E": "#2376, 9th Main, 4th Cross Vijayanagar 2nd Stage Mysuru 570 017"
   },
   {
-    "A21": "20",
-    "B21": "26",
-    "C21": "Cherian K. M."
+    "A": "",
+    "B": "32",
+    "C": "Chinnamma George",
+    "D": "",
+    "E": "#227-B, KRS Road Mettagalli Mysuru 570016"
   },
   {
-    "A22": "21",
-    "B22": "32",
-    "C22": "Chinnamma George"
+    "A": "",
+    "B": "27",
+    "C": "Daniel.J",
+    "D": "9901349570",
+    "E": "#114, MIG 2, Group 1, KHB Colony Near Bank of Baroda Hootagalli Belvadi PO Mysuru 570018"
   },
   {
-    "A23": "22",
-    "B23": "27",
-    "C23": "Daniel.J"
+    "A": "",
+    "B": "31",
+    "C": "Deenamma George",
+    "D": "97311 51890",
+    "E": "#1585, 80 Feet Road 1st Main Hebbal 2nd Stage, Mysuru - 570017"
   },
   {
-    "A24": "23",
-    "B24": "31",
-    "C24": "Deenamma George"
+    "A": "",
+    "B": "146",
+    "C": "Dickson Thamby",
+    "D": "7349568183",
+    "E": "No.56, Basaveshwara Layout Belavadi Main Road Near Sharmada Farm, Vijayanagar 4th Stage Belvadi"
   },
   {
-    "A25": "24",
-    "B25": "146",
-    "C25": "Dickson Thamby"
+    "A": "",
+    "B": "100",
+    "C": "Elizabeth S. Thomas",
+    "D": "8884267799",
+    "E": "#S1,41/41A, Mehawish Apartments 7th Main Jaylakshmipuram"
   },
   {
-    "A26": "25",
-    "B26": "100",
-    "C26": "Elizabeth S. Thomas"
+    "A": "",
+    "B": "144",
+    "C": "George A. M.",
+    "D": "9449627097",
+    "E": "#873, Pushpagiri Belavetha, Note Mudra Nagar"
   },
   {
-    "A27": "26",
-    "B27": "144",
-    "C27": "George A. M."
+    "A": "",
+    "B": "30",
+    "C": "George Abraham",
+    "D": "9480134739",
+    "E": "#14, C.I.T.B House Bannimantap Mysuru 570015"
   },
   {
-    "A28": "27",
-    "B28": "30",
-    "C28": "George Abraham"
+    "A": "",
+    "B": "33",
+    "C": "George Pothan",
+    "D": "",
+    "E": ""
   },
   {
-    "A29": "28",
-    "B29": "35",
-    "C29": "George M. C. (Shaji)"
+    "A": "",
+    "B": "131",
+    "C": "George Suprit",
+    "D": "9019591475",
+    "E": "Flat No"
   },
   {
-    "A30": "29",
-    "B30": "33",
-    "C30": "George Pothan"
+    "A": "",
+    "B": "35",
+    "C": "George M. C. (Shaji)",
+    "D": "9845098907",
+    "E": "#1175 Moolamannil 5th Main Hebbal 1st Stage Mettagalli Mysuru 570016"
   },
   {
-    "A31": "30",
-    "B31": "131",
-    "C31": "George Suprit"
+    "A": "",
+    "B": "37",
+    "C": "Gracy Johnson",
+    "D": "9900207656",
+    "E": "#3542/9, New Maruthi Extn. Hunsur 571 105"
   },
   {
-    "A32": "31",
-    "B32": "37",
-    "C32": "Gracy Johnson"
+    "A": "",
+    "B": "25",
+    "C": "Gregorios CKV",
+    "D": "9740388990",
+    "E": "#956, Kings View 8th Main, 11th Cross Vijayanagar, 1st Stage, Mysuru 570 017"
   },
   {
-    "A33": "32",
-    "B33": "25",
-    "C33": "Gregorios CKV"
+    "A": "",
+    "B": "38",
+    "C": "Indira Abraham",
+    "D": "8277054700",
+    "E": "#225 Mettagalli Extn. K.R.S Road Mysuru 570016"
   },
   {
-    "A34": "33",
-    "B34": "38",
-    "C34": "Indira Abraham"
+    "A": "",
+    "B": "39",
+    "C": "Ittan.A.M",
+    "D": "9972594294",
+    "E": "#18, 2nd Cross Kaveri Layout Vijayanagar 3rd Stage"
   },
   {
-    "A35": "34",
-    "B35": "39",
-    "C35": "Ittan.A.M"
+    "A": "",
+    "B": "162",
+    "C": "Jacob Oommen",
+    "D": "9844135334",
+    "E": "101, Gungralchathra Village, Behind Sri Adichunchanagiri Primary and Higher School. Rattnahalli Road, .. Yelwala, Hobli, Mysuru 571130"
   },
   {
-    "A36": "35",
-    "B36": "29",
-    "C36": "Jacob Eapen K. C."
+    "A": "",
+    "B": "29",
+    "C": "Jacob Eapen K. C.",
+    "D": "7338088930",
+    "E": "#45-1 Ashiana, Temple Road 2nd Cross Jayalakshmipuram Mysuru570012"
   },
   {
-    "A37": "36",
-    "B37": "130",
-    "C37": "Jacob K. Abraham"
+    "A": "",
+    "B": "130",
+    "C": "Jacob K. Abraham",
+    "D": "",
+    "E": "#1 Block No 20 1st Stage Dr.Rajakumar Road JSS Layout Behind BSNL Office Shakthinagr Mysuru 570011"
   },
   {
-    "A38": "37",
-    "B38": "162",
-    "C38": "Jacob Oommen"
+    "A": "",
+    "B": "40",
+    "C": "Jacob.C.T",
+    "D": "9686491415",
+    "E": "#62, Gayathiripuram 2nd Stage Near St. Antony's Church Mysuru 570 019"
   },
   {
-    "A39": "38",
-    "B39": "40",
-    "C39": "Jacob.C.T"
+    "A": "",
+    "B": "174",
+    "C": "Jijo Abraham Mathew",
+    "D": "9035240452",
+    "E": "143, MIG-2, Group-1, KHB Colony, Hootagalli, Belavadi P.O., Mysuru - 18"
   },
   {
-    "A40": "39",
-    "B40": "174",
-    "C40": "Jijo Abraham Mathew"
+    "A": "",
+    "B": "51",
+    "C": "John A. M.",
+    "D": "9945996153",
+    "E": "#271, Behind Maruthi Temple Belavatha Village RB I P.O Mysuru 570 003"
   },
   {
-    "A41": "40",
-    "B41": "51",
-    "C41": "John A. M."
+    "A": "",
+    "B": "19",
+    "C": "Johnson.K.G",
+    "D": "9880318252",
+    "E": "#1972, 27th Cross, Hebbal 2nd Stage Mysuru 570 017"
   },
   {
-    "A42": "41",
-    "B42": "49",
-    "C42": "Johnson K.U"
+    "A": "",
+    "B": "49",
+    "C": "Johnson K. U.",
+    "D": "9481814649",
+    "E": "#52, R M P Layout Vijayanagar 4th Stage Mysuru 570017"
   },
   {
-    "A43": "42",
-    "B43": "19",
-    "C43": "Johnson.K.G"
+    "A": "",
+    "B": "126",
+    "C": "Johnsy George",
+    "D": "",
+    "E": ""
   },
   {
-    "A44": "43",
-    "B44": "126",
-    "C44": "Johnsy George"
+    "A": "",
+    "B": "67",
+    "C": "Jolly Mathew",
+    "D": "8212511085",
+    "E": "#10 Ammini Ark, 3rd Cross Gokulam 3rd Stage Mysuru 570002"
   },
   {
-    "A45": "44",
-    "B45": "67",
-    "C45": "Jolly Mathew"
+    "A": "",
+    "B": "52",
+    "C": "Joseph A. M.",
+    "D": "9980058164",
+    "E": "#1167/C, 7th Main Vijayanagar 1st Stage Mysuru 570017"
   },
   {
-    "A46": "45",
-    "B46": "52",
-    "C46": "Joseph A. M."
+    "A": "",
+    "B": "175",
+    "C": "Karthik John Varkie",
+    "D": "",
+    "E": ""
   },
   {
-    "A47": "46",
-    "B47": "175",
-    "C47": "Karthik John Varkie"
+    "A": "",
+    "B": "58",
+    "C": "Kashy C. N.",
+    "D": "",
+    "E": ""
   },
   {
-    "A48": "47",
-    "B48": "58",
-    "C48": "Kashy C. N."
+    "A": "",
+    "B": "56",
+    "C": "Kiron Mathew",
+    "D": "8762471764",
+    "E": "#63,5A Main Road Gokulam 2nd Stage V.V Mohalla PO Mysuru 570 002"
   },
   {
-    "A49": "48",
-    "B49": "56",
-    "C49": "Kiron Mathew"
+    "A": "",
+    "B": "57",
+    "C": "Kochumon P. K.",
+    "D": "9611692580",
+    "E": "#4232, 8th Cross 17th Main Near KD Circle, Vijayanagar 2nd Stage Mysuru 570017"
   },
   {
-    "A50": "49",
-    "B50": "57",
-    "C50": "Kochumon P. K."
+    "A": "",
+    "B": "59",
+    "C": "Koshy T. T.",
+    "D": "9448061223",
+    "E": "#473, Thumpunakal House Panchayath Office Road Hinkal Mysuru 570017"
   },
   {
-    "A51": "50",
-    "B51": "59",
-    "C51": "Koshy T. T."
+    "A": "",
+    "B": "61",
+    "C": "Laila Kurian",
+    "D": "945478903",
+    "E": "#656,1st Cross 11th Main Mahadeshwara Layout Mysuru 570 016"
   },
   {
-    "A52": "51",
-    "B52": "61",
-    "C52": "Laila Kurian"
+    "A": "",
+    "B": "62",
+    "C": "Lalamma David",
+    "D": "8861525828",
+    "E": "#M-84, 5th Main 2nd Stage Kuvempunagar, Mysuru 570 023"
   },
   {
-    "A53": "52",
-    "B53": "62",
-    "C53": "Lalamma David"
+    "A": "",
+    "B": "108",
+    "C": "Lali J.",
+    "D": "9945651279",
+    "E": "#67/1, 6th A Cross 1st Main 1st Stage, Brindavan Ext."
   },
   {
-    "A54": "53",
-    "B54": "108",
-    "C54": "Lali J."
+    "A": "",
+    "B": "14",
+    "C": "Lucy V. I.",
+    "D": "9880815405",
+    "E": "#151/2 Lokanayakanagar Hebbal Main Road Mettaglii Mysuru 570 016"
   },
   {
-    "A55": "54",
-    "B55": "14",
-    "C55": "Lucy V. I."
+    "A": "",
+    "B": "44",
+    "C": "Manu Varghese",
+    "D": "9739357249",
+    "E": "#650, KBL Silicon City Kuppedada Village, Belagola Hobli Srirangapatna Mandya -571 606"
   },
   {
-    "A56": "55",
-    "B56": "44",
-    "C56": "Manu Varghese"
+    "A": "",
+    "B": "92",
+    "C": "Mariamma Philipose",
+    "D": "9559024198",
+    "E": "#L-2-463 1st Cross 1st Stage Sharadadevi Nagar Mysuru 570023"
   },
   {
-    "A57": "56",
-    "B57": "92",
-    "C57": "Mariamma Philipose"
+    "A": "",
+    "B": "75",
+    "C": "Mariamma Poulose C. P.",
+    "D": "",
+    "E": ""
   },
   {
-    "A58": "57",
-    "B58": "75",
-    "C58": "Mariamma Poulose C. P."
+    "A": "",
+    "B": "5",
+    "C": "Mariamma V. M.",
+    "D": "9886101979",
+    "E": "#398, Mariya Nivas 3rd Main Chummundeshwary Rly Layout, Mettagalli P. O., Mysuru 5700 016"
   },
   {
-    "A59": "58",
-    "B59": "5",
-    "C59": "Mariamma V. M."
+    "A": "",
+    "B": "65",
+    "C": "Mary Mathew",
+    "D": "9704008285",
+    "E": "#47-1 Manamel House Ashram Road, Jayalakshmipuram Mysuru 570012"
   },
   {
-    "A60": "59",
-    "B60": "65",
-    "C60": "Mary Mathew"
+    "A": "",
+    "B": "120",
+    "C": "Mathew P. V",
+    "D": "9343390092",
+    "E": "#18, Palamittam House P Hosahalli PO, KRS-Srirangapatna Road Srirangapatna T.Q., Mandya Dist. 571606"
   },
   {
-    "A61": "60",
-    "B61": "69",
-    "C61": "Mathew K. T."
+    "A": "",
+    "B": "117",
+    "C": "Mathew Varghese",
+    "D": "9483902953",
+    "E": "#115, 8th Main Jayalakshmipuram Mysuru 570 012"
   },
   {
-    "A62": "61",
-    "B62": "120",
-    "C62": "Mathew P. V"
+    "A": "",
+    "B": "69",
+    "C": "Mathew K. T.",
+    "D": "9482985276",
+    "E": "#507, 1st Main 3rd Cross Lokanaykanagar Mettagalli P. \u041e., Mysuru 570 016"
   },
   {
-    "A63": "62",
-    "B63": "117",
-    "C63": "Mathew Varghese"
+    "A": "",
+    "B": "171",
+    "C": "Mino Koshy",
+    "D": "9449091103",
+    "E": "#C299, RBI Quarters Mysuru 570016"
   },
   {
-    "A64": "63",
-    "B64": "171",
-    "C64": "Mino Koshy"
+    "A": "",
+    "B": "73",
+    "C": "Monamma Baby",
+    "D": "9632781045",
+    "E": "#4, Rly Layout, Hebbal Vijayanagar Mysuru 570017"
   },
   {
-    "A65": "64",
-    "B65": "73",
-    "C65": "Monamma Baby"
+    "A": "",
+    "B": "66",
+    "C": "Monzy Thomas",
+    "D": "",
+    "E": ""
   },
   {
-    "A66": "65",
-    "B66": "66",
-    "C66": "Monzy Thomas"
+    "A": "",
+    "B": "169",
+    "C": "Nidheesh David Kuruvila",
+    "D": "8105627525",
+    "E": "#T3-001, AIISH Staff Qtrs. Manasagangothri, Mysuru 570 006"
   },
   {
-    "A67": "66",
-    "B67": "169",
-    "C67": "Nidheesh David Kuruvila"
+    "A": "",
+    "B": "85",
+    "C": "Ninan P.T. S/o Raichal",
+    "D": "8971311667",
+    "E": "#217, Metagalli Extn. Mysuru 570016"
   },
   {
-    "A68": "67",
-    "B68": "85",
-    "C68": "Ninan P.T. S/o Raichal"
+    "A": "",
+    "B": "78",
+    "C": "Peter K. A.",
+    "D": "9845001375",
+    "E": "#163, Palal, 3rd Main, 4th Cross Mettagalli, Mysuru 570016"
   },
   {
-    "A69": "68",
-    "B69": "78",
-    "C69": "Peter K. A."
+    "A": "",
+    "B": "181",
+    "C": "Ponnamma Pappachan",
+    "D": "9900366201",
+    "E": "No.150, Siddalingapura P.O., Near Water Tank Kalasthavadi"
   },
   {
-    "A70": "69",
-    "B70": "181",
-    "C70": "Ponnamma Pappachan"
+    "A": "",
+    "B": "113",
+    "C": "Ponnamma Unni",
+    "D": "9886974611",
+    "E": "#442, 8th Main High Tension Road Madeshwara Extn. Mettaglli Mysuru 570016"
   },
   {
-    "A71": "70",
-    "B71": "113",
-    "C71": "Ponnamma Unni"
+    "A": "",
+    "B": "55",
+    "C": "Poulose M. M. Dr.",
+    "D": "",
+    "E": ""
   },
   {
-    "A72": "71",
-    "B72": "55",
-    "C72": "Poulose M. M. Dr."
+    "A": "",
+    "B": "76",
+    "C": "Poulose M. S.",
+    "D": "",
+    "E": ""
   },
   {
-    "A73": "72",
-    "B73": "76",
-    "C73": "Poulose M. S."
+    "A": "",
+    "B": "82",
+    "C": "Pradeep Eapen Thomas",
+    "D": "",
+    "E": ""
   },
   {
-    "A74": "73",
-    "B74": "82",
-    "C74": "Pradeep Eapen Thomas"
+    "A": "",
+    "B": "22",
+    "C": "Prasad Chacko",
+    "D": "9845905138",
+    "E": "#3083 - A Mannil house 14-Cross, Hebbal 2nd Stage Mysuru 570 017"
   },
   {
-    "A75": "74",
-    "B75": "22",
-    "C75": "Prasad Chacko"
+    "A": "",
+    "B": "86",
+    "C": "Rajan Mathai",
+    "D": "",
+    "E": ""
   },
   {
-    "A76": "75",
-    "B76": "86",
-    "C76": "Rajan Mathai"
+    "A": "",
+    "B": "87",
+    "C": "Rajan P.",
+    "D": "9845197843",
+    "E": "#66, K. C. Layout Chammundi Hill Main Road"
   },
   {
-    "A77": "76",
-    "B77": "87",
-    "C77": "Rajan P."
+    "A": "",
+    "B": "90",
+    "C": "Reji Simon",
+    "D": "984561064",
+    "E": "#F 5, 4th Cross Weavers Colony 2nd Stage, Industrial Suburb Vidyaranyapuram"
   },
   {
-    "A78": "77",
-    "B78": "90",
-    "C78": "Reji Simon"
+    "A": "",
+    "B": "124",
+    "C": "Rejina George",
+    "D": "",
+    "E": ""
   },
   {
-    "A79": "78",
-    "B79": "124",
-    "C79": "Rejina George"
+    "A": "",
+    "B": "173",
+    "C": "Rohith Mathews",
+    "D": "9900505839",
+    "E": "C/O Bibi Chandy, #47, Manamel, Ashram Road, Jayalakshmipuram, Mysuru 570012"
   },
   {
-    "A80": "79",
-    "B80": "173",
-    "C80": "Rohith Mathews"
+    "A": "",
+    "B": "168",
+    "C": "Roy Pappachan",
+    "D": "7487055618",
+    "E": "#339, 6th Main 7th Cross K. C. Layout, Mysuru 570 011"
   },
   {
-    "A81": "80",
-    "B81": "168",
-    "C81": "Roy Pappachan"
+    "A": "",
+    "B": "91",
+    "C": "Sabu Abraham",
+    "D": "9449082096",
+    "E": "#29, Bhrahmaputhra RMP Qtrs. Kuvempunagar Mysuru 570023"
   },
   {
-    "A82": "81",
-    "B82": "91",
-    "C82": "Sabu Abraham"
+    "A": "",
+    "B": "60",
+    "C": "Sabu K. Chacko",
+    "D": "9166955374",
+    "E": "#2247-New No K-16, 5th Cross Basaveshwara Road Lakshmipuram P. O., KR Mohalla, Mysuru 570 004"
   },
   {
-    "A83": "82",
-    "B83": "60",
-    "C83": "Sabu K. Chacko"
+    "A": "",
+    "B": "170",
+    "C": "Sajan Papachan",
+    "D": "",
+    "E": ""
   },
   {
-    "A84": "83",
-    "B84": "170",
-    "C84": "Sajan Papachan"
+    "A": "",
+    "B": "17",
+    "C": "Saju Jacob",
+    "D": "9980615758",
+    "E": "#3188, Sourabiaroop 21-D Main Road Vijayanagar 2nd Stage Mysuru 570017"
   },
   {
-    "A85": "84",
-    "B85": "17",
-    "C85": "Saju Jacob"
+    "A": "",
+    "B": "72",
+    "C": "Sally Mathew",
+    "D": "9900704599",
+    "E": "#80, 8th Main, Vinayak Nagar Jayalakshmipuram V Block"
   },
   {
-    "A86": "85",
-    "B86": "72",
-    "C86": "Sally Mathew"
+    "A": "",
+    "B": "94",
+    "C": "Samkutty.P",
+    "D": "9448189290",
+    "E": "#126, 4th Cross C.V Road A Layout Bannimantp Mysuru 570015"
   },
   {
-    "A87": "86",
-    "B87": "94",
-    "C87": "Samkutty.P"
+    "A": "",
+    "B": "150",
+    "C": "Santhosh K. A.",
+    "D": "9448062513",
+    "E": "#151/2, Lokanaykanagar Hebbal Main Road Mettagalli"
   },
   {
-    "A88": "87",
-    "B88": "150",
-    "C88": "Santhosh K. A."
+    "A": "",
+    "B": "133",
+    "C": "Shanthamma George",
+    "D": "9845895982",
+    "E": "#2/2 Muniswamiappa Cross, R.S Palya, Kamanahalli Main Rd, M S Nagar PO Bangalore 560033"
   },
   {
-    "A89": "88",
-    "B89": "133",
-    "C89": "Shanthamma George"
+    "A": "",
+    "B": "97",
+    "C": "Shanthamma Thampi",
+    "D": "9902239601",
+    "E": "#842, Belavalthagramma Pushpagiri Note Mudranagar RBI Post Mysuru 570003"
   },
   {
-    "A90": "89",
-    "B90": "97",
-    "C90": "Shanthamma Thampi"
+    "A": "",
+    "B": "16",
+    "C": "Sheela Johnson",
+    "D": "9980356271",
+    "E": "#1702, E&F Block 4th Main 9th Cross Ramakrishna Nagar Mysuru 570023"
   },
   {
-    "A91": "90",
-    "B91": "16",
-    "C91": "Sheela Johnson"
+    "A": "",
+    "B": "41",
+    "C": "Shibu Jacob",
+    "D": "9740603781",
+    "E": "51, 13th Cross St. Mary's Road N.R Mohalla, Mysuru 570 007"
   },
   {
-    "A92": "91",
-    "B92": "41",
-    "C92": "Shibu Jacob"
+    "A": "",
+    "B": "166",
+    "C": "Shobha Anil",
+    "D": "9449090416",
+    "E": "#138, Grace Cottage Gangothri Layout 1st stage Saraswthipuram Mysuru 570 009"
   },
   {
-    "A93": "92",
-    "B93": "166",
-    "C93": "Shobha Anil"
+    "A": "",
+    "B": "176",
+    "C": "Siby K. Varughese",
+    "D": "",
+    "E": ""
   },
   {
-    "A94": "93",
-    "B94": "176",
-    "C94": "Siby K. Varughese"
+    "A": "",
+    "B": "165",
+    "C": "Sinoy Kuriakose",
+    "D": "9495545949",
+    "E": "No"
   },
   {
-    "A95": "94",
-    "B95": "165",
-    "C95": "Sinoy Kuriakose"
+    "A": "",
+    "B": "70",
+    "C": "Sosamma Mathew",
+    "D": "",
+    "E": ""
   },
   {
-    "A96": "95",
-    "B96": "70",
-    "C96": "Sosamma Mathew"
+    "A": "",
+    "B": "177",
+    "C": "Sunil Lukose Jesso",
+    "D": "9560094111",
+    "E": "A718, A Block, Brigade Symphony Appartments, Mettagalli, Mysuru 570 016"
   },
   {
-    "A97": "96",
-    "B97": "177",
-    "C97": "Sunil Lukose Jesso"
+    "A": "",
+    "B": "101",
+    "C": "Sunny K. M.",
+    "D": "9341197843",
+    "E": "#268, Mograhally (Manti) KRS Main Road Hossally P.O., Belagola Hobli, Srirangapatna T.Q., Mandya Dist. 571 606"
   },
   {
-    "A98": "97",
-    "B98": "101",
-    "C98": "Sunny K. M."
+    "A": "",
+    "B": "119",
+    "C": "Sunny P.I.",
+    "D": "9449041171",
+    "E": "#32, 1st Main 4th Cross Lokanayakanagar Mettagalli Mysuru 570016"
   },
   {
-    "A99": "98",
-    "B99": "119",
-    "C99": "Sunny P.I."
+    "A": "",
+    "B": "96",
+    "C": "Susamma Samuel",
+    "D": "",
+    "E": ""
   },
   {
-    "A100": "99",
-    "B100": "96",
-    "C100": "Susamma Samuel"
+    "A": "",
+    "B": "103",
+    "C": "Thampan V. K. Thomas",
+    "D": "9741880903",
+    "E": "#489, 13th Cross Sreerampura 2nd Stage, Mysuru 570023"
   },
   {
-    "A101": "100",
-    "B101": "103",
-    "C101": "Thampan V. K. Thomas"
+    "A": "",
+    "B": "105",
+    "C": "Thankam Panackal",
+    "D": "",
+    "E": ""
   },
   {
-    "A102": "101",
-    "B102": "105",
-    "C102": "Thankam Panackal"
+    "A": "",
+    "B": "106",
+    "C": "Thankamma Samuel",
+    "D": "9880068512",
+    "E": "#207Nayakara Street, Hinkal Mysuru 570017"
   },
   {
-    "A103": "102",
-    "B103": "106",
-    "C103": "Thankamma Samuel"
+    "A": "",
+    "B": "167",
+    "C": "Thomas Varghese",
+    "D": "8123045967",
+    "E": "5th Main, Block 2, Jayalaxmipuram Mysore - 570 012"
   },
   {
-    "A104": "103",
-    "B104": "107",
-    "C104": "Thomas A. M."
+    "A": "",
+    "B": "107",
+    "C": "Thomas A. M.",
+    "D": "9448896114",
+    "E": "#631, Belavath Gramma, Pushpagiri RBI PostMysuru 570003"
   },
   {
-    "A105": "104",
-    "B105": "110",
-    "C105": "Thomas M.O. (Biju)"
+    "A": "",
+    "B": "110",
+    "C": "Thomas M.O. (Biju)",
+    "D": "9945651279",
+    "E": "#215, Maret Immanuel 2nd Stage 8th Cross Naidunagar F.E Of Kesere, Mysuru 570007"
   },
   {
-    "A106": "105",
-    "B106": "167",
-    "C106": "Thomas Varghese"
+    "A": "",
+    "B": "4",
+    "C": "Varghese Mathew",
+    "D": "96597973491",
+    "E": "#35-A, Amparayil Villa Brindavn Extn. 2nd Stage"
   },
   {
-    "A107": "106",
-    "B107": "116",
-    "C107": "Varghese K. U."
+    "A": "",
+    "B": "118",
+    "C": "Varghese T Koshy",
+    "D": "9880645393",
+    "E": "#939, 10th Cross 6th Main Vijayanagar 1st Stage Mysuru 570 017"
   },
   {
-    "A108": "107",
-    "B108": "4",
-    "C108": "Varghese Mathew"
+    "A": "",
+    "B": "116",
+    "C": "Varghese K. U.",
+    "D": "9900461718",
+    "E": "#538, New No K-14 Veenaeshanna Road 7th Cross KR Mohalla, Mysuru 570 004"
   },
   {
-    "A109": "108",
-    "B109": "118",
-    "C109": "Varghese T Koshy"
+    "A": "",
+    "B": "114",
+    "C": "Vijayan Joseph",
+    "D": "6360724450",
+    "E": "#K/12, Gunamba Trust Qtrs M.G road Mysuru 570004"
   },
   {
-    "A110": "109",
-    "B110": "114",
-    "C110": "Vijayan Joseph"
+    "A": "",
+    "B": "53",
+    "C": "Wilsy Joseph",
+    "D": "9620098414",
+    "E": "#97,5th Cross Jayadevanagar Mettagalli, Mysuru 570016"
   },
   {
-    "A111": "110",
-    "B111": "53",
-    "C111": "Wilsy Joseph"
-  },
-  {
-    "A112": "111",
-    "B112": "NM",
-    "C112": "NM NON Members"
-  },
-  {
-    "C113": null
+    "A": "",
+    "B": "NM",
+    "C": "NM NON Members",
+    "D": "",
+    "E": ""
   }
 ],
   budget: [
@@ -12052,1146 +12380,7 @@ window.CHURCH_DATA = {
     "F200": null
   }
 ],
-  codes: [
-  {
-    "A1": "St. Gregorios Orthodox Syrian Church and Pilgrim Centre",
-    "B1": null,
-    "C1": null,
-    "D1": null,
-    "E1": null,
-    "F1": null,
-    "G1": null,
-    "H1": null,
-    "I1": null
-  },
-  {
-    "A2": "Government House Road, Nazarbad, Mysuru, Karnataka 570 010",
-    "B2": null,
-    "C2": null,
-    "D2": null,
-    "E2": null,
-    "F2": null,
-    "G2": null,
-    "H2": null,
-    "I2": null
-  },
-  {
-    "A3": "New Codes as per the direction of MOSC FY 2026-2027",
-    "B3": null,
-    "C3": null,
-    "D3": null,
-    "E3": null,
-    "F3": null,
-    "G3": null,
-    "H3": null,
-    "I3": null
-  },
-  {
-    "A4": "RECEIPTS ",
-    "B4": null,
-    "C4": null,
-    "D4": null
-  },
-  {
-    "A5": "New Codes",
-    "B5": "Particulars",
-    "C5": null,
-    "D5": "Old Codes"
-  },
-  {
-    "A6": "RP-1.01",
-    "B6": "Cash Balances",
-    "C6": "Receipt",
-    "D6": "1300"
-  },
-  {
-    "A7": "RP-1.02",
-    "B7": "Balances in SB Accounts",
-    "C7": "Receipt",
-    "D7": "1000"
-  },
-  {
-    "A8": null,
-    "B8": "Donations",
-    "C8": null,
-    "D8": null
-  },
-  {
-    "A9": "RP-2.02",
-    "B9": "General Donations",
-    "C9": "Receipt",
-    "D9": "2301"
-  },
-  {
-    "A10": "RP-2.06",
-    "B10": "Parish Day",
-    "C10": "Receipt",
-    "D10": "2305"
-  },
-  {
-    "A11": "RP-2.09",
-    "B11": "Church Celebrations (other than perunnal)",
-    "C11": "Receipt",
-    "D11": "2308"
-  },
-  {
-    "A12": "RP-2.10",
-    "B12": "Meeting and conventions",
-    "C12": "Receipt",
-    "D12": "2309"
-  },
-  {
-    "A13": "RP-2.11",
-    "B13": "Christmas Carol",
-    "C13": "Receipt",
-    "D13": "2310"
-  },
-  {
-    "A14": "RP-2.12",
-    "B14": "Parish Day",
-    "C14": "Receipt",
-    "D14": "2311"
-  },
-  {
-    "A15": "RP-2.13",
-    "B15": "Lent and Passion Week",
-    "C15": "Receipt",
-    "D15": "2312"
-  },
-  {
-    "A16": "RP-2.14",
-    "B16": "Marriage Receipts",
-    "C16": "Receipt",
-    "D16": "2313"
-  },
-  {
-    "A17": "RP-2.15",
-    "B17": "Harvest Festival  Receipts _ Auctions _Current Year",
-    "C17": "Receipt",
-    "D17": "2314"
-  },
-  {
-    "A18": "RP-2.15 (a)",
-    "B18": "Harvest Festival  Receipts _ Auction Dues _ Previous Years",
-    "C18": "Receipt",
-    "D18": null
-  },
-  {
-    "A19": "RP-2.15 (b)",
-    "B19": "Petty Auctions _Current Year",
-    "C19": "Receipt",
-    "D19": null
-  },
-  {
-    "A20": "RP-2.16",
-    "B20": "Annadhanam and feast _Breakfast Donation",
-    "C20": "Receipt",
-    "D20": "2315"
-  },
-  {
-    "A21": "RP-2.17",
-    "B21": "Receipt of Agricultural Produces",
-    "C21": "Receipt",
-    "D21": "2316"
-  },
-  {
-    "A22": "RP-2.18",
-    "B22": "Donation In Kind",
-    "C22": "Receipt",
-    "D22": null
-  },
-  {
-    "A23": "RP-2.19",
-    "B23": "Receipt from Tomb/Grave : Cemetry",
-    "C23": "Receipt",
-    "D23": "2234"
-  },
-  {
-    "A24": "RP-2.20",
-    "B24": "Other Donations (Farewell) ",
-    "C24": "Receipt",
-    "D24": "2317"
-  },
-  {
-    "A25": "RP-3.52 ",
-    "B25": "Certificate Fee",
-    "C25": "Receipt",
-    "D25": null
-  },
-  {
-    "A26": null,
-    "B26": "Church Receipts : Bhandaram Collections",
-    "C26": null,
-    "D26": null
-  },
-  {
-    "A27": "RP-3.03",
-    "B27": "Bhandaram Receipts : Church ( koodaaram + Wooden Cash Box)",
-    "C27": "Receipt",
-    "D27": "2101"
-  },
-  {
-    "A28": "RP-3.04",
-    "B28": "Kurishinthotti : Infront if Church",
-    "C28": "Receipt",
-    "D28": "2102"
-  },
-  {
-    "A29": "RP-3.05",
-    "B29": "Others (specify) : Perunnal Vanchika ( House Offertory Box)",
-    "C29": "Receipt",
-    "D29": "2103"
-  },
-  {
-    "A30": "RP-3.10",
-    "B30": "Qurbana Receipts: Qurbana Kannikka Church ",
-    "C30": "Receipt",
-    "D30": "2110"
-  },
-  {
-    "A31": "RP-3.10 (a)",
-    "B31": "Qurbana Receipts:  Cemetry Chapel",
-    "C31": "Receipt",
-    "D31": null
-  },
-  {
-    "A32": "RP-3.12",
-    "B32": "Church (Orma Qurbana + Special Qurbaba)",
-    "C32": "Receipt",
-    "D32": "2121"
-  },
-  {
-    "A33": "RP-3.14",
-    "B33": "Baptism",
-    "C33": "Receipt",
-    "D33": "2123"
-  },
-  {
-    "A34": "RP-3.15",
-    "B34": "Funeral",
-    "C34": "Receipt",
-    "D34": "2124"
-  },
-  {
-    "A35": "RP-3.16",
-    "B35": "Birthday Contributions",
-    "C35": "Receipt",
-    "D35": "2125"
-  },
-  {
-    "A36": "RP-3.17",
-    "B36": "Other offerings : Weeding Anniversary",
-    "C36": "Receipt",
-    "D36": "2126"
-  },
-  {
-    "A37": "RP-3.17 (a)",
-    "B37": "House Blessings",
-    "C37": "Receipt",
-    "D37": null
-  },
-  {
-    "A38": "RP-3.18",
-    "B38": "Offerings for Ritual Articles : Candles, Oil, Kunturikkam",
-    "C38": "Receipt",
-    "D38": "2127"
-  },
-  {
-    "A39": null,
-    "B39": "Receipts for Festivals",
-    "C39": null,
-    "D39": "2160"
-  },
-  {
-    "A40": "RP-3.31",
-    "B40": "July 3rd Festival : St. Thomas",
-    "C40": "Receipt",
-    "D40": "2161"
-  },
-  {
-    "A41": "RP-3.32",
-    "B41": "August 15  Festival : St. Mary",
-    "C41": "Receipt",
-    "D41": "2162"
-  },
-  {
-    "A42": "RP-3.32 (a)",
-    "B42": "Sep 1-8 Festival : St. Mary",
-    "C42": "Receipt",
-    "D42": null
-  },
-  {
-    "A43": "RP-3.33",
-    "B43": "Church Festival: St Gregorios",
-    "C43": "Receipt",
-    "D43": "2163"
-  },
-  {
-    "A44": "RP-3.35",
-    "B44": "Others : St George",
-    "C44": "Receipt",
-    "D44": "2165"
-  },
-  {
-    "A45": null,
-    "B45": "Receipts for Spiritual Organizations",
-    "C45": null,
-    "D45": null
-  },
-  {
-    "A46": "RP-3.61",
-    "B46": "Sunday School",
-    "C46": "Receipt",
-    "D46": "2181"
-  },
-  {
-    "A47": "RP-3.64",
-    "B47": "MMVS",
-    "C47": "Receipt",
-    "D47": "2183"
-  },
-  {
-    "A48": "RP-3.64",
-    "B48": "Prarthanayogam",
-    "C48": "Receipt",
-    "D48": "2184"
-  },
-  {
-    "A49": "RP-3.66",
-    "B49": "OVBS",
-    "C49": "Receipt",
-    "D49": "2186"
-  },
-  {
-    "A50": "RP-3.67",
-    "B50": "MGOCSM & OCYM",
-    "C50": "Receipt",
-    "D50": "2187"
-  },
-  {
-    "A51": "RP-3.68",
-    "B51": "St. Joseph Forum",
-    "C51": "Receipt",
-    "D51": null
-  },
-  {
-    "A52": "RP-3.69",
-    "B52": "St. Dionysious Forum",
-    "C52": "Receipt",
-    "D52": null
-  },
-  {
-    "A53": null,
-    "B53": "Monthly subscription",
-    "C53": null,
-    "D53": null,
-    "E53": null
-  },
-  {
-    "A54": "RP-3.82",
-    "B54": "subscription For the current year",
-    "C54": "Receipt",
-    "D54": "2212",
-    "E54": null
-  },
-  {
-    "A55": "RP-3.83",
-    "B55": "subscription Outstanding from previous year",
-    "C55": "Receipt",
-    "D55": "2213",
-    "E55": null
-  },
-  {
-    "A56": "RP-3.84",
-    "B56": "Advance for next year",
-    "C56": "Receipt",
-    "D56": "2214",
-    "E56": null
-  },
-  {
-    "A57": "RP-8.03",
-    "B57": "Savings Bank Interest",
-    "C57": "Receipt",
-    "D57": "2401"
-  },
-  {
-    "A58": "RP-9.10",
-    "B58": "Advances ",
-    "C58": "Receipt",
-    "D58": "3200"
-  },
-  {
-    "A59": "RP-9.13",
-    "B59": "Advances from Trustees",
-    "C59": "Receipt",
-    "D59": "3203"
-  },
-  {
-    "A60": "RP-9.14",
-    "B60": "Advance from others",
-    "C60": "Receipt",
-    "D60": "3204"
-  },
-  {
-    "A61": "RP-9.15",
-    "B61": "Loan/Advances from Church Members",
-    "C61": "Receipt",
-    "D61": "3103"
-  },
-  {
-    "A62": "RP-10.03",
-    "B62": "For Malankara Metropolitan",
-    "C62": "Receipt",
-    "D62": null
-  },
-  {
-    "A63": "RP-10.04",
-    "B63": "Catholicate Day Collection",
-    "C63": "Receipt",
-    "D63": "2801"
-  },
-  {
-    "A64": "RP-10.05",
-    "B64": "Recceessa",
-    "C64": "Receipt",
-    "D64": "2802"
-  },
-  {
-    "A65": "RP-10.07",
-    "B65": "For Diocession Office",
-    "C65": "Receipt",
-    "D65": null
-  },
-  {
-    "A66": "RP-10.08",
-    "B66": "Diocesan Day Collection : Metropolitan Fund",
-    "C66": "Receipt",
-    "D66": "2807"
-  },
-  {
-    "A67": "RP-10.09",
-    "B67": "Vivaha Kaimuthu",
-    "C67": "Receipt",
-    "D67": "2803"
-  },
-  {
-    "A68": "RP-10.10",
-    "B68": "Other Collections : Priest Welfare Fund",
-    "C68": "Receipt",
-    "D68": null
-  },
-  {
-    "A69": "RP-10.12",
-    "B69": "For Other Offices",
-    "C69": "Receipt",
-    "D69": null
-  },
-  {
-    "A70": "RP-10.13",
-    "B70": "Mission Sunday collection",
-    "C70": "Receipt",
-    "D70": "2804"
-  },
-  {
-    "A71": "RP-10.14",
-    "B71": "Sunday school day collection",
-    "C71": "Receipt",
-    "D71": "2805"
-  },
-  {
-    "A72": "RP-10.15",
-    "B72": "Seminary day collection",
-    "C72": "Receipt",
-    "D72": "2806"
-  },
-  {
-    "A73": "RP-10.16",
-    "B73": "Gerbo Sunday Collection: Leprosy",
-    "C73": "Receipt",
-    "D73": "2808"
-  },
-  {
-    "A74": "RP-10.17",
-    "B74": "Other collections ( Old Cover Collection Dues)",
-    "C74": "Receipt",
-    "D74": "2809"
-  },
-  {
-    "A75": "PAYMENTS",
-    "B75": null,
-    "C75": null,
-    "D75": null
-  },
-  {
-    "A76": "New Codes",
-    "B76": "Particulars",
-    "C76": null,
-    "D76": "Old Codes"
-  },
-  {
-    "A77": "RP-11.02",
-    "B77": "General Donations Paid",
-    "C77": "Payment",
-    "D77": null
-  },
-  {
-    "A78": null,
-    "B78": "EMPLOYEE BENEFIT EXPENSES",
-    "C78": null,
-    "D78": null
-  },
-  {
-    "A79": null,
-    "B79": "Allowances to Priest",
-    "C79": null,
-    "D79": null
-  },
-  {
-    "A80": "RP-12.02",
-    "B80": "Annual Travelling Allowance to Vicar",
-    "C80": "Payment",
-    "D80": "4231"
-  },
-  {
-    "A81": "RP-12.02 ",
-    "B81": "Leave Salary to Vicar",
-    "C81": "Payment",
-    "D81": "4231"
-  },
-  {
-    "A82": "RP-12.02",
-    "B82": "Gift Purse to Vicar",
-    "C82": "Payment",
-    "D82": "4231"
-  },
-  {
-    "A83": "RP-12.03",
-    "B83": "Salary and allowances to others",
-    "C83": "Payment",
-    "D83": "4232"
-  },
-  {
-    "A84": "RP-12.06",
-    "B84": "Allowances to Kapyar",
-    "C84": "Payment",
-    "D84": "4235"
-  },
-  {
-    "A85": "RP-12.07",
-    "B85": "Honorarium - Guest Preist",
-    "C85": "Payment",
-    "D85": "4236"
-  },
-  {
-    "A86": "RP-13.02",
-    "B86": "Bank Charges",
-    "C86": "Payment",
-    "D86": "4503"
-  },
-  {
-    "A87": null,
-    "B87": "Administrative Expenses",
-    "C87": null,
-    "D87": null
-  },
-  {
-    "A88": "RP-14.03",
-    "B88": "Travelling Expenses",
-    "C88": "Payment",
-    "D88": "4551"
-  },
-  {
-    "A89": "RP-14.04",
-    "B89": "Auditors Remuneration",
-    "C89": "Payment",
-    "D89": "4552"
-  },
-  {
-    "A90": "RP-14.05",
-    "B90": "Postage and Telephone",
-    "C90": "Payment",
-    "D90": "4553"
-  },
-  {
-    "A91": "RP-14.06",
-    "B91": "Printing and Stationery",
-    "C91": "Payment",
-    "D91": "4554"
-  },
-  {
-    "A92": "RP-14.07",
-    "B92": "Professional and other service charges",
-    "C92": "Payment",
-    "D92": "4555"
-  },
-  {
-    "A93": "RP-14.08",
-    "B93": "Office Expenses",
-    "C93": "Payment",
-    "D93": "4556"
-  },
-  {
-    "A94": "RP-14.09",
-    "B94": "Subscription and Periodicals",
-    "C94": "Payment",
-    "D94": "4557"
-  },
-  {
-    "A95": "RP-14.10",
-    "B95": "Insurance Charges",
-    "C95": "Payment",
-    "D95": "4558"
-  },
-  {
-    "A96": "RP-14.11",
-    "B96": "Advertisement Expenses",
-    "C96": "Payment",
-    "D96": "4559"
-  },
-  {
-    "A97": "RP-14.12",
-    "B97": "Legal Expenses",
-    "C97": "Payment",
-    "D97": "4209"
-  },
-  {
-    "A98": "RP-14.18",
-    "B98": "Other Expenses",
-    "C98": "Payment",
-    "D98": "4560"
-  },
-  {
-    "A99": null,
-    "B99": "Repairs And Maintenance",
-    "C99": null,
-    "D99": null
-  },
-  {
-    "A100": "RP-14.31",
-    "B100": "Buildings",
-    "C100": "Payment",
-    "D100": "4271"
-  },
-  {
-    "A101": "RP-14.32",
-    "B101": "Equipments",
-    "C101": "Payment",
-    "D101": "4272"
-  },
-  {
-    "A102": "RP-14.33",
-    "B102": "Computers",
-    "C102": "Payment",
-    "D102": "4273"
-  },
-  {
-    "A103": "RP-14.34",
-    "B103": "Vehicles ",
-    "C103": "Payment",
-    "D103": "4274"
-  },
-  {
-    "A104": "RP-14.35",
-    "B104": "Others",
-    "C104": "Payment",
-    "D104": "4275"
-  },
-  {
-    "A105": null,
-    "B105": "Church Expenses",
-    "C105": null,
-    "D105": null
-  },
-  {
-    "A106": "RP-16.03",
-    "B106": "Holy Qurbana Allowances : Guest Priest",
-    "C106": "Payment",
-    "D106": "4202"
-  },
-  {
-    "A107": "RP-16.04",
-    "B107": "Church Consumables/ Daily Expenses",
-    "C107": "Payment",
-    "D107": "4203"
-  },
-  {
-    "A108": "RP-16.05",
-    "B108": "Suvisheshayogam Expenses",
-    "C108": "Payment",
-    "D108": "4204"
-  },
-  {
-    "A109": "RP-16.06",
-    "B109": "Holy week and Dhyanam expenses",
-    "C109": "Payment",
-    "D109": "4205"
-  },
-  {
-    "A110": "RP-16.07",
-    "B110": " Feast Expenses",
-    "C110": "Payment",
-    "D110": "4206"
-  },
-  {
-    "A111": "RP-16.08",
-    "B111": "Food and Refreshment Expenses",
-    "C111": "Payment",
-    "D111": "4207"
-  },
-  {
-    "A112": "RP-16.09",
-    "B112": "Owned institution expenses",
-    "C112": "Payment",
-    "D112": "4208"
-  },
-  {
-    "A113": "RP-16.11",
-    "B113": "Electricity Charges",
-    "C113": "Payment",
-    "D113": "4211"
-  },
-  {
-    "A114": "RP-16.12",
-    "B114": "Fuel and Water Charges",
-    "C114": "Payment",
-    "D114": "4212"
-  },
-  {
-    "A115": "RP-16.13",
-    "B115": "Send off Expenses",
-    "C115": "Payment",
-    "D115": "4282"
-  },
-  {
-    "A116": "RP-16.14",
-    "B116": "Celebration Expenses: Harvest/ Parish Day Expenses",
-    "C116": "Payment",
-    "D116": null
-  },
-  {
-    "A117": "RP-16.15",
-    "B117": "Christmas Carol & Programme Expenses",
-    "C117": "Payment",
-    "D117": "4284"
-  },
-  {
-    "A118": "RP-16.16",
-    "B118": "Others Celebrations",
-    "C118": "Payment",
-    "D118": null
-  },
-  {
-    "A119": "RP-16.17",
-    "B119": "Others",
-    "C119": "Payment",
-    "D119": "4213"
-  },
-  {
-    "A120": null,
-    "B120": "Miscellaneous Expenses",
-    "C120": null,
-    "D120": null
-  },
-  {
-    "A121": "RP-16.31",
-    "B121": "Wages and Cooly",
-    "C121": "Payment",
-    "D121": "4251"
-  },
-  {
-    "A122": "RP-16.32",
-    "B122": "Meeting and Conference expenses",
-    "C122": "Payment",
-    "D122": "4252"
-  },
-  {
-    "A123": "RP-16.33",
-    "B123": "Cleaning Expenses",
-    "C123": "Payment",
-    "D123": "4253"
-  },
-  {
-    "A124": "RP-16.35",
-    "B124": "Canteen Payments",
-    "C124": "Payment",
-    "D124": "4255"
-  },
-  {
-    "A125": "RP-16.36",
-    "B125": "Tomb Construction",
-    "C125": "Payment",
-    "D125": "4256"
-  },
-  {
-    "A126": "RP-16.37",
-    "B126": "Vehicle Running and Maintenance Expenses",
-    "C126": "Payment",
-    "D126": "4257"
-  },
-  {
-    "A127": "RP-16.38",
-    "B127": "Others",
-    "C127": "Payment",
-    "D127": "4258"
-  },
-  {
-    "A128": null,
-    "B128": "Perunnal expenses",
-    "C128": null,
-    "D128": null
-  },
-  {
-    "A129": "RP-16.46",
-    "B129": "July 3rd Festival",
-    "C129": "Payment",
-    "D129": "4261"
-  },
-  {
-    "A130": "RP-16.47",
-    "B130": "August 15 & Sep 1-8  Festival : St Mary",
-    "C130": "Payment",
-    "D130": "4262"
-  },
-  {
-    "A131": "RP-16.48",
-    "B131": "Church Festival : Feast of St Gregorios",
-    "C131": "Payment",
-    "D131": "4263"
-  },
-  {
-    "A132": "RP-16.50",
-    "B132": "Others : St Geogre",
-    "C132": "Payment",
-    "D132": "4265"
-  },
-  {
-    "A133": "RP-16.61",
-    "B133": "Spiritual Organisations Expenses",
-    "C133": "Payment",
-    "D133": "4301"
-  },
-  {
-    "A134": "RP-16.62",
-    "B134": "Sunday School",
-    "C134": "Payment",
-    "D134": "4302"
-  },
-  {
-    "A135": "RP-16.64",
-    "B135": "MMVS",
-    "C135": "Payment",
-    "D135": "4304"
-  },
-  {
-    "A136": "RP-16.65",
-    "B136": "Prarthanayogam",
-    "C136": "Payment",
-    "D136": "4305"
-  },
-  {
-    "A137": "RP-16.67",
-    "B137": "OVBS",
-    "C137": "Payment",
-    "D137": "4307"
-  },
-  {
-    "A138": "RP-16.68",
-    "B138": "MGOCSM & OCYM",
-    "C138": "Payment",
-    "D138": "4308"
-  },
-  {
-    "A139": "RP-16.69",
-    "B139": "St. Joseph Forum",
-    "C139": "Payment",
-    "D139": "4309"
-  },
-  {
-    "A140": "RP-16.70",
-    "B140": "St. Dionysious Forum",
-    "C140": "Payment",
-    "D140": null
-  },
-  {
-    "A141": "RP-16.71",
-    "B141": "Other Spiritual organisations",
-    "C141": "Payment",
-    "D141": null
-  },
-  {
-    "A142": "RP-16.87",
-    "B142": "Other Charity : Grant to Sneha Bhavan Bilikere",
-    "C142": "Payment",
-    "D142": "4317"
-  },
-  {
-    "A143": "RP-16.89",
-    "B143": "Gifts and Compliments",
-    "C143": "Payment",
-    "D143": "4319"
-  },
-  {
-    "A144": null,
-    "B144": "ADDITION OF FIXED ASSETS",
-    "C144": null,
-    "D144": null
-  },
-  {
-    "A145": "RP-18.05",
-    "B145": "Church Building",
-    "C145": "Payment",
-    "D145": "4604"
-  },
-  {
-    "A146": "RP-18.16",
-    "B146": "Furniture and Fixtures",
-    "C146": "Payment",
-    "D146": "4615"
-  },
-  {
-    "A147": "RP-18.17",
-    "B147": "Church Equipments",
-    "C147": "Payment",
-    "D147": "4616"
-  },
-  {
-    "A148": "RP-18.18",
-    "B148": "Other Equipments",
-    "C148": "Payment",
-    "D148": "4617"
-  },
-  {
-    "A149": "RP-18.21",
-    "B149": "Computer, Software  and Peripherals",
-    "C149": "Payment",
-    "D149": "4620"
-  },
-  {
-    "A150": "RP-18.22",
-    "B150": "Website",
-    "C150": "Payment",
-    "D150": "4621"
-  },
-  {
-    "A151": "RP-18.23",
-    "B151": "Electrical Equipments",
-    "C151": "Payment",
-    "D151": "4622"
-  },
-  {
-    "A152": "RP-18.24",
-    "B152": "Machinery and equipments",
-    "C152": "Payment",
-    "D152": "4623"
-  },
-  {
-    "A153": "RP-18.25",
-    "B153": "Generator",
-    "C153": "Payment",
-    "D153": "4624"
-  },
-  {
-    "A154": "RP-18.26",
-    "B154": "Sound System",
-    "C154": "Payment",
-    "D154": "4625"
-  },
-  {
-    "A155": "RP-18.27",
-    "B155": "Renewable Energy Systems",
-    "C155": "Payment",
-    "D155": null
-  },
-  {
-    "A156": "RP-18.28",
-    "B156": "Books",
-    "C156": "Payment",
-    "D156": "4626"
-  },
-  {
-    "A157": "RP-18.29",
-    "B157": "Building under Construction",
-    "C157": "Payment",
-    "D157": "4627"
-  },
-  {
-    "A158": null,
-    "B158": "Repayment of Loans and Borrowings",
-    "C158": null,
-    "D158": null
-  },
-  {
-    "A159": "RP-18.82",
-    "B159": "Repayament to Trustee",
-    "C159": "Payment",
-    "D159": null
-  },
-  {
-    "A160": "RP-18.83",
-    "B160": "Loan from  Church Members",
-    "C160": "Payment",
-    "D160": "4857"
-  },
-  {
-    "A161": null,
-    "B161": "To Malankara Metropolitan",
-    "C161": null,
-    "D161": null
-  },
-  {
-    "A162": "RP-19.03",
-    "B162": "Catholicate Day Collection",
-    "C162": "Payment",
-    "D162": "4001"
-  },
-  {
-    "A163": "RP-19.04",
-    "B163": "Recceessa",
-    "C163": "Payment",
-    "D163": "4002"
-  },
-  {
-    "A164": null,
-    "B164": "To Diocession Office",
-    "C164": null,
-    "D164": null
-  },
-  {
-    "A165": "RP-19.11",
-    "B165": "Diocesan Day Dollection",
-    "C165": "Payment",
-    "D165": "4003"
-  },
-  {
-    "A166": "RP-19.12",
-    "B166": "Vivaha Kaimuthu",
-    "C166": "Payment",
-    "D166": "4004"
-  },
-  {
-    "A167": "RP-19.15",
-    "B167": "Other Collections : Priest Welfare Fund",
-    "C167": "Payment",
-    "D167": "4008"
-  },
-  {
-    "A168": null,
-    "B168": "To Other Offices",
-    "C168": null,
-    "D168": null
-  },
-  {
-    "A169": "RP-19.21",
-    "B169": "Mission Sunday collection",
-    "C169": "Payment",
-    "D169": "4009"
-  },
-  {
-    "A170": "RP-19.22",
-    "B170": "Sunday school day collection",
-    "C170": "Payment",
-    "D170": "4010"
-  },
-  {
-    "A171": "RP-19.23",
-    "B171": "Seminary day collection",
-    "C171": "Payment",
-    "D171": "4011"
-  },
-  {
-    "A172": "RP-19.24",
-    "B172": "Gerbo Sunday Collection",
-    "C172": "Payment",
-    "D172": "4012"
-  },
-  {
-    "A173": "RP-19.25",
-    "B173": "Other collections",
-    "C173": "Payment",
-    "D173": "4013"
-  },
-  {
-    "A174": null,
-    "B174": "Inter Accounts Payments to Diocese",
-    "C174": null,
-    "D174": null
-  },
-  {
-    "A175": "RP-19.31",
-    "B175": "Monthly Quota of Churches (Priest Salary Quota to Diocese)",
-    "C175": "Payment",
-    "D175": "4031"
-  },
-  {
-    "A176": "RP-19.32",
-    "B176": "Methrasana Vihitham: Annual Kaimuth to Thirumeni",
-    "C176": "Payment",
-    "D176": "4032"
-  },
-  {
-    "C177": null
-  },
-  {
-    "C178": null
-  },
-  {
-    "A179": "Monthly Payments",
-    "B179": null,
-    "C179": null
-  },
-  {
-    "A180": "RP-19.31",
-    "B180": "Salary Quota to Diocese (Vicar)",
-    "C180": "Payment"
-  },
-  {
-    "A181": "RP-12.03 (a)",
-    "B181": "Salary to Sexton _ Eldhos ",
-    "C181": "Payment"
-  },
-  {
-    "A182": "RP-12.03 (b)",
-    "B182": "Salary to Watchman(Cemetry) _ Lakshmi",
-    "C182": "Payment"
-  },
-  {
-    "A183": "RP-12.03 (c)",
-    "B183": "Salary to Ayah _ Rani",
-    "C183": "Payment"
-  },
-  {
-    "A184": "RP-12.06",
-    "B184": "Medical Allowance to Sexton",
-    "C184": "Payment"
-  },
-  {
-    "A185": "RP-12.02 (a)",
-    "B185": "Medical Allowance to Vicar",
-    "C185": "Payment"
-  },
-  {
-    "A186": "RP-12.02 ",
-    "B186": "Telephone Allowance to Vicar",
-    "C186": "Payment"
-  },
-  {
-    "A187": "RP-12.02 ",
-    "B187": "Local Travelling Allowance to Vicar",
-    "C187": "Payment"
-  },
-  {
-    "C188": null
-  },
-  {
-    "C189": null
-  },
-  {
-    "C190": null
-  },
-  {
-    "C191": null
-  }
-],
+  codes: [],
   auction: [
   {
     "A1": "St. Gregorios Orthodox Syrian Church, Mysore",

@@ -40,6 +40,7 @@ class MainActivity : ComponentActivity() {
 
         val settings: WebSettings = webView.settings
         settings.javaScriptEnabled = true
+        settings.cacheMode = WebSettings.LOAD_NO_CACHE
         settings.domStorageEnabled = true
         settings.databaseEnabled = true
         settings.allowFileAccess = true

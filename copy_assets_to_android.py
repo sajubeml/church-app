@@ -12,7 +12,7 @@ os.makedirs(dest_assets, exist_ok=True)
 files_to_copy = [
     "index.html",
     "styles.css",
-    "app_cloud_v10.js",
+    "app.js",
     "church_logo.png",
     "church_logo.jpg",
     "html2pdf.bundle.min.js"
@@ -21,7 +21,7 @@ files_to_copy = [
 for fname in files_to_copy:
     src_path = os.path.join(src_dir, fname)
     if os.path.exists(src_path):
-        dest_name = "app.js" if fname == "app_cloud_v10.js" else fname
+        dest_name = fname
         shutil.copy2(src_path, os.path.join(dest_assets, dest_name))
         print(f"Copied: {fname} -> {dest_name}")
 

@@ -42,14 +42,14 @@
   {
     "B4": null,
     "C4": "Receipt No",
-    "D4": "4282",
+    "D4": "4321",
     "F4": "Date:",
-    "G4": "46234",
+    "G4": "46244",
     "J4": null,
     "K4": "Receipt No",
-    "L4": "4282",
+    "L4": "4321",
     "N4": "Date:",
-    "O4": "46234"
+    "O4": "46244"
   },
   {
     "B5": null,
@@ -75,17 +75,17 @@
   },
   {
     "B7": null,
-    "C7": "Abraham.M.O",
+    "C7": "Rajan Mathai",
     "D7": null,
     "E7": null,
     "F7": "Register No:",
-    "G7": "2",
+    "G7": "86",
     "J7": null,
-    "K7": "Abraham.M.O",
+    "K7": "Rajan Mathai",
     "L7": null,
     "M7": null,
     "N7": "Register No:",
-    "O7": "2"
+    "O7": "86"
   },
   {
     "B8": null,
@@ -115,17 +115,17 @@
   },
   {
     "B11": "1",
-    "C11": "Donation General-chair & tables",
+    "C11": "Donation-Breakfast",
     "D11": null,
     "E11": null,
     "F11": null,
-    "G11": "59000",
+    "G11": "500",
     "J11": "1",
-    "K11": "Donation General-chair & tables",
+    "K11": "Donation-Breakfast",
     "L11": null,
     "M11": null,
     "N11": null,
-    "O11": "59000"
+    "O11": "500"
   },
   {
     "B12": null,
@@ -357,13 +357,13 @@
     "D28": null,
     "E28": null,
     "F28": "Total",
-    "G28": "59000",
+    "G28": "500",
     "J28": null,
     "K28": null,
     "L28": null,
     "M28": null,
     "N28": "Total",
-    "O28": "59000"
+    "O28": "500"
   },
   {
     "B29": null,
@@ -372,9 +372,9 @@
     "O29": null
   },
   {
-    "B30": "Fifty Nine Thousand  Rupees Only",
+    "B30": "Five Hundred  Rupees Only",
     "G30": null,
-    "J30": "Fifty Nine Thousand  Rupees Only",
+    "J30": "Five Hundred  Rupees Only",
     "O30": null
   },
   {

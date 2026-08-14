@@ -311,36 +311,27 @@ async function loadAllData() {
         console.warn("No API backend detected, proceeding in offline mode.");
       }
 
-      const fetchJson = async (name) => {
-        try {
-          const res = await fetch(`./data_export/${name}.json`);
-          if (res.ok) {
-            const arr = await res.json();
-            if (Array.isArray(arr) && arr.length > 0) return arr;
-          }
-        } catch (e) { }
-        return [];
-      };
-
-      const m = await fetchJson("Members");
       const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
-      state.members = localM.length ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
+      const hasValidM = Array.isArray(localM) && localM.some(item => getColVal(item, "B"));
+      const fallbackM = (window.CHURCH_DATA && window.CHURCH_DATA.members) || window.INITIAL_MEMBERS || [];
+      state.members = hasValidM ? localM : fallbackM;
 
-      const ind = await fetchJson("Individual");
       const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
-      state.individual = localInd.length ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
+      const hasValidInd = Array.isArray(localInd) && localInd.some(item => getColVal(item, "B") || getColVal(item, "C"));
+      const fallbackInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) || window.INITIAL_INDIVIDUAL || [];
+      state.individual = hasValidInd ? localInd : fallbackInd;
 
-      const tb = await fetchJson("Trial_Balance");
       const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
-      state.trialBalance = localTb.length ? localTb : (tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []));
+      const fallbackTb = (window.CHURCH_DATA && window.CHURCH_DATA.trialBalance) || window.INITIAL_TRIAL_BALANCE || [];
+      state.trialBalance = localTb.length ? localTb : fallbackTb;
 
-      const c = await fetchJson("Codes");
       const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
-      state.codes = localC.length ? localC : (c.length ? c : (window.INITIAL_CODES || []));
+      const fallbackC = (window.CHURCH_DATA && window.CHURCH_DATA.codes) || window.INITIAL_CODES || [];
+      state.codes = localC.length ? localC : fallbackC;
 
-      const bu = await fetchJson("Budget");
       const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
-      state.budget = localBu.length ? localBu : (bu.length ? bu : (window.INITIAL_BUDGET || []));
+      const fallbackBu = (window.CHURCH_DATA && window.CHURCH_DATA.budget) || window.INITIAL_BUDGET || [];
+      state.budget = localBu.length ? localBu : fallbackBu;
       console.log("Loaded all required data!");
     }
 
@@ -348,6 +339,108 @@ async function loadAllData() {
     const savedMembers = localStorage.getItem("CHURCH_MEMBERS");
     if (savedMembers) {
       try { state.individual = JSON.parse(savedMembers); } catch (e) { }
+    }
+
+    // 3.5. Dynamic Auto-Sync Individual Ledgers from Cashbook
+    try {
+      let baseInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) ? JSON.parse(JSON.stringify(window.CHURCH_DATA.individual)) : [];
+      if (baseInd.length === 0 && window.INITIAL_INDIVIDUAL) baseInd = JSON.parse(JSON.stringify(window.INITIAL_INDIVIDUAL));
+      
+      const baseCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || window.INITIAL_CASHBOOK || [];
+      const baseReceiptNos = new Set();
+      baseCb.forEach(r => { const no = getColVal(r, "B"); if (no) baseReceiptNos.add(no); });
+      
+      const newReceipts = (state.cashbook || []).filter(r => {
+        const no = getColVal(r, "B");
+        return no && !baseReceiptNos.has(no);
+      });
+      
+      if (newReceipts.length > 0 && baseInd.length > 0) {
+        newReceipts.forEach(itemRow => {
+          const isReceipt = !!(getColVal(itemRow, "H") || getColVal(itemRow, "I"));
+          if (!isReceipt) return;
+          const amountStr = getColVal(itemRow, "H");
+          const amountBank = getColVal(itemRow, "I");
+          const amount = parseFloat((amountStr || amountBank || "0").toString().replace(/,/g, '')) || 0;
+          const regNo = getColVal(itemRow, "C");
+          
+          if (amount > 0 && regNo) {
+             const item = { particulars: getColVal(itemRow, "E"), code: getColVal(itemRow, "F") };
+             let targetColKey = "E";
+             const headerRow = baseInd[3] || {};
+             const partStr = String(item.particulars || "").trim().toLowerCase();
+             const codeStr = String(item.code || "").trim().toUpperCase();
+             if (codeStr === "RP-3.82" || codeStr === "RP-3.83" || partStr.includes("subscription")) {
+               targetColKey = "E";
+             } else {
+               for (let key in headerRow) {
+                 const title = String(headerRow[key] || "").trim().toLowerCase();
+                 if (!title) continue;
+                 const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
+                 if (["A", "B", "C", "D", "AM"].includes(colLetter)) continue;
+                 if (
+                    (partStr.includes("holy qurbana") && title.includes("qurbana")) ||
+                    (partStr.includes("donat") && title.includes("donat") && !partStr.includes("breakfast") && !partStr.includes("marriage") && !partStr.includes("cemetry")) ||
+                    (partStr.includes("perunnal") && title.includes("perunnal")) ||
+                    (partStr.includes("passion") && title.includes("passion")) ||
+                    (partStr.includes("george") && title.includes("george")) ||
+                    (partStr.includes("thomas") && title.includes("thomas")) ||
+                    (partStr.includes("mary") && title.includes("mary")) ||
+                    (partStr.includes("blessing") && title.includes("blessing")) ||
+                    (partStr.includes("auction") && title.includes("auction")) ||
+                    (partStr.includes("cemetry") && title.includes("cemetry")) ||
+                    (partStr.includes("breakfast") && title.includes("breakfast")) ||
+                    (partStr.includes("birthday") && title.includes("birthday")) ||
+                    (partStr.includes("anniversary") && title.includes("anniversary")) ||
+                    (partStr.includes("baptism") && title.includes("baptism")) ||
+                    (partStr.includes("bann") && title.includes("bann")) ||
+                    (partStr.includes("catholicate") && title.includes("catholicate")) ||
+                    (partStr.includes("metropolitan") && title.includes("metropolitan")) ||
+                    (partStr.includes("mission") && title.includes("mission")) ||
+                    (partStr.includes("seminary") && title.includes("seminary")) ||
+                    (partStr.includes("priest") && title.includes("priest")) ||
+                    (partStr.includes("sunday school") && title.includes("sunday school")) ||
+                    (partStr.includes("harvest") && title.includes("harvest")) ||
+                    (partStr.includes("christmas") && title.includes("christmas")) ||
+                    title.includes(partStr) || partStr.includes(title)
+                 ) {
+                   targetColKey = colLetter;
+                   break;
+                 }
+               }
+             }
+             
+             const memberRow = baseInd.find((r, idx) => idx >= 4 && getColVal(r, "B") === regNo);
+             if (memberRow) {
+               if (targetColKey) {
+                 const currentVal = parseFloat(getColVal(memberRow, targetColKey)) || 0;
+                 setColVal(memberRow, targetColKey, (currentVal + amount).toString());
+               }
+               const currentGrand = parseFloat(getColVal(memberRow, "AM")) || 0;
+               setColVal(memberRow, "AM", (currentGrand + amount).toString());
+             }
+          }
+        });
+        
+        // Sync names from Master Members
+        if (state.members && state.members.length > 0) {
+          baseInd.forEach((row, idx) => {
+            if (idx >= 4) {
+              const regNo = getColVal(row, "B");
+              if (regNo) {
+                const masterRow = state.members.find(m => getColVal(m, "B") === regNo);
+                if (masterRow) setColVal(row, "C", getColVal(masterRow, "C"));
+              }
+            }
+          });
+        }
+        
+        state.individual = baseInd;
+        localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+        console.log("Dynamically synced " + newReceipts.length + " new receipts to Individual Ledger.");
+      }
+    } catch (e) {
+      console.error("Auto-sync error:", e);
     }
 
     const savedHeads = localStorage.getItem("CHURCH_ACCOUNT_HEADS");
@@ -391,6 +484,15 @@ async function loadAllData() {
     const savedCashbook = localStorage.getItem("CHURCH_CASHBOOK");
     if (savedCashbook) {
       try { state.cashbook = JSON.parse(savedCashbook); } catch (e) { }
+    }
+    
+    // Safety Fallback: If Cashbook is STILL empty (API failed and cache cleared), load from data.js
+    if (!state.cashbook || state.cashbook.length === 0) {
+       const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || window.INITIAL_CASHBOOK || [];
+       if (fallbackCb.length > 0) {
+           state.cashbook = JSON.parse(JSON.stringify(fallbackCb));
+           console.log("Loaded cashbook from static data.js fallback.");
+       }
     }
 
     const savedPass = localStorage.getItem("CHURCH_ADMIN_PASS");

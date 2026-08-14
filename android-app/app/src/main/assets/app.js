@@ -233,68 +233,33 @@ function verifyLicenseGuard() {
 async function loadAllData() {
   try {
     if (window.AndroidBridge) {
-      const stateJson = window.AndroidBridge.fetchDatabaseState();
-      try {
-        const data = JSON.parse(stateJson);
-        state.cashbook = data.cashbook || [];
-        console.log("Loaded cashbook from Native Android SQLite!");
-      } catch(e) {
-        console.error("Failed to parse Android database state:", e);
-      }
-
-      const fetchJson = async (name) => {
-        if (window.AndroidBridge) {
-          const content = window.AndroidBridge.readAssetFile(`data_export/${name}.json`);
-          try { 
-            const arr = JSON.parse(content); 
-            if (Array.isArray(arr) && arr.length > 0) return arr;
-          } catch (e) { console.error("Bridge parse error:", e); }
-        }
         try {
-          const res = await fetch(`./data_export/${name}.json`);
-          if (res.ok) {
-            const arr = await res.json();
-            if (Array.isArray(arr) && arr.length > 0) return arr;
+          const stateJson = window.AndroidBridge.fetchDatabaseState();
+          const data = JSON.parse(stateJson);
+          if (data.cashbook && data.cashbook.length > 0) {
+            state.cashbook = data.cashbook;
+            calculateNextNumbers();
+            console.log("Loaded cashbook from Native Android SQLite!");
+          } else {
+            const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || [];
+            if (fallbackCb.length > 0) {
+              state.cashbook = fallbackCb;
+              calculateNextNumbers();
+              window.AndroidBridge.bulkSync(JSON.stringify(fallbackCb));
+              console.log("Populated Android SQLite DB from data.js package!");
+            }
           }
-        } catch (e) { console.error("Fetch parse error:", e); }
-        return [];
-      };
+        } catch(e) {
+          console.error("Failed to parse Android database state:", e);
+        }
 
-      const m = await fetchJson("Members");
-      const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
-      state.members = localM.length ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
-
-      const ind = await fetchJson("Individual");
-      const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
-      state.individual = localInd.length ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
-
-      const tb = await fetchJson("Trial_Balance");
-      const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
-      state.trialBalance = localTb.length ? localTb : (tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []));
-
-      const c = await fetchJson("Codes");
-      const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
-      state.codes = localC.length ? localC : (c.length ? c : (window.INITIAL_CODES || []));
-
-
-
-      const bu = await fetchJson("Budget");
-      const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
-      state.budget = localBu.length ? localBu : (bu.length ? bu : (window.INITIAL_BUDGET || []));
-
-    } else {
-      const res = await fetch('/api/data');
-      if (res.ok) {
-        const data = await res.json();
-        state.cashbook = data.cashbook || [];
-        
         const fetchJson = async (name) => {
           if (window.AndroidBridge) {
             const content = window.AndroidBridge.readAssetFile(`data_export/${name}.json`);
             try { 
               const arr = JSON.parse(content); 
               if (Array.isArray(arr) && arr.length > 0) return arr;
-            } catch (e) { }
+            } catch (e) { console.error("Bridge parse error:", e); }
           }
           try {
             const res = await fetch(`./data_export/${name}.json`);
@@ -302,41 +267,180 @@ async function loadAllData() {
               const arr = await res.json();
               if (Array.isArray(arr) && arr.length > 0) return arr;
             }
-          } catch (e) { }
+          } catch (e) { console.error("Fetch parse error:", e); }
           return [];
         };
 
         const m = await fetchJson("Members");
         const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
-        state.members = localM.length ? localM : (m.length ? m : (window.INITIAL_MEMBERS || []));
+        const hasValidM = Array.isArray(localM) && localM.some(item => getColVal(item, "B"));
+        const fallbackM = (window.CHURCH_DATA && window.CHURCH_DATA.members) || window.INITIAL_MEMBERS || [];
+        state.members = hasValidM ? localM : (m.length ? m : fallbackM);
 
         const ind = await fetchJson("Individual");
         const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
-        state.individual = localInd.length ? localInd : (ind.length ? ind : (window.INITIAL_INDIVIDUAL || []));
+        const hasValidInd = Array.isArray(localInd) && localInd.some(item => getColVal(item, "B") || getColVal(item, "C"));
+        const fallbackInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) || window.INITIAL_INDIVIDUAL || [];
+        state.individual = hasValidInd ? localInd : (ind.length ? ind : fallbackInd);
 
         const tb = await fetchJson("Trial_Balance");
         const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
-        state.trialBalance = localTb.length ? localTb : (tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []));
+        const fallbackTb = (window.CHURCH_DATA && window.CHURCH_DATA.trialBalance) || window.INITIAL_TRIAL_BALANCE || [];
+        state.trialBalance = localTb.length ? localTb : (tb.length ? tb : fallbackTb);
 
         const c = await fetchJson("Codes");
         const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
-        state.codes = localC.length ? localC : (c.length ? c : (window.INITIAL_CODES || []));
-
-
+        const fallbackC = (window.CHURCH_DATA && window.CHURCH_DATA.codes) || window.INITIAL_CODES || [];
+        state.codes = localC.length ? localC : (c.length ? c : fallbackC);
 
         const bu = await fetchJson("Budget");
         const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
-        state.budget = localBu.length ? localBu : (bu.length ? bu : (window.INITIAL_BUDGET || []));
-        console.log("Loaded cashbook from SQLite Backend API, other data from JSON!");
-      } else {
-        console.error("Failed to load from backend:", res.status);
+        const fallbackBu = (window.CHURCH_DATA && window.CHURCH_DATA.budget) || window.INITIAL_BUDGET || [];
+        state.budget = localBu.length ? localBu : (bu.length ? bu : fallbackBu);
+
+    } else {
+      try {
+        const res = await fetch('/api/data');
+        if (res.ok) {
+          const data = await res.json();
+          state.cashbook = data.cashbook || [];
+        } else {
+          console.error("Failed to load from backend:", res.status);
+        }
+      } catch (err) {
+        console.warn("No API backend detected, proceeding in offline mode.");
       }
+
+      const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
+      const hasValidM = Array.isArray(localM) && localM.some(item => getColVal(item, "B"));
+      const fallbackM = (window.CHURCH_DATA && window.CHURCH_DATA.members) || window.INITIAL_MEMBERS || [];
+      state.members = hasValidM ? localM : fallbackM;
+
+      const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
+      const hasValidInd = Array.isArray(localInd) && localInd.some(item => getColVal(item, "B") || getColVal(item, "C"));
+      const fallbackInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) || window.INITIAL_INDIVIDUAL || [];
+      state.individual = hasValidInd ? localInd : fallbackInd;
+
+      const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
+      const fallbackTb = (window.CHURCH_DATA && window.CHURCH_DATA.trialBalance) || window.INITIAL_TRIAL_BALANCE || [];
+      state.trialBalance = localTb.length ? localTb : fallbackTb;
+
+      const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
+      const fallbackC = (window.CHURCH_DATA && window.CHURCH_DATA.codes) || window.INITIAL_CODES || [];
+      state.codes = localC.length ? localC : fallbackC;
+
+      const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
+      const fallbackBu = (window.CHURCH_DATA && window.CHURCH_DATA.budget) || window.INITIAL_BUDGET || [];
+      state.budget = localBu.length ? localBu : fallbackBu;
+      console.log("Loaded all required data!");
     }
 
     // 3. Load LocalStorage Overrides
     const savedMembers = localStorage.getItem("CHURCH_MEMBERS");
     if (savedMembers) {
       try { state.individual = JSON.parse(savedMembers); } catch (e) { }
+    }
+
+    // 3.5. Dynamic Auto-Sync Individual Ledgers from Cashbook
+    try {
+      let baseInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) ? JSON.parse(JSON.stringify(window.CHURCH_DATA.individual)) : [];
+      if (baseInd.length === 0 && window.INITIAL_INDIVIDUAL) baseInd = JSON.parse(JSON.stringify(window.INITIAL_INDIVIDUAL));
+      
+      const baseCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || window.INITIAL_CASHBOOK || [];
+      const baseReceiptNos = new Set();
+      baseCb.forEach(r => { const no = getColVal(r, "B"); if (no) baseReceiptNos.add(no); });
+      
+      const newReceipts = (state.cashbook || []).filter(r => {
+        const no = getColVal(r, "B");
+        return no && !baseReceiptNos.has(no);
+      });
+      
+      if (newReceipts.length > 0 && baseInd.length > 0) {
+        newReceipts.forEach(itemRow => {
+          const isReceipt = !!(getColVal(itemRow, "H") || getColVal(itemRow, "I"));
+          if (!isReceipt) return;
+          const amountStr = getColVal(itemRow, "H");
+          const amountBank = getColVal(itemRow, "I");
+          const amount = parseFloat((amountStr || amountBank || "0").toString().replace(/,/g, '')) || 0;
+          const regNo = getColVal(itemRow, "C");
+          
+          if (amount > 0 && regNo) {
+             const item = { particulars: getColVal(itemRow, "E"), code: getColVal(itemRow, "F") };
+             let targetColKey = "E";
+             const headerRow = baseInd[3] || {};
+             const partStr = String(item.particulars || "").trim().toLowerCase();
+             const codeStr = String(item.code || "").trim().toUpperCase();
+             if (codeStr === "RP-3.82" || codeStr === "RP-3.83" || partStr.includes("subscription")) {
+               targetColKey = "E";
+             } else {
+               for (let key in headerRow) {
+                 const title = String(headerRow[key] || "").trim().toLowerCase();
+                 if (!title) continue;
+                 const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
+                 if (["A", "B", "C", "D", "AM"].includes(colLetter)) continue;
+                 if (
+                    (partStr.includes("holy qurbana") && title.includes("qurbana")) ||
+                    (partStr.includes("donat") && title.includes("donat") && !partStr.includes("breakfast") && !partStr.includes("marriage") && !partStr.includes("cemetry")) ||
+                    (partStr.includes("perunnal") && title.includes("perunnal")) ||
+                    (partStr.includes("passion") && title.includes("passion")) ||
+                    (partStr.includes("george") && title.includes("george")) ||
+                    (partStr.includes("thomas") && title.includes("thomas")) ||
+                    (partStr.includes("mary") && title.includes("mary")) ||
+                    (partStr.includes("blessing") && title.includes("blessing")) ||
+                    (partStr.includes("auction") && title.includes("auction")) ||
+                    (partStr.includes("cemetry") && title.includes("cemetry")) ||
+                    (partStr.includes("breakfast") && title.includes("breakfast")) ||
+                    (partStr.includes("birthday") && title.includes("birthday")) ||
+                    (partStr.includes("anniversary") && title.includes("anniversary")) ||
+                    (partStr.includes("baptism") && title.includes("baptism")) ||
+                    (partStr.includes("bann") && title.includes("bann")) ||
+                    (partStr.includes("catholicate") && title.includes("catholicate")) ||
+                    (partStr.includes("metropolitan") && title.includes("metropolitan")) ||
+                    (partStr.includes("mission") && title.includes("mission")) ||
+                    (partStr.includes("seminary") && title.includes("seminary")) ||
+                    (partStr.includes("priest") && title.includes("priest")) ||
+                    (partStr.includes("sunday school") && title.includes("sunday school")) ||
+                    (partStr.includes("harvest") && title.includes("harvest")) ||
+                    (partStr.includes("christmas") && title.includes("christmas")) ||
+                    title.includes(partStr) || partStr.includes(title)
+                 ) {
+                   targetColKey = colLetter;
+                   break;
+                 }
+               }
+             }
+             
+             const memberRow = baseInd.find((r, idx) => idx >= 4 && getColVal(r, "B") === regNo);
+             if (memberRow) {
+               if (targetColKey) {
+                 const currentVal = parseFloat(getColVal(memberRow, targetColKey)) || 0;
+                 setColVal(memberRow, targetColKey, (currentVal + amount).toString());
+               }
+               const currentGrand = parseFloat(getColVal(memberRow, "AM")) || 0;
+               setColVal(memberRow, "AM", (currentGrand + amount).toString());
+             }
+          }
+        });
+        
+        // Sync names from Master Members
+        if (state.members && state.members.length > 0) {
+          baseInd.forEach((row, idx) => {
+            if (idx >= 4) {
+              const regNo = getColVal(row, "B");
+              if (regNo) {
+                const masterRow = state.members.find(m => getColVal(m, "B") === regNo);
+                if (masterRow) setColVal(row, "C", getColVal(masterRow, "C"));
+              }
+            }
+          });
+        }
+        
+        state.individual = baseInd;
+        localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+        console.log("Dynamically synced " + newReceipts.length + " new receipts to Individual Ledger.");
+      }
+    } catch (e) {
+      console.error("Auto-sync error:", e);
     }
 
     const savedHeads = localStorage.getItem("CHURCH_ACCOUNT_HEADS");
@@ -380,6 +484,15 @@ async function loadAllData() {
     const savedCashbook = localStorage.getItem("CHURCH_CASHBOOK");
     if (savedCashbook) {
       try { state.cashbook = JSON.parse(savedCashbook); } catch (e) { }
+    }
+    
+    // Safety Fallback: If Cashbook is STILL empty (API failed and cache cleared), load from data.js
+    if (!state.cashbook || state.cashbook.length === 0) {
+       const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || window.INITIAL_CASHBOOK || [];
+       if (fallbackCb.length > 0) {
+           state.cashbook = JSON.parse(JSON.stringify(fallbackCb));
+           console.log("Loaded cashbook from static data.js fallback.");
+       }
     }
 
     const savedPass = localStorage.getItem("CHURCH_ADMIN_PASS");
@@ -1188,8 +1301,9 @@ function populateMemberDropdown() {
   const memberMap = new Map();
   const invalidNames = ["NAME OF HOF", "NAME", "SL. NO.", "REGISTER NO.", "REGISTER NO", "SL NO", "MEMBER NAME"];
 
-  // 1. Load from Individual Sheet (Col B = Reg No, Col C = Name of HoF)
-  state.individual.forEach(row => {
+  // 1. Load from state.members (which includes Address and Phone)
+  // We prefer state.members over individual sheet to reflect live edits
+  state.members.forEach(row => {
     const regNo = getColVal(row, "B");
     const name = getColVal(row, "C");
     if (regNo && name && !invalidNames.includes(regNo.toUpperCase()) && !invalidNames.includes(name.toUpperCase())) {
@@ -1197,32 +1311,33 @@ function populateMemberDropdown() {
     }
   });
 
-  // 2. Load from Members Sheet (Col B = Register No, Col C = Name)
-  state.members.forEach(row => {
+  // Fallback/Merge with Individual Sheet
+  state.individual.forEach(row => {
     const regNo = getColVal(row, "B");
     const name = getColVal(row, "C");
     if (regNo && name && !invalidNames.includes(regNo.toUpperCase()) && !invalidNames.includes(name.toUpperCase())) {
-      if (!memberMap.has(regNo)) {
-        memberMap.set(regNo, name);
-      }
+      if (!memberMap.has(regNo)) memberMap.set(regNo, name);
     }
   });
 
-  // Sort by Register Number numerically
   const sortedRegNos = Array.from(memberMap.keys()).sort((a, b) => {
-    const numA = parseInt(a) || 0;
-    const numB = parseInt(b) || 0;
-    return numA - numB;
+    const nameA = String(memberMap.get(a)).toLowerCase();
+    const nameB = String(memberMap.get(b)).toLowerCase();
+    return nameA.localeCompare(nameB);
   });
 
   sortedRegNos.forEach(regNo => {
     const name = memberMap.get(regNo);
     const opt = document.createElement("option");
     opt.value = regNo;
-    opt.textContent = `Reg #${regNo} - ${name}`;
+    opt.textContent = `${regNo} - ${name}`;
     opt.dataset.name = name;
     cmbMember.appendChild(opt);
   });
+
+  // Keep a global reference for the search filter
+  window.cachedMemberMap = memberMap;
+  window.cachedSortedRegNos = sortedRegNos;
 
   console.log(`Successfully populated ${sortedRegNos.length} parish members into dropdown.`);
 }
@@ -1245,8 +1360,11 @@ function setupNavigation() {
       tab.classList.add("active");
       const targetPane = document.getElementById(paneId);
       if (targetPane) targetPane.classList.add("active");
+      
       if (paneId === "tabAdmin") {
         renderAdminTab();
+      } else if (paneId === "tabMemberDirectory") {
+        renderMemberDirectory();
       }
     });
   });
@@ -1257,6 +1375,25 @@ function setupNavigation() {
 // ----------------------------------------------------
 function setupFormEventListeners() {
   const cmbMember = document.getElementById("cmbMember");
+  const txtSearchMember = document.getElementById("txtSearchMember");
+
+  // Receipt Tab Member Search Filter
+  if (txtSearchMember) {
+    txtSearchMember.addEventListener("input", (e) => {
+      const searchStr = e.target.value.toLowerCase().trim();
+      cmbMember.innerHTML = `<option value="">-- Select Member --</option>`;
+      window.cachedSortedRegNos.forEach(regNo => {
+        const name = window.cachedMemberMap.get(regNo);
+        if (regNo.toLowerCase().includes(searchStr) || name.toLowerCase().includes(searchStr)) {
+          const opt = document.createElement("option");
+          opt.value = regNo;
+          opt.textContent = `${regNo} - ${name}`;
+          opt.dataset.name = name;
+          cmbMember.appendChild(opt);
+        }
+      });
+    });
+  }
 
   // 2-Way Sync: Member Select -> Reg No
   cmbMember.addEventListener("change", (e) => {
@@ -1464,11 +1601,18 @@ function removeCartItem(index) {
 function clearForm() {
   state.cart = [];
   renderCartTable();
-  document.getElementById("txtRegNo").value = "";
-  document.getElementById("cmbMember").value = "";
-  document.getElementById("txtDetails").value = "";
+  const txtReg = document.getElementById("txtRegNo");
+  if (txtReg) txtReg.value = "";
+  const cmbM = document.getElementById("cmbMember");
+  if (cmbM) cmbM.value = "";
+  const txtDet = document.getElementById("txtDetails");
+  if (txtDet) txtDet.value = "";
   const amtEl = document.getElementById("txtAmount");
   if (amtEl) amtEl.value = "";
+  const txtSrcMem = document.getElementById("txtSearchMember");
+  if (txtSrcMem) txtSrcMem.value = "";
+  const txtSrcHead = document.getElementById("txtSearchAccountHead");
+  if (txtSrcHead) txtSrcHead.value = "";
 }
 
 function formatSubUptoMonthYear(val) {
@@ -1710,8 +1854,7 @@ function commitCartToLedgers() {
   }
 
   // 5. Reset Cart & Live update all table views (Cash Book, Member Ledgers, Trial Balance, Audit, Admin)
-  state.cart = [];
-  renderCartTable();
+  clearForm();
   renderAllViews();
 }
 
@@ -2182,8 +2325,8 @@ function renderCashbook() {
   const paymentRows = [];
 
   let totalCashR = 0, totalBankR = 0, totalCashP = 0, totalBankP = 0;
-  const openingCash = 9879.00;
-  const openingBank = 651682.00;
+  let openingCash = 0;
+  let openingBank = 0;
 
   state.cashbook.forEach(row => {
     const dtRaw = getColVal(row, "A");
@@ -2219,6 +2362,8 @@ function renderCashbook() {
     if (details.toLowerCase().includes("opening balance") || cashR === "9879" || bankR === "651682" || (headLower.includes("opening") && (cashR || bankR))) {
       head = "Opening Balance";
       isOpening = true;
+      openingCash = parseFloat(cashR) || 0;
+      openingBank = parseFloat(bankR) || 0;
     }
 
     let finalReceiptHead = head;
@@ -2980,8 +3125,7 @@ function calculateCashbookTotals() {
 
   // Fallback if Trial Balance is completely empty or missing these rows
   if (openingCash === 0 && openingBank === 0 && !window.isFreshStartBuild) {
-    openingCash = 9879.00;
-    openingBank = 651682.00;
+    // Hardcoded balances removed, relies on backup data or Trial Balance sheet
   }
 
   let totalCashR = 0, totalBankR = 0, totalCashP = 0, totalBankP = 0;
@@ -3020,7 +3164,10 @@ function calculateCashbookTotals() {
     }
 
     const isValidReceipt = isOpening || Boolean(recNo) || Boolean(head) || Boolean(hof);
-    if (isValidReceipt && !isOpening) {
+    if (isOpening) {
+      if (openingCash === 0 && cashR) openingCash = parseFloat(cashR) || 0;
+      if (openingBank === 0 && bankR) openingBank = parseFloat(bankR) || 0;
+    } else if (isValidReceipt) {
       if (cashR && !isNaN(parseFloat(cashR))) totalCashR += parseFloat(cashR) || 0;
       if (bankR && !isNaN(parseFloat(bankR))) totalBankR += parseFloat(bankR) || 0;
     }
@@ -3196,6 +3343,14 @@ function exportTableToExcel(tableId, filename) {
       XLSX.utils.sheet_add_dom(ws, cleanTable, { origin: "A5", raw: true });
       
       const range = XLSX.utils.decode_range(ws['!ref']);
+      
+      // Merge header rows to center text across the page
+      const totalCols = range.e.c;
+      if (!ws['!merges']) ws['!merges'] = [];
+      for (let i = 0; i < 3; i++) {
+        ws['!merges'].push({ s: { r: i, c: 0 }, e: { r: i, c: totalCols } });
+      }
+      
       for (let R = 4; R <= range.e.r; ++R) {
         for (let C = 0; C <= range.e.c; ++C) {
           const cell_ref = XLSX.utils.encode_cell({c:C, r:R});
@@ -3203,6 +3358,8 @@ function exportTableToExcel(tableId, filename) {
           if (!cell || cell.t !== 's') continue;
           
           const val = String(cell.v).trim();
+          
+          // Try parse date
           const dateRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
           if (dateRegex.test(val)) {
             const parts = val.split('-');
@@ -3211,6 +3368,24 @@ function exportTableToExcel(tableId, filename) {
               cell.t = 'd';
               cell.v = d;
               cell.z = 'dd-mm-yyyy';
+              continue;
+            }
+          }
+
+          // Try parse numbers and amounts
+          if (val.startsWith("₹")) {
+            const numVal = parseFloat(val.replace(/[₹\s,]/g, ''));
+            if (!isNaN(numVal)) {
+              cell.t = 'n';
+              cell.v = numVal;
+              cell.z = '"₹"#,##0.00';
+              continue;
+            }
+          } else {
+            // Standard number strings (like Receipt No, Reg No)
+            if (/^-?\d+(\.\d+)?$/.test(val)) {
+              cell.t = 'n';
+              cell.v = Number(val);
             }
           }
         }
@@ -3593,20 +3768,28 @@ function executePendingAction() {
     confirmDeleteAccountHead(payload);
   } else if (type === "DELETE_MEMBER") {
     confirmDeleteMember(payload);
+  } else if (type === "DIR_ADD") {
+    openDirAddMemberModal();
+  } else if (type === "DIR_EDIT") {
+    openDirEditMemberModal(payload);
+  } else if (type === "DIR_DELETE") {
+    deleteDirMemberCrud(payload);
   }
 }
 
 function confirmDeleteMember(regNo) {
-  const memberRow = state.individual.find((r, idx) => idx >= 4 && getColVal(r, "B") === regNo);
+  const memberRow = state.individual.find(r => getColVal(r, "B") === String(regNo));
   const name = memberRow ? getColVal(memberRow, "C") : regNo;
 
   if (confirm(`Are you sure you want to delete member Reg No. #${regNo} (${name})? This cannot be undone.`)) {
-    state.individual = state.individual.filter((r, idx) => {
-      if (idx < 4) return true;
-      return getColVal(r, "B") !== regNo;
-    });
-
+    state.individual = state.individual.filter(r => getColVal(r, "B") !== String(regNo));
     localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+
+    // Sync deletion to Directory
+    state.members = state.members.filter(m => getColVal(m, "B") !== String(regNo));
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+    renderMemberDirectory();
+
     populateMemberDropdown();
     renderIndividualLedgers();
     renderAudit();
@@ -3703,8 +3886,25 @@ function saveNewMemberAccount() {
   };
 
   state.individual.push(newMemberRow);
-
   localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+
+  // Sync to Directory
+  if (!state.members.some(m => getColVal(m, "B") === String(regNo))) {
+    const maxSlDir = state.members.reduce((max, m) => {
+      const a = parseInt(getColVal(m, "A"), 10);
+      return !isNaN(a) && a > max ? a : max;
+    }, 0);
+    state.members.push({
+      "A": String(maxSlDir + 1),
+      "B": regNo,
+      "C": name,
+      "D": "",
+      "E": ""
+    });
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+    renderMemberDirectory();
+  }
+
   populateMemberDropdown();
   renderIndividualLedgers();
   renderAudit();
@@ -4109,9 +4309,8 @@ function renderAdminMembersTable() {
   const invalidNames = ["NAME OF HOF", "NAME", "SL. NO.", "REGISTER NO.", "REGISTER NO", "SL NO", "MEMBER NAME"];
   const membersList = [];
 
-  if (state.individual && state.individual.length > 4) {
-    const rows = state.individual.slice(4);
-    rows.forEach((r) => {
+  if (state.individual && state.individual.length > 0) {
+    state.individual.forEach((r) => {
       const regNo = getColVal(r, "B");
       const name = getColVal(r, "C");
       const subUpto = getColVal(r, "D");
@@ -4627,6 +4826,7 @@ function openBackupExportModal() {
       deletedAccountHeads: state.deletedAccountHeads || [],
       deletedMembers: state.deletedMembers || [],
       individual: state.individual || [],
+      masterMembers: state.members || [],
       adminPassword: state.adminPassword || "church123",
       currentReceiptNo: state.currentReceiptNo || 4001,
       currentVoucherNo: state.currentVoucherNo || 1
@@ -4809,13 +5009,33 @@ function processBackupRestoreData(jsonText) {
       }
 
       const indArr = Array.isArray(data.individual) ? data.individual :
-        Array.isArray(data.members) ? data.members :
+        Array.isArray(data.members) && !data.masterMembers ? data.members :
           Array.isArray(data.Individual) ? data.Individual :
-            Array.isArray(data.Members) ? data.Members : null;
+            Array.isArray(data.Members) && !data.masterMembers ? data.Members : null;
 
       if (Array.isArray(indArr)) {
         state.individual = indArr;
         localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+      }
+
+      const masterArr = Array.isArray(data.masterMembers) ? data.masterMembers : null;
+      if (masterArr) {
+        state.members = masterArr;
+        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+      } else if (Array.isArray(indArr)) {
+        indArr.forEach(r => {
+          const reg = getColVal(r, "B");
+          const name = getColVal(r, "C");
+          if (reg && name && reg !== "Register No." && reg.toUpperCase() !== "REGISTER NO") {
+            if (!state.members.find(m => getColVal(m, "B") === reg)) {
+              state.members.push({ "A": "", "B": reg, "C": name, "D": "", "E": "" });
+            } else {
+              const ex = state.members.find(m => getColVal(m, "B") === reg);
+              ex.C = name;
+            }
+          }
+        });
+        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
       }
 
       if (Array.isArray(data.customAccountHeads)) {
@@ -4837,10 +5057,6 @@ function processBackupRestoreData(jsonText) {
       if (Array.isArray(data.auction)) {
         state.auction = data.auction;
         localStorage.setItem("CHURCH_AUCTION", JSON.stringify(state.auction));
-      }
-      if (Array.isArray(data.members)) {
-        state.members = data.members;
-        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
       }
       if (Array.isArray(data.deletedAccountHeads)) {
         state.deletedAccountHeads = data.deletedAccountHeads;
@@ -4919,6 +5135,329 @@ function verifyTrialActivationKey() {
   } else {
     alert("Invalid Activation Key! Please contact administrator.");
   }
+}
+
+// ----------------------------------------------------
+// MEMBER DIRECTORY CRUD OPERATIONS
+// ----------------------------------------------------
+function renderMemberDirectory() {
+  const tbody = document.querySelector("#memberDirectoryTable tbody");
+  if (!tbody) return;
+
+  // Filter out headers from Excel
+  const validMembers = state.members.filter(row => {
+    const rn = getColVal(row, "B");
+    return rn && rn !== "Register No." && rn.toUpperCase() !== "REGISTER NO";
+  });
+
+  // Sort alphabetically by Name
+  validMembers.sort((a, b) => {
+    const nameA = String(getColVal(a, "C") || "").toLowerCase();
+    const nameB = String(getColVal(b, "C") || "").toLowerCase();
+    return nameA.localeCompare(nameB);
+  });
+
+  let html = "";
+  validMembers.forEach(member => {
+    const regNo = getColVal(member, "B") || "";
+    const name = getColVal(member, "C") || "";
+    const phone = getColVal(member, "D") || "";
+    const address = getColVal(member, "E") || "";
+
+    html += `
+      <tr>
+        <td style="font-weight:700;">${regNo}</td>
+        <td>${name}</td>
+        <td>${phone}</td>
+        <td>${address}</td>
+        <td style="text-align:center;">
+          <button class="btn btn-outline" style="padding:4px 8px; font-size:0.8rem; margin-right:4px;" onclick="promptAdminPassword('DIR_EDIT', '${escapeJsString(regNo)}')">✏️ Edit</button>
+          <button class="btn btn-outline" style="padding:4px 8px; font-size:0.8rem; color:#ef4444; border-color:#ef4444;" onclick="promptAdminPassword('DIR_DELETE', '${escapeJsString(regNo)}')">🗑️</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+}
+
+function openDirAddMemberModal() {
+  document.getElementById("memberCrudTitle").innerHTML = "➕ Add New Member";
+  document.getElementById("txtMemOriginalRegNo").value = "";
+  document.getElementById("txtMemRegNo").value = "";
+  document.getElementById("txtMemName").value = "";
+  document.getElementById("txtMemPhone").value = "";
+  document.getElementById("txtMemAddress").value = "";
+  document.getElementById("memberCrudModal").style.display = "flex";
+}
+
+function openDirEditMemberModal(regNo) {
+  const member = state.members.find(m => getColVal(m, "B") === String(regNo));
+  if (!member) return;
+
+  document.getElementById("memberCrudTitle").innerHTML = "✏️ Edit Member";
+  document.getElementById("txtMemOriginalRegNo").value = regNo;
+  document.getElementById("txtMemRegNo").value = regNo;
+  document.getElementById("txtMemName").value = getColVal(member, "C") || "";
+  document.getElementById("txtMemPhone").value = getColVal(member, "D") || "";
+  document.getElementById("txtMemAddress").value = getColVal(member, "E") || "";
+  document.getElementById("memberCrudModal").style.display = "flex";
+}
+
+function closeDirMemberCrudModal() {
+  document.getElementById("memberCrudModal").style.display = "none";
+}
+
+function saveDirMemberCrud() {
+  const originalRegNo = document.getElementById("txtMemOriginalRegNo").value.trim();
+  const regNo = document.getElementById("txtMemRegNo").value.trim();
+  const name = document.getElementById("txtMemName").value.trim();
+  const phone = document.getElementById("txtMemPhone").value.trim();
+  const address = document.getElementById("txtMemAddress").value.trim();
+
+  if (!regNo || !name) {
+    alert("Register Number and Name are required.");
+    return;
+  }
+
+  // Editing existing member
+  if (originalRegNo) {
+    const idx = state.members.findIndex(m => getColVal(m, "B") === originalRegNo);
+    if (idx !== -1) {
+      if (originalRegNo !== regNo && state.members.some(m => getColVal(m, "B") === regNo)) {
+        alert(`Register number ${regNo} is already in use.`);
+        return;
+      }
+      setColVal(state.members[idx], "B", regNo);
+      setColVal(state.members[idx], "C", name);
+      setColVal(state.members[idx], "D", phone);
+      setColVal(state.members[idx], "E", address);
+    }
+  } else {
+    // Adding new member
+    if (state.members.some(m => getColVal(m, "B") === regNo)) {
+      alert(`Register number ${regNo} is already in use.`);
+      return;
+    }
+    const maxSl = state.members.reduce((max, m) => {
+      const a = parseInt(getColVal(m, "A"), 10);
+      return !isNaN(a) && a > max ? a : max;
+    }, 0);
+
+    state.members.push({
+      "A": String(maxSl + 1),
+      "B": regNo,
+      "C": name,
+      "D": phone,
+      "E": address
+    });
+  }
+
+  // 2-Way Sync with Administration (state.individual)
+  const idxIndiv = state.individual.findIndex((r, i) => i >= 4 && getColVal(r, "B") === (originalRegNo || regNo));
+  if (idxIndiv !== -1) {
+    setColVal(state.individual[idxIndiv], "B", regNo);
+    setColVal(state.individual[idxIndiv], "C", name);
+  } else {
+    state.individual.push({
+      "A": String(state.individual.length - 3),
+      "B": regNo,
+      "C": name,
+      "D": "",
+      "AM": "0.00"
+    });
+  }
+  localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+
+  // Save to correct local storage key
+  localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+  closeDirMemberCrudModal();
+  renderMemberDirectory();
+  populateMemberDropdown();
+  if (state.isAdminUnlocked) renderAdminMembersTable();
+}
+
+function deleteDirMemberCrud(regNo) {
+  if (confirm(`Are you sure you want to completely delete member ${regNo}?`)) {
+    state.members = state.members.filter(m => getColVal(m, "B") !== String(regNo));
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+    
+    // Sync deletion to Administration
+    state.individual = state.individual.filter(r => getColVal(r, "B") !== String(regNo));
+    localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+
+    renderMemberDirectory();
+    populateMemberDropdown();
+    if (state.isAdminUnlocked) renderAdminMembersTable();
+  }
+}
+
+// ----------------------------------------------------
+// 📥/📤 MEMBER DIRECTORY IMPORT/EXPORT FUNCTIONS
+// ----------------------------------------------------
+function exportMemberDirectoryCSV() {
+  try {
+    const validMembers = state.members.filter(row => {
+      const rn = getColVal(row, "B");
+      return rn && rn !== "Register No." && rn.toUpperCase() !== "REGISTER NO";
+    });
+
+    validMembers.sort((a, b) => {
+      const nameA = String(getColVal(a, "C") || "").toLowerCase();
+      const nameB = String(getColVal(b, "C") || "").toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+
+    let csvContent = "\ufeff"; // BOM for UTF-8 Excel compatibility
+    csvContent += "Register No.,Name,Mobile,Address\n";
+
+    validMembers.forEach(member => {
+      const regNo = String(getColVal(member, "B") || "").replace(/"/g, '""');
+      const name = String(getColVal(member, "C") || "").replace(/"/g, '""');
+      const phone = String(getColVal(member, "D") || "").replace(/"/g, '""');
+      const address = String(getColVal(member, "E") || "").replace(/"/g, '""');
+
+      csvContent += `"${regNo}","${name}","${phone}","${address}"\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `St_Gregorios_Church_Members_Directory.csv`);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (err) {
+    alert("Export failed: " + err.message);
+  }
+}
+
+function importMemberDirectoryCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const text = e.target.result;
+      const lines = parseCSVText(text);
+      if (lines.length < 2) {
+        alert("The selected CSV file appears to be empty or has no header.");
+        return;
+      }
+
+      const headers = lines[0].map(h => h.trim().toLowerCase());
+      
+      const regIdx = headers.findIndex(h => h.includes("reg") || h.includes("member no") || h.includes("no."));
+      const nameIdx = headers.findIndex(h => h.includes("name") || h.includes("hof") || h.includes("head"));
+      const phoneIdx = headers.findIndex(h => h.includes("mob") || h.includes("phone") || h.includes("cell") || h.includes("contact"));
+      const addrIdx = headers.findIndex(h => h.includes("add") || h.includes("address") || h.includes("location") || h.includes("residence"));
+
+      if (regIdx === -1 || nameIdx === -1) {
+        alert("Could not identify 'Register No.' or 'Name' columns in CSV header. Please check headers: " + lines[0].join(", "));
+        return;
+      }
+
+      let importCount = 0;
+      let updateCount = 0;
+
+      for (let i = 1; i < lines.length; i++) {
+        const row = lines[i];
+        if (row.length < 2) continue;
+
+        const regNo = row[regIdx] ? row[regIdx].trim() : "";
+        const name = row[nameIdx] ? row[nameIdx].trim() : "";
+        const phone = phoneIdx !== -1 && row[phoneIdx] ? row[phoneIdx].trim() : "";
+        const address = addrIdx !== -1 && row[addrIdx] ? row[addrIdx].trim() : "";
+
+        if (!regNo || !name) continue;
+        if (regNo === "Register No." || regNo.toUpperCase() === "REGISTER NO") continue;
+
+        const existingIdx = state.members.findIndex(m => getColVal(m, "B") === regNo);
+        if (existingIdx !== -1) {
+          setColVal(state.members[existingIdx], "C", name);
+          setColVal(state.members[existingIdx], "D", phone);
+          setColVal(state.members[existingIdx], "E", address);
+          updateCount++;
+        } else {
+          const maxSl = state.members.reduce((max, m) => {
+            const a = parseInt(getColVal(m, "A"), 10);
+            return !isNaN(a) && a > max ? a : max;
+          }, 0);
+
+          state.members.push({
+            "A": String(maxSl + 1),
+            "B": regNo,
+            "C": name,
+            "D": phone,
+            "E": address
+          });
+          importCount++;
+        }
+
+        const idxIndiv = state.individual.findIndex((r, idx) => idx >= 4 && getColVal(r, "B") === regNo);
+        if (idxIndiv !== -1) {
+          setColVal(state.individual[idxIndiv], "C", name);
+        } else {
+          state.individual.push({
+            "A": String(state.individual.length - 3),
+            "B": regNo,
+            "C": name,
+            "D": "",
+            "AM": "0.00"
+          });
+        }
+      }
+
+      localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+      localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+      if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+
+      renderMemberDirectory();
+      populateMemberDropdown();
+      if (state.isAdminUnlocked) renderAdminMembersTable();
+
+      alert(`✅ CSV Import Complete!\n- Imported ${importCount} new members\n- Updated ${updateCount} existing member profiles.`);
+    } catch(err) {
+      alert("Error parsing CSV: " + err.message);
+    }
+  };
+  reader.readAsText(file, "UTF-8");
+  event.target.value = "";
+}
+
+function parseCSVText(text) {
+  const lines = [];
+  let row = [""];
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    const next = text[i+1];
+
+    if (c === '"') {
+      if (inQuotes && next === '"') {
+        row[row.length - 1] += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (c === ',' && !inQuotes) {
+      row.push("");
+    } else if ((c === '\r' || c === '\n') && !inQuotes) {
+      if (c === '\r' && next === '\n') i++;
+      lines.push(row);
+      row = [""];
+    } else {
+      row[row.length - 1] += c;
+    }
+  }
+  if (row.length > 1 || row[0] !== "") {
+    lines.push(row);
+  }
+  return lines;
 }
 
 
