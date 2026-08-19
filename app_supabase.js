@@ -75,6 +75,17 @@ window.fetch = async function(url, options) {
             insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
         });
         
+        // Calculate the next ID to prevent 'null value in column id' errors if DB lacks auto-increment
+        if (window.state && window.state.cashbook && window.state.cashbook.length > 0) {
+            let maxId = 0;
+            window.state.cashbook.forEach(r => {
+                if (r.id && r.id > maxId) maxId = r.id;
+            });
+            insertObj.id = maxId + 1;
+        } else {
+            insertObj.id = 1;
+        }
+        
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
             method: 'POST',
             headers: {
@@ -91,6 +102,7 @@ window.fetch = async function(url, options) {
             throw new Error("Failed to save transaction: " + res.status + " " + errText);
         }
         if (window.state && window.state.cashbook) {
+            body.row.id = insertObj.id;
             window.state.cashbook.push(body.row);
             if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
         }
@@ -155,6 +167,7 @@ window.fetch = async function(url, options) {
         });
         if (!res.ok) throw new Error("Failed to save app state: " + res.status);
         if (window.state && window.state.cashbook) {
+            body.row.id = insertObj.id;
             window.state.cashbook.push(body.row);
             if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
         }
@@ -202,6 +215,7 @@ window.fetch = async function(url, options) {
         }
         
         if (window.state && window.state.cashbook) {
+            body.row.id = insertObj.id;
             window.state.cashbook.push(body.row);
             if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
         }
