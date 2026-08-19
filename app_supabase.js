@@ -75,31 +75,17 @@ window.fetch = async function(url, options) {
             insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
         });
         
-        // Fetch the true max ID from the database to bypass the 1000 row limit!
-        let trueMaxId = 0;
-        try {
-            const maxRes = await originalFetch(SUPABASE_URL + '/rest/v1/cashbook?select=id&order=id.desc&limit=1', {
-                headers: {
-                    'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-                }
+        // Ultimate maxId calculator with global state to prevent double-click duplicate keys
+        let maxId = window._lastInsertedId || 0;
+        if (window.state && window.state.cashbook) {
+            window.state.cashbook.forEach(r => {
+                const num = parseInt(r.id, 10);
+                if (!isNaN(num) && num > maxId) maxId = num;
             });
-            if (maxRes.ok) {
-                const maxData = await maxRes.json();
-                if (maxData && maxData.length > 0 && maxData[0].id) {
-                    trueMaxId = parseInt(maxData[0].id, 10);
-                }
-            }
-        } catch(e) {
-            console.error('Failed to fetch max ID', e);
         }
-        insertObj.id = trueMaxId + 1;
+        insertObj.id = maxId + 1;
+        window._lastInsertedId = insertObj.id; // Protect against rapid double clicks!
         
-        // Calculate the next ID to prevent 'null value in column id' errors if DB lacks auto-increment
-        if (window.state && window.state.cashbook && window.state.cashbook.length > 0) {
-            
-        } else {
-            insertObj.id = 1;
-        }
         
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
             method: 'POST',
