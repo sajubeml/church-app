@@ -79,7 +79,8 @@ window.fetch = async function(url, options) {
         if (window.state && window.state.cashbook && window.state.cashbook.length > 0) {
             let maxId = 0;
             window.state.cashbook.forEach(r => {
-                if (r.id && r.id > maxId) maxId = r.id;
+                const num = parseInt(r.id, 10);
+                if (!isNaN(num) && num > maxId) maxId = num;
             });
             insertObj.id = maxId + 1;
         } else {
