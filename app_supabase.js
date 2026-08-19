@@ -90,6 +90,10 @@ window.fetch = async function(url, options) {
             const errText = await res.text();
             throw new Error("Failed to save transaction: " + res.status + " " + errText);
         }
+        if (window.state && window.state.cashbook) {
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+        }
         return new Response(JSON.stringify({ success: true }));
       }
 
@@ -150,6 +154,10 @@ window.fetch = async function(url, options) {
             body: JSON.stringify(updates)
         });
         if (!res.ok) throw new Error("Failed to save app state: " + res.status);
+        if (window.state && window.state.cashbook) {
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+        }
         return new Response(JSON.stringify({ success: true }));
       }
       
@@ -193,6 +201,10 @@ window.fetch = async function(url, options) {
             }
         }
         
+        if (window.state && window.state.cashbook) {
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+        }
         return new Response(JSON.stringify({ success: true }));
       }
       
