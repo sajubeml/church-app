@@ -78,9 +78,8 @@ window.fetch = async function(url, options) {
         // Fetch the true max ID from the database to bypass the 1000 row limit!
         let trueMaxId = 0;
         try {
-            const maxRes = await originalFetch(${SUPABASE_URL}/rest/v1/cashbook?select=id&order=id.desc&limit=1, {
+            const maxRes = await originalFetch(SUPABASE_URL + '/rest/v1/cashbook?select=id&order=id.desc&limit=1', {
                 headers: {
-                    'apikey': SUPABASE_ANON_KEY,
                     'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
                 }
             });
