@@ -77,12 +77,7 @@ window.fetch = async function(url, options) {
         
         // Calculate the next ID to prevent 'null value in column id' errors if DB lacks auto-increment
         if (window.state && window.state.cashbook && window.state.cashbook.length > 0) {
-            let maxId = 0;
-            window.state.cashbook.forEach(r => {
-                const num = parseInt(r.id, 10);
-                if (!isNaN(num) && num > maxId) maxId = num;
-            });
-            insertObj.id = maxId + 1;
+            
         } else {
             insertObj.id = 1;
         }
@@ -103,9 +98,8 @@ window.fetch = async function(url, options) {
             throw new Error("Failed to save transaction: " + res.status + " " + errText);
         }
         if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            // Re-fetch everything to get the proper DB-generated IDs
+            if (typeof window.loadCloudData === 'function') window.loadCloudData(false);
         }
         return new Response(JSON.stringify({ success: true }));
       }
@@ -168,9 +162,8 @@ window.fetch = async function(url, options) {
         });
         if (!res.ok) throw new Error("Failed to save app state: " + res.status);
         if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            // Re-fetch everything to get the proper DB-generated IDs
+            if (typeof window.loadCloudData === 'function') window.loadCloudData(false);
         }
         return new Response(JSON.stringify({ success: true }));
       }
@@ -216,9 +209,8 @@ window.fetch = async function(url, options) {
         }
         
         if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            // Re-fetch everything to get the proper DB-generated IDs
+            if (typeof window.loadCloudData === 'function') window.loadCloudData(false);
         }
         return new Response(JSON.stringify({ success: true }));
       }
