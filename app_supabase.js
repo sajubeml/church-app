@@ -117,8 +117,10 @@ window.fetch = async function(url, options) {
             throw new Error("Failed to save transaction: " + res.status + " " + errText);
         }
         if (window.state && window.state.cashbook) {
-            // Re-fetch everything to get the proper DB-generated IDs
-            if (typeof window.loadCloudData === 'function') window.loadCloudData(false);
+            body.row.id = insertObj.id;
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
         }
         return new Response(JSON.stringify({ success: true }));
       }
@@ -181,8 +183,10 @@ window.fetch = async function(url, options) {
         });
         if (!res.ok) throw new Error("Failed to save app state: " + res.status);
         if (window.state && window.state.cashbook) {
-            // Re-fetch everything to get the proper DB-generated IDs
-            if (typeof window.loadCloudData === 'function') window.loadCloudData(false);
+            body.row.id = insertObj.id;
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
         }
         return new Response(JSON.stringify({ success: true }));
       }
@@ -228,8 +232,10 @@ window.fetch = async function(url, options) {
         }
         
         if (window.state && window.state.cashbook) {
-            // Re-fetch everything to get the proper DB-generated IDs
-            if (typeof window.loadCloudData === 'function') window.loadCloudData(false);
+            body.row.id = insertObj.id;
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
         }
         return new Response(JSON.stringify({ success: true }));
       }
