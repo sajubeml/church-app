@@ -76,15 +76,9 @@ window.fetch = async function(url, options) {
         });
         
         // Ultimate maxId calculator with global state to prevent double-click duplicate keys
-        let maxId = window._lastInsertedId || 0;
-        if (window.state && window.state.cashbook) {
-            window.state.cashbook.forEach(r => {
-                const num = parseInt(r.id, 10);
-                if (!isNaN(num) && num > maxId) maxId = num;
-            });
-        }
-        insertObj.id = maxId + 1;
-        window._lastInsertedId = insertObj.id; // Protect against rapid double clicks!
+        // ULTIMATE TEST: Use Date.now() for ID. If this throws a duplicate key, 
+        // it means the primary key is NOT on the ID column, but on Receipt No (col_B)!
+        insertObj.id = 900000 + Math.floor(Math.random() * 90000);
         
         
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
