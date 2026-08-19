@@ -2,6 +2,62 @@
 const SUPABASE_URL = 'https://djpuxmrjxsrhgfrtppky.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_QjkuMrFMwtc2imGfy0XCdw_37h05VtE';
 
+
+window.SUPABASE_ACCESS_TOKEN = null;
+
+window.attemptLogin = async function() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const errorDiv = document.getElementById('login-error');
+    const btn = document.getElementById('login-submit');
+    
+    if (!email || !password) {
+        errorDiv.textContent = "Please enter email and password.";
+        errorDiv.style.display = "block";
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = "Authenticating...";
+    errorDiv.style.display = "none";
+    
+    try {
+        const res = await originalFetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email, password: password })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.error_description || data.msg || "Authentication failed");
+        }
+        
+        // Success! Save token
+        window.SUPABASE_ACCESS_TOKEN = data.access_token;
+        
+        // Hide overlay and show app
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('main-app-container').style.display = 'block';
+        
+        // Trigger data reload now that we have the secure token!
+        if (typeof loadAllData === 'function') {
+            loadAllData();
+        }
+        
+    } catch(err) {
+        errorDiv.textContent = err.message;
+        errorDiv.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Login";
+    }
+};
+
+
 const originalFetch = window.fetch;
 window.fetch = async function(url, options) {
   if (url && typeof url === 'string' && url.includes('api.php')) {
@@ -12,7 +68,7 @@ window.fetch = async function(url, options) {
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?select=*`, {
             headers: {
                 'apikey': SUPABASE_ANON_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
             }
         });
         if (!res.ok) throw new Error("App state fetch failed: " + res.status);
@@ -31,7 +87,7 @@ window.fetch = async function(url, options) {
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?select=*&order=id.asc`, {
             headers: {
                 'apikey': SUPABASE_ANON_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
             }
         });
         if (!res.ok) throw new Error("Cashbook fetch failed: " + res.status);
@@ -58,7 +114,7 @@ window.fetch = async function(url, options) {
             method: 'POST',
             headers: {
                 'apikey': SUPABASE_ANON_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
                 'Content-Type': 'application/json',
                 'Prefer': 'resolution=merge-duplicates'
             },
@@ -76,7 +132,7 @@ window.fetch = async function(url, options) {
             method: 'DELETE',
             headers: {
                 'apikey': SUPABASE_ANON_KEY,
-                'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
             }
         });
         
@@ -97,7 +153,7 @@ window.fetch = async function(url, options) {
                 method: 'POST',
                 headers: {
                     'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+                    'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(batch)
