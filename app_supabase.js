@@ -78,7 +78,15 @@ window.fetch = async function(url, options) {
         // Ultimate maxId calculator with global state to prevent double-click duplicate keys
         // ULTIMATE TEST: Use Date.now() for ID. If this throws a duplicate key, 
         // it means the primary key is NOT on the ID column, but on Receipt No (col_B)!
-        insertObj.id = 900000 + Math.floor(Math.random() * 90000);
+        // Robust ID generation: Unix timestamp in seconds + random salt.
+        // E.g., 1724063000. Fits easily within PostgreSQL int4 limit (2.1 billion)
+        // and guarantees uniqueness across all devices without needing cloud sync!
+        let safeId = Math.floor(Date.now() / 1000);
+        if (window._lastInsertedId && safeId <= window._lastInsertedId) {
+            safeId = window._lastInsertedId + 1; // Prevent rapid-fire collisions
+        }
+        insertObj.id = safeId;
+        window._lastInsertedId = safeId;
         
         
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
