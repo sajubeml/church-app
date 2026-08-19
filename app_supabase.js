@@ -75,6 +75,15 @@ window.fetch = async function(url, options) {
             insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
         });
         
+        let maxId = 0;
+        if (window.state && window.state.cashbook) {
+            window.state.cashbook.forEach(r => {
+                const num = parseInt(r.id, 10);
+                if (!isNaN(num) && num > maxId) maxId = num;
+            });
+        }
+        insertObj.id = maxId + 1;
+        
         // Calculate the next ID to prevent 'null value in column id' errors if DB lacks auto-increment
         if (window.state && window.state.cashbook && window.state.cashbook.length > 0) {
             
