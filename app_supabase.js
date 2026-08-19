@@ -46,7 +46,10 @@ window.attemptLogin = async function() {
         
         // Trigger data reload now that we have the secure token!
         if (typeof loadAllData === 'function') {
-            loadAllData();
+            await loadAllData();
+        }
+        if (typeof window.loadCloudData === 'function') {
+            await window.loadCloudData(false);
         }
         
     } catch(err) {
