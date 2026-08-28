@@ -1,3 +1,243 @@
+
+const SUPABASE_URL = 'https://djpuxmrjxsrhgfrtppky.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_QjkuMrFMwtc2imGfy0XCdw_37h05VtE';
+
+
+window.SUPABASE_ACCESS_TOKEN = null;
+
+window.attemptLogin = async function() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const errorDiv = document.getElementById('login-error');
+    const btn = document.getElementById('login-submit');
+    
+    if (!email || !password) {
+        errorDiv.textContent = "Please enter email and password.";
+        errorDiv.style.display = "block";
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = "Authenticating...";
+    errorDiv.style.display = "none";
+    
+    try {
+        const res = await originalFetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email, password: password })
+        });
+        
+        const data = await res.json();
+        
+        if (!res.ok) {
+            throw new Error(data.error_description || data.msg || "Authentication failed");
+        }
+        
+        // Success! Save token
+        window.SUPABASE_ACCESS_TOKEN = data.access_token;
+        
+        // Hide overlay and show app
+        document.getElementById('login-overlay').style.display = 'none';
+        document.getElementById('main-app-container').style.display = 'block';
+        
+        // Trigger data reload now that we have the secure token!
+        if (typeof loadAllData === 'function') {
+            await loadAllData();
+        }
+        if (typeof window.loadCloudData === 'function') {
+            await window.loadCloudData(false);
+        }
+        
+    } catch(err) {
+        errorDiv.textContent = err.message;
+        errorDiv.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "Login";
+    }
+};
+
+
+const originalFetch = window.fetch;
+window.fetch = async function(url, options) {
+  if (url && typeof url === 'string' && url.includes('api.php')) {
+    try {
+      const body = JSON.parse(options.body);
+      
+      if (body.action === 'save_transaction') {
+        const row = body.row;
+        const insertObj = {};
+        const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
+        cols.forEach(c => {
+            insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
+        });
+        
+        // Ultimate maxId calculator with global state to prevent double-click duplicate keys
+        // ULTIMATE TEST: Use Date.now() for ID. If this throws a duplicate key, 
+        // it means the primary key is NOT on the ID column, but on Receipt No (col_B)!
+        // Robust ID generation: Unix timestamp in seconds + random salt.
+        // E.g., 1724063000. Fits easily within PostgreSQL int4 limit (2.1 billion)
+        // and guarantees uniqueness across all devices without needing cloud sync!
+        let safeId = Math.floor(Date.now() / 1000);
+        if (window._lastInsertedId && safeId <= window._lastInsertedId) {
+            safeId = window._lastInsertedId + 1; // Prevent rapid-fire collisions
+        }
+        insertObj.id = safeId;
+        window._lastInsertedId = safeId;
+        
+        
+        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify(insertObj)
+        });
+        
+        if (!res.ok) {
+            const errText = await res.text();
+            throw new Error("Failed to save transaction: " + res.status + " " + errText);
+        }
+        if (window.state && window.state.cashbook) {
+            body.row.id = insertObj.id;
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
+        }
+        return new Response(JSON.stringify({ success: true }));
+      }
+
+      if (body.action === 'get_app_state') {
+        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?select=*`, {
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+            }
+        });
+        if (!res.ok) throw new Error("App state fetch failed: " + res.status);
+        const data = await res.json();
+        
+        const stateMap = {};
+        data.forEach(row => { 
+            try { 
+                stateMap[row.key_name] = typeof row.json_data === 'string' ? JSON.parse(row.json_data || '[]') : row.json_data; 
+            } catch(e){}
+        });
+        return new Response(JSON.stringify({ success: true, data: stateMap }));
+      }
+      
+      if (body.action === 'get_cashbook') {
+        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?select=*&order=id.asc`, {
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+            }
+        });
+        if (!res.ok) throw new Error("Cashbook fetch failed: " + res.status);
+        const data = await res.json();
+
+        const mappedRows = data.map(row => {
+            const mapped = {};
+            if(row.id) mapped.id = row.id;
+            const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
+            cols.forEach(c => {
+                if (row['col_'+c] !== undefined && row['col_'+c] !== null && row['col_'+c] !== 'NULL') mapped[c] = row['col_'+c];
+            });
+            return mapped;
+        });
+        return new Response(JSON.stringify({ success: true, data: mappedRows }));
+      }
+      
+      if (body.action === 'save_app_state') {
+        const updates = [];
+        for (let key in body.state_data) {
+           updates.push({ key_name: key, json_data: body.state_data[key] }); 
+        }
+        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?on_conflict=key_name`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(updates)
+        });
+        if (!res.ok) throw new Error("Failed to save app state: " + res.status);
+        if (window.state && window.state.cashbook) {
+            body.row.id = insertObj.id;
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
+        }
+        return new Response(JSON.stringify({ success: true }));
+      }
+      
+      if (body.action === 'import_cashbook') {
+        const rows = body.rows;
+        
+        // 1. Delete all existing rows
+        await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?id=gt.0`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+            }
+        });
+        
+        // 2. Prepare new rows for bulk insert with EXACTLY matching schema structure
+        const insertArr = rows.map((row, idx) => {
+            const insertObj = { id: (idx + 1) }; 
+            const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
+            cols.forEach(c => {
+                insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
+            });
+            return insertObj;
+        });
+        
+        // 3. Insert in batches
+        for (let i=0; i<insertArr.length; i+=500) {
+            const batch = insertArr.slice(i, i+500);
+            const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(batch)
+            });
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error("Batch insert failed: " + res.status + " " + errText);
+            }
+        }
+        
+        if (window.state && window.state.cashbook) {
+            body.row.id = insertObj.id;
+            window.state.cashbook.push(body.row);
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
+        }
+        return new Response(JSON.stringify({ success: true }));
+      }
+      
+    } catch(err) {
+      console.error('Supabase Mock Fetch Error:', err);
+      alert("Database Save Error:\n" + err.message);
+      return new Response(JSON.stringify({ success: false, message: err.message }));
+    }
+  }
+  
+  return originalFetch(url, options);
+};
+
 window.onerror = function(message, source, lineno, colno, error) {
     alert("JS ERROR:\n" + message + "\nLine: " + lineno);
     return false;

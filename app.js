@@ -300,10 +300,17 @@ async function loadAllData() {
 
     } else {
       try {
-        const res = await fetch('/api/data');
+        const res = await fetch('./api.php?_t=' + Date.now(), {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'get_cashbook' })
+        });
         if (res.ok) {
-          const data = await res.json();
-          state.cashbook = data.cashbook || [];
+          const cloudData = await res.json();
+          if (cloudData.success && cloudData.data && cloudData.data.length > 0) {
+            state.cashbook = cloudData.data;
+          }
         } else {
           console.error("Failed to load from backend:", res.status);
         }
@@ -836,6 +843,11 @@ function getAllAccountHeads(type = "ALL") {
   });
 
   const MASTER_PAYMENT_HEADS = [
+    {
+        "code": "RP-16.68",
+        "name": "MGOCSM & OCYM",
+        "category": "PAYMENT"
+    },
     {
         "code": "RP-19.31",
         "name": "Salary Quota to Diocese(Vicar)",
@@ -1836,13 +1848,42 @@ function commitCartToLedgers() {
         payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
         payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
       };
-      const endpoint = isReceipt ? '/api/save_receipt' : '/api/save_payment';
-      return fetch(endpoint, {
+
+      const newRow = {
+        A: dateStr, 
+        B: isReceipt ? docNo : "",
+        C: isReceipt ? regNo : "",
+        D: isReceipt ? memberName : "",
+        E: isReceipt ? item.particulars : "",
+        F: isReceipt ? item.code : "",
+        G: isReceipt ? item.details : "",
+        H: isReceipt && isCash ? item.amount : "",
+        I: isReceipt && !isCash ? item.amount : "",
+        K: !isReceipt ? dateStr : "",
+        L: !isReceipt ? docNo : "",
+        M: !isReceipt ? item.particulars : "",
+        N: !isReceipt ? item.code : "",
+        O: !isReceipt ? item.details : "",
+        P: !isReceipt && isCash ? item.amount : "",
+        Q: !isReceipt && !isCash ? item.amount : ""
+      };
+      
+      return fetch('./api.php?_t=' + Date.now(), {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ action: 'save_transaction', row: newRow })
       });
-    })).then(() => console.log("Saved to DB!")).catch(err => {
+    })).then((responses) => {
+      let allOk = true;
+      responses.forEach(r => { if (r && !r.ok) allOk = false; });
+      if (allOk) {
+        console.log("Saved to DB!");
+        alert("✅ Transaction successfully synced to Cloud Database!");
+      } else {
+        alert("⚠️ Transaction saved locally, but Cloud server returned an error.");
+      }
+    }).catch(err => {
       console.error("[SYNC ERROR] Failed to save to server database:", err);
       alert("⚠️ Data saved locally but could NOT sync to server database. Please check your network connection and try again.");
     });
@@ -4208,6 +4249,7 @@ function saveCashbookEntryChanges() {
   if (!window.AndroidBridge) {
     fetch('/api/bulk_import', {
       method: 'POST',
+      credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(state.cashbook)
     }).then(() => console.log("Cashbook edit synced to DB!")).catch(err => {
