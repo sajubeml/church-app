@@ -462,8 +462,11 @@ async function loadAllData() {
     if (!Array.isArray(state.deletedAccountHeads)) state.deletedAccountHeads = [];
 
     // Purge any master receipt codes from deleted list to guarantee they always appear
-    const masterCodes = ["CD", "RP-3.61", "RP-10.14", "RP-1.01", "RP-1.02", "RP-1.03", "RP-2.02", "RP-2.14", "RP-3.12", "RP-3.16", "RP-3.17", "RP-3.82", "RP-3.83"];
-    state.deletedAccountHeads = state.deletedAccountHeads.filter(c => !masterCodes.includes(c));
+    const masterCodes = ["CD", "RP-3.61", "RP-10.14", "RP-1.01", "RP-1.02", "RP-1.03", "RP-2.02", "RP-2.14", "RP-3.12", "RP-3.16", "RP-3.17", "RP-3.82", "RP-3.83", "RP-16.68"];
+    state.deletedAccountHeads = state.deletedAccountHeads.filter(c => {
+      const raw = c.replace(/^(RECEIPT_|PAYMENT_)/, "");
+      return !masterCodes.includes(raw) && !masterCodes.includes(c);
+    });
     localStorage.setItem("CHURCH_DELETED_HEADS", JSON.stringify(state.deletedAccountHeads));
 
     const savedDeletedMembers = localStorage.getItem("CHURCH_DELETED_MEMBERS");
@@ -566,7 +569,7 @@ function getAllAccountHeads(type = "ALL") {
 
     // Baseline master heads protection check
     const isMasterHead = (source === "Budget Master");
-    if (!isMasterHead && state.deletedAccountHeads && state.deletedAccountHeads.includes(codeKey)) return;
+    if (state.deletedAccountHeads && (state.deletedAccountHeads.includes(codeKey) || state.deletedAccountHeads.includes(normCodeStr))) return;
 
     const existing = headsMap.get(codeKey);
     // Budget Master heads take 100% HIGHEST priority and can NEVER be overwritten by Trial Balance, Cashbook, or Codes.json
@@ -1275,8 +1278,9 @@ function getAllAccountHeads(type = "ALL") {
     return nameA.localeCompare(nameB, undefined, { sensitivity: 'base' });
   });
 
+  const paymentMasterCodes = MASTER_PAYMENT_HEADS.filter(h => h.code).map(h => h.code.toUpperCase().replace(/\s+/g, ''));
   if (type === "RECEIPT") {
-    return result.filter(h => h.category === "RECEIPT");
+    return result.filter(h => h.category === "RECEIPT" && (!h.code || !paymentMasterCodes.includes(h.code.toUpperCase().replace(/\s+/g, ''))));
   } else if (type === "PAYMENT") {
     return result.filter(h => h.category === "PAYMENT");
   }
