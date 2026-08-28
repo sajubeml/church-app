@@ -659,7 +659,7 @@ function getAllAccountHeads(type = "ALL") {
 
     // Baseline master heads protection check
     const isMasterHead = (source === "Budget Master");
-    if (!isMasterHead && state.deletedAccountHeads && state.deletedAccountHeads.includes(codeKey)) return;
+    if (!isMasterHead && state.deletedAccountHeads && (state.deletedAccountHeads.includes(codeKey) || state.deletedAccountHeads.includes(normCodeStr))) return;
 
     const existing = headsMap.get(codeKey);
     // Budget Master heads take 100% HIGHEST priority and can NEVER be overwritten by Trial Balance, Cashbook, or Codes.json
