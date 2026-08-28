@@ -1,0 +1,54 @@
+nt_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+      };
+
+      const newRow = {
+        A: dateStr, 
+        B: isReceipt ? docNo : "",
+        C: isReceipt ? regNo : "",
+        D: isReceipt ? memberName : "",
+        E: isReceipt ? item.particulars : "",
+        F: isReceipt ? item.code : "",
+        G: isReceipt ? item.details : "",
+        H: isReceipt && isCash ? item.amount : "",
+        I: isReceipt && !isCash ? item.amount : "",
+        K: !isReceipt ? dateStr : "",
+        L: !isReceipt ? docNo : "",
+        M: !isReceipt ? item.particulars : "",
+        N: !isReceipt ? item.code : "",
+        O: !isReceipt ? item.details : "",
+        P: !isReceipt && isCash ? item.amount : "",
+        Q: !isReceipt && !isCash ? item.amount : ""
+      };
+      
+      return fetch('./api.php?_t=' + Date.now(), {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'save_transaction', row: newRow })
+      });
+    })).then((responses) => {
+      let allOk = true;
+      responses.forEach(r => { if (r && !r.ok) allOk = false; });
+      if (allOk) {
+        console.log("Saved to DB!");
+        alert("✅ Transaction successfully synced to Cloud Database!");
+      } else {
+        alert("⚠️ Transaction saved locally, but Cloud server returned an error.");
+      }
+    }).catch(err => {
+      console.error("[SYNC ERROR] Failed to save to server database:", err);
+      alert("⚠️ Data saved locally but could NOT sync to server database. Please check your network connection and try again.");
+    });
+  }
+
+  const vInput = document.getElementById("txtVoucherNo");
+  if (vInput) {
+    vInput.value = isReceipt ? state.currentReceiptNo.toString() : state.currentVoucherNo.toString();
+  }
+
+  // 5. Reset Cart & Live update all table views (Cash Book, Member Ledgers, Trial Balance, Audit, Admin)
+  clearForm();
+  renderAllViews();
+}
+
+// ---------------------------------

@@ -1618,6 +1618,24 @@ function updateDocTypeView() {
     btnGen.textContent = "🖨️ Generate & Print Payment Voucher";
   }
 
+  try {
+    if (state && state.cashbook && state.cashbook.length === 0) {
+      if (txtNum) {
+        txtNum.removeAttribute("readonly");
+        txtNum.style.background = "#ffffff";
+        txtNum.title = "First Entry: You may type a custom starting serial number";
+      }
+    } else {
+      if (txtNum) {
+        txtNum.setAttribute("readonly", "true");
+        txtNum.style.background = "#f1f5f9";
+        txtNum.title = "";
+      }
+    }
+  } catch(e) {
+    console.error("Error setting readonly state:", e);
+  }
+
   renderAccountHeadOptions(state.activeAccountHeads);
 }
 
@@ -1901,10 +1919,23 @@ function commitCartToLedgers() {
   });
 
   // 3. Increment Sequence Numbers & Update Inputs
-  if (isReceipt) {
-    state.currentReceiptNo++;
-  } else {
-    state.currentVoucherNo++;
+  try {
+    const docStr = docNo ? String(docNo) : "";
+    const parsedDocNo = parseInt(docStr.replace(/\D/g, ''));
+    if (isReceipt) {
+      if (!isNaN(parsedDocNo) && parsedDocNo !== state.currentReceiptNo) {
+        state.currentReceiptNo = parsedDocNo;
+      }
+      state.currentReceiptNo++;
+    } else {
+      if (!isNaN(parsedDocNo) && parsedDocNo !== state.currentVoucherNo) {
+        state.currentVoucherNo = parsedDocNo;
+      }
+      state.currentVoucherNo++;
+    }
+  } catch (e) {
+    console.error("Error updating sequence:", e);
+    if (isReceipt) state.currentReceiptNo++; else state.currentVoucherNo++;
   }
 
   // 4. Save updated Cash Book, Member Ledgers to LocalStorage and Backend API

@@ -29,14 +29,17 @@
 
   <!-- NAVIGATION TABS -->
   <nav class="app-nav">
-    <div class="nav-container">
-      <button class="nav-tab active" data-tab="tabVoucher">💳 New Voucher / Receipt</button>
-      <button class="nav-tab" data-tab="tabCashbook">📘 Cash Book</button>
-      <button class="nav-tab" data-tab="tabMembers">👥 Individual Member Ledgers</button>
-      <button class="nav-tab" data-tab="tabTrialBalance">⚖️ Trial Balance</button>
-      <button class="nav-tab" data-tab="tabAudit">🔍 Reconciliation Audit</button>
-      <button class="nav-tab" data-tab="tabAdmin">🔐 Administration</button>
-      <button class="nav-tab" data-tab="tabMemberDirectory">📞 Member Directory</button>
+    <div class="nav-container" style="justify-content: space-between; align-items: center;">
+      <div style="display: flex; overflow-x: auto; gap: 0.5rem;">
+        <button class="nav-tab active" data-tab="tabVoucher">💳 New Voucher / Receipt</button>
+        <button class="nav-tab" data-tab="tabCashbook">📘 Cash Book</button>
+        <button class="nav-tab" data-tab="tabMembers">👥 Individual Member Ledgers</button>
+        <button class="nav-tab" data-tab="tabTrialBalance">⚖️ Trial Balance</button>
+        <button class="nav-tab" data-tab="tabAudit">🔍 Reconciliation Audit</button>
+        <button class="nav-tab" data-tab="tabAdmin">🔐 Administration</button>
+        <button class="nav-tab" data-tab="tabMemberDirectory">📞 Member Directory</button>
+      </div>
+      <button class="btn btn-success" style="padding: 0.25rem 0.5rem; margin-left: 0.5rem; font-size: 0.75rem; white-space: nowrap; font-weight: 700; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onclick="if(window.loadCloudData) window.loadCloudData(true);">☁️ Refresh</button>
     </div>
   </nav>
 

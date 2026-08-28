@@ -1,0 +1,19 @@
+cashbook from cloud database...");
+    try {
+        const response = await fetch('./api.php?_t=' + Date.now(), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'get_cashbook' })
+        });
+        const result = await response.json();
+        if (result.success && result.data) {
+            state.cashbook = result.data;
+            calculateNextNumbers();
+            renderAllViews();
+            console.log("Cloud cashbook loaded successfully!");
+            if (isManualRefresh) {
+                alert("✅ Cloud Sync Successful! The application will now hard refresh to ensure all data is fully up to date.");
+                window.location.reload(true);
+            }
+        } else {
+            console.

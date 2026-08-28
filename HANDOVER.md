@@ -1,45 +1,38 @@
 # Project Handover Document & Continuation Guide
 **St. Gregorios Orthodox Syrian Church & Pilgrim Centre Accounting Portal**
-*Workspace: `c:\saju_old pc\Church_App\anti_gravity`*
-*Target Builds Directory: `C:\saju_old pc\Church_App\final working version-9`*
-*Active Release Version: 9.0 (versionCode 50)*
+*Workspace: `c:\saju_old pc\Church_App\anti_gravity_v9.2`*
+*Active Release Version: 9.2*
 
 ---
 
 ## 📌 Executive Summary
 
-This project converts the Excel Macro-Enabled Accounting Workbook into a cross-platform accounting system featuring:
+This project serves as a comprehensive cross-platform accounting system replacing the legacy Excel Macro-Enabled Accounting Workbook. It features:
 1.  **Web Accounting Cloud App (cPanel / PHP / MySQL):** An online portal with multi-device live data synchronization.
 2.  **Standalone Windows Desktop Application (`.exe`):** A C# wrapper served locally on port `8088` (with system tray icon).
-3.  **Android Mobile Applications (`.apk`):** Dual flavors (Full and Fresh Start) compiled on target SDK 36.
-4.  **Automatic Compilation System:** A Python-based builder that bundles assets, compiles C# binaries, builds Android APKs, and packages portable ZIP distributables.
+3.  **Android Mobile Applications (`.apk`):** Compiled applications bundling the client script for on-the-go access.
+4.  **Automatic Compilation System:** Python-based builders that bundle assets, compile C# binaries, build Android APKs, and package portable ZIP distributables.
 
 ---
 
-## 🛠️ Work Accomplished Today (Version 9.0)
+## 🛠️ Work Accomplished & Recent Fixes (Version 9.2)
 
-### 1. Dynamic Path Compatibility
-- Modified all compiler scripts (`build_all_releases.py`, `copy_assets_to_android.py`, `build_fresh_start_data.py`, `generator_final.py`) to dynamically resolve paths using Python's `os.path.dirname(os.path.abspath(__file__))`. This prevents path failures when running in different repository locations.
+### 1. Cloud Synchronization Routing Fixes
+- **Cashbook Edit Sync Bug:** Resolved a critical bug in `app_cloud_final.js` where editing an existing cashbook transaction via the Admin portal failed to sync to the online database. The application previously hardcoded the `fetch` request to the local Python server (`/api/bulk_import`). We introduced dynamic environment detection to route requests properly to the PHP/MySQL backend (`./api.php`) when hosted online, preventing edits from reverting upon subsequent syncs.
+- **Backup Restoration Sync:** Applied the identical environment-aware routing fix to the backup restoration logic. Uploading a `.json` backup file now correctly flushes and updates the cloud database rather than failing silently.
 
-### 2. Dual Cloud Script Pipeline
-- Updated `generator_final.py` to compile the core `app.js` into two different optimized web scripts:
-  - **`app_cloud_final.js` (Web Cloud App):** Connects to MySQL database online via `api.php`.
-  - **`app_cloud_v10.js` (Android/Desktop App):** Integrates the local database API and provides an offline LocalStorage fallback check.
+### 2. Migration Pathways Evaluated
+- Created comprehensive documentation detailing the architecture and step-by-step procedures required to fully migrate the backend infrastructure from cPanel PHP/MySQL to **Supabase Cloud (PostgreSQL)**, paving the way for real-time collaboration and improved security.
 
-### 3. Bidirectional Database Synchronization
-- **MySQL Integration:** Added `save_receipt` and `save_payment` SQL handlers to cPanel's `api.php`.
-- **Unified Fetch Router:** Integrated a unified network router inside the client app to automatically switch saving and loading between local Python SQLite server endpoints and the online MySQL PHP database based on the browser's hostname.
-- **Member Directory Cloud Sync:** Enabled syncing of `state.members` (the Member Directory) to MySQL under `CHURCH_MASTER_MEMBERS` so that phone/address edits sync permanently.
+### 3. Dynamic Path Compatibility & Cloud Script Pipeline (Inherited from v9.0)
+- Compiler scripts (`build_all_releases.py`, `copy_assets_to_android.py`, etc.) dynamically resolve paths using Python's `os.path.dirname`.
+- `generator_final.py` compiles `app.js` into targeted scripts:
+  - **`app_cloud_final.js`:** Cloud deployment script connected to MySQL via `api.php`.
+  - **`app_cloud_v10.js`:** Android/Desktop offline script with LocalStorage / Python SQLite integration.
 
-### 4. Member Contact Directory & CSV Import/Export
-- Implemented a complete **Member Contact Directory** tab featuring CRUD operations (Add, Edit, Delete), pagination, and search.
-- Built a **BOM-enabled CSV Exporter** to download directories readable in MS Excel.
-- Built a **RFC-compliant CSV Parser** to import directories (matching Register No., Name, Phone, and Address) and sync them instantly to the database.
-
-### 5. Essential Accounting Bug Fixes
-- **Receipt Sequence Number Fix:** Recalculates `state.currentReceiptNo` and `state.currentVoucherNo` instantly after the asynchronous database load completes, correcting next receipt numbers (e.g. `4328`).
-- **Opening Balance Accumulator:** Fixed `openingCash` and `openingBank` calculation, ensuring the first row values (e.g. `₹9,879` and `₹6,51,682`) are accumulated in net totals rather than hardcoded to `0`.
-- **Default Port Alignment:** Changed `start_server.py` to prioritize port **`8088`** to match the C# launcher and `Start_Portal.cmd` batch scripts.
+### 4. Member Contact Directory & CSV Tooling (Inherited from v9.0)
+- Full CRUD Member Directory syncable to MySQL.
+- Built-in BOM-enabled CSV Exporter and RFC-compliant CSV Parser for importing.
 
 ---
 
@@ -51,20 +44,18 @@ This project converts the Excel Macro-Enabled Accounting Workbook into a cross-p
 | **`Start_Portal.cmd`** | Runs python backend server and launches Edge in app mode |
 | **`index.html`** & **`index_cloud.html`** | Offline local and online Cloud portal layouts respectively |
 | **`app.js`** | Core client-side javascript application code |
-| **`app_cloud_final.js`** | Compiled cPanel Cloud Web javascript script |
+| **`app_cloud_final.js`** | Compiled cPanel Cloud Web javascript script (recently patched) |
 | **`app_cloud_v10.js`** | Compiled Android WebView and Desktop offline javascript script |
 | **`cloud_api/api.php`** | PHP script to process queries (save/load/import cashbook/members) |
 | **`generator_final.py`** | Compiles app.js into cloud versions |
 | **`build_all_releases.py`** | Orchestrates compilation of Android APKs, EXE, and ZIP portable packages |
 | **`package_distributable.py`** | Assembles ZIP distribution packages under `dist/` |
-| **`dist/St_Gregorios_Church_Accounting_App_v9.0.zip`** | Full PC Portable ZIP distribution package |
-| **`dist/St_Gregorios_Church_Accounting_Fresh_Start_Trial_v9.0.zip`** | Fresh Start PC Trial ZIP package |
 
 ---
 
 ## 🚀 How to Run Compiler Scripts
 
-All builder tasks are run using Python (`py`) inside `final working version-9`:
+All builder tasks are run using Python (`py`):
 
 1.  **Recompile all releases (APKs, EXE, and packaged ZIPs):**
     ```cmd

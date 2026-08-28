@@ -199,7 +199,7 @@ window.syncAppStateToCloud = function() {
     }, 500); // 500ms debounce
 };
 
-window.loadCloudData = async function() {
+window.loadCloudData = async function(isManualRefresh = false) {
     console.log("Loading cashbook from cloud database...");
     try {
         const response = await fetch('./api.php?_t=' + Date.now(), {
@@ -208,14 +208,27 @@ window.loadCloudData = async function() {
             body: JSON.stringify({ action: 'get_cashbook' })
         });
         const result = await response.json();
-        if (result.success && result.data && result.data.length > 0) {
+        if (result.success && result.data) {
             state.cashbook = result.data;
             calculateNextNumbers();
             renderAllViews();
             console.log("Cloud cashbook loaded successfully!");
+            if (isManualRefresh) {
+                alert("✅ Cloud Sync Successful! The application will now hard refresh to ensure all data is fully up to date.");
+                window.location.reload(true);
+            }
+        } else {
+            console.log("No cloud cashbook data yet (or empty).");
+            if (isManualRefresh) {
+                alert("✅ Cloud Sync Successful! No records found. The application will now hard refresh.");
+                window.location.reload(true);
+            }
         }
     } catch (e) {
         console.warn("Cloud fetch skipped (api.php not available):", e.message);
+        if (isManualRefresh) {
+            alert("❌ Cloud Sync Failed! Please check your connection.");
+        }
     }
 };
 '''

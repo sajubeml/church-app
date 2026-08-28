@@ -1,0 +1,90 @@
+  // 6. Custom / Edited Account Heads from state.customAccountHeads (USER OVERRIDES - HIGHEST PRIORITY)
+ate.members over individual sheet to reflect live edits
+(--primary-color);" onclick="promptAdminPassword('EDIT_MEMBER', '${m.regNo}')">✏️ Edit</button></td>
+  let totalCredit = 0;
+      totalCredit += pAmtDisp;
+<td colspan="2">TOTAL TRIAL BALANCE (PAYMENTS / CREDIT)</td>
+lor); font-size:0.95rem;">${formatCurrency(totalCredit)}</td>
+/ Helper to clone table and strip Actions column (edit/delete buttons)
+== "Actions" || text === "Action" || text === "✏️ Edit" || text === "🗑️ Delete";
+// 🔒 ADMIN PASSWORD AUTHENTICATION & EDITING SYSTEM
+  } else if (type === "EDIT_MEMBER") {
+    openEditMemberModal(payload);
+  } else if (type === "EDIT_CASHBOOK") {
+    openEditCashbookModal(payload);
+  } else if (type === "EDIT_ACCOUNT_HEAD") {
+    openEditAccountHeadModal(payload);
+  } else if (type === "DIR_EDIT") {
+    openDirEditMemberModal(payload);
+// EDIT MEMBER ACCOUNT & CONTRIBUTIONS (TAB 3)
+function openEditMemberModal(regNo) {
+  const titleEl = document.getElementById("lblEditMemberTitle");
+  const subEl = document.getElementById("lblEditMemberSub");
+  if (titleEl) titleEl.textContent = `✏️ Edit Member Account: ${name}`;
+    <input type="hidden" id="editMemberRegNo" value="${regNo}">
+        <input type="text" id="editMemberName" class="form-control" value="${name}" style="font-weight:700;">
+        <input type="text" id="editMemberSubUpto" class="form-control" value="${subUpto}" placeholder="e.g. Apr 26 to march 27" style="font-weight:600;">
+        <input type="number" class="form-control edit-member-col" data-col="${colLetter}" value="${val}" placeholder="0.00" step="0.01" style="font-weight:600;">
+  document.getElementById("editMemberFormBody").innerHTML = formHtml;
+  document.getElementById("editMemberModal").classList.add("active");
+function closeEditMemberModal() {
+  document.getElementById("editMemberModal").classList.remove("active");
+  const regNo = document.getElementById("editMemberRegNo").value;
+  const newName = document.getElementById("editMemberName").value.trim();
+  const newSubUpto = document.getElementById("editMemberSubUpto").value.trim();
+  const inputs = document.querySelectorAll(".edit-member-col");
+  closeEditMemberModal();
+// EDIT CASH BOOK TRANSACTION ENTRY (TAB 2)
+function openEditCashbookModal(rowIndex) {
+    <input type="hidden" id="editCashbookIndex" value="${rowIndex}">
+    <input type="hidden" id="editCashbookIsReceipt" value="${isReceipt ? '1' : '0'}">
+        <input type="text" id="editCbDocNo" class="form-control" value="${docNo}" style="font-weight:700;">
+        <input type="text" id="editCbDate" class="form-control" value="${dateVal}">
+        <input type="text" id="editCbRegNo" class="form-control" value="${regNo}">
+        <input type="text" id="editCbHof" class="form-control" value="${hof}">
+        <input type="text" id="editCbHead" class="form-control" value="${head}" style="font-weight:700;">
+        <input type="text" id="editCbCode" class="form-control" value="${code}">
+        <input type="text" id="editCbDetails" class="form-control" value="${details}">
+        <input type="number" id="editCbCash" class="form-control" value="${cashAmt}" step="0.01" style="font-weight:700; color:var(--success-color);">
+        <input type="number" id="editCbBank" class="form-control" value="${bankAmt}" step="0.01" style="font-weight:700; color:var(--primary-color);">
+  document.getElementById("editCashbookFormBody").innerHTML = formHtml;
+  document.getElementById("editCashbookModal").classList.add("active");
+function closeEditCashbookModal() {
+  document.getElementById("editCashbookModal").classList.remove("active");
+  const index = parseInt(document.getElementById("editCashbookIndex").value);
+  const isReceipt = document.getElementById("editCashbookIsReceipt").value === "1";
+  const dateVal = document.getElementById("editCbDate").value.trim();
+  const docNo = document.getElementById("editCbDocNo").value.trim();
+  const regNo = document.getElementById("editCbRegNo").value.trim();
+  const hof = document.getElementById("editCbHof").value.trim();
+  const head = document.getElementById("editCbHead").value.trim();
+  const code = document.getElementById("editCbCode").value.trim();
+  const details = document.getElementById("editCbDetails").value.trim();
+  const cashAmt = document.getElementById("editCbCash").value.trim();
+  const bankAmt = document.getElementById("editCbBank").value.trim();
+  // Sync edited cashbook to server database
+    }).then(() => console.log("Cashbook edit synced to DB!")).catch(err => {
+nsole.error("[SYNC ERROR] Failed to sync cashbook edit to server:", err);
+  closeEditCashbookModal();
+ margin-right:4px;" onclick="promptAdminPassword('EDIT_MEMBER', '${safeReg}')">✏️ Edit</button>
+ margin-right:4px;" onclick="promptAdminPassword('EDIT_ACCOUNT_HEAD', '${safeCode}')">✏️ Edit</button>
+ margin-right:4px;" onclick="promptAdminPassword('EDIT_CASHBOOK', ${t.index})">✏️ Edit</button>
+function openEditAccountHeadModal(code) {
+  document.getElementById("editHeadOriginalCode").value = head.code;
+  document.getElementById("editHeadCategory").value = head.category;
+  document.getElementById("editHeadCode").value = head.code;
+  document.getElementById("editHeadTitle").value = head.name;
+  const modal = document.getElementById("editAccountHeadModal");
+function closeEditAccountHeadModal() {
+  const modal = document.getElementById("editAccountHeadModal");
+  const origCode = document.getElementById("editHeadOriginalCode").value.trim();
+  const category = document.getElementById("editHeadCategory").value;
+  const newCode = document.getElementById("editHeadCode").value.trim();
+  const newTitle = document.getElementById("editHeadTitle").value.trim();
+ame: newTitle, category, type: category, source: "Edited" };
+  closeEditAccountHeadModal();
+ustom local data changes (members, account heads, edited transactions) and revert to default Excel workbook datasets?")) {
+gin-right:4px;" onclick="promptAdminPassword('DIR_EDIT', '${escapeJsString(regNo)}')">✏️ Edit</button>
+function openDirEditMemberModal(regNo) {
+getElementById("memberCrudTitle").innerHTML = "✏️ Edit Member";
+  // Editing existing member
