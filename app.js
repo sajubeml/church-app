@@ -2787,6 +2787,67 @@ function getCleanSubUptoLive(text, hasSub) {
   return `${String(latest.mm).padStart(2, '0')}/${latest.yy}`;
 }
 
+function findIndividualColKey({ head, code }) {
+  if (!state.individual || state.individual.length < 4) return null;
+  const headerRow = state.individual[3];
+  
+  head = (head || "").toLowerCase().trim();
+  code = (code || "").toUpperCase().trim();
+  code = code.replace(/^RP[-\s]*/i, "RP-").replace(/\s+/g, '');
+  
+  const incomeCols = [];
+  for (let key in headerRow) {
+    const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
+    if (colLetter !== "A" && colLetter !== "B" && colLetter !== "C" && colLetter !== "D" && colLetter !== "AM") {
+      const title = String(headerRow[key] || "").trim();
+      if (title && title.toLowerCase() !== "grand total") {
+        incomeCols.push({ key: colLetter, title: title.toLowerCase() });
+      }
+    }
+  }
+
+  for (let col of incomeCols) {
+    if (head && head === col.title) return col.key;
+  }
+  
+  if (head.includes("subscription ( current year)") || code === "RP-3.82") return "E";
+  if (head.includes("donation general") || code === "RP-2.02" || code === "RP-2.02(A)") return "F";
+  if (head.includes("catholicate day") || code === "RP-19.03&.04") return "G";
+  if (head.includes("metropolitan fund") || code === "RP-19.11") return "H";
+  if (head.includes("mission sunday") || code === "RP-19.21") return "I";
+  if (head.includes("seminary day") || code === "RP-19.23") return "J";
+  if (head.includes("priest welfare") || code === "RP-19.15") return "K";
+  if (head.includes("old cover collection") || code === "RP-10.17") return "L";
+  if (head.includes("wedding anniversary") || code === "RP-3.17") return "M";
+  if (head.includes("birthday offering") || code === "RP-3.16") return "N";
+  if (head.includes("baptism") || code === "RP-3.14") return "O";
+  if (head.includes("orma qurbana") || head.includes("holy qurbana") || code === "RP-3.12") return "P";
+  if (head.includes("sunday school day collection") || code === "RP-19.22") return "Q";
+  if (head.includes("st.gregorios feast") || code === "RP-3.33") return "R";
+  if (head.includes("parish day") || code === "RP-2.12") return "S";
+  if (head.includes("christmas") || head.includes("new year") || code === "RP-3.11") return "T";
+  if (head.includes("perunnal vanchika") || head.includes("house offertory box") || code === "RP-3.05") return "U";
+  if (head.includes("passion week") || code === "RP-2.13") return "V";
+  if (head.includes("st. george feast") || code === "RP-16.50") return "W";
+  if (head.includes("st. thomas feast") || code === "RP-3.31") return "X";
+  if (head.includes("st. mary's feast") || code === "RP-16.47" || code === "RP-3.32") return "Y";
+  if (head.includes("marriage bann") || code === "RP-3.15(A)") return "Z";
+  if (head.includes("marriage celebration") || code === "RP-3.15(B)") return "AA";
+  if (head.includes("donations-marriage") || code === "RP-3.15(C)") return "AB";
+  if (head.includes("marriage kaimuthu") || code === "RP-3.15(D)") return "AC";
+  if (head.includes("donation - cemetry") || code === "RP-3.08") return "AD";
+  if (head.includes("house blessing") || code === "RP-3.17(A)") return "AE";
+  if (head.includes("petty auction") || code === "RP-2.15(B)") return "AF";
+  if (head.includes("auction current") || code === "RP-2.14") return "AG";
+  if (head.includes("auction dues - old") || code === "RP-2.15(A)") return "AH";
+  if (head.includes("cemetry receipt") || code === "RP-3.09") return "AI";
+  if (head.includes("certificate fee") || code === "RP-3.21") return "AJ";
+  if (head.includes("donation-breakfast") || code === "RP-2.16") return "AK";
+  if (head.includes("miscellaneous income") || code === "RP-3.22") return "AL";
+  if (head.includes("monthly subscription ( pervious year)") || code === "RP-3.83") return "E";
+  return "E";
+}
+
 function renderIndividualLedgers() {
   const tableEl = document.getElementById("indivTable");
   const thead = document.getElementById("indivThead");
