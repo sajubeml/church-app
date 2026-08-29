@@ -3017,14 +3017,7 @@ function renderTrialBalance() {
       if (isContraEntry(rHeadRaw, rDetailsRaw, rCodeRaw)) {
         // Exclude Contra entry from Trial Balance Receipts
       } else {
-        if (!rCodeRaw && rHeadRaw) {
-          const rHeadLower = rHeadRaw.toLowerCase();
-          if (rHeadLower.includes("sunday school day collection")) rCodeRaw = "RP-10.14";
-          else if (rHeadLower.includes("sunday school")) rCodeRaw = "RP-3.61";
-          else if (rHeadLower.includes("kurishinthothi") || rHeadLower.includes("koodaram")) rCodeRaw = "RP-3.04";
-          else if (rHeadLower.includes("cemetry kanika") || rHeadLower.includes("cemetery kanika")) rCodeRaw = "RP-3.10";
-          else if (rHeadLower.includes("candles") || rHeadLower.includes("ritual")) rCodeRaw = "RP-3.18";
-        } else if (rCodeRaw && rHeadRaw.toLowerCase().includes("sunday school day collection")) {
+        if (rCodeRaw && rHeadRaw.toLowerCase().includes("sunday school day collection")) {
           rCodeRaw = "RP-10.14";
         }
 
@@ -3045,23 +3038,6 @@ function renderTrialBalance() {
       if (isContraEntry(pHeadRaw, pDetailsRaw, pCodeRaw)) {
         // Exclude Contra entry from Trial Balance Payments
       } else {
-        if (!pCodeRaw && pHeadRaw) {
-          const pHeadLower = pHeadRaw.toLowerCase();
-          if (pHeadLower.includes("cemetry development") || pHeadLower.includes("cemetery development")) pCodeRaw = "RP-16.36";
-          else if (pHeadLower.includes("maintenance of cemetry") || pHeadLower.includes("maintenance of cemetery")) pCodeRaw = "RP-14.35";
-          else if (pHeadLower.includes("electricity charges - cemetry") || pHeadLower.includes("elecricity charges - cemetry")) pCodeRaw = "RP-16.11(c)";
-          else if (pHeadLower.includes("sexton") && pHeadLower.includes("salary")) pCodeRaw = "RP-12.03 (a)";
-          else if (pHeadLower.includes("watchman") && pHeadLower.includes("cemetry")) pCodeRaw = "RP-12.03 (b)";
-          else if (pHeadLower.includes("ayah") && pHeadLower.includes("salary")) pCodeRaw = "RP-12.03 (c)";
-          else if (pHeadLower.includes("medical allowance") && pHeadLower.includes("vicar")) pCodeRaw = "RP-12.02 (a)";
-          else if (pHeadLower.includes("medical allowance") && pHeadLower.includes("sexton")) pCodeRaw = "RP-12.06";
-          else if (pHeadLower.includes("telephone allowance") && pHeadLower.includes("vicar")) pCodeRaw = "RP-12.02 (c)";
-          else if (pHeadLower.includes("local travelling") && pHeadLower.includes("vicar")) pCodeRaw = "RP-12.02 (d)";
-          else if (pHeadLower.includes("annual travelling") && pHeadLower.includes("vicar")) pCodeRaw = "RP-12.02 (e)";
-          else if (pHeadLower.includes("leave salary") && pHeadLower.includes("vicar")) pCodeRaw = "RP-12.02 (f)";
-          else if (pHeadLower.includes("gift purse") && pHeadLower.includes("vicar")) pCodeRaw = "RP-12.02 (g)";
-          else if (pHeadLower.includes("equipments")) pCodeRaw = "RP-14.32";
-        }
 
         const payNorm = normalizeCode(pCodeRaw);
         const pP = parseFloat(String(getColVal(row, "P")).replace(/,/g, '')) || 0;
@@ -3107,12 +3083,7 @@ function renderTrialBalance() {
   const activeReceiptHeads = [];
   allReceiptHeads.forEach(hObj => {
     const rNorm = normalizeCode(hObj.code);
-    let amt = 0;
-    if (receiptTotalsByCode[rNorm] !== undefined) {
-      amt = receiptTotalsByCode[rNorm];
-    } else if (baselineReceiptAmts[rNorm] !== undefined) {
-      amt = baselineReceiptAmts[rNorm];
-    }
+    let amt = receiptTotalsByCode[rNorm] || 0;
     if (amt > 0) {
       activeReceiptHeads.push({ code: hObj.code, name: hObj.name, amount: amt });
     }
@@ -3122,12 +3093,7 @@ function renderTrialBalance() {
   allPaymentHeads.forEach(hObj => {
     const pNorm = normalizeCode(hObj.code);
     if (pNorm === "RP-12.02") return; // Suppress generic RP-12.02 as it is fully bifurcated into sub-codes RP-12.02(a) through RP-12.02(g)
-    let amt = 0;
-    if (paymentTotalsByCode[pNorm] !== undefined) {
-      amt = paymentTotalsByCode[pNorm];
-    } else if (baselinePaymentAmts[pNorm] !== undefined) {
-      amt = baselinePaymentAmts[pNorm];
-    }
+    let amt = paymentTotalsByCode[pNorm] || 0;
     if (amt > 0) {
       activePaymentHeads.push({ code: hObj.code, name: hObj.name, amount: amt });
     }
@@ -4258,6 +4224,14 @@ function saveCashbookEntryChanges() {
   const cashAmt = document.getElementById("editCbCash").value.trim();
   const bankAmt = document.getElementById("editCbBank").value.trim();
 
+  const oldIsReceipt = !!getColVal(row, "F");
+  const oldRegNo = getColVal(row, "C");
+  const oldHead = getColVal(row, "E");
+  const oldCode = getColVal(row, "F");
+  const oldCash = parseFloat(String(getColVal(row, "H")).replace(/,/g, '')) || 0;
+  const oldBank = parseFloat(String(getColVal(row, "I")).replace(/,/g, '')) || 0;
+  const oldTotal = oldCash + oldBank;
+
   if (isReceipt) {
     setColVal(row, "A", dateVal);
     setColVal(row, "B", docNo);
@@ -4278,6 +4252,44 @@ function saveCashbookEntryChanges() {
     setColVal(row, "Q", bankAmt);
   }
 
+  if (oldIsReceipt && oldRegNo && state.individual && state.individual.length > 0) {
+    const memberRow = state.individual.find((r, idx) => idx >= 4 && getColVal(r, "B") === oldRegNo);
+    if (memberRow) {
+      const colKey = findIndividualColKey({ head: oldHead, code: oldCode });
+      if (colKey) {
+        const currentVal = parseFloat(getColVal(memberRow, colKey)) || 0;
+        setColVal(memberRow, colKey, currentVal - oldTotal);
+      }
+      let grandTot = 0;
+      for (const key in memberRow) {
+        if (key !== "A" && key !== "B" && key !== "C" && key !== "D" && key !== "AM") {
+          grandTot += parseFloat(getColVal(memberRow, key)) || 0;
+        }
+      }
+      setColVal(memberRow, "AM", grandTot);
+    }
+  }
+
+  if (isReceipt && regNo && state.individual && state.individual.length > 0) {
+    const memberRow = state.individual.find((r, idx) => idx >= 4 && getColVal(r, "B") === regNo);
+    if (memberRow) {
+      const colKey = findIndividualColKey({ head: head, code: code });
+      if (colKey) {
+        const currentVal = parseFloat(getColVal(memberRow, colKey)) || 0;
+        const newTotal = (parseFloat(String(cashAmt).replace(/,/g, '')) || 0) + (parseFloat(String(bankAmt).replace(/,/g, '')) || 0);
+        setColVal(memberRow, colKey, currentVal + newTotal);
+      }
+      let grandTot = 0;
+      for (const key in memberRow) {
+        if (key !== "A" && key !== "B" && key !== "C" && key !== "D" && key !== "AM") {
+          grandTot += parseFloat(getColVal(memberRow, key)) || 0;
+        }
+      }
+      setColVal(memberRow, "AM", grandTot);
+    }
+  }
+
+  localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
   localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
 
   // Sync edited cashbook to server database
@@ -4299,6 +4311,36 @@ function saveCashbookEntryChanges() {
 
 function confirmDeleteCashbookEntry(index) {
   if (confirm("Are you sure you want to delete this Cash Book transaction entry?")) {
+    const row = state.cashbook[index];
+    if (row) {
+      const oldIsReceipt = !!getColVal(row, "F");
+      const oldRegNo = getColVal(row, "C");
+      const oldHead = getColVal(row, "E");
+      const oldCode = getColVal(row, "F");
+      const oldCash = parseFloat(String(getColVal(row, "H")).replace(/,/g, '')) || 0;
+      const oldBank = parseFloat(String(getColVal(row, "I")).replace(/,/g, '')) || 0;
+      const oldTotal = oldCash + oldBank;
+
+      if (oldIsReceipt && oldRegNo && state.individual && state.individual.length > 0) {
+        const memberRow = state.individual.find((r, idx) => idx >= 4 && getColVal(r, "B") === oldRegNo);
+        if (memberRow) {
+          const colKey = findIndividualColKey({ head: oldHead, code: oldCode });
+          if (colKey) {
+            const currentVal = parseFloat(getColVal(memberRow, colKey)) || 0;
+            setColVal(memberRow, colKey, currentVal - oldTotal);
+          }
+          let grandTot = 0;
+          for (const key in memberRow) {
+            if (key !== "A" && key !== "B" && key !== "C" && key !== "D" && key !== "AM") {
+              grandTot += parseFloat(getColVal(memberRow, key)) || 0;
+            }
+          }
+          setColVal(memberRow, "AM", grandTot);
+        }
+      }
+      localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+    }
+
     state.cashbook.splice(index, 1);
     localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
 
