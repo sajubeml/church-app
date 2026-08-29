@@ -29,8 +29,10 @@ This project serves as a comprehensive cross-platform accounting system replacin
   - `deployment_files/mobile apk v1.0/`: Files ready for offline mobile apps (using the vanilla `index.html` and `app.js`).
 - Both CPanel and GitHub deployments successfully point to the *exact same* Supabase cloud database, remaining perfectly in sync.
 
-### 3. Critical Data & Ledger Corrections (v9.4)
-- **The "16.47" Data Corruption:** Conducted a deep data audit and corrected 28 entries where Code `RP-16.47` (Payments: St. Mary's Feast) was mistakenly entered as a Receipt. This fixed massive desyncs in Individual Member Ledgers (e.g., Bibi Chandy's balance was successfully restored to ₹24,000).
+### 3. Critical Data & Ledger Corrections (v9.4 - v9.5)
+- **The "16.47" Data Corruption:** Conducted a deep data audit and corrected entries where Code `RP-16.47` (Payments: St. Mary's Feast) was mistakenly entered as a Receipt. 
+- **Comprehensive Ledger Rebuild:** Built a Python audit script to completely wipe and recalculate the `individual` ledger array from scratch. The script parsed every single transaction in the 800+ row cashbook to perfectly rebuild the column-by-column totals for all 110+ members (Successfully restoring Bibi Chandy's balance to ₹24,000 using the latest August 2026 dataset).
+- **Dual-Sync Verification:** Successfully verified that both the GitHub Pages (`sajubeml.github.io`) and cPanel (`orthodoxchurchmysore.in`) deployments are perfectly synchronized and instantly reflecting updates from the Supabase cloud backend (resolving browser caching issues with a Hard Refresh).
 - **Core Logic Fix:** Updated `app_supabase.js` and `app.js` to remove the hardcoded `16.47` mapping in `findIndividualColKey()`, preventing cashbook edits from crashing the application logic.
 - **Trial Balance Accuracy:** Updated the Trial Balance aggregator to strictly include only Explicit Codes (starting with `RP-` or ending with letter variants like `(a)`, `(b)`), fixing miscalculations.
 
