@@ -1,7 +1,7 @@
 # Project Handover Document & Continuation Guide
 **St. Gregorios Orthodox Syrian Church & Pilgrim Centre Accounting Portal**
 *Workspace: `c:\saju_old pc\Church_App\anti_gravity_v9.2`*
-*Active Release Version: 9.4*
+*Active Release Version: 9.5*
 
 ---
 
@@ -9,12 +9,12 @@
 
 This project serves as a comprehensive cross-platform accounting system replacing the legacy Excel Macro-Enabled Accounting Workbook. It has evolved through several iterations and now features:
 1.  **Multi-Platform Cloud Sync:** A modern serverless architecture connected to **Supabase (PostgreSQL)**, deployed perfectly in-sync across both GitHub Pages and CPanel.
-2.  **Standalone Offline Mobile Applications (`.apk`):** Fully independent offline versions (v9.4) for Android devices, utilizing LocalStorage for environments without internet access, allowing manual exports/imports to the cloud.
+2.  **Standalone Offline Mobile Applications (`.apk`):** Fully independent offline versions (v9.5) for Android devices, utilizing LocalStorage for environments without internet access, allowing manual exports/imports to the cloud.
 3.  **Automatic Deployment System:** Python-based builders (`prepare_deployments.py` and `build_all_releases.py`) that cleanly segregate environments into ready-to-deploy folders.
 
 ---
 
-## 🛠️ Work Accomplished & Recent Fixes (Versions 9.3 & 9.4)
+## 🛠️ Work Accomplished & Recent Fixes (Versions 9.3 to 9.5)
 
 ### 1. The Supabase Serverless Migration (v9.3)
 - **Legacy PHP/MySQL Removed:** The application was fully migrated away from the legacy CPanel PHP/MySQL and local Python SQLite backend architectures.
@@ -34,10 +34,11 @@ This project serves as a comprehensive cross-platform accounting system replacin
 - **Core Logic Fix:** Updated `app_supabase.js` and `app.js` to remove the hardcoded `16.47` mapping in `findIndividualColKey()`, preventing cashbook edits from crashing the application logic.
 - **Trial Balance Accuracy:** Updated the Trial Balance aggregator to strictly include only Explicit Codes (starting with `RP-` or ending with letter variants like `(a)`, `(b)`), fixing miscalculations.
 
-### 4. Independent Offline APK Build (v9.4)
-- Rolled back the Mobile APK (Android app) to act as a fully independent, offline tool using `app.js` (LocalStorage).
-- Bumped the Gradle versioning to **v9.4** to distinguish the newly built bug-free APKs from the older buggy `v9.3` versions.
-- Generated `St_Gregorios_Church_Accounting_v9.4.apk` ensuring that offline usage calculates ledgers properly without needing a network connection.
+### 4. Cashbook Edit Modal Bug Fix & Offline APK (v9.5)
+- **Row Separation Bug Fixed:** The legacy system stores Receipts and Payments on the exact same row in the dataset. Previously, clicking 'Edit' on a Payment would accidentally load the Receipt data instead. This logic has been completely rewritten so the app accurately distinguishes between the Receipt side and Payment side of a single row.
+- **Independent Offline APK Build:** Recompiled the Mobile APK (Android app) to act as a fully independent, offline tool using `app.js` (LocalStorage).
+- Bumped the Gradle versioning to **v9.5** to distinguish the newly built bug-free APKs.
+- Generated `St_Gregorios_Church_Accounting_v9.5.apk` ensuring that offline usage correctly processes edits without needing a network connection.
 
 ---
 
@@ -57,11 +58,11 @@ This project serves as a comprehensive cross-platform accounting system replacin
 
 ---
 
-## 🚀 How to Re-Deploy or Compile (v9.4 onwards)
+## 🚀 How to Re-Deploy or Compile (v9.5 onwards)
 
 1.  **To Update Web Deployments:** 
     If you make changes to HTML/CSS/JS, run `py prepare_deployments.py`. Then, upload the contents of the `cpanel` folder to your CPanel File Manager, and push the `github-supabase` folder to your GitHub `main` branch.
 2.  **To Rebuild Mobile APKs:**
-    Navigate to the `android-app/` directory and run `.\gradlew assembleRelease`. The output will be located in `android-app/app/build/outputs/apk/full/release/`.
+    Navigate to the `android-app/` directory and run `.\gradlew assembleRelease`. The output will be located in `android-app/app/build/outputs/apk/full/release/`. Then copy the files into `deployment_files/mobile apk v1.0/`.
 3.  **To sync Offline Mobile Data:**
     Export the JSON backup from the CPanel web admin portal and import it into the Android Mobile App via **Restore/Replace Data**.
