@@ -1,38 +1,43 @@
 # Project Handover Document & Continuation Guide
 **St. Gregorios Orthodox Syrian Church & Pilgrim Centre Accounting Portal**
 *Workspace: `c:\saju_old pc\Church_App\anti_gravity_v9.2`*
-*Active Release Version: 9.2*
+*Active Release Version: 9.4*
 
 ---
 
 ## 📌 Executive Summary
 
-This project serves as a comprehensive cross-platform accounting system replacing the legacy Excel Macro-Enabled Accounting Workbook. It features:
-1.  **Web Accounting Cloud App (cPanel / PHP / MySQL):** An online portal with multi-device live data synchronization.
-2.  **Standalone Windows Desktop Application (`.exe`):** A C# wrapper served locally on port `8088` (with system tray icon).
-3.  **Android Mobile Applications (`.apk`):** Compiled applications bundling the client script for on-the-go access.
-4.  **Automatic Compilation System:** Python-based builders that bundle assets, compile C# binaries, build Android APKs, and package portable ZIP distributables.
+This project serves as a comprehensive cross-platform accounting system replacing the legacy Excel Macro-Enabled Accounting Workbook. It has evolved through several iterations and now features:
+1.  **Multi-Platform Cloud Sync:** A modern serverless architecture connected to **Supabase (PostgreSQL)**, deployed perfectly in-sync across both GitHub Pages and CPanel.
+2.  **Standalone Offline Mobile Applications (`.apk`):** Fully independent offline versions (v9.4) for Android devices, utilizing LocalStorage for environments without internet access, allowing manual exports/imports to the cloud.
+3.  **Automatic Deployment System:** Python-based builders (`prepare_deployments.py` and `build_all_releases.py`) that cleanly segregate environments into ready-to-deploy folders.
 
 ---
 
-## 🛠️ Work Accomplished & Recent Fixes (Version 9.2)
+## 🛠️ Work Accomplished & Recent Fixes (Versions 9.3 & 9.4)
 
-### 1. Cloud Synchronization Routing Fixes
-- **Cashbook Edit Sync Bug:** Resolved a critical bug in `app_cloud_final.js` where editing an existing cashbook transaction via the Admin portal failed to sync to the online database. The application previously hardcoded the `fetch` request to the local Python server (`/api/bulk_import`). We introduced dynamic environment detection to route requests properly to the PHP/MySQL backend (`./api.php`) when hosted online, preventing edits from reverting upon subsequent syncs.
-- **Backup Restoration Sync:** Applied the identical environment-aware routing fix to the backup restoration logic. Uploading a `.json` backup file now correctly flushes and updates the cloud database rather than failing silently.
+### 1. The Supabase Serverless Migration (v9.3)
+- **Legacy PHP/MySQL Removed:** The application was fully migrated away from the legacy CPanel PHP/MySQL and local Python SQLite backend architectures.
+- **Fetch Interceptor (`app_supabase.js`):** Built a seamless interceptor that catches all legacy `api.php` requests and translates them into secure Supabase REST API requests on the fly. This saved us from rewriting thousands of lines of legacy frontend code.
+- **Authentication & Security:** Implemented Supabase JWT Authentication and Row Level Security (RLS). The application now requires an email/password login to fetch or modify data.
+- **Bulletproof ID Generation:** Fixed duplicate key insertion crashes caused by legacy `maxId + 1` logic. Insertions now use Unix timestamps (`Math.floor(Date.now() / 1000)`) guaranteeing mathematically absolute uniqueness across devices.
 
-### 2. Migration Pathways Evaluated
-- Created comprehensive documentation detailing the architecture and step-by-step procedures required to fully migrate the backend infrastructure from cPanel PHP/MySQL to **Supabase Cloud (PostgreSQL)**, paving the way for real-time collaboration and improved security.
+### 2. Multi-Cloud Deployment Architecture (v9.3)
+- Created `prepare_deployments.py` which organizes the codebase into three strict deployment folders:
+  - `deployment_files/cpanel/`: Files ready for CPanel host (using `index_supabase.html`).
+  - `deployment_files/github-supabase/`: Files ready for GitHub Pages (using `index_supabase.html`).
+  - `deployment_files/mobile apk v1.0/`: Files ready for offline mobile apps (using the vanilla `index.html` and `app.js`).
+- Both CPanel and GitHub deployments successfully point to the *exact same* Supabase cloud database, remaining perfectly in sync.
 
-### 3. Dynamic Path Compatibility & Cloud Script Pipeline (Inherited from v9.0)
-- Compiler scripts (`build_all_releases.py`, `copy_assets_to_android.py`, etc.) dynamically resolve paths using Python's `os.path.dirname`.
-- `generator_final.py` compiles `app.js` into targeted scripts:
-  - **`app_cloud_final.js`:** Cloud deployment script connected to MySQL via `api.php`.
-  - **`app_cloud_v10.js`:** Android/Desktop offline script with LocalStorage / Python SQLite integration.
+### 3. Critical Data & Ledger Corrections (v9.4)
+- **The "16.47" Data Corruption:** Conducted a deep data audit and corrected 28 entries where Code `RP-16.47` (Payments: St. Mary's Feast) was mistakenly entered as a Receipt. This fixed massive desyncs in Individual Member Ledgers (e.g., Bibi Chandy's balance was successfully restored to ₹24,000).
+- **Core Logic Fix:** Updated `app_supabase.js` and `app.js` to remove the hardcoded `16.47` mapping in `findIndividualColKey()`, preventing cashbook edits from crashing the application logic.
+- **Trial Balance Accuracy:** Updated the Trial Balance aggregator to strictly include only Explicit Codes (starting with `RP-` or ending with letter variants like `(a)`, `(b)`), fixing miscalculations.
 
-### 4. Member Contact Directory & CSV Tooling (Inherited from v9.0)
-- Full CRUD Member Directory syncable to MySQL.
-- Built-in BOM-enabled CSV Exporter and RFC-compliant CSV Parser for importing.
+### 4. Independent Offline APK Build (v9.4)
+- Rolled back the Mobile APK (Android app) to act as a fully independent, offline tool using `app.js` (LocalStorage).
+- Bumped the Gradle versioning to **v9.4** to distinguish the newly built bug-free APKs from the older buggy `v9.3` versions.
+- Generated `St_Gregorios_Church_Accounting_v9.4.apk` ensuring that offline usage calculates ledgers properly without needing a network connection.
 
 ---
 
@@ -40,32 +45,23 @@ This project serves as a comprehensive cross-platform accounting system replacin
 
 | File / Folder | Purpose |
 | :--- | :--- |
-| **`St_Gregorios_Church_Accounting.exe`** | C# standalone Windows launcher with tray icon (runs server on port 8088) |
-| **`Start_Portal.cmd`** | Runs python backend server and launches Edge in app mode |
-| **`index.html`** & **`index_cloud.html`** | Offline local and online Cloud portal layouts respectively |
-| **`app.js`** | Core client-side javascript application code |
-| **`app_cloud_final.js`** | Compiled cPanel Cloud Web javascript script (recently patched) |
-| **`app_cloud_v10.js`** | Compiled Android WebView and Desktop offline javascript script |
-| **`cloud_api/api.php`** | PHP script to process queries (save/load/import cashbook/members) |
-| **`generator_final.py`** | Compiles app.js into cloud versions |
-| **`build_all_releases.py`** | Orchestrates compilation of Android APKs, EXE, and ZIP portable packages |
-| **`package_distributable.py`** | Assembles ZIP distribution packages under `dist/` |
+| **`deployment_files/`** | The finalized output directory containing the 3 deployment environments. |
+| **`app_supabase.js`** | Core client-side javascript application code connected to Supabase Cloud. |
+| **`app.js`** | Core client-side javascript application code using offline LocalStorage (for APK). |
+| **`index_supabase.html`** | Cloud portal layout containing the Secure Gateway Login overlay. |
+| **`index.html`** | Offline local portal layout (No login overlay). |
+| **`prepare_deployments.py`** | Packages the repository into the 3 deployment folders. |
+| **`package_distributable.py`** | Assembles ZIP distribution packages under `dist/`. |
+| **`build_executable.py`** | Compiles the standalone Windows C# Executable. |
+| **`android-app/`** | Android Gradle project for compiling the mobile APKs. |
 
 ---
 
-## 🚀 How to Run Compiler Scripts
+## 🚀 How to Re-Deploy or Compile (v9.4 onwards)
 
-All builder tasks are run using Python (`py`):
-
-1.  **Recompile all releases (APKs, EXE, and packaged ZIPs):**
-    ```cmd
-    py build_all_releases.py
-    ```
-2.  **Generate cloud scripts only:**
-    ```cmd
-    py generator_final.py
-    ```
-3.  **Package portable distributions only:**
-    ```cmd
-    py package_distributable.py
-    ```
+1.  **To Update Web Deployments:** 
+    If you make changes to HTML/CSS/JS, run `py prepare_deployments.py`. Then, upload the contents of the `cpanel` folder to your CPanel File Manager, and push the `github-supabase` folder to your GitHub `main` branch.
+2.  **To Rebuild Mobile APKs:**
+    Navigate to the `android-app/` directory and run `.\gradlew assembleRelease`. The output will be located in `android-app/app/build/outputs/apk/full/release/`.
+3.  **To sync Offline Mobile Data:**
+    Export the JSON backup from the CPanel web admin portal and import it into the Android Mobile App via **Restore/Replace Data**.

@@ -4289,11 +4289,22 @@ function saveMemberAccountChanges() {
 // ----------------------------------------------------
 // EDIT CASH BOOK TRANSACTION ENTRY (TAB 2)
 // ----------------------------------------------------
-function openEditCashbookModal(rowIndex) {
+function openEditCashbookModal(payload) {
+  const rowIndex = typeof payload === "object" ? payload.index : payload;
+  const editType = typeof payload === "object" ? payload.type : null;
+
   const row = state.cashbook[rowIndex];
   if (!row) return;
 
-  const isReceipt = !!(getColVal(row, "B") || getColVal(row, "E") || getColVal(row, "H") || getColVal(row, "I"));
+  let isReceipt;
+  if (editType === "RECEIPT") {
+    isReceipt = true;
+  } else if (editType === "PAYMENT") {
+    isReceipt = false;
+  } else {
+    isReceipt = !!(getColVal(row, "B") || getColVal(row, "E") || getColVal(row, "H") || getColVal(row, "I"));
+  }
+
   const dateVal = isReceipt ? getColVal(row, "A") : getColVal(row, "K");
   const docNo = isReceipt ? getColVal(row, "B") : getColVal(row, "L");
   const regNo = isReceipt ? getColVal(row, "C") : "";
@@ -4824,8 +4835,8 @@ function renderAdminTxnsTable() {
       <td class="text-right">${formatCurrency(t.bankAmt)}</td>
       <td class="text-center" style="white-space:nowrap;">
         <button class="btn btn-outline" style="padding:2px 8px; font-size:0.78rem; color:#0284c7; border-color:#0284c7; margin-right:4px;" onclick="reprintTxnDocument('${t.type}', '${t.docNo}', ${t.index})">🖨️ Print</button>
-        <button class="btn btn-outline" style="padding:2px 8px; font-size:0.78rem; margin-right:4px;" onclick="promptAdminPassword('EDIT_CASHBOOK', ${t.index})">✏️ Edit</button>
-        <button class="btn btn-outline" style="padding:2px 8px; font-size:0.78rem; color:var(--danger-color);" onclick="promptAdminPassword('DELETE_CASHBOOK', ${t.index})">🗑️ Delete</button>
+        <button class="btn btn-outline" style="padding:2px 8px; font-size:0.78rem; margin-right:4px;" onclick="promptAdminPassword('EDIT_CASHBOOK', {index: ${t.index}, type: '${t.type}'})">✏️ Edit</button>
+        <button class="btn btn-outline" style="padding:2px 8px; font-size:0.78rem; color:var(--danger-color);" onclick="promptAdminPassword('DELETE_CASHBOOK', {index: ${t.index}, type: '${t.type}'})">🗑️ Delete</button>
       </td>
     `;
     tbody.appendChild(tr);
