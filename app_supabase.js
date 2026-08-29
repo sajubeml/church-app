@@ -2920,7 +2920,7 @@ function findIndividualColKey({ head, code }) {
   if (head.includes("passion week") || code === "RP-2.13") return "V";
   if (head.includes("st. george feast") || code === "RP-16.50") return "W";
   if (head.includes("st. thomas feast") || code === "RP-3.31") return "X";
-  if (head.includes("st. mary's feast") || code === "RP-16.47" || code === "RP-3.32") return "Y";
+  if (head.includes("st. mary's feast") || code === "RP-3.32") return "Y";
   if (head.includes("marriage bann") || code === "RP-3.15(A)") return "Z";
   if (head.includes("marriage celebration") || code === "RP-3.15(B)") return "AA";
   if (head.includes("donations-marriage") || code === "RP-3.15(C)") return "AB";
