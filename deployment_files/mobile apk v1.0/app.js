@@ -2223,7 +2223,7 @@ function printReceiptModal() {
           .no-print, .print-preview-header { display: none !important; }
           @page { size: A4 landscape; margin: 0; }
           body { padding: 5mm !important; background: #fff; width: 100%; margin: 0; box-sizing: border-box; }
-          .dual-receipt-container { position: relative; gap: 15px !important; width: 100%; min-height: 190mm; }
+          .dual-receipt-container { position: relative; gap: 15px !important; width: 100%; align-items: flex-start !important; }
           .dual-receipt-container::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed #94a3b8; }
           .receipt-card { max-width: 48% !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 10mm !important; }
         }
@@ -2350,9 +2350,9 @@ function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
   <style>
     @page { size: A4 landscape; margin: 0; }
     * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 5mm; background: #fff; color: #000; margin: 0; width: 297mm; height: 210mm; overflow: hidden; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 5mm; background: #fff; color: #000; margin: 0; width: 297mm; height: auto; overflow: hidden; }
     .no-print, .print-preview-header { display: none !important; }
-    .dual-receipt-container { display: flex; position: relative; gap: 15px; flex-wrap: nowrap; width: 100%; height: 100%; align-items: stretch; justify-content: center; }
+    .dual-receipt-container { display: flex; position: relative; gap: 15px; flex-wrap: nowrap; width: 100%; align-items: flex-start; justify-content: center; }
     .dual-receipt-container::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed #94a3b8; }
     .receipt-card { flex: 1; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 10mm; background: #fff; position: relative; box-sizing: border-box; overflow: hidden; max-width: 48%; }
   </style>
