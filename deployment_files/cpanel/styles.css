@@ -570,28 +570,31 @@ body {
   }
   
   .dual-receipt-container {
+    position: relative !important;
     display: flex !important;
-    flex-wrap: nowrap !important;
-    gap: 0 !important;
+    gap: 15px !important;
     width: 100% !important;
-    height: 100% !important;
-    align-items: stretch !important;
+    min-height: 190mm !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
   }
-  
+  .dual-receipt-container::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    border-left: 1px dashed #94a3b8 !important;
+  }
   .receipt-card {
     flex: 1 !important;
-    min-width: 0 !important;
-    border: none !important;
-    border-radius: 0 !important;
-    padding: 0 10mm !important;
-    box-shadow: none !important;
-    height: 100% !important;
+    max-width: 48% !important;
+    border: 2px solid #0f172a !important;
+    border-radius: 8px !important;
+    padding: 10mm !important;
+    box-sizing: border-box !important;
     overflow: hidden !important;
-  }
-  
-  /* Add dashed cut line between Original and Copy */
-  .receipt-card:first-child {
-    border-right: 1px dashed #94a3b8 !important;
+    page-break-inside: avoid !important;
   }
 
   /* Make sure tables compact themselves to fit */
@@ -821,26 +824,7 @@ body {
     margin: 0 !important;
   }
 
-  .dual-receipt-container {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    gap: 15px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    page-break-inside: avoid !important;
-    page-break-after: avoid !important;
-  }
 
-  .receipt-card {
-    flex: 1 !important;
-    border: 2px solid #0f172a !important;
-    border-radius: 8px !important;
-    padding: 12px !important;
-    background: #ffffff !important;
-    box-shadow: none !important;
-    page-break-inside: avoid !important;
-  }
 }
 
 @media print {
