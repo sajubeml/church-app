@@ -44,8 +44,9 @@ copy_files(common_files + ["app_supabase.js", "supabase.js", ".htaccess", "api.p
 shutil.copy2(os.path.join(base_dir, "index_supabase.html"), os.path.join(cpanel_dir, "index.html"))
 
 # 3. Mobile APK / Local (No Cloud Sync)
-# Uses standard index.html (which points to app.js) and app.js
+# Uses index_offline.html (which points to app.js) and app.js
 print("Packaging Mobile APK / Local version...")
-copy_files(common_files + ["app.js", "index.html"], local_dir)
+copy_files(common_files + ["app.js"], local_dir)
+shutil.copy2(os.path.join(base_dir, "index_offline.html"), os.path.join(local_dir, "index.html"))
 
 print("\n[OK] Deployment folders created successfully in 'deployment_files/'!")
