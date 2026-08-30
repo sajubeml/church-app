@@ -546,12 +546,65 @@ body {
 
 /* Print Rules */
 @media print {
+  @page { 
+    size: A4 landscape; 
+    margin: 0; 
+  }
   body * { visibility: hidden; }
-  #receiptModalArea, #receiptModalArea * { visibility: visible; }
-  #receiptModalArea { position: absolute; left: 0; top: 0; width: 100%; }
+  
+  #receiptModalArea, #receiptModalArea * { 
+    visibility: visible; 
+  }
+  
+  #receiptModalArea { 
+    position: absolute; 
+    left: 0; 
+    top: 0; 
+    width: 297mm !important; 
+    height: 210mm !important; 
+    max-height: 210mm !important;
+    overflow: hidden !important; 
+    padding: 10mm !important;
+    box-sizing: border-box !important;
+    background: #fff !important;
+  }
+  
+  .dual-receipt-container {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    align-items: stretch !important;
+  }
+  
+  .receipt-card {
+    flex: 1 !important;
+    min-width: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 0 10mm !important;
+    box-shadow: none !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+  
+  /* Add dashed cut line between Original and Copy */
+  .receipt-card:first-child {
+    border-right: 1px dashed #94a3b8 !important;
+  }
+
+  /* Make sure tables compact themselves to fit */
+  .receipt-card table td, .receipt-card table th {
+    padding: 3px !important;
+    font-size: 10px !important;
+  }
+  
+  .receipt-card h3 { font-size: 13px !important; }
+  .receipt-card p { font-size: 9.5px !important; }
+  
   .modal-header, .no-print { display: none !important; }
 }
-
 /* Individual Member Ledger Table - Sticky Headers, Footer & Columns */
 .indiv-table {
   border-collapse: separate;
