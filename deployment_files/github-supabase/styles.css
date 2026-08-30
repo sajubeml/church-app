@@ -550,23 +550,25 @@ body {
     size: A4 landscape; 
     margin: 0; 
   }
-  body * { visibility: hidden; }
-  
-  #receiptModalArea, #receiptModalArea * { 
-    visibility: visible; 
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
   }
-  
-  #receiptModalArea { 
-    position: absolute; 
-    left: 0; 
-    top: 0; 
-    width: 297mm !important; 
-    height: 210mm !important; 
-    max-height: 210mm !important;
-    overflow: hidden !important; 
-    padding: 10mm !important;
+  .app-header, .app-nav, .main-content, .app-footer, .no-print, .modal-header {
+    display: none !important;
+  }
+  .modal-backdrop, #receiptModal {
+    display: block !important;
+    position: static !important;
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #receiptModalArea {
+    padding: 5mm !important;
     box-sizing: border-box !important;
     background: #fff !important;
+    width: 100% !important;
   }
   
   .dual-receipt-container {
@@ -788,41 +790,7 @@ body {
   body {
     background: #ffffff !important;
     color: #000000 !important;
-  }
 
-  /* Hide background webpage structure */
-  .app-header, .app-nav, .main-content, .app-footer, .no-print, .modal-header {
-    display: none !important;
-  }
-
-  /* Display ONLY receipt modal area */
-  .modal-backdrop, #receiptModal {
-    display: block !important;
-    position: static !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  #receiptModal .modal-body-container {
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    background: transparent !important;
-  }
-
-  #receiptModalArea {
-    width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
 
 
 }
