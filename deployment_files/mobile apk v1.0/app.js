@@ -2005,9 +2005,9 @@ function showReceiptModal() {
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:10px; border-radius:4px; margin-bottom:15px; width:90%; margin-left:auto; margin-right:auto;">
-          <div style="font-size:11px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left;">(${totalWords})</div>
-          <div style="font-size:14px; font-weight:900; color:#0f172a; text-align:right;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:10px; border-radius:4px; margin-bottom:15px; width:90%; margin-left:auto; margin-right:auto; flex-wrap:nowrap;">
+          <div style="font-size:11px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
+          <div style="font-size:14px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
         <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-bottom:8px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
@@ -2036,9 +2036,9 @@ function showReceiptModal() {
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:10px; border-radius:4px; margin-bottom:15px; width:90%; margin-left:auto; margin-right:auto;">
-          <div style="font-size:11px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left;">(${totalWords})</div>
-          <div style="font-size:14px; font-weight:900; color:#0f172a; text-align:right;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:10px; border-radius:4px; margin-bottom:15px; width:90%; margin-left:auto; margin-right:auto; flex-wrap:nowrap;">
+          <div style="font-size:11px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
+          <div style="font-size:14px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
         <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-bottom:8px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
@@ -2217,14 +2217,15 @@ function printReceiptModal() {
       <style>
         body { font-family: system-ui, -apple-system, sans-serif; padding: 60px 20px 20px 20px; background: #fff; color: #000; }
         button[onclick*="closeReceiptModal"], .receipt-modal-close-btn, .modal-close-btn { display: none !important; }
-        .dual-receipt-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .dual-receipt-container { display: flex; gap: 20px; justify-content: center; align-items: stretch; }
         .receipt-card { flex: 1; border: 2px solid #0f172a; border-radius: 8px; padding: 15px; background: #fff; min-width: 320px; max-width: 48%; position: relative; box-sizing: border-box; }
         @media print {
           .no-print, .print-preview-header { display: none !important; }
-          @page { size: landscape; margin: 6mm; }
-          body { padding: 0 !important; background: #fff; }
-          .dual-receipt-container { gap: 15px; }
-          .receipt-card { max-width: 48%; border-color: #000; }
+          @page { size: A4 landscape; margin: 0; }
+          body { padding: 0 !important; background: #fff; width: 100%; margin: 0; }
+          .dual-receipt-container { gap: 0 !important; width: 100%; min-height: 210mm; }
+          .receipt-card { max-width: 50% !important; border: none !important; border-radius: 0 !important; padding: 10mm !important; }
+          .receipt-card:first-child { border-right: 1px dashed #94a3b8 !important; }
         }
       </style>
     </head>
