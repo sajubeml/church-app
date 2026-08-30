@@ -2085,19 +2085,19 @@ function showReceiptModal() {
           <p style="margin:2px 0; font-size:10.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
           <p style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:4px;">${docTitle}</p>
         </div>
-        <table style="width:100%; margin-bottom:10px; font-size:12px;">
+        <table style="width:90%; margin:0 auto 10px auto; font-size:12px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${dateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Party / Member:</strong> ${memberName}</td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px;">
+        <table style="width:90%; margin:0 auto 12px auto; border-collapse:collapse; font-size:12px;">
           <thead>
             <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-size:12px; font-weight:bold; margin-bottom:15px;">
-          <div>Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-          <div style="font-size:11px; font-weight:normal; font-style:italic; margin-top:2px;">(${totalWords})</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:10px; border-radius:4px; margin-bottom:15px; width:90%; margin-left:auto; margin-right:auto;">
+          <div style="font-size:11px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left;">(${totalWords})</div>
+          <div style="font-size:14px; font-weight:900; color:#0f172a; text-align:right;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
         <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-bottom:8px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
@@ -2116,19 +2116,19 @@ function showReceiptModal() {
           <p style="margin:2px 0; font-size:10.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
           <p style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:4px;">${docTitle} (OFFICE COPY)</p>
         </div>
-        <table style="width:100%; margin-bottom:10px; font-size:12px;">
+        <table style="width:90%; margin:0 auto 10px auto; font-size:12px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${dateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Party / Member:</strong> ${memberName}</td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px;">
+        <table style="width:90%; margin:0 auto 12px auto; border-collapse:collapse; font-size:12px;">
           <thead>
             <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-size:12px; font-weight:bold; margin-bottom:15px;">
-          <div>Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-          <div style="font-size:11px; font-weight:normal; font-style:italic; margin-top:2px;">(${totalWords})</div>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:10px; border-radius:4px; margin-bottom:15px; width:90%; margin-left:auto; margin-right:auto;">
+          <div style="font-size:11px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left;">(${totalWords})</div>
+          <div style="font-size:14px; font-weight:900; color:#0f172a; text-align:right;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
         <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-bottom:8px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
@@ -2437,12 +2437,13 @@ function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
   <meta charset="UTF-8">
   <title>${key}_St_Gregorios_Church</title>
   <style>
-    @page { size: landscape; margin: 6mm; }
+    @page { size: A4 landscape; margin: 0; }
     * { box-sizing: border-box; }
-    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 15px; background: #fff; color: #000; margin: 0; }
+    body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; padding: 10mm; background: #fff; color: #000; margin: 0; width: 297mm; height: 210mm; overflow: hidden; }
     .no-print, .print-preview-header { display: none !important; }
-    .dual-receipt-container { display: flex; gap: 20px; flex-wrap: nowrap; justify-content: space-between; width: 100%; }
-    .receipt-card { flex: 1; border: 2px solid #0f172a; border-radius: 8px; padding: 15px; background: #fff; width: 48%; position: relative; box-sizing: border-box; }
+    .dual-receipt-container { display: flex; gap: 0; flex-wrap: nowrap; width: 100%; height: 100%; align-items: stretch; }
+    .receipt-card { flex: 1; border: none; border-radius: 0; padding: 0 10mm; background: #fff; position: relative; box-sizing: border-box; overflow: hidden; }
+    .receipt-card:first-child { border-right: 1px dashed #94a3b8; }
   </style>
 </head>
 <body>
