@@ -4383,7 +4383,8 @@ function saveCashbookEntryChanges() {
   closeEditCashbookModal();
 }
 
-function confirmDeleteCashbookEntry(index) {
+function confirmDeleteCashbookEntry(payload) {
+  const index = typeof payload === "object" ? payload.index : payload;
   if (confirm("Are you sure you want to delete this Cash Book transaction entry?")) {
     const row = state.cashbook[index];
     if (row) {
