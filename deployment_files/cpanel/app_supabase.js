@@ -2791,6 +2791,38 @@ function handleIndivHeaderClick(colKey) {
   renderIndividualLedgers();
 }
 
+
+function getLatestSubscriptionRemark(regNo) {
+  if (!state.cashbook) return "";
+  
+  const parseDate = (dStr) => {
+    if (!dStr) return new Date(0);
+    const parts = String(dStr).trim().split('-');
+    if (parts.length === 3) {
+      return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
+    return new Date(0);
+  };
+
+  let latestDate = new Date(0);
+  let latestRemark = "";
+
+  for (const cb of state.cashbook) {
+    const cbRegNo = String(cb["C"] || "").trim();
+    if (cbRegNo === String(regNo).trim()) {
+      const code = String(cb["F"] || "").trim().toUpperCase();
+      if (code.includes("3.82") || code.includes("3.83")) {
+        const cbDate = parseDate(cb["A"]);
+        if (cbDate > latestDate) {
+          latestDate = cbDate;
+          latestRemark = String(cb["G"] || "").trim();
+        }
+      }
+    }
+  }
+  return latestRemark;
+}
+
 function getCleanSubUptoLive(text, hasSub) {
   if (!text) return hasSub ? "03/2027" : "-";
   const s = String(text).trim().toLowerCase();
@@ -2944,21 +2976,46 @@ function renderIndividualLedgers() {
     return true;
   });
 
+  // Aggregate Cashbook dynamically - Cash Book is the single source of truth
+  const cbAgg = {};
+  if (state.cashbook && state.cashbook.length) {
+    state.cashbook.forEach(cb => {
+      const reg = String(cb["C"] || "").trim();
+      if (!reg) return;
+      const head = String(cb["E"] || "").trim();
+      const code = String(cb["F"] || "").trim();
+      const amtText = String(cb["H"] || cb["I"] || "0").replace(/,/g, '');
+      const amt = parseFloat(amtText) || 0;
+      const colKey = findIndividualColKey({ head, code });
+      if (colKey) {
+        if (!cbAgg[reg]) cbAgg[reg] = {};
+        cbAgg[reg][colKey] = (cbAgg[reg][colKey] || 0) + amt;
+      }
+    });
+  }
+
   const memberData = memberRows.map((row, idx) => {
     const sl = getColVal(row, "A");
     const regNo = getColVal(row, "B");
     const name = getColVal(row, "C");
-    const rawSubUpto = getColVal(row, "D");
-    const grandVal = getColVal(row, "AM");
-    const grandNum = parseFloat(grandVal) || 0;
+    let rawSubUpto = getColVal(row, "D");
 
     const colValues = {};
-    incomeCols.forEach(col => {
-      const val = getColVal(row, col.key);
-      colValues[col.key] = parseFloat(val) || 0;
-    });
+    incomeCols.forEach(col => { colValues[col.key] = 0; });
+    if (cbAgg[regNo]) {
+      for (let k in cbAgg[regNo]) {
+        if (colValues.hasOwnProperty(k)) colValues[k] = cbAgg[regNo][k];
+      }
+    }
 
-    const subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["F"] || 0) > 0);
+    let grandNum = 0;
+    for (let k in colValues) grandNum += colValues[k];
+    const grandVal = grandNum.toLocaleString('en-IN');
+
+    const cashbookRemark = getLatestSubscriptionRemark(regNo);
+    if (cashbookRemark) rawSubUpto = cashbookRemark;
+
+    const subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["E"] || 0) > 0);
 
     return { sl, regNo, name, subUpto, grandVal, grandNum, colValues };
   });
