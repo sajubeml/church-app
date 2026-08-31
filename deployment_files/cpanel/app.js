@@ -349,7 +349,11 @@ async function loadAllData() {
     }
 
     // 3.5. Dynamic Auto-Sync Individual Ledgers from Cashbook
-    try {
+    // BUGFIX: Only run auto-sync if we don't have valid individual ledger data from localStorage.
+    // Otherwise, auto-sync aggressively overwrites manual edits and valid local state.
+    const hasValidLocalInd = (state.individual && state.individual.length > 4);
+    if (!hasValidLocalInd) {
+      try {
       let baseInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) ? JSON.parse(JSON.stringify(window.CHURCH_DATA.individual)) : [];
       if (baseInd.length === 0 && window.INITIAL_INDIVIDUAL) baseInd = JSON.parse(JSON.stringify(window.INITIAL_INDIVIDUAL));
       
@@ -449,6 +453,7 @@ async function loadAllData() {
     } catch (e) {
       console.error("Auto-sync error:", e);
     }
+    } // End if (!hasValidLocalInd)
 
     const savedHeads = localStorage.getItem("CHURCH_ACCOUNT_HEADS");
     if (savedHeads) {

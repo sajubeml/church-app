@@ -546,12 +546,70 @@ body {
 
 /* Print Rules */
 @media print {
-  body * { visibility: hidden; }
-  #receiptModalArea, #receiptModalArea * { visibility: visible; }
-  #receiptModalArea { position: absolute; left: 0; top: 0; width: 100%; }
+  @page { 
+    size: A4 landscape; 
+    margin: 0; 
+  }
+  body {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .app-header, .app-nav, .main-content, .app-footer, .no-print, .modal-header {
+    display: none !important;
+  }
+  .modal-backdrop, #receiptModal {
+    display: block !important;
+    position: static !important;
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #receiptModalArea {
+    padding: 5mm !important;
+    box-sizing: border-box !important;
+    background: #fff !important;
+    width: 100% !important;
+  }
+  
+  .dual-receipt-container {
+    position: relative !important;
+    display: flex !important;
+    gap: 15px !important;
+    width: 100% !important;
+    min-height: 190mm !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+  }
+  .dual-receipt-container::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 50% !important;
+    border-left: 1px dashed #94a3b8 !important;
+  }
+  .receipt-card {
+    flex: 1 !important;
+    max-width: 48% !important;
+    border: 2px solid #0f172a !important;
+    border-radius: 8px !important;
+    padding: 10mm !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Make sure tables compact themselves to fit */
+  .receipt-card table td, .receipt-card table th {
+    padding: 3px !important;
+    font-size: 10px !important;
+  }
+  
+  .receipt-card h3 { font-size: 13px !important; }
+  .receipt-card p { font-size: 9.5px !important; }
+  
   .modal-header, .no-print { display: none !important; }
 }
-
 /* Individual Member Ledger Table - Sticky Headers, Footer & Columns */
 .indiv-table {
   border-collapse: separate;
@@ -600,26 +658,26 @@ body {
   position: sticky;
   left: 0;
   z-index: 5;
-  width: 45px;
-  min-width: 45px;
+  width: 30px;
+  min-width: 30px;
   text-align: center;
 }
 
 .indiv-table .sticky-col.col-reg {
   position: sticky;
-  left: 45px;
+  left: 30px;
   z-index: 5;
-  width: 90px;
-  min-width: 90px;
+  width: 50px;
+  min-width: 50px;
   border-right: 1px solid #e2e8f0;
 }
 
 .indiv-table .sticky-col.col-name {
   position: sticky;
-  left: 135px;
+  left: 80px;
   z-index: 5;
-  min-width: 190px;
-  max-width: 240px;
+  min-width: 100px;
+  max-width: 130px;
   border-right: 2px solid #cbd5e1;
   white-space: nowrap;
   overflow: hidden;
@@ -732,62 +790,9 @@ body {
   body {
     background: #ffffff !important;
     color: #000000 !important;
-  }
 
-  /* Hide background webpage structure */
-  .app-header, .app-nav, .main-content, .app-footer, .no-print, .modal-header {
-    display: none !important;
-  }
 
-  /* Display ONLY receipt modal area */
-  .modal-backdrop, #receiptModal {
-    display: block !important;
-    position: static !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
 
-  #receiptModal .modal-body-container {
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    background: transparent !important;
-  }
-
-  #receiptModalArea {
-    width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
-  .dual-receipt-container {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    gap: 15px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    page-break-inside: avoid !important;
-    page-break-after: avoid !important;
-  }
-
-  .receipt-card {
-    flex: 1 !important;
-    border: 2px solid #0f172a !important;
-    border-radius: 8px !important;
-    padding: 12px !important;
-    background: #ffffff !important;
-    box-shadow: none !important;
-    page-break-inside: avoid !important;
-  }
 }
 
 @media print {
@@ -875,65 +880,57 @@ body {
   }
 
   .indiv-table .sticky-col.col-sl {
-    position: static !important;
-    left: auto !important;
-    width: 32px !important;
-    min-width: 32px !important;
-    padding: 4px 2px !important;
-    text-align: center !important;
+    display: none !important;
   }
 
   .indiv-table .sticky-col.col-reg {
-    position: sticky !important;
-    left: 0 !important;
+    position: static !important;
     z-index: 5;
-    width: 52px !important;
-    min-width: 52px !important;
-    max-width: 52px !important;
-    padding: 4px 4px !important;
-    font-size: 0.75rem !important;
+    width: 45px !important;
+    min-width: 45px !important;
+    max-width: 45px !important;
+    padding: 2px !important;
+    font-size: 0.70rem !important;
     border-right: 1.5px solid #cbd5e1 !important;
   }
 
   .indiv-table .sticky-col.col-name {
     position: static !important;
-    left: auto !important;
-    min-width: 110px !important;
-    max-width: 130px !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    padding: 4px 4px !important;
-    font-size: 0.75rem !important;
+    min-width: 70px !important;
+    max-width: 90px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+    padding: 2px !important;
+    font-size: 0.65rem !important;
     border-right: 1px solid #e2e8f0 !important;
   }
 
   .indiv-table thead th.sticky-col.col-reg {
-    position: sticky !important;
-    left: 0 !important;
+    position: static !important;
     z-index: 15;
     background: #cbd5e1 !important;
   }
 
   .indiv-table tfoot td.sticky-col.col-reg {
-    position: sticky !important;
-    left: 0 !important;
+    position: static !important;
     z-index: 15;
     background: #cbd5e1 !important;
   }
 
   .indiv-table .num-col {
-    min-width: 60px !important;
-    max-width: 80px !important;
-    font-size: 0.75rem !important;
-    padding: 4px 4px !important;
+    min-width: 40px !important;
+    max-width: 55px !important;
+    font-size: 0.65rem !important;
+    padding: 2px !important;
   }
 
   .indiv-table .sticky-col.col-grand {
-    min-width: 75px !important;
-    max-width: 85px !important;
-    font-size: 0.72rem !important;
-    padding: 4px 3px !important;
+    position: static !important;
+    min-width: 42px !important;
+    max-width: 50px !important;
+    font-size: 0.60rem !important;
+    padding: 2px !important;
   }
 }
 

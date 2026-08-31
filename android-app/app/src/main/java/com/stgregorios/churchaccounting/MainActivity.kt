@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         settings.allowFileAccessFromFileURLs = true
         settings.setSupportZoom(true)
         settings.builtInZoomControls = true
-        settings.displayZoomControls = false
+        settings.displayZoomControls = true
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW

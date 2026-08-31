@@ -1,247 +1,3 @@
-
-const SUPABASE_URL = 'https://djpuxmrjxsrhgfrtppky.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_QjkuMrFMwtc2imGfy0XCdw_37h05VtE';
-
-
-window.SUPABASE_ACCESS_TOKEN = null;
-
-window.attemptLogin = async function() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const errorDiv = document.getElementById('login-error');
-    const btn = document.getElementById('login-submit');
-    
-    if (!email || !password) {
-        errorDiv.textContent = "Please enter email and password.";
-        errorDiv.style.display = "block";
-        return;
-    }
-    
-    btn.disabled = true;
-    btn.textContent = "Authenticating...";
-    errorDiv.style.display = "none";
-    
-    try {
-        const res = await originalFetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: email, password: password })
-        });
-        
-        const data = await res.json();
-        
-        if (!res.ok) {
-            throw new Error(data.error_description || data.msg || "Authentication failed");
-        }
-        
-        // Success! Save token
-        window.SUPABASE_ACCESS_TOKEN = data.access_token;
-        
-        // Hide overlay and show app
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('main-app-container').style.display = 'block';
-        
-        // Trigger data reload now that we have the secure token!
-        if (typeof loadAllData === 'function') {
-            await loadAllData();
-        }
-        if (typeof window.loadCloudData === 'function') {
-            await window.loadCloudData(false);
-        }
-        
-    } catch(err) {
-        errorDiv.textContent = err.message;
-        errorDiv.style.display = "block";
-        btn.disabled = false;
-        btn.textContent = "Login";
-    }
-};
-
-
-const originalFetch = window.fetch;
-window.fetch = async function(url, options) {
-  if (url && typeof url === 'string' && url.includes('api.php')) {
-    try {
-      const body = JSON.parse(options.body);
-      
-      if (body.action === 'save_transaction') {
-        const row = body.row;
-        const insertObj = {};
-        const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
-        cols.forEach(c => {
-            insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
-        });
-        
-        // Ultimate maxId calculator with global state to prevent double-click duplicate keys
-        // ULTIMATE TEST: Use Date.now() for ID. If this throws a duplicate key, 
-        // it means the primary key is NOT on the ID column, but on Receipt No (col_B)!
-        // Robust ID generation: Unix timestamp in seconds + random salt.
-        // E.g., 1724063000. Fits easily within PostgreSQL int4 limit (2.1 billion)
-        // and guarantees uniqueness across all devices without needing cloud sync!
-        let safeId = Math.floor(Date.now() / 1000);
-        if (window._lastInsertedId && safeId <= window._lastInsertedId) {
-            safeId = window._lastInsertedId + 1; // Prevent rapid-fire collisions
-        }
-        insertObj.id = safeId;
-        window._lastInsertedId = safeId;
-        
-        
-        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify(insertObj)
-        });
-        
-        if (!res.ok) {
-            const errText = await res.text();
-            throw new Error("Failed to save transaction: " + res.status + " " + errText);
-        }
-        if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
-        }
-        return new Response(JSON.stringify({ success: true }));
-      }
-
-      if (body.action === 'get_app_state') {
-        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?select=*`, {
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-            }
-        });
-        if (!res.ok) throw new Error("App state fetch failed: " + res.status);
-        const data = await res.json();
-        
-        const stateMap = {};
-        data.forEach(row => { 
-            try { 
-                stateMap[row.key_name] = typeof row.json_data === 'string' ? JSON.parse(row.json_data || '[]') : row.json_data; 
-            } catch(e){}
-        });
-        return new Response(JSON.stringify({ success: true, data: stateMap }));
-      }
-      
-      if (body.action === 'get_cashbook') {
-        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?select=*&order=id.asc`, {
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-            }
-        });
-        if (!res.ok) throw new Error("Cashbook fetch failed: " + res.status);
-        const data = await res.json();
-
-        const mappedRows = data.map(row => {
-            const mapped = {};
-            if(row.id) mapped.id = row.id;
-            const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
-            cols.forEach(c => {
-                if (row['col_'+c] !== undefined && row['col_'+c] !== null && row['col_'+c] !== 'NULL') mapped[c] = row['col_'+c];
-            });
-            return mapped;
-        });
-        return new Response(JSON.stringify({ success: true, data: mappedRows }));
-      }
-      
-      if (body.action === 'save_app_state') {
-        const updates = [];
-        for (let key in body.state_data) {
-           updates.push({ key_name: key, json_data: body.state_data[key] }); 
-        }
-        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?on_conflict=key_name`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-                'Content-Type': 'application/json',
-                'Prefer': 'resolution=merge-duplicates'
-            },
-            body: JSON.stringify(updates)
-        });
-        if (!res.ok) throw new Error("Failed to save app state: " + res.status);
-        if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
-        }
-        return new Response(JSON.stringify({ success: true }));
-      }
-      
-      if (body.action === 'import_cashbook') {
-        const rows = body.rows;
-        
-        // 1. Delete all existing rows
-        await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?id=gt.0`, {
-            method: 'DELETE',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-            }
-        });
-        
-        // 2. Prepare new rows for bulk insert with EXACTLY matching schema structure
-        const insertArr = rows.map((row, idx) => {
-            const insertObj = { id: (idx + 1) }; 
-            const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
-            cols.forEach(c => {
-                insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
-            });
-            return insertObj;
-        });
-        
-        // 3. Insert in batches
-        for (let i=0; i<insertArr.length; i+=500) {
-            const batch = insertArr.slice(i, i+500);
-            const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
-                method: 'POST',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(batch)
-            });
-            if (!res.ok) {
-                const errText = await res.text();
-                throw new Error("Batch insert failed: " + res.status + " " + errText);
-            }
-        }
-        
-        if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
-        }
-        return new Response(JSON.stringify({ success: true }));
-      }
-      
-    } catch(err) {
-      console.error('Supabase Mock Fetch Error:', err);
-      alert("Database Save Error:\n" + err.message);
-      return new Response(JSON.stringify({ success: false, message: err.message }));
-    }
-  }
-  
-  return originalFetch(url, options);
-};
-
-window.onerror = function(message, source, lineno, colno, error) {
-    alert("JS ERROR:\n" + message + "\nLine: " + lineno);
-    return false;
-};
 /**
  * St. Gregorios Church Accounting Application Logic
  * Implements VBA UserForm (frmEntry) behavior, 2-way member sync,
@@ -423,7 +179,6 @@ function numberToIndianWords(amount) {
 document.addEventListener("DOMContentLoaded", async () => {
   if (!verifyLicenseGuard()) return;
   await loadAllData();
-  try { if(window.loadCloudData) await window.loadCloudData(); } catch(e) { console.warn("Cloud sync skipped"); }
   setupNavigation();
   setupFormEventListeners();
   setupCashbookViewListeners();
@@ -477,145 +232,299 @@ function verifyLicenseGuard() {
 
 async function loadAllData() {
   try {
-    // === WEB-ONLY DATA LOADING ===
-    // Fetch JSON files directly from data_export folder
-    const fetchJson = async (name) => {
-      try {
-        const res = await fetch('./data_export/' + name + '.json');
-        if (res.ok) {
-          const arr = await res.json();
-          if (Array.isArray(arr) && arr.length > 0) return arr;
+    if (window.AndroidBridge) {
+        try {
+          const stateJson = window.AndroidBridge.fetchDatabaseState();
+          const data = JSON.parse(stateJson);
+          if (data.cashbook && data.cashbook.length > 0) {
+            state.cashbook = data.cashbook;
+            calculateNextNumbers();
+            console.log("Loaded cashbook from Native Android SQLite!");
+          } else {
+            const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || [];
+            if (fallbackCb.length > 0) {
+              state.cashbook = fallbackCb;
+              calculateNextNumbers();
+              window.AndroidBridge.bulkSync(JSON.stringify(fallbackCb));
+              console.log("Populated Android SQLite DB from data.js package!");
+            }
+          }
+        } catch(e) {
+          console.error("Failed to parse Android database state:", e);
         }
-      } catch (e) { console.warn("fetchJson error for " + name + ":", e); }
-      return [];
-    };
 
-    // Fetch all JSON data files in parallel
-    const [m, ind, tb, c, bu] = await Promise.all([
-      fetchJson("Members"),
-      fetchJson("Individual"),
-      fetchJson("Trial_Balance"),
-      fetchJson("Codes"),
-      fetchJson("Budget")
-    ]);
+        const fetchJson = async (name) => {
+          if (window.AndroidBridge) {
+            const content = window.AndroidBridge.readAssetFile(`data_export/${name}.json`);
+            try { 
+              const arr = JSON.parse(content); 
+              if (Array.isArray(arr) && arr.length > 0) return arr;
+            } catch (e) { console.error("Bridge parse error:", e); }
+          }
+          try {
+            const res = await fetch(`./data_export/${name}.json`);
+            if (res.ok) {
+              const arr = await res.json();
+              if (Array.isArray(arr) && arr.length > 0) return arr;
+            }
+          } catch (e) { console.error("Fetch parse error:", e); }
+          return [];
+        };
 
-    // Assign to state (fetched data takes priority, fallback to INITIAL_*)
-    state.members = m.length ? m : (window.INITIAL_MEMBERS || []);
-    state.individual = ind.length ? ind : (window.INITIAL_INDIVIDUAL || []);
-    state.trialBalance = tb.length ? tb : (window.INITIAL_TRIAL_BALANCE || []);
-    state.codes = c.length ? c : (window.INITIAL_CODES || []);
-    state.budget = bu.length ? bu : (window.INITIAL_BUDGET || []);
-    state.cashbook = [];
+        const m = await fetchJson("Members");
+        const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
+        const hasValidM = Array.isArray(localM) && localM.some(item => getColVal(item, "B"));
+        const fallbackM = (window.CHURCH_DATA && window.CHURCH_DATA.members) || window.INITIAL_MEMBERS || [];
+        state.members = hasValidM ? localM : (m.length ? m : fallbackM);
 
-    // Load App State from Cloud (Individual Ledgers, Custom Heads, Members Directory, etc.)
-    try {
-      const stateRes = await fetch('./api.php?_t=' + Date.now(), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'get_app_state' })
-      });
-      const stateData = await stateRes.json();
-      if (stateData.success && stateData.data) {
-        if (stateData.data.CHURCH_MEMBERS) state.individual = stateData.data.CHURCH_MEMBERS;
-        if (stateData.data.CHURCH_ACCOUNT_HEADS) state.customAccountHeads = stateData.data.CHURCH_ACCOUNT_HEADS;
-        if (stateData.data.CHURCH_DELETED_HEADS) state.deletedAccountHeads = stateData.data.CHURCH_DELETED_HEADS;
-        if (stateData.data.CHURCH_DELETED_MEMBERS) state.deletedMembers = stateData.data.CHURCH_DELETED_MEMBERS;
-        if (stateData.data.CHURCH_MASTER_MEMBERS) state.members = stateData.data.CHURCH_MASTER_MEMBERS;
-        console.log("App state loaded from MySQL cloud!");
+        const ind = await fetchJson("Individual");
+        const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
+        const hasValidInd = Array.isArray(localInd) && localInd.some(item => getColVal(item, "B") || getColVal(item, "C"));
+        const fallbackInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) || window.INITIAL_INDIVIDUAL || [];
+        state.individual = hasValidInd ? localInd : (ind.length ? ind : fallbackInd);
+
+        const tb = await fetchJson("Trial_Balance");
+        const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
+        const fallbackTb = (window.CHURCH_DATA && window.CHURCH_DATA.trialBalance) || window.INITIAL_TRIAL_BALANCE || [];
+        state.trialBalance = localTb.length ? localTb : (tb.length ? tb : fallbackTb);
+
+        const c = await fetchJson("Codes");
+        const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
+        const fallbackC = (window.CHURCH_DATA && window.CHURCH_DATA.codes) || window.INITIAL_CODES || [];
+        state.codes = localC.length ? localC : (c.length ? c : fallbackC);
+
+        const bu = await fetchJson("Budget");
+        const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
+        const fallbackBu = (window.CHURCH_DATA && window.CHURCH_DATA.budget) || window.INITIAL_BUDGET || [];
+        state.budget = localBu.length ? localBu : (bu.length ? bu : fallbackBu);
+
+    } else {
+      try {
+        const res = await fetch('./api.php?_t=' + Date.now(), {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'get_cashbook' })
+        });
+        if (res.ok) {
+          const cloudData = await res.json();
+          if (cloudData.success && cloudData.data && cloudData.data.length > 0) {
+            state.cashbook = cloudData.data;
+          }
+        } else {
+          console.error("Failed to load from backend:", res.status);
+        }
+      } catch (err) {
+        console.warn("No API backend detected, proceeding in offline mode.");
       }
-    } catch(e) {
-      console.warn("Cloud state fetch failed, falling back to LocalStorage.");
+
+      const localM = JSON.parse(localStorage.getItem("CHURCH_MASTER_MEMBERS") || "[]");
+      const hasValidM = Array.isArray(localM) && localM.some(item => getColVal(item, "B"));
+      const fallbackM = (window.CHURCH_DATA && window.CHURCH_DATA.members) || window.INITIAL_MEMBERS || [];
+      state.members = hasValidM ? localM : fallbackM;
+
+      const localInd = JSON.parse(localStorage.getItem("CHURCH_MEMBERS") || "[]");
+      const hasValidInd = Array.isArray(localInd) && localInd.some(item => getColVal(item, "B") || getColVal(item, "C"));
+      const fallbackInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) || window.INITIAL_INDIVIDUAL || [];
+      state.individual = hasValidInd ? localInd : fallbackInd;
+
+      const localTb = JSON.parse(localStorage.getItem("CHURCH_TRIAL_BALANCE") || "[]");
+      const fallbackTb = (window.CHURCH_DATA && window.CHURCH_DATA.trialBalance) || window.INITIAL_TRIAL_BALANCE || [];
+      state.trialBalance = localTb.length ? localTb : fallbackTb;
+
+      const localC = JSON.parse(localStorage.getItem("CHURCH_CODES") || "[]");
+      const fallbackC = (window.CHURCH_DATA && window.CHURCH_DATA.codes) || window.INITIAL_CODES || [];
+      state.codes = localC.length ? localC : fallbackC;
+
+      const localBu = JSON.parse(localStorage.getItem("CHURCH_BUDGET") || "[]");
+      const fallbackBu = (window.CHURCH_DATA && window.CHURCH_DATA.budget) || window.INITIAL_BUDGET || [];
+      state.budget = localBu.length ? localBu : fallbackBu;
+      console.log("Loaded all required data!");
     }
 
-    console.log("Loaded all JSON data! Members:", state.members.length, "Individual:", state.individual.length);
-
-    // 3. Load LocalStorage Overrides (with safety wrappers)
+    // 3. Load LocalStorage Overrides
+    const savedMembers = localStorage.getItem("CHURCH_MEMBERS");
+    if (savedMembers) {
+      try { state.individual = JSON.parse(savedMembers); } catch (e) { }
+    // 3.5. Dynamic Auto-Sync Individual Ledgers from Cashbook
+    // Must run every time to ensure Supabase cashbook syncs reflect in individual ledgers.
     try {
-      const savedMembers = localStorage.getItem("CHURCH_MEMBERS");
-      if (savedMembers) {
-        try { state.individual = JSON.parse(savedMembers); } catch (e) { }
+      let baseInd = (window.CHURCH_DATA && window.CHURCH_DATA.individual) ? JSON.parse(JSON.stringify(window.CHURCH_DATA.individual)) : [];
+      if (baseInd.length === 0 && window.INITIAL_INDIVIDUAL) baseInd = JSON.parse(JSON.stringify(window.INITIAL_INDIVIDUAL));
+      
+      const baseCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || window.INITIAL_CASHBOOK || [];
+      const baseReceiptNos = new Set();
+      baseCb.forEach(r => { const no = getColVal(r, "B"); if (no) baseReceiptNos.add(no); });
+      
+      const newReceipts = (state.cashbook || []).filter(r => {
+        const no = getColVal(r, "B");
+        return no && !baseReceiptNos.has(no);
+      });
+      
+      if (newReceipts.length > 0 && baseInd.length > 0) {
+        newReceipts.forEach(itemRow => {
+          const isReceipt = !!(getColVal(itemRow, "H") || getColVal(itemRow, "I"));
+          if (!isReceipt) return;
+          const amountStr = getColVal(itemRow, "H");
+          const amountBank = getColVal(itemRow, "I");
+          const amount = parseFloat((amountStr || amountBank || "0").toString().replace(/,/g, '')) || 0;
+          const regNo = getColVal(itemRow, "C");
+          
+          if (amount > 0 && regNo) {
+             const item = { particulars: getColVal(itemRow, "E"), code: getColVal(itemRow, "F") };
+             let targetColKey = "E";
+             const headerRow = baseInd[3] || {};
+             const partStr = String(item.particulars || "").trim().toLowerCase();
+             const codeStr = String(item.code || "").trim().toUpperCase();
+             if (codeStr === "RP-3.82" || codeStr === "RP-3.83" || partStr.includes("subscription")) {
+               targetColKey = "E";
+             } else {
+               for (let key in headerRow) {
+                 const title = String(headerRow[key] || "").trim().toLowerCase();
+                 if (!title) continue;
+                 const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
+                 if (["A", "B", "C", "D", "AM"].includes(colLetter)) continue;
+                 if (
+                    (partStr.includes("holy qurbana") && title.includes("qurbana")) ||
+                    (partStr.includes("donat") && title.includes("donat") && !partStr.includes("breakfast") && !partStr.includes("marriage") && !partStr.includes("cemetry")) ||
+                    (partStr.includes("perunnal") && title.includes("perunnal")) ||
+                    (partStr.includes("passion") && title.includes("passion")) ||
+                    (partStr.includes("george") && title.includes("george")) ||
+                    (partStr.includes("thomas") && title.includes("thomas")) ||
+                    (partStr.includes("mary") && title.includes("mary")) ||
+                    (partStr.includes("blessing") && title.includes("blessing")) ||
+                    (partStr.includes("auction") && title.includes("auction")) ||
+                    (partStr.includes("cemetry") && title.includes("cemetry")) ||
+                    (partStr.includes("breakfast") && title.includes("breakfast")) ||
+                    (partStr.includes("birthday") && title.includes("birthday")) ||
+                    (partStr.includes("anniversary") && title.includes("anniversary")) ||
+                    (partStr.includes("baptism") && title.includes("baptism")) ||
+                    (partStr.includes("bann") && title.includes("bann")) ||
+                    (partStr.includes("catholicate") && title.includes("catholicate")) ||
+                    (partStr.includes("metropolitan") && title.includes("metropolitan")) ||
+                    (partStr.includes("mission") && title.includes("mission")) ||
+                    (partStr.includes("seminary") && title.includes("seminary")) ||
+                    (partStr.includes("priest") && title.includes("priest")) ||
+                    (partStr.includes("sunday school") && title.includes("sunday school")) ||
+                    (partStr.includes("harvest") && title.includes("harvest")) ||
+                    (partStr.includes("christmas") && title.includes("christmas")) ||
+                    title.includes(partStr) || partStr.includes(title)
+                 ) {
+                   targetColKey = colLetter;
+                   break;
+                 }
+               }
+             }
+             
+             const memberRow = baseInd.find((r, idx) => idx >= 4 && getColVal(r, "B") === regNo);
+             if (memberRow) {
+               if (targetColKey) {
+                 const currentVal = parseFloat(getColVal(memberRow, targetColKey)) || 0;
+                 setColVal(memberRow, targetColKey, (currentVal + amount).toString());
+               }
+               const currentGrand = parseFloat(getColVal(memberRow, "AM")) || 0;
+               setColVal(memberRow, "AM", (currentGrand + amount).toString());
+             }
+          }
+        });
+        
+        // Sync names from Master Members
+        if (state.members && state.members.length > 0) {
+          baseInd.forEach((row, idx) => {
+            if (idx >= 4) {
+              const regNo = getColVal(row, "B");
+              if (regNo) {
+                const masterRow = state.members.find(m => getColVal(m, "B") === regNo);
+                if (masterRow) setColVal(row, "C", getColVal(masterRow, "C"));
+              }
+            }
+          });
+        }
+        
+        state.individual = baseInd;
+        localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
+        console.log("Dynamically synced " + newReceipts.length + " new receipts to Individual Ledger.");
       }
-    } catch(e) { }
+    } catch (e) {
+      console.error("Auto-sync error:", e);
+    }
 
-    try {
-      const savedHeads = localStorage.getItem("CHURCH_ACCOUNT_HEADS");
-      if (savedHeads) {
-        try { state.customAccountHeads = JSON.parse(savedHeads); } catch (e) { }
-      }
-    } catch(e) { }
+    const savedHeads = localStorage.getItem("CHURCH_ACCOUNT_HEADS");
+    if (savedHeads) {
+      try { state.customAccountHeads = JSON.parse(savedHeads); } catch (e) { }
+    }
 
-    try {
-      const savedDeletedHeads = localStorage.getItem("CHURCH_DELETED_HEADS");
-      if (savedDeletedHeads) {
-        try { state.deletedAccountHeads = JSON.parse(savedDeletedHeads); } catch (e) { }
-      }
-    } catch(e) { }
+    const savedDeletedHeads = localStorage.getItem("CHURCH_DELETED_HEADS");
+    if (savedDeletedHeads) {
+      try { state.deletedAccountHeads = JSON.parse(savedDeletedHeads); } catch (e) { }
+    }
     if (!Array.isArray(state.deletedAccountHeads)) state.deletedAccountHeads = [];
 
     // Purge any master receipt codes from deleted list to guarantee they always appear
-    const masterCodes = ["CD", "RP-3.61", "RP-10.14", "RP-1.01", "RP-1.02", "RP-1.03", "RP-2.02", "RP-2.14", "RP-3.12", "RP-3.16", "RP-3.17", "RP-3.82", "RP-3.83"];
-    state.deletedAccountHeads = state.deletedAccountHeads.filter(c => !masterCodes.includes(c));
-    try { localStorage.setItem("CHURCH_DELETED_HEADS", JSON.stringify(state.deletedAccountHeads)); } catch(e) { }
+    const masterCodes = ["CD", "RP-3.61", "RP-10.14", "RP-1.01", "RP-1.02", "RP-1.03", "RP-2.02", "RP-2.14", "RP-3.12", "RP-3.16", "RP-3.17", "RP-3.82", "RP-3.83", "RP-16.68"];
+    state.deletedAccountHeads = state.deletedAccountHeads.filter(c => {
+      const raw = c.replace(/^(RECEIPT_|PAYMENT_)/, "");
+      return !masterCodes.includes(raw) && !masterCodes.includes(c);
+    });
+    localStorage.setItem("CHURCH_DELETED_HEADS", JSON.stringify(state.deletedAccountHeads));
 
-    try {
-      const savedDeletedMembers = localStorage.getItem("CHURCH_DELETED_MEMBERS");
-      if (savedDeletedMembers) {
-        try { state.deletedMembers = JSON.parse(savedDeletedMembers); } catch (e) { }
-      }
-    } catch(e) { }
+    const savedDeletedMembers = localStorage.getItem("CHURCH_DELETED_MEMBERS");
+    if (savedDeletedMembers) {
+      try { state.deletedMembers = JSON.parse(savedDeletedMembers); } catch (e) { }
+    }
     if (!Array.isArray(state.deletedMembers)) state.deletedMembers = [];
 
-    // If Fresh Start Build: Purge any old full-data localStorage caches
+    // If Fresh Start Build: Purge any old full-data localStorage caches and force empty cashbook/trial balance
     if (window.isFreshStartBuild) {
-      try {
-        if (!localStorage.getItem("CHURCH_FRESH_START_INITIALIZED")) {
-          localStorage.removeItem("CHURCH_CASHBOOK");
-          localStorage.removeItem("CHURCH_MEMBERS");
-          localStorage.removeItem("CHURCH_ACCOUNT_HEADS");
-          localStorage.removeItem("CHURCH_DELETED_HEADS");
-          localStorage.removeItem("CHURCH_DELETED_MEMBERS");
-          localStorage.setItem("CHURCH_FRESH_START_INITIALIZED", "true");
-        }
-      } catch(e) { }
+      if (!localStorage.getItem("CHURCH_FRESH_START_INITIALIZED")) {
+        localStorage.removeItem("CHURCH_CASHBOOK");
+        localStorage.removeItem("CHURCH_MEMBERS");
+        localStorage.removeItem("CHURCH_ACCOUNT_HEADS");
+        localStorage.removeItem("CHURCH_DELETED_HEADS");
+        localStorage.removeItem("CHURCH_DELETED_MEMBERS");
+        localStorage.setItem("CHURCH_FRESH_START_INITIALIZED", "true");
+      }
       state.cashbook = [];
       state.trialBalance = [];
       state.auction = [];
       state.budget = [];
     }
 
-    try {
-      const savedCashbook = localStorage.getItem("CHURCH_CASHBOOK");
-      if (savedCashbook) {
-        try { state.cashbook = JSON.parse(savedCashbook); } catch (e) { }
-      }
-    } catch(e) { }
+    const savedCashbook = localStorage.getItem("CHURCH_CASHBOOK");
+    if (savedCashbook) {
+      try { state.cashbook = JSON.parse(savedCashbook); } catch (e) { }
+    }
+    
+    // Safety Fallback: If Cashbook is STILL empty (API failed and cache cleared), load from data.js
+    if (!state.cashbook || state.cashbook.length === 0) {
+       const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || window.INITIAL_CASHBOOK || [];
+       if (fallbackCb.length > 0) {
+           state.cashbook = JSON.parse(JSON.stringify(fallbackCb));
+           console.log("Loaded cashbook from static data.js fallback.");
+       }
+    }
 
-    try {
-      const savedPass = localStorage.getItem("CHURCH_ADMIN_PASS");
-      if (savedPass) { state.adminPassword = savedPass; }
-    } catch(e) { }
+    const savedPass = localStorage.getItem("CHURCH_ADMIN_PASS");
+    if (savedPass) {
+      state.adminPassword = savedPass;
+    }
 
-    try {
-      const savedRecNo = localStorage.getItem("CHURCH_RECEIPT_NO");
-      if (savedRecNo) {
-        const parsedRec = parseInt(savedRecNo, 10);
-        if (!isNaN(parsedRec)) state.currentReceiptNo = parsedRec;
-      }
-    } catch(e) { }
+    const savedRecNo = localStorage.getItem("CHURCH_RECEIPT_NO");
+    if (savedRecNo) {
+      const parsedRec = parseInt(savedRecNo, 10);
+      if (!isNaN(parsedRec)) state.currentReceiptNo = parsedRec;
+    }
 
-    try {
-      const savedVouNo = localStorage.getItem("CHURCH_VOUCHER_NO");
-      if (savedVouNo) {
-        const parsedVou = parseInt(savedVouNo, 10);
-        if (!isNaN(parsedVou)) state.currentVoucherNo = parsedVou;
-      }
-    } catch(e) { }
+    const savedVouNo = localStorage.getItem("CHURCH_VOUCHER_NO");
+    if (savedVouNo) {
+      const parsedVou = parseInt(savedVouNo, 10);
+      if (!isNaN(parsedVou)) state.currentVoucherNo = parsedVou;
+    }
 
     calculateNextNumbers();
     populateMemberDropdown();
     checkTrialLicenseGuard();
   } catch (err) {
-    alert("LOAD ERROR: " + err.message);
     console.error("Data load error:", err);
   }
 }
@@ -3982,7 +3891,7 @@ function confirmDeleteMember(regNo) {
 
     // Sync deletion to Directory
     state.members = state.members.filter(m => getColVal(m, "B") !== String(regNo));
-    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
     renderMemberDirectory();
 
     populateMemberDropdown();
@@ -4096,7 +4005,7 @@ function saveNewMemberAccount() {
       "D": "",
       "E": ""
     });
-    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
     renderMemberDirectory();
   }
 
@@ -4169,7 +4078,7 @@ function saveNewAccountHead() {
     state.customAccountHeads.push(newObj);
   }
 
-  localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+  localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads));
 
   // Instant 2-way sync across form dropdowns, trial balance, and admin tables
   updateDocTypeView();
@@ -4458,25 +4367,14 @@ function saveCashbookEntryChanges() {
 
   // Sync edited cashbook to server database
   if (!window.AndroidBridge) {
-    const isLocalServer = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.');
-    if (isLocalServer) {
-      fetch('/api/bulk_import', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(state.cashbook)
-      }).then(() => console.log("Cashbook edit synced to DB!")).catch(err => {
-        console.error("[SYNC ERROR] Failed to sync cashbook edit to server:", err);
-      });
-    } else {
-      fetch('./api.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'import_cashbook', rows: state.cashbook })
-      }).then(r => r.json()).then(r => {
-        if (r.success) console.log("Cashbook edit synced to cloud MySQL!");
-        else console.error("Cloud MySQL sync failed:", r.message);
-      }).catch(err => console.error("[SYNC ERROR] Failed to sync cashbook edit to cloud server:", err));
-    }
+    fetch('/api/bulk_import', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(state.cashbook)
+    }).then(() => console.log("Cashbook edit synced to DB!")).catch(err => {
+      console.error("[SYNC ERROR] Failed to sync cashbook edit to server:", err);
+    });
   }
 
   renderAllViews();
@@ -4522,25 +4420,13 @@ function confirmDeleteCashbookEntry(payload) {
 
     // Sync deletion to server database
     if (!window.AndroidBridge) {
-      const isLocalServer = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.');
-      if (isLocalServer) {
-        fetch('/api/bulk_import', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(state.cashbook)
-        }).then(() => console.log("Cashbook deletion synced to DB!")).catch(err => {
-          console.error("[SYNC ERROR] Failed to sync cashbook deletion to server:", err);
-        });
-      } else {
-        fetch('./api.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'import_cashbook', rows: state.cashbook })
-        }).then(r => r.json()).then(r => {
-          if (r.success) console.log("Cashbook deletion synced to cloud MySQL!");
-          else console.error("Cloud MySQL sync failed:", r.message);
-        }).catch(err => console.error("[SYNC ERROR] Failed to sync cashbook deletion to cloud server:", err));
-      }
+      fetch('/api/bulk_import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(state.cashbook)
+      }).then(() => console.log("Cashbook deletion synced to DB!")).catch(err => {
+        console.error("[SYNC ERROR] Failed to sync cashbook deletion to server:", err);
+      });
     }
 
     renderAllViews();
@@ -5049,7 +4935,7 @@ function saveAccountHeadChanges() {
     state.customAccountHeads.push(updatedObj);
   }
 
-  localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+  localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads));
 
   // Sync active views
   updateDocTypeView();
@@ -5070,7 +4956,7 @@ function confirmDeleteAccountHead(code) {
       state.deletedAccountHeads.push(upperCode);
     }
 
-    localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+    localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads));
     localStorage.setItem("CHURCH_DELETED_HEADS", JSON.stringify(state.deletedAccountHeads));
 
     updateDocTypeView();
@@ -5305,26 +5191,14 @@ function processBackupRestoreData(jsonText) {
       if (Array.isArray(cbArr)) {
         state.cashbook = cbArr;
         localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
-        // Bulk import to database
-        const isLocalServer = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.');
-        if (isLocalServer) {
-          fetch('/api/bulk_import', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(cbArr)
-          }).then(res => {
-            if (!res.ok) console.error("Failed to sync backup to SQLite DB");
-          }).catch(err => console.error("DB Sync error:", err));
-        } else {
-          fetch('./api.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'import_cashbook', rows: cbArr })
-          }).then(r => r.json()).then(r => {
-            if (r.success) console.log("Backup cashbook synced to cloud MySQL!");
-            else console.error("Cloud MySQL backup sync failed:", r.message);
-          }).catch(err => console.error("[SYNC ERROR] Failed to sync backup to cloud server:", err));
-        }
+        // Bulk import to SQLite Backend
+        fetch('/api/bulk_import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(cbArr)
+        }).then(res => {
+          if (!res.ok) console.error("Failed to sync backup to SQLite DB");
+        }).catch(err => console.error("DB Sync error:", err));
       }
 
       const indArr = Array.isArray(data.individual) ? data.individual :
@@ -5340,7 +5214,7 @@ function processBackupRestoreData(jsonText) {
       const masterArr = Array.isArray(data.masterMembers) ? data.masterMembers : null;
       if (masterArr) {
         state.members = masterArr;
-        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
       } else if (Array.isArray(indArr)) {
         indArr.forEach(r => {
           const reg = getColVal(r, "B");
@@ -5354,12 +5228,12 @@ function processBackupRestoreData(jsonText) {
             }
           }
         });
-        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+        localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
       }
 
       if (Array.isArray(data.customAccountHeads)) {
         state.customAccountHeads = data.customAccountHeads;
-        localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+        localStorage.setItem("CHURCH_ACCOUNT_HEADS", JSON.stringify(state.customAccountHeads));
       }
       if (Array.isArray(data.trialBalance)) {
         state.trialBalance = data.trialBalance;
@@ -5589,7 +5463,7 @@ function saveDirMemberCrud() {
   localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
 
   // Save to correct local storage key
-  localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+  localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
   closeDirMemberCrudModal();
   renderMemberDirectory();
   populateMemberDropdown();
@@ -5599,7 +5473,7 @@ function saveDirMemberCrud() {
 function deleteDirMemberCrud(regNo) {
   if (confirm(`Are you sure you want to completely delete member ${regNo}?`)) {
     state.members = state.members.filter(m => getColVal(m, "B") !== String(regNo));
-    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+    localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
     
     // Sync deletion to Administration
     state.individual = state.individual.filter(r => getColVal(r, "B") !== String(regNo));
@@ -5731,7 +5605,7 @@ function importMemberDirectoryCSV(event) {
       }
 
       localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
-      localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
+      localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
       if (window.syncAppStateToCloud) window.syncAppStateToCloud();
 
       renderMemberDirectory();
@@ -5780,61 +5654,3 @@ function parseCSVText(text) {
 }
 
 
-
-
-// === CLOUD DATABASE SYNC ===
-window._syncStateTimeout = null;
-window.syncAppStateToCloud = function() {
-    if (window._syncStateTimeout) clearTimeout(window._syncStateTimeout);
-    window._syncStateTimeout = setTimeout(() => {
-        const stateData = {
-            "CHURCH_MEMBERS": state.individual || [],
-            "CHURCH_ACCOUNT_HEADS": state.customAccountHeads || [],
-            "CHURCH_DELETED_HEADS": state.deletedAccountHeads || [],
-            "CHURCH_DELETED_MEMBERS": state.deletedMembers || [],
-            "CHURCH_MASTER_MEMBERS": state.members || []
-        };
-        
-        fetch('./api.php?_t=' + Date.now(), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'save_app_state', state_data: stateData })
-        }).then(r => r.json()).then(r => {
-            if (r.success) console.log('App state successfully synced to cloud MySQL:', r.message);
-            else console.warn('Failed to sync app state:', r.message);
-        }).catch(err => console.warn('App state cloud sync skipped:', err.message));
-    }, 500); // 500ms debounce
-};
-
-window.loadCloudData = async function(isManualRefresh = false) {
-    console.log("Loading cashbook from cloud database...");
-    try {
-        const response = await fetch('./api.php?_t=' + Date.now(), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'get_cashbook' })
-        });
-        const result = await response.json();
-        if (result.success && result.data) {
-            state.cashbook = result.data;
-            calculateNextNumbers();
-            renderAllViews();
-            console.log("Cloud cashbook loaded successfully!");
-            if (isManualRefresh) {
-                alert("✅ Cloud Sync Successful! The application will now hard refresh to ensure all data is fully up to date.");
-                window.location.reload(true);
-            }
-        } else {
-            console.log("No cloud cashbook data yet (or empty).");
-            if (isManualRefresh) {
-                alert("✅ Cloud Sync Successful! No records found. The application will now hard refresh.");
-                window.location.reload(true);
-            }
-        }
-    } catch (e) {
-        console.warn("Cloud fetch skipped (api.php not available):", e.message);
-        if (isManualRefresh) {
-            alert("❌ Cloud Sync Failed! Please check your connection.");
-        }
-    }
-};
