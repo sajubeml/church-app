@@ -3521,10 +3521,15 @@ function exportTableToExcel(tableId, filename) {
     const nameStr = filename || "St_Gregorios_Accounting_Export";
     const sheetTitle = nameStr.replace(/_/g, " ");
 
+    const dateToday = new Date();
+    const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    const formattedDate = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
+
     const churchHeaderRows = tableId === "indivTable" ? [
       ["ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"],
       ["Government House Road, Nazarbad, Mysuru, Karnataka 570 010"],
-      ["Individual Account updated upto 31-07-2026"],
+      [`Individual Account updated upto ${formattedDate}`],
       []
     ] : [
       ["ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"],
@@ -3709,11 +3714,16 @@ function exportTableToPDF(tableId, filename) {
     const headerTitle = cleanTitle.replace(/_/g, " ");
     const nowStr = new Date().toLocaleString("en-IN");
 
+    const dateToday = new Date();
+    const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    const formattedDate = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
+
     // Prepend Church Header inside <thead> so it repeats on EVERY page in PDF print
     const thead = cleanTable.querySelector("thead");
     if (thead) {
       const isIndiv = (tableId === "indivTable");
-      const titleLine3 = isIndiv ? "Individual Account updated upto 31-07-2026" : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
+      const titleLine3 = isIndiv ? `Individual Account updated upto ${formattedDate}` : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
 
       const totalCols = 99; // Force full span across all actual columns
 
@@ -3724,7 +3734,7 @@ function exportTableToPDF(tableId, filename) {
               <img src="church_logo.png" alt="Church Logo" style="display:block; margin:0 auto 6px auto; height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; object-fit:contain; background:#fff;">
               <div style="font-size:16px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</div>
               <div style="font-size:11px; font-weight:600; color:#475569; margin-top:3px;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</div>
-              <div style="font-size:12px; font-weight:700; color:#0f172a; margin-top:6px; padding-top:6px; border-top:1.5px solid #cbd5e1; display:inline-block;">${titleLine3}</div>
+              <div style="font-size:13px; font-weight:800; color:#0f172a; margin-top:6px; padding-top:6px; display:inline-block;">${titleLine3}</div>
             </div>
           </th>
         </tr>
@@ -3754,6 +3764,11 @@ function exportTableToPDF(tableId, filename) {
             #printPreviewOverlay, #printPreviewOverlay * { visibility: visible !important; }
             .print-preview-header { display: none !important; }
             @page { size: A4 landscape; margin: 5mm; }
+            table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Segoe UI', Arial, sans-serif !important; border: 1.5px solid #000 !important; }
+            table th { background-color: #f1f5f9 !important; color: #000 !important; font-weight: 800 !important; font-size: 10px !important; border: 1px solid #475569 !important; padding: 5px !important; text-align: center !important; }
+            table td { font-size: 10px !important; border: 1px solid #94a3b8 !important; padding: 4px !important; color: #000 !important; }
+            table tr:nth-child(even) td { background-color: #f8fafc !important; }
+            table tr:last-child td { font-weight: 900 !important; background-color: #e2e8f0 !important; border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
           }
         </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
