@@ -3104,6 +3104,13 @@ function renderIndividualLedgers() {
 
   // Sorting
   filteredMembers.sort((a, b) => {
+    // FORCE "NM" row to ALWAYS stay at the bottom
+    const isAnm = a.regNo && a.regNo.toUpperCase() === "NM";
+    const isBnm = b.regNo && b.regNo.toUpperCase() === "NM";
+    if (isAnm && !isBnm) return 1;
+    if (!isAnm && isBnm) return -1;
+    if (isAnm && isBnm) return 0;
+
     let valA, valB;
     if (state.sortCol === "B") {
       valA = parseInt(a.regNo, 10) || 99999;
