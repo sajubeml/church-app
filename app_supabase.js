@@ -2969,7 +2969,7 @@ function renderIndividualLedgers() {
   for (let key in headerRow) {
     const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
     if (colLetter !== "A" && colLetter !== "B" && colLetter !== "C" && colLetter !== "D" && colLetter !== "AM") {
-      const title = String(headerRow[key] || "").trim();
+      const title = String(headerRow[key] || "").trim().replace(/\n/g, '<br>');
       if (title && title.toLowerCase() !== "grand total") {
         if (!incomeCols.some(c => c.key === colLetter)) {
           incomeCols.push({ key: colLetter, title });
@@ -3062,7 +3062,7 @@ function renderIndividualLedgers() {
     <th class="text-center sticky-col col-sl sortable-th" onclick="handleIndivHeaderClick('B')">Sl. No.</th>
     <th class="sticky-col col-reg sortable-th" onclick="handleIndivHeaderClick('B')">Reg No. ${state.sortCol === 'B' ? (state.sortAsc ? '▲' : '▼') : ''}</th>
     <th class="sticky-col col-name sortable-th" onclick="handleIndivHeaderClick('C')">Name of HoF ${state.sortCol === 'C' ? (state.sortAsc ? '▲' : '▼') : ''}</th>
-    <th>Subscription Upto</th>`;
+    <th>Subscription<br>Upto</th>`;
 
   displayCols.forEach(col => {
     const isSorted = state.sortCol === col.key;
@@ -3771,11 +3771,17 @@ function exportTableToPDF(tableId, filename) {
               print-color-adjust: exact !important;
             }
             
-            table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Segoe UI', Arial, sans-serif !important; border: 1.5px solid #000 !important; }
-            table th { background-color: #f1f5f9 !important; color: #000 !important; font-weight: 800 !important; font-size: 10px !important; border: 1px solid #475569 !important; padding: 5px !important; text-align: center !important; }
-            table td { font-size: 10px !important; border: 1px solid #94a3b8 !important; padding: 4px !important; color: #000 !important; }
-            table tr:nth-child(even) td { background-color: #f8fafc !important; }
-            table tr:last-child td { font-weight: 900 !important; background-color: #e2e8f0 !important; border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
+            table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Times New Roman', Times, serif !important; border: 1px solid #000 !important; }
+            table th, table td { white-space: normal !important; word-wrap: break-word !important; }
+            table th:nth-child(1), table td:nth-child(1),
+            table th:nth-child(2), table td:nth-child(2),
+            table th:nth-child(3), table td:nth-child(3),
+            table th:nth-child(4), table td:nth-child(4) {
+              white-space: nowrap !important;
+            }
+            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 11px !important; border: 1px solid #000 !important; padding: 2px 4px !important; text-align: center !important; }
+            table td { font-size: 11px !important; border: 1px solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
+            table tr:last-child td { font-weight: bold !important; background-color: #e2e8f0 !important; border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
           }
         </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
@@ -3816,12 +3822,18 @@ function exportTableToPDF(tableId, filename) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0, user-scalable=yes">
         <title>${cleanTitle}</title>
         <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 50px 15px 15px 15px; color: #0f172a; background: #ffffff; margin: 0; }
-          table { width: 100%; border-collapse: collapse !important; font-size: 9.5px; margin-top: 5px; border: 1.5px solid #000 !important; font-family: 'Segoe UI', Arial, sans-serif !important; }
-          th, td { border: 1px solid #94a3b8 !important; padding: 4px !important; color: #000 !important; }
-          th { background-color: #f1f5f9 !important; font-weight: 800 !important; font-size: 10px !important; text-align: center !important; }
-          tr:nth-child(even) td { background-color: #f8fafc !important; }
-          tr:last-child td { font-weight: 900 !important; background-color: #e2e8f0 !important; border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
+          body { font-family: 'Times New Roman', Times, serif; padding: 50px 15px 15px 15px; color: #000; background: #ffffff; margin: 0; }
+          table { width: 100%; border-collapse: collapse !important; font-size: 11px; margin-top: 5px; border: 1px solid #000 !important; font-family: 'Times New Roman', Times, serif !important; }
+          table th, table td { white-space: normal !important; word-wrap: break-word !important; }
+          table th:nth-child(1), table td:nth-child(1),
+          table th:nth-child(2), table td:nth-child(2),
+          table th:nth-child(3), table td:nth-child(3),
+          table th:nth-child(4), table td:nth-child(4) {
+            white-space: nowrap !important;
+          }
+          th, td { border: 1px solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
+          th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; }
+          tr:last-child td { font-weight: bold !important; border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
           .text-right { text-align: right; white-space: nowrap; }
           code { font-family: monospace; font-size: 9.5px; }
           

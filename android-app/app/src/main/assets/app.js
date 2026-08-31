@@ -2787,7 +2787,7 @@ function renderIndividualLedgers() {
   for (let key in headerRow) {
     const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
     if (colLetter !== "A" && colLetter !== "B" && colLetter !== "C" && colLetter !== "D" && colLetter !== "AM") {
-      const title = String(headerRow[key] || "").trim();
+      const title = String(headerRow[key] || "").trim().replace(/\n/g, '<br>');
       if (title && title.toLowerCase() !== "grand total") {
         if (!incomeCols.some(c => c.key === colLetter)) {
           incomeCols.push({ key: colLetter, title });
@@ -2880,7 +2880,7 @@ function renderIndividualLedgers() {
     <th class="text-center sticky-col col-sl sortable-th" onclick="handleIndivHeaderClick('B')">Sl. No.</th>
     <th class="sticky-col col-reg sortable-th" onclick="handleIndivHeaderClick('B')">Reg No. ${state.sortCol === 'B' ? (state.sortAsc ? '▲' : '▼') : ''}</th>
     <th class="sticky-col col-name sortable-th" onclick="handleIndivHeaderClick('C')">Name of HoF ${state.sortCol === 'C' ? (state.sortAsc ? '▲' : '▼') : ''}</th>
-    <th>Subscription Upto</th>`;
+    <th>Subscription<br>Upto</th>`;
 
   displayCols.forEach(col => {
     const isSorted = state.sortCol === col.key;
@@ -3590,8 +3590,15 @@ function exportTableToPDF(tableId, filename) {
             }
             
             table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Times New Roman', Times, serif !important; border: 1px solid #000 !important; }
-            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 11px !important; border: 1px solid #000 !important; padding: 4px !important; text-align: center !important; }
-            table td { font-size: 11px !important; border: 1px solid #000 !important; padding: 4px !important; color: #000 !important; }
+            table th, table td { white-space: normal !important; word-wrap: break-word !important; }
+            table th:nth-child(1), table td:nth-child(1),
+            table th:nth-child(2), table td:nth-child(2),
+            table th:nth-child(3), table td:nth-child(3),
+            table th:nth-child(4), table td:nth-child(4) {
+              white-space: nowrap !important;
+            }
+            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 11px !important; border: 1px solid #000 !important; padding: 2px 4px !important; text-align: center !important; }
+            table td { font-size: 11px !important; border: 1px solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
             table tr:last-child td { font-weight: bold !important; border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
           }
         </style>
@@ -3635,7 +3642,14 @@ function exportTableToPDF(tableId, filename) {
         <style>
           body { font-family: 'Times New Roman', Times, serif; padding: 50px 15px 15px 15px; color: #000; background: #ffffff; margin: 0; }
           table { width: 100%; border-collapse: collapse !important; font-size: 11px; margin-top: 5px; border: 1px solid #000 !important; font-family: 'Times New Roman', Times, serif !important; }
-          th, td { border: 1px solid #000 !important; padding: 4px !important; color: #000 !important; }
+          table th, table td { white-space: normal !important; word-wrap: break-word !important; }
+          table th:nth-child(1), table td:nth-child(1),
+          table th:nth-child(2), table td:nth-child(2),
+          table th:nth-child(3), table td:nth-child(3),
+          table th:nth-child(4), table td:nth-child(4) {
+            white-space: nowrap !important;
+          }
+          th, td { border: 1px solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
           th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; }
           tr:last-child td { font-weight: bold !important; border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
           .text-right { text-align: right; white-space: nowrap; }
