@@ -3601,8 +3601,8 @@ function exportTableToPDF(tableId, filename) {
             table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
               background-color: #fff2cc !important;
             }
-            table td { font-size: 11px !important; border: 0.1mm solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
-            table tr:last-child td { font-weight: bold !important; border-top: 1px solid #000 !important; border-bottom: 1px solid #000 !important; }
+            table td { font-size: 12.5px !important; border: 1px dotted #888 !important; padding: 3px 4px !important; color: #000 !important; }
+            table tr:last-child td { font-weight: bold !important; border: 1px solid #000 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
           }
         </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
@@ -3652,12 +3652,12 @@ function exportTableToPDF(tableId, filename) {
           table th:nth-child(4), table td:nth-child(4) {
             white-space: nowrap !important;
           }
-          th, td { border: 0.1mm solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
-          th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; }
+          th, td { border: 1px dotted #888 !important; padding: 3px 4px !important; color: #000 !important; }
+          th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; border: 1px solid #666 !important; }
           table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
             background-color: #fff2cc !important;
           }
-          tr:last-child td { font-weight: bold !important; border-top: 1px solid #000 !important; border-bottom: 1px solid #000 !important; }
+          tr:last-child td { font-weight: bold !important; border: 1px solid #000 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
           .text-right { text-align: right; white-space: nowrap; }
           code { font-family: monospace; font-size: 11px; }
           
