@@ -3817,11 +3817,12 @@ function exportTableToPDF(tableId, filename) {
         <title>${cleanTitle}</title>
         <style>
           body { font-family: 'Segoe UI', Arial, sans-serif; padding: 50px 15px 15px 15px; color: #0f172a; background: #ffffff; margin: 0; }
-          table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 5px; }
-          th, td { border: 1px solid #94a3b8; padding: 4px 6px; text-align: left; }
-          th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; }
+          table { width: 100%; border-collapse: collapse !important; font-size: 9.5px; margin-top: 5px; border: 1.5px solid #000 !important; font-family: 'Segoe UI', Arial, sans-serif !important; }
+          th, td { border: 1px solid #94a3b8 !important; padding: 4px !important; color: #000 !important; }
+          th { background-color: #f1f5f9 !important; font-weight: 800 !important; font-size: 10px !important; text-align: center !important; }
+          tr:nth-child(even) td { background-color: #f8fafc !important; }
+          tr:last-child td { font-weight: 900 !important; background-color: #e2e8f0 !important; border-top: 2px solid #000 !important; border-bottom: 2px solid #000 !important; }
           .text-right { text-align: right; white-space: nowrap; }
-          tfoot tr { background-color: #e2e8f0; font-weight: bold; }
           code { font-family: monospace; font-size: 9.5px; }
           
           /* Force header repeating on every printed page */
@@ -3833,6 +3834,13 @@ function exportTableToPDF(tableId, filename) {
             .no-print, .print-preview-header { display: none !important; }
             body { padding: 0 !important; margin: 0 !important; zoom: 0.55; }
             @page { size: A4 landscape; margin: 5mm; }
+            
+            /* FORCE BROWSER TO PRINT BACKGROUND COLORS */
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
             table { page-break-inside: auto; margin: 0 auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group !important; }
