@@ -2936,23 +2936,23 @@ function findIndividualColKey({ head, code }) {
 
   if (head.includes("subscription ( current year)") || code === "RP-3.82") return "E";
   if (head.includes("donation general") || code === "RP-2.02" || code === "RP-2.02(A)") return "F";
-  if (head.includes("catholicate day") || code === "RP-19.03&.04") return "G";
-  if (head.includes("metropolitan fund") || code === "RP-19.11") return "H";
-  if (head.includes("mission sunday") || code === "RP-19.21") return "I";
-  if (head.includes("seminary day") || code === "RP-19.23") return "J";
-  if (head.includes("priest welfare") || code === "RP-19.15") return "K";
+  if (head.includes("catholicate day") || code === "RP-19.03&.04" || code === "RP-10.04/05") return "G";
+  if (head.includes("metropolitan fund") || code === "RP-19.11" || code === "RP-10.08") return "H";
+  if (head.includes("mission sunday") || code === "RP-19.21" || code === "RP-10.13") return "I";
+  if (head.includes("seminary day") || code === "RP-19.23" || code === "RP-10.15") return "J";
+  if (head.includes("priest welfare") || code === "RP-19.15" || code === "RP-10.10") return "K";
   if (head.includes("old cover collection") || code === "RP-10.17") return "L";
   if (head.includes("wedding anniversary") || code === "RP-3.17") return "M";
   if (head.includes("birthday offering") || code === "RP-3.16") return "N";
   if (head.includes("baptism") || code === "RP-3.14") return "O";
   if (head.includes("orma qurbana") || head.includes("holy qurbana") || code === "RP-3.12") return "P";
-  if (head.includes("sunday school day collection") || code === "RP-19.22") return "Q";
+  if (head.includes("sunday school day collection") || head.includes("sunday school") || code === "RP-19.22" || code === "RP-10.14") return "Q";
   if (head.includes("st.gregorios feast") || code === "RP-3.33") return "R";
   if (head.includes("parish day") || code === "RP-2.12") return "S";
   if (head.includes("christmas") || head.includes("new year") || code === "RP-3.11") return "T";
   if (head.includes("perunnal vanchika") || head.includes("house offertory box") || code === "RP-3.05") return "U";
   if (head.includes("passion week") || code === "RP-2.13") return "V";
-  if (head.includes("st. george feast") || code === "RP-16.50") return "W";
+  if (head.includes("st. george feast") || head.includes("st george feast") || code === "RP-16.50" || code === "RP-3.35") return "W";
   if (head.includes("st. thomas feast") || code === "RP-3.31") return "X";
   if (head.includes("st. mary's feast") || code === "RP-3.32") return "Y";
   if (head.includes("marriage bann") || code === "RP-3.15(A)") return "Z";
@@ -2969,7 +2969,7 @@ function findIndividualColKey({ head, code }) {
   if (head.includes("donation-breakfast") || code === "RP-2.16") return "AK";
   if (head.includes("miscellaneous income") || code === "RP-3.22") return "AL";
   if (head.includes("monthly subscription ( pervious year)") || code === "RP-3.83") return "E";
-  return "E";
+  return null;
 }
 
 function renderIndividualLedgers() {

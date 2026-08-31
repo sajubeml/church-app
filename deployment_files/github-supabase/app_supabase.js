@@ -5,76 +5,76 @@ const SUPABASE_ANON_KEY = 'sb_publishable_QjkuMrFMwtc2imGfy0XCdw_37h05VtE';
 
 window.SUPABASE_ACCESS_TOKEN = null;
 
-window.attemptLogin = async function() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    const errorDiv = document.getElementById('login-error');
-    const btn = document.getElementById('login-submit');
-    
-    if (!email || !password) {
-        errorDiv.textContent = "Please enter email and password.";
-        errorDiv.style.display = "block";
-        return;
+window.attemptLogin = async function () {
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-password').value;
+  const errorDiv = document.getElementById('login-error');
+  const btn = document.getElementById('login-submit');
+
+  if (!email || !password) {
+    errorDiv.textContent = "Please enter email and password.";
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "Authenticating...";
+  errorDiv.style.display = "none";
+
+  try {
+    const res = await originalFetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email: email, password: password })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error_description || data.msg || "Authentication failed");
     }
-    
-    btn.disabled = true;
-    btn.textContent = "Authenticating...";
-    errorDiv.style.display = "none";
-    
-    try {
-        const res = await originalFetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: email, password: password })
-        });
-        
-        const data = await res.json();
-        
-        if (!res.ok) {
-            throw new Error(data.error_description || data.msg || "Authentication failed");
-        }
-        
-        // Success! Save token
-        window.SUPABASE_ACCESS_TOKEN = data.access_token;
-        
-        // Hide overlay and show app
-        document.getElementById('login-overlay').style.display = 'none';
-        document.getElementById('main-app-container').style.display = 'block';
-        
-        // Trigger data reload now that we have the secure token!
-        if (typeof loadAllData === 'function') {
-            await loadAllData();
-        }
-        if (typeof window.loadCloudData === 'function') {
-            await window.loadCloudData(false);
-        }
-        
-    } catch(err) {
-        errorDiv.textContent = err.message;
-        errorDiv.style.display = "block";
-        btn.disabled = false;
-        btn.textContent = "Login";
+
+    // Success! Save token
+    window.SUPABASE_ACCESS_TOKEN = data.access_token;
+
+    // Hide overlay and show app
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('main-app-container').style.display = 'block';
+
+    // Trigger data reload now that we have the secure token!
+    if (typeof loadAllData === 'function') {
+      await loadAllData();
     }
+    if (typeof window.loadCloudData === 'function') {
+      await window.loadCloudData(false);
+    }
+
+  } catch (err) {
+    errorDiv.textContent = err.message;
+    errorDiv.style.display = "block";
+    btn.disabled = false;
+    btn.textContent = "Login";
+  }
 };
 
 
 const originalFetch = window.fetch;
-window.fetch = async function(url, options) {
+window.fetch = async function (url, options) {
   if (url && typeof url === 'string' && url.includes('api.php')) {
     try {
       const body = JSON.parse(options.body);
-      
+
       if (body.action === 'save_transaction') {
         const row = body.row;
         const insertObj = {};
-        const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
+        const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
         cols.forEach(c => {
-            insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
+          insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
         });
-        
+
         // Ultimate maxId calculator with global state to prevent double-click duplicate keys
         // ULTIMATE TEST: Use Date.now() for ID. If this throws a duplicate key, 
         // it means the primary key is NOT on the ID column, but on Receipt No (col_B)!
@@ -83,164 +83,164 @@ window.fetch = async function(url, options) {
         // and guarantees uniqueness across all devices without needing cloud sync!
         let safeId = Math.floor(Date.now() / 1000);
         if (window._lastInsertedId && safeId <= window._lastInsertedId) {
-            safeId = window._lastInsertedId + 1; // Prevent rapid-fire collisions
+          safeId = window._lastInsertedId + 1; // Prevent rapid-fire collisions
         }
         insertObj.id = safeId;
         window._lastInsertedId = safeId;
-        
-        
+
+
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-                'Content-Type': 'application/json',
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify(insertObj)
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(insertObj)
         });
-        
+
         if (!res.ok) {
-            const errText = await res.text();
-            throw new Error("Failed to save transaction: " + res.status + " " + errText);
+          const errText = await res.text();
+          throw new Error("Failed to save transaction: " + res.status + " " + errText);
         }
         if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
+          body.row.id = insertObj.id;
+          window.state.cashbook.push(body.row);
+          if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+          if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
         }
         return new Response(JSON.stringify({ success: true }));
       }
 
       if (body.action === 'get_app_state') {
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?select=*`, {
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-            }
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+          }
         });
         if (!res.ok) throw new Error("App state fetch failed: " + res.status);
         const data = await res.json();
-        
+
         const stateMap = {};
-        data.forEach(row => { 
-            try { 
-                stateMap[row.key_name] = typeof row.json_data === 'string' ? JSON.parse(row.json_data || '[]') : row.json_data; 
-            } catch(e){}
+        data.forEach(row => {
+          try {
+            stateMap[row.key_name] = typeof row.json_data === 'string' ? JSON.parse(row.json_data || '[]') : row.json_data;
+          } catch (e) { }
         });
         return new Response(JSON.stringify({ success: true, data: stateMap }));
       }
-      
+
       if (body.action === 'get_cashbook') {
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?select=*&order=id.asc`, {
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-            }
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+          }
         });
         if (!res.ok) throw new Error("Cashbook fetch failed: " + res.status);
         const data = await res.json();
 
         const mappedRows = data.map(row => {
-            const mapped = {};
-            if(row.id) mapped.id = row.id;
-            const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
-            cols.forEach(c => {
-                if (row['col_'+c] !== undefined && row['col_'+c] !== null && row['col_'+c] !== 'NULL') mapped[c] = row['col_'+c];
-            });
-            return mapped;
+          const mapped = {};
+          if (row.id) mapped.id = row.id;
+          const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+          cols.forEach(c => {
+            if (row['col_' + c] !== undefined && row['col_' + c] !== null && row['col_' + c] !== 'NULL') mapped[c] = row['col_' + c];
+          });
+          return mapped;
         });
         return new Response(JSON.stringify({ success: true, data: mappedRows }));
       }
-      
+
       if (body.action === 'save_app_state') {
         const updates = [];
         for (let key in body.state_data) {
-           updates.push({ key_name: key, json_data: body.state_data[key] }); 
+          updates.push({ key_name: key, json_data: body.state_data[key] });
         }
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?on_conflict=key_name`, {
-            method: 'POST',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-                'Content-Type': 'application/json',
-                'Prefer': 'resolution=merge-duplicates'
-            },
-            body: JSON.stringify(updates)
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'resolution=merge-duplicates'
+          },
+          body: JSON.stringify(updates)
         });
         if (!res.ok) throw new Error("Failed to save app state: " + res.status);
         if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
+          body.row.id = insertObj.id;
+          window.state.cashbook.push(body.row);
+          if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+          if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
         }
         return new Response(JSON.stringify({ success: true }));
       }
-      
+
       if (body.action === 'import_cashbook') {
         const rows = body.rows;
-        
+
         // 1. Delete all existing rows
         await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?id=gt.0`, {
-            method: 'DELETE',
-            headers: {
-                'apikey': SUPABASE_ANON_KEY,
-                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-            }
+          method: 'DELETE',
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+          }
         });
-        
+
         // 2. Prepare new rows for bulk insert with EXACTLY matching schema structure
         const insertArr = rows.map((row, idx) => {
-            const insertObj = { id: (idx + 1) }; 
-            const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
-            cols.forEach(c => {
-                insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
-            });
-            return insertObj;
+          const insertObj = { id: (idx + 1) };
+          const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+          cols.forEach(c => {
+            insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
+          });
+          return insertObj;
         });
-        
+
         // 3. Insert in batches
-        for (let i=0; i<insertArr.length; i+=500) {
-            const batch = insertArr.slice(i, i+500);
-            const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
-                method: 'POST',
-                headers: {
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(batch)
-            });
-            if (!res.ok) {
-                const errText = await res.text();
-                throw new Error("Batch insert failed: " + res.status + " " + errText);
-            }
+        for (let i = 0; i < insertArr.length; i += 500) {
+          const batch = insertArr.slice(i, i + 500);
+          const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
+            method: 'POST',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(batch)
+          });
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error("Batch insert failed: " + res.status + " " + errText);
+          }
         }
-        
+
         if (window.state && window.state.cashbook) {
-            body.row.id = insertObj.id;
-            window.state.cashbook.push(body.row);
-            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-            if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
+          body.row.id = insertObj.id;
+          window.state.cashbook.push(body.row);
+          if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+          if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
         }
         return new Response(JSON.stringify({ success: true }));
       }
-      
-    } catch(err) {
+
+    } catch (err) {
       console.error('Supabase Mock Fetch Error:', err);
       alert("Database Save Error:\n" + err.message);
       return new Response(JSON.stringify({ success: false, message: err.message }));
     }
   }
-  
+
   return originalFetch(url, options);
 };
 
-window.onerror = function(message, source, lineno, colno, error) {
-    alert("JS ERROR:\n" + message + "\nLine: " + lineno);
-    return false;
+window.onerror = function (message, source, lineno, colno, error) {
+  alert("JS ERROR:\n" + message + "\nLine: " + lineno);
+  return false;
 };
 /**
  * St. Gregorios Church Accounting Application Logic
@@ -276,13 +276,13 @@ const state = {
 
 let cbPage = 1;
 let cbPageSize = 100;
-window.nextCbPage = function() { cbPage++; renderCashbook(); };
-window.prevCbPage = function() { if(cbPage > 1) { cbPage--; renderCashbook(); } };
+window.nextCbPage = function () { cbPage++; renderCashbook(); };
+window.prevCbPage = function () { if (cbPage > 1) { cbPage--; renderCashbook(); } };
 
 let indivPage = 1;
 let indivPageSize = 100;
-window.nextIndivPage = function() { indivPage++; renderIndividualLedgers(); };
-window.prevIndivPage = function() { if(indivPage > 1) { indivPage--; renderIndividualLedgers(); } };
+window.nextIndivPage = function () { indivPage++; renderIndividualLedgers(); };
+window.prevIndivPage = function () { if (indivPage > 1) { indivPage--; renderIndividualLedgers(); } };
 
 // Helper to extract column value regardless of cell key format ("B" or "B2" or "B3" or "AA4")
 function getColVal(rowObj, colLetter) {
@@ -366,7 +366,7 @@ function formatCurrency(val) {
   if (!cleaned) return "";
   const num = Math.round(parseFloat(cleaned));
   if (isNaN(num)) return "";
-  return "₹ " + num.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  return num.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
 // ----------------------------------------------------
@@ -423,7 +423,7 @@ function numberToIndianWords(amount) {
 document.addEventListener("DOMContentLoaded", async () => {
   if (!verifyLicenseGuard()) return;
   await loadAllData();
-  try { if(window.loadCloudData) await window.loadCloudData(); } catch(e) { console.warn("Cloud sync skipped"); }
+  try { if (window.loadCloudData) await window.loadCloudData(); } catch (e) { console.warn("Cloud sync skipped"); }
   setupNavigation();
   setupFormEventListeners();
   setupCashbookViewListeners();
@@ -523,7 +523,7 @@ async function loadAllData() {
         if (stateData.data.CHURCH_MASTER_MEMBERS) state.members = stateData.data.CHURCH_MASTER_MEMBERS;
         console.log("App state loaded from MySQL cloud!");
       }
-    } catch(e) {
+    } catch (e) {
       console.warn("Cloud state fetch failed, falling back to LocalStorage.");
     }
 
@@ -535,34 +535,34 @@ async function loadAllData() {
       if (savedMembers) {
         try { state.individual = JSON.parse(savedMembers); } catch (e) { }
       }
-    } catch(e) { }
+    } catch (e) { }
 
     try {
       const savedHeads = localStorage.getItem("CHURCH_ACCOUNT_HEADS");
       if (savedHeads) {
         try { state.customAccountHeads = JSON.parse(savedHeads); } catch (e) { }
       }
-    } catch(e) { }
+    } catch (e) { }
 
     try {
       const savedDeletedHeads = localStorage.getItem("CHURCH_DELETED_HEADS");
       if (savedDeletedHeads) {
         try { state.deletedAccountHeads = JSON.parse(savedDeletedHeads); } catch (e) { }
       }
-    } catch(e) { }
+    } catch (e) { }
     if (!Array.isArray(state.deletedAccountHeads)) state.deletedAccountHeads = [];
 
     // Purge any master receipt codes from deleted list to guarantee they always appear
     const masterCodes = ["CD", "RP-3.61", "RP-10.14", "RP-1.01", "RP-1.02", "RP-1.03", "RP-2.02", "RP-2.14", "RP-3.12", "RP-3.16", "RP-3.17", "RP-3.82", "RP-3.83"];
     state.deletedAccountHeads = state.deletedAccountHeads.filter(c => !masterCodes.includes(c));
-    try { localStorage.setItem("CHURCH_DELETED_HEADS", JSON.stringify(state.deletedAccountHeads)); } catch(e) { }
+    try { localStorage.setItem("CHURCH_DELETED_HEADS", JSON.stringify(state.deletedAccountHeads)); } catch (e) { }
 
     try {
       const savedDeletedMembers = localStorage.getItem("CHURCH_DELETED_MEMBERS");
       if (savedDeletedMembers) {
         try { state.deletedMembers = JSON.parse(savedDeletedMembers); } catch (e) { }
       }
-    } catch(e) { }
+    } catch (e) { }
     if (!Array.isArray(state.deletedMembers)) state.deletedMembers = [];
 
     // If Fresh Start Build: Purge any old full-data localStorage caches
@@ -576,7 +576,7 @@ async function loadAllData() {
           localStorage.removeItem("CHURCH_DELETED_MEMBERS");
           localStorage.setItem("CHURCH_FRESH_START_INITIALIZED", "true");
         }
-      } catch(e) { }
+      } catch (e) { }
       state.cashbook = [];
       state.trialBalance = [];
       state.auction = [];
@@ -588,12 +588,12 @@ async function loadAllData() {
       if (savedCashbook) {
         try { state.cashbook = JSON.parse(savedCashbook); } catch (e) { }
       }
-    } catch(e) { }
+    } catch (e) { }
 
     try {
       const savedPass = localStorage.getItem("CHURCH_ADMIN_PASS");
       if (savedPass) { state.adminPassword = savedPass; }
-    } catch(e) { }
+    } catch (e) { }
 
     try {
       const savedRecNo = localStorage.getItem("CHURCH_RECEIPT_NO");
@@ -601,7 +601,7 @@ async function loadAllData() {
         const parsedRec = parseInt(savedRecNo, 10);
         if (!isNaN(parsedRec)) state.currentReceiptNo = parsedRec;
       }
-    } catch(e) { }
+    } catch (e) { }
 
     try {
       const savedVouNo = localStorage.getItem("CHURCH_VOUCHER_NO");
@@ -609,7 +609,7 @@ async function loadAllData() {
         const parsedVou = parseInt(savedVouNo, 10);
         if (!isNaN(parsedVou)) state.currentVoucherNo = parsedVou;
       }
-    } catch(e) { }
+    } catch (e) { }
 
     calculateNextNumbers();
     populateMemberDropdown();
@@ -680,256 +680,256 @@ function getAllAccountHeads(type = "ALL") {
   // 1. MASTER RECEIPT SIDE HEADERS (BASELINE MASTER PRIORITY)
   const MASTER_RECEIPT_HEADS = [
     {
-        "code": "RP-1.01",
-        "name": "Opening Balance - Cash",
-        "category": "RECEIPT"
+      "code": "RP-1.01",
+      "name": "Opening Balance - Cash",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-1.02",
-        "name": "- Bank",
-        "category": "RECEIPT"
+      "code": "RP-1.02",
+      "name": "- Bank",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.82",
-        "name": "Monthly Subscription ( Current Year)",
-        "category": "RECEIPT"
+      "code": "RP-3.82",
+      "name": "Monthly Subscription ( Current Year)",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.83",
-        "name": "Monthly Subscription ( Pervious Year)",
-        "category": "RECEIPT"
+      "code": "RP-3.83",
+      "name": "Monthly Subscription ( Pervious Year)",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.16",
-        "name": "Birthday Offerings",
-        "category": "RECEIPT"
+      "code": "RP-3.16",
+      "name": "Birthday Offerings",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.17",
-        "name": "Wedding Anniversary Offerings",
-        "category": "RECEIPT"
+      "code": "RP-3.17",
+      "name": "Wedding Anniversary Offerings",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.12",
-        "name": "Orma Qurbana/Holy Qurbana",
-        "category": "RECEIPT"
+      "code": "RP-3.12",
+      "name": "Orma Qurbana/Holy Qurbana",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.17 (a)",
-        "name": "House Blessing",
-        "category": "RECEIPT"
+      "code": "RP-3.17 (a)",
+      "name": "House Blessing",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.14",
-        "name": "Marriage Bann",
-        "category": "RECEIPT"
+      "code": "RP-2.14",
+      "name": "Marriage Bann",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.14",
-        "name": "Baptism",
-        "category": "RECEIPT"
+      "code": "RP-3.14",
+      "name": "Baptism",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.19",
-        "name": "Cemetry Receipt",
-        "category": "RECEIPT"
+      "code": "RP-2.19",
+      "name": "Cemetry Receipt",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.61",
-        "name": "Sunday School",
-        "category": "RECEIPT"
+      "code": "RP-3.61",
+      "name": "Sunday School",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.66",
-        "name": "OVBS",
-        "category": "RECEIPT"
+      "code": "RP-3.66",
+      "name": "OVBS",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.64",
-        "name": "Kanika Prayer Group",
-        "category": "RECEIPT"
+      "code": "RP-3.64",
+      "name": "Kanika Prayer Group",
+      "category": "RECEIPT"
     },
     {
-        "code": "",
-        "name": "Miscellaneous Income",
-        "category": "RECEIPT"
+      "code": "",
+      "name": "Miscellaneous Income",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.52",
-        "name": "Certificate Fee",
-        "category": "RECEIPT"
+      "code": "RP-3.52",
+      "name": "Certificate Fee",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.02",
-        "name": "Donation General",
-        "category": "RECEIPT"
+      "code": "RP-2.02",
+      "name": "Donation General",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.02(a)",
-        "name": "Donation General-chair & tables",
-        "category": "RECEIPT"
+      "code": "RP-2.02(a)",
+      "name": "Donation General-chair & tables",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.16",
-        "name": "Donation-Breakfast",
-        "category": "RECEIPT"
+      "code": "RP-2.16",
+      "name": "Donation-Breakfast",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.20",
-        "name": "Donation- Others (Farewell)",
-        "category": "RECEIPT"
+      "code": "RP-2.20",
+      "name": "Donation- Others (Farewell)",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.211",
-        "name": "KMDC Grant",
-        "category": "RECEIPT"
+      "code": "RP-2.211",
+      "name": "KMDC Grant",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.03",
-        "name": "Kurishinthothi &",
-        "category": "RECEIPT"
+      "code": "RP-3.03",
+      "name": "Kurishinthothi &",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.04",
-        "name": "Koodaram",
-        "category": "RECEIPT"
+      "code": "RP-3.04",
+      "name": "Koodaram",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.05",
-        "name": "Perunnal Vanchika (House Offertory Box)",
-        "category": "RECEIPT"
+      "code": "RP-3.05",
+      "name": "Perunnal Vanchika (House Offertory Box)",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.10",
-        "name": "Kanicka Church",
-        "category": "RECEIPT"
+      "code": "RP-3.10",
+      "name": "Kanicka Church",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.13",
-        "name": "Kanicka-Chapel",
-        "category": "RECEIPT"
+      "code": "RP-3.13",
+      "name": "Kanicka-Chapel",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.15(a)",
-        "name": "Auction Dues - Old",
-        "category": "RECEIPT"
+      "code": "RP-2.15(a)",
+      "name": "Auction Dues - Old",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.15",
-        "name": "Auction current",
-        "category": "RECEIPT"
+      "code": "RP-2.15",
+      "name": "Auction current",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.15(b)",
-        "name": "Petty Auction",
-        "category": "RECEIPT"
+      "code": "RP-2.15(b)",
+      "name": "Petty Auction",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.04/05",
-        "name": "Catholicate Day & Recessa",
-        "category": "RECEIPT"
+      "code": "RP-10.04/05",
+      "name": "Catholicate Day & Recessa",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.08",
-        "name": "Metropolitan Fund",
-        "category": "RECEIPT"
+      "code": "RP-10.08",
+      "name": "Metropolitan Fund",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.13",
-        "name": "Mission Sunday",
-        "category": "RECEIPT"
+      "code": "RP-10.13",
+      "name": "Mission Sunday",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.15",
-        "name": "Seminary Day",
-        "category": "RECEIPT"
+      "code": "RP-10.15",
+      "name": "Seminary Day",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.10",
-        "name": "Priest Welfare Fund",
-        "category": "RECEIPT"
+      "code": "RP-10.10",
+      "name": "Priest Welfare Fund",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.09",
-        "name": "Marriage Kaimuthu",
-        "category": "RECEIPT"
+      "code": "RP-10.09",
+      "name": "Marriage Kaimuthu",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.17",
-        "name": "Old Cover Collection Dues",
-        "category": "RECEIPT"
+      "code": "RP-10.17",
+      "name": "Old Cover Collection Dues",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.14",
-        "name": "Sunday School Day Collection",
-        "category": "RECEIPT"
+      "code": "RP-10.14",
+      "name": "Sunday School Day Collection",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-10.16",
-        "name": "Gerbo Sunday",
-        "category": "RECEIPT"
+      "code": "RP-10.16",
+      "name": "Gerbo Sunday",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.35",
-        "name": "St. George Feast",
-        "category": "RECEIPT"
+      "code": "RP-3.35",
+      "name": "St. George Feast",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.31",
-        "name": "St. Thomas Feast",
-        "category": "RECEIPT"
+      "code": "RP-3.31",
+      "name": "St. Thomas Feast",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.32",
-        "name": "St. Mary's Feast",
-        "category": "RECEIPT"
+      "code": "RP-3.32",
+      "name": "St. Mary's Feast",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-3.33",
-        "name": "St.Gregorios Feast ( Annual Feast)",
-        "category": "RECEIPT"
+      "code": "RP-3.33",
+      "name": "St.Gregorios Feast ( Annual Feast)",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.11",
-        "name": "Christmas / New Year Collection",
-        "category": "RECEIPT"
+      "code": "RP-2.11",
+      "name": "Christmas / New Year Collection",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.12",
-        "name": "Parish Day/Harvest / Collection",
-        "category": "RECEIPT"
+      "code": "RP-2.12",
+      "name": "Parish Day/Harvest / Collection",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-2.13",
-        "name": "Passion Week Collection",
-        "category": "RECEIPT"
+      "code": "RP-2.13",
+      "name": "Passion Week Collection",
+      "category": "RECEIPT"
     },
     {
-        "code": "RP-8.03",
-        "name": "Interest Received SB Account",
-        "category": "RECEIPT"
+      "code": "RP-8.03",
+      "name": "Interest Received SB Account",
+      "category": "RECEIPT"
     },
     {
-        "code": "",
-        "name": "Advance A/C Sound System",
-        "category": "RECEIPT"
+      "code": "",
+      "name": "Advance A/C Sound System",
+      "category": "RECEIPT"
     },
     {
-        "code": "",
-        "name": "Diocesan Prayer Meeting Income",
-        "category": "RECEIPT"
+      "code": "",
+      "name": "Diocesan Prayer Meeting Income",
+      "category": "RECEIPT"
     },
     {
-        "code": "",
-        "name": "IOBD Charity",
-        "category": "RECEIPT"
+      "code": "",
+      "name": "IOBD Charity",
+      "category": "RECEIPT"
     },
     {
-        "code": "",
-        "name": "Fixed Deposit Withdrawn",
-        "category": "RECEIPT"
+      "code": "",
+      "name": "Fixed Deposit Withdrawn",
+      "category": "RECEIPT"
     }
-];
+  ];
 
   MASTER_RECEIPT_HEADS.forEach(h => {
     addHead(h.code, h.name, "RECEIPT", "Budget Master", true);
@@ -937,311 +937,311 @@ function getAllAccountHeads(type = "ALL") {
 
   const MASTER_PAYMENT_HEADS = [
     {
-        "code": "RP-16.68",
-        "name": "MGOCSM & OCYM",
-        "category": "PAYMENT"
+      "code": "RP-16.68",
+      "name": "MGOCSM & OCYM",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.31",
-        "name": "Salary Quota to Diocese(Vicar)",
-        "category": "PAYMENT"
+      "code": "RP-19.31",
+      "name": "Salary Quota to Diocese(Vicar)",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.03 (a)",
-        "name": "Salary to Sexton",
-        "category": "PAYMENT"
+      "code": "RP-12.03 (a)",
+      "name": "Salary to Sexton",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.03 (b)",
-        "name": "Salary to Watchman(Cemetry)",
-        "category": "PAYMENT"
+      "code": "RP-12.03 (b)",
+      "name": "Salary to Watchman(Cemetry)",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.03 (c)",
-        "name": "Salary to Ayah",
-        "category": "PAYMENT"
+      "code": "RP-12.03 (c)",
+      "name": "Salary to Ayah",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.02 (a)",
-        "name": "Medical Allowance to Vicar",
-        "category": "PAYMENT"
+      "code": "RP-12.02 (a)",
+      "name": "Medical Allowance to Vicar",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.06",
-        "name": "Medical Allowance to Sexton",
-        "category": "PAYMENT"
+      "code": "RP-12.06",
+      "name": "Medical Allowance to Sexton",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.02 (c)",
-        "name": "Telephone Allowance to Vicar",
-        "category": "PAYMENT"
+      "code": "RP-12.02 (c)",
+      "name": "Telephone Allowance to Vicar",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.02(d)",
-        "name": "Local Travelling Allowance to Vicar",
-        "category": "PAYMENT"
+      "code": "RP-12.02(d)",
+      "name": "Local Travelling Allowance to Vicar",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.02(e)",
-        "name": "Annual Travelling Allowance to Vicar",
-        "category": "PAYMENT"
+      "code": "RP-12.02(e)",
+      "name": "Annual Travelling Allowance to Vicar",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.02(f)",
-        "name": "Leave Salary to Vicar",
-        "category": "PAYMENT"
+      "code": "RP-12.02(f)",
+      "name": "Leave Salary to Vicar",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.02(g)",
-        "name": "Gift Purse to Vicar",
-        "category": "PAYMENT"
+      "code": "RP-12.02(g)",
+      "name": "Gift Purse to Vicar",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.07",
-        "name": "Kaimuthu to Thirumeni",
-        "category": "PAYMENT"
+      "code": "RP-12.07",
+      "name": "Kaimuthu to Thirumeni",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-12.07(a)",
-        "name": "Kaimuthu to Visiting priest",
-        "category": "PAYMENT"
+      "code": "RP-12.07(a)",
+      "name": "Kaimuthu to Visiting priest",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.04",
-        "name": "Church Service Expense",
-        "category": "PAYMENT"
+      "code": "RP- 16.04",
+      "name": "Church Service Expense",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.11(a)",
-        "name": "Electricity Charges - Church",
-        "category": "PAYMENT"
+      "code": "RP- 16.11(a)",
+      "name": "Electricity Charges - Church",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.11(b)",
-        "name": "Electricity Charges - Parsonage",
-        "category": "PAYMENT"
+      "code": "RP- 16.11(b)",
+      "name": "Electricity Charges - Parsonage",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.11(c)",
-        "name": "Elecricity Charges - Cemetry",
-        "category": "PAYMENT"
+      "code": "RP- 16.11(c)",
+      "name": "Elecricity Charges - Cemetry",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.08",
-        "name": "Breakfast Expenses",
-        "category": "PAYMENT"
+      "code": "RP- 16.08",
+      "name": "Breakfast Expenses",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 14.31(a)",
-        "name": "Church Renovation Expenses",
-        "category": "PAYMENT"
+      "code": "RP- 14.31(a)",
+      "name": "Church Renovation Expenses",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 14.31",
-        "name": "Maintenance of Church & Parsonage",
-        "category": "PAYMENT"
+      "code": "RP- 14.31",
+      "name": "Maintenance of Church & Parsonage",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.06",
-        "name": "Passion Week Expenses",
-        "category": "PAYMENT"
+      "code": "RP- 16.06",
+      "name": "Passion Week Expenses",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 14.35",
-        "name": "Maintenance of Cemetry",
-        "category": "PAYMENT"
+      "code": "RP- 14.35",
+      "name": "Maintenance of Cemetry",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-14.05",
-        "name": "Postage",
-        "category": "PAYMENT"
+      "code": "RP-14.05",
+      "name": "Postage",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.35",
-        "name": "Canteen Expenses",
-        "category": "PAYMENT"
+      "code": "RP- 16.35",
+      "name": "Canteen Expenses",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-14.06",
-        "name": "Printing & Stationery",
-        "category": "PAYMENT"
+      "code": "RP-14.06",
+      "name": "Printing & Stationery",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.36",
-        "name": "Cemetry Development",
-        "category": "PAYMENT"
+      "code": "RP- 16.36",
+      "name": "Cemetry Development",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.87",
-        "name": "Grant - Sneha Bhavan",
-        "category": "PAYMENT"
+      "code": "RP- 16.87",
+      "name": "Grant - Sneha Bhavan",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.89",
-        "name": "Gift & Mementoes",
-        "category": "PAYMENT"
+      "code": "RP- 16.89",
+      "name": "Gift & Mementoes",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.62",
-        "name": "Sunday School Expense",
-        "category": "PAYMENT"
+      "code": "RP- 16.62",
+      "name": "Sunday School Expense",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.67",
-        "name": "OVBS",
-        "category": "PAYMENT"
+      "code": "RP- 16.67",
+      "name": "OVBS",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.65",
-        "name": "Prayer Group",
-        "category": "PAYMENT"
+      "code": "RP- 16.65",
+      "name": "Prayer Group",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 14.03",
-        "name": "Travelling Expenses",
-        "category": "PAYMENT"
+      "code": "RP- 14.03",
+      "name": "Travelling Expenses",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 14.04",
-        "name": "Audit Fee",
-        "category": "PAYMENT"
+      "code": "RP- 14.04",
+      "name": "Audit Fee",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 13.02",
-        "name": "Bank Charges",
-        "category": "PAYMENT"
+      "code": "RP- 13.02",
+      "name": "Bank Charges",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.69",
-        "name": "St Joseph Orthodox Fellowship",
-        "category": "PAYMENT"
+      "code": "RP- 16.69",
+      "name": "St Joseph Orthodox Fellowship",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.70",
-        "name": "St Dionysius Orthodox Fellowship",
-        "category": "PAYMENT"
+      "code": "RP- 16.70",
+      "name": "St Dionysius Orthodox Fellowship",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-14.34",
-        "name": "Repairs And Maintenance-Vehicles",
-        "category": "PAYMENT"
+      "code": "RP-14.34",
+      "name": "Repairs And Maintenance-Vehicles",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.03&.04",
-        "name": "Catholicate Day & Recceessa",
-        "category": "PAYMENT"
+      "code": "RP-19.03&.04",
+      "name": "Catholicate Day & Recceessa",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.11",
-        "name": "Metropolitan Fund",
-        "category": "PAYMENT"
+      "code": "RP-19.11",
+      "name": "Metropolitan Fund",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.21",
-        "name": "Mission Sunday",
-        "category": "PAYMENT"
+      "code": "RP-19.21",
+      "name": "Mission Sunday",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.22",
-        "name": "Sunday School Cover Collection",
-        "category": "PAYMENT"
+      "code": "RP-19.22",
+      "name": "Sunday School Cover Collection",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.23",
-        "name": "Seminary Day",
-        "category": "PAYMENT"
+      "code": "RP-19.23",
+      "name": "Seminary Day",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.15",
-        "name": "Priest Welfare Fund",
-        "category": "PAYMENT"
+      "code": "RP-19.15",
+      "name": "Priest Welfare Fund",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.12",
-        "name": "Marriage Kaimuthu",
-        "category": "PAYMENT"
+      "code": "RP-19.12",
+      "name": "Marriage Kaimuthu",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.32",
-        "name": "Annual Kaimuthu to Tirumeni",
-        "category": "PAYMENT"
+      "code": "RP-19.32",
+      "name": "Annual Kaimuthu to Tirumeni",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-19.24",
-        "name": "Gerbo Sunday",
-        "category": "PAYMENT"
+      "code": "RP-19.24",
+      "name": "Gerbo Sunday",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.50",
-        "name": "St. George Feast",
-        "category": "PAYMENT"
+      "code": "RP- 16.50",
+      "name": "St. George Feast",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.47",
-        "name": "St. Mary's Feast",
-        "category": "PAYMENT"
+      "code": "RP- 16.47",
+      "name": "St. Mary's Feast",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP- 16.48",
-        "name": "St.Gregorios Feast ( Annual Feast)",
-        "category": "PAYMENT"
+      "code": "RP- 16.48",
+      "name": "St.Gregorios Feast ( Annual Feast)",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-16.15",
-        "name": "Christmas & New Year Expense",
-        "category": "PAYMENT"
+      "code": "RP-16.15",
+      "name": "Christmas & New Year Expense",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-16.14",
-        "name": "Harvest Day/Parish Day Expense",
-        "category": "PAYMENT"
+      "code": "RP-16.14",
+      "name": "Harvest Day/Parish Day Expense",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-16.38",
-        "name": "Miscellaneous Expenses",
-        "category": "PAYMENT"
+      "code": "RP-16.38",
+      "name": "Miscellaneous Expenses",
+      "category": "PAYMENT"
     },
     {
-        "code": "",
-        "name": "Fixed Deposit",
-        "category": "PAYMENT"
+      "code": "",
+      "name": "Fixed Deposit",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-18.16",
-        "name": "Asset Purchase",
-        "category": "PAYMENT"
+      "code": "RP-18.16",
+      "name": "Asset Purchase",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-18.23",
-        "name": "Electrical Equipments",
-        "category": "PAYMENT"
+      "code": "RP-18.23",
+      "name": "Electrical Equipments",
+      "category": "PAYMENT"
     },
     {
-        "code": "",
-        "name": "Ecumenical Meeting Expenses (UCF)",
-        "category": "PAYMENT"
+      "code": "",
+      "name": "Ecumenical Meeting Expenses (UCF)",
+      "category": "PAYMENT"
     },
     {
-        "code": "RP-16.32",
-        "name": "Diocesan Prayer Meeting Expenses",
-        "category": "PAYMENT"
+      "code": "RP-16.32",
+      "name": "Diocesan Prayer Meeting Expenses",
+      "category": "PAYMENT"
     },
     {
-        "code": "",
-        "name": "Farewell Expenses",
-        "category": "PAYMENT"
+      "code": "",
+      "name": "Farewell Expenses",
+      "category": "PAYMENT"
     },
     {
-        "code": "",
-        "name": "Transport Charges ( Ex. Vicar)",
-        "category": "PAYMENT"
+      "code": "",
+      "name": "Transport Charges ( Ex. Vicar)",
+      "category": "PAYMENT"
     },
     {
-        "code": "",
-        "name": "IOBD Charity",
-        "category": "PAYMENT"
+      "code": "",
+      "name": "IOBD Charity",
+      "category": "PAYMENT"
     }
-];
+  ];
 
   MASTER_PAYMENT_HEADS.forEach(h => {
     addHead(h.code, h.name, "PAYMENT", "Budget Master", true);
@@ -1466,7 +1466,7 @@ function setupNavigation() {
       tab.classList.add("active");
       const targetPane = document.getElementById(paneId);
       if (targetPane) targetPane.classList.add("active");
-      
+
       if (paneId === "tabAdmin") {
         renderAdminTab();
       } else if (paneId === "tabMemberDirectory") {
@@ -1633,7 +1633,7 @@ function updateDocTypeView() {
         txtNum.title = "";
       }
     }
-  } catch(e) {
+  } catch (e) {
     console.error("Error setting readonly state:", e);
   }
 
@@ -1954,7 +1954,7 @@ function commitCartToLedgers() {
         receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
         receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
       } : {
-        payment_date: dateStr, payment_voucher_no: docNo, 
+        payment_date: dateStr, payment_voucher_no: docNo,
         payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
         payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
       };
@@ -1969,13 +1969,13 @@ function commitCartToLedgers() {
         receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
         receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
       } : {
-        payment_date: dateStr, payment_voucher_no: docNo, 
+        payment_date: dateStr, payment_voucher_no: docNo,
         payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
         payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
       };
 
       const newRow = {
-        A: dateStr, 
+        A: dateStr,
         B: isReceipt ? docNo : "",
         C: isReceipt ? regNo : "",
         D: isReceipt ? memberName : "",
@@ -1992,7 +1992,7 @@ function commitCartToLedgers() {
         P: !isReceipt && isCash ? item.amount : "",
         Q: !isReceipt && !isCash ? item.amount : ""
       };
-      
+
       return fetch('./api.php?_t=' + Date.now(), {
         method: 'POST',
         credentials: 'same-origin',
@@ -2616,7 +2616,7 @@ function renderCashbook() {
     if (col === "cash" || col === "bank" || col === "amt") return "amtKey";
     return "dateKey";
   };
-  
+
   const getPropP = (col) => {
     if (col === "date" || col === "paydate") return "dateKey";
     if (col === "rec" || col === "voucher") return "voucherNoKey";
@@ -2840,10 +2840,10 @@ function handleIndivHeaderClick(colKey) {
   renderIndividualLedgers();
 }
 
-
 function getLatestSubscriptionRemark(regNo) {
   if (!state.cashbook) return "";
   
+  // Parse DD-MM-YYYY to Date object for comparison
   const parseDate = (dStr) => {
     if (!dStr) return new Date(0);
     const parts = String(dStr).trim().split('-');
@@ -2914,11 +2914,11 @@ function getCleanSubUptoLive(text, hasSub) {
 function findIndividualColKey({ head, code }) {
   if (!state.individual || state.individual.length < 4) return null;
   const headerRow = state.individual[3];
-  
+
   head = (head || "").toLowerCase().trim();
   code = (code || "").toUpperCase().trim();
   code = code.replace(/^RP[-\s]*/i, "RP-").replace(/\s+/g, '');
-  
+
   const incomeCols = [];
   for (let key in headerRow) {
     const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
@@ -2933,26 +2933,26 @@ function findIndividualColKey({ head, code }) {
   for (let col of incomeCols) {
     if (head && head === col.title) return col.key;
   }
-  
+
   if (head.includes("subscription ( current year)") || code === "RP-3.82") return "E";
   if (head.includes("donation general") || code === "RP-2.02" || code === "RP-2.02(A)") return "F";
-  if (head.includes("catholicate day") || code === "RP-19.03&.04") return "G";
-  if (head.includes("metropolitan fund") || code === "RP-19.11") return "H";
-  if (head.includes("mission sunday") || code === "RP-19.21") return "I";
-  if (head.includes("seminary day") || code === "RP-19.23") return "J";
-  if (head.includes("priest welfare") || code === "RP-19.15") return "K";
+  if (head.includes("catholicate day") || code === "RP-19.03&.04" || code === "RP-10.04/05") return "G";
+  if (head.includes("metropolitan fund") || code === "RP-19.11" || code === "RP-10.08") return "H";
+  if (head.includes("mission sunday") || code === "RP-19.21" || code === "RP-10.13") return "I";
+  if (head.includes("seminary day") || code === "RP-19.23" || code === "RP-10.15") return "J";
+  if (head.includes("priest welfare") || code === "RP-19.15" || code === "RP-10.10") return "K";
   if (head.includes("old cover collection") || code === "RP-10.17") return "L";
   if (head.includes("wedding anniversary") || code === "RP-3.17") return "M";
   if (head.includes("birthday offering") || code === "RP-3.16") return "N";
   if (head.includes("baptism") || code === "RP-3.14") return "O";
   if (head.includes("orma qurbana") || head.includes("holy qurbana") || code === "RP-3.12") return "P";
-  if (head.includes("sunday school day collection") || code === "RP-19.22") return "Q";
+  if (head.includes("sunday school day collection") || head.includes("sunday school") || code === "RP-19.22" || code === "RP-10.14") return "Q";
   if (head.includes("st.gregorios feast") || code === "RP-3.33") return "R";
   if (head.includes("parish day") || code === "RP-2.12") return "S";
   if (head.includes("christmas") || head.includes("new year") || code === "RP-3.11") return "T";
   if (head.includes("perunnal vanchika") || head.includes("house offertory box") || code === "RP-3.05") return "U";
   if (head.includes("passion week") || code === "RP-2.13") return "V";
-  if (head.includes("st. george feast") || code === "RP-16.50") return "W";
+  if (head.includes("st. george feast") || head.includes("st george feast") || code === "RP-16.50" || code === "RP-3.35") return "W";
   if (head.includes("st. thomas feast") || code === "RP-3.31") return "X";
   if (head.includes("st. mary's feast") || code === "RP-3.32") return "Y";
   if (head.includes("marriage bann") || code === "RP-3.15(A)") return "Z";
@@ -2969,7 +2969,7 @@ function findIndividualColKey({ head, code }) {
   if (head.includes("donation-breakfast") || code === "RP-2.16") return "AK";
   if (head.includes("miscellaneous income") || code === "RP-3.22") return "AL";
   if (head.includes("monthly subscription ( pervious year)") || code === "RP-3.83") return "E";
-  return "E";
+  return null;
 }
 
 function renderIndividualLedgers() {
@@ -3001,7 +3001,7 @@ function renderIndividualLedgers() {
   for (let key in headerRow) {
     const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
     if (colLetter !== "A" && colLetter !== "B" && colLetter !== "C" && colLetter !== "D" && colLetter !== "AM") {
-      const title = String(headerRow[key] || "").trim();
+      const title = String(headerRow[key] || "").trim().replace(/\n/g, '<br>');
       if (title && title.toLowerCase() !== "grand total") {
         if (!incomeCols.some(c => c.key === colLetter)) {
           incomeCols.push({ key: colLetter, title });
@@ -3025,7 +3025,7 @@ function renderIndividualLedgers() {
     return true;
   });
 
-  // Aggregate Cashbook dynamically - Cash Book is the single source of truth
+  // 3a. Aggregate Cashbook dynamically
   const cbAgg = {};
   if (state.cashbook && state.cashbook.length) {
     state.cashbook.forEach(cb => {
@@ -3035,6 +3035,7 @@ function renderIndividualLedgers() {
       const code = String(cb["F"] || "").trim();
       const amtText = String(cb["H"] || cb["I"] || "0").replace(/,/g, '');
       const amt = parseFloat(amtText) || 0;
+      
       const colKey = findIndividualColKey({ head, code });
       if (colKey) {
         if (!cbAgg[reg]) cbAgg[reg] = {};
@@ -3050,19 +3051,28 @@ function renderIndividualLedgers() {
     let rawSubUpto = getColVal(row, "D");
 
     const colValues = {};
-    incomeCols.forEach(col => { colValues[col.key] = 0; });
+    incomeCols.forEach(col => {
+      colValues[col.key] = 0;
+    });
     if (cbAgg[regNo]) {
       for (let k in cbAgg[regNo]) {
-        if (colValues.hasOwnProperty(k)) colValues[k] = cbAgg[regNo][k];
+        if (colValues.hasOwnProperty(k)) {
+          colValues[k] = cbAgg[regNo][k];
+        }
       }
     }
 
-    let grandNum = 0;
-    for (let k in colValues) grandNum += colValues[k];
+    let newGrandNum = 0;
+    for (let k in colValues) {
+      newGrandNum += colValues[k];
+    }
+    const grandNum = newGrandNum;
     const grandVal = grandNum.toLocaleString('en-IN');
 
     const cashbookRemark = getLatestSubscriptionRemark(regNo);
-    if (cashbookRemark) rawSubUpto = cashbookRemark;
+    if (cashbookRemark) {
+      rawSubUpto = cashbookRemark;
+    }
 
     const subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["E"] || 0) > 0);
 
@@ -3119,7 +3129,7 @@ function renderIndividualLedgers() {
     <th class="text-center sticky-col col-sl sortable-th" onclick="handleIndivHeaderClick('B')">Sl. No.</th>
     <th class="sticky-col col-reg sortable-th" onclick="handleIndivHeaderClick('B')">Reg No. ${state.sortCol === 'B' ? (state.sortAsc ? '▲' : '▼') : ''}</th>
     <th class="sticky-col col-name sortable-th" onclick="handleIndivHeaderClick('C')">Name of HoF ${state.sortCol === 'C' ? (state.sortAsc ? '▲' : '▼') : ''}</th>
-    <th>Subscription Upto</th>`;
+    <th>Subscription<br>Upto</th>`;
 
   displayCols.forEach(col => {
     const isSorted = state.sortCol === col.key;
@@ -3134,7 +3144,7 @@ function renderIndividualLedgers() {
   // 8. Render Table Body <tbody>
   let overallGrandTotal = 0;
   const totalCount = filteredMembers.length;
-  
+
   // Need to compute overall grand total for the footer regardless of pagination
   filteredMembers.forEach(m => {
     overallGrandTotal += m.grandNum;
@@ -3166,7 +3176,7 @@ function renderIndividualLedgers() {
       <td class="sticky-col col-name" title="${m.name}"><strong>${m.name}</strong></td>
       <td><strong>${formatSubUptoMonthYear(m.subUpto)}</strong></td>
       ${colCellsHtml}
-      <td class="text-right sticky-col col-grand" style="font-weight:800; color:var(--accent-color);">${formatCurrency(m.grandNum) || '₹ 0.00'}</td>
+      <td class="text-right sticky-col col-grand" style="font-weight:800; color:var(--accent-color);">${formatCurrency(m.grandNum) || '0'}</td>
       <td class="text-center sticky-col" style="background:#fff;"><button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; font-weight:700; color:var(--primary-color); border-color:var(--primary-color);" onclick="promptAdminPassword('EDIT_MEMBER', '${m.regNo}')">✏️ Edit</button></td>
     `;
     tbody.appendChild(tr);
@@ -3558,7 +3568,7 @@ function exportTableToExcel(tableId, filename) {
     }
 
     const cleanTable = createCleanExportTable(tableId);
-    
+
     // Restore pagination immediately after scraping DOM
     if (tableId === 'cashbookTable') {
       cbPageSize = originalCbSize;
@@ -3578,10 +3588,15 @@ function exportTableToExcel(tableId, filename) {
     const nameStr = filename || "St_Gregorios_Accounting_Export";
     const sheetTitle = nameStr.replace(/_/g, " ");
 
+    const dateToday = new Date();
+    const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    const formattedDate = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
+
     const churchHeaderRows = tableId === "indivTable" ? [
       ["ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"],
       ["Government House Road, Nazarbad, Mysuru, Karnataka 570 010"],
-      ["Individual Account updated upto 31-07-2026"],
+      [`Individual Account updated upto ${formattedDate}`],
       []
     ] : [
       ["ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"],
@@ -3593,24 +3608,24 @@ function exportTableToExcel(tableId, filename) {
     if (window.XLSX) {
       const ws = XLSX.utils.aoa_to_sheet(churchHeaderRows);
       XLSX.utils.sheet_add_dom(ws, cleanTable, { origin: "A5", raw: true });
-      
+
       const range = XLSX.utils.decode_range(ws['!ref']);
-      
+
       // Merge header rows to center text across the page
       const totalCols = range.e.c;
       if (!ws['!merges']) ws['!merges'] = [];
       for (let i = 0; i < 3; i++) {
         ws['!merges'].push({ s: { r: i, c: 0 }, e: { r: i, c: totalCols } });
       }
-      
+
       for (let R = 4; R <= range.e.r; ++R) {
         for (let C = 0; C <= range.e.c; ++C) {
-          const cell_ref = XLSX.utils.encode_cell({c:C, r:R});
+          const cell_ref = XLSX.utils.encode_cell({ c: C, r: R });
           const cell = ws[cell_ref];
           if (!cell || cell.t !== 's') continue;
-          
+
           const val = String(cell.v).trim();
-          
+
           // Try parse date
           const dateRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
           if (dateRegex.test(val)) {
@@ -3645,7 +3660,7 @@ function exportTableToExcel(tableId, filename) {
 
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-      
+
       const bridge = window.AndroidBridge || (typeof AndroidBridge !== "undefined" ? AndroidBridge : null);
       if (bridge && typeof bridge.shareBase64File === "function") {
         try {
@@ -3656,7 +3671,7 @@ function exportTableToExcel(tableId, filename) {
           console.error(e);
         }
       }
-      
+
       XLSX.writeFile(wb, `${nameStr}.xlsx`);
       return;
     }
@@ -3766,11 +3781,16 @@ function exportTableToPDF(tableId, filename) {
     const headerTitle = cleanTitle.replace(/_/g, " ");
     const nowStr = new Date().toLocaleString("en-IN");
 
+    const dateToday = new Date();
+    const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    const formattedDate = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
+
     // Prepend Church Header inside <thead> so it repeats on EVERY page in PDF print
     const thead = cleanTable.querySelector("thead");
     if (thead) {
       const isIndiv = (tableId === "indivTable");
-      const titleLine3 = isIndiv ? "Individual Account updated upto 31-07-2026" : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
+      const titleLine3 = isIndiv ? `Individual Account updated upto ${formattedDate}` : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
 
       const totalCols = 99; // Force full span across all actual columns
 
@@ -3781,7 +3801,7 @@ function exportTableToPDF(tableId, filename) {
               <img src="church_logo.png" alt="Church Logo" style="display:block; margin:0 auto 6px auto; height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; object-fit:contain; background:#fff;">
               <div style="font-size:16px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</div>
               <div style="font-size:11px; font-weight:600; color:#475569; margin-top:3px;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</div>
-              <div style="font-size:12px; font-weight:700; color:#0f172a; margin-top:6px; padding-top:6px; border-top:1.5px solid #cbd5e1; display:inline-block;">${titleLine3}</div>
+              <div style="font-size:13px; font-weight:800; color:#0f172a; margin-top:6px; padding-top:6px; display:inline-block;">${titleLine3}</div>
             </div>
           </th>
         </tr>
@@ -3811,6 +3831,27 @@ function exportTableToPDF(tableId, filename) {
             #printPreviewOverlay, #printPreviewOverlay * { visibility: visible !important; }
             .print-preview-header { display: none !important; }
             @page { size: A4 landscape; margin: 5mm; }
+            
+            /* FORCE BROWSER TO PRINT BACKGROUND COLORS */
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
+            table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Times New Roman', Times, serif !important; border: 1px solid #000 !important; }
+            table th, table td { white-space: normal !important; word-wrap: break-word !important; }
+            table th:nth-child(1), table td:nth-child(1),
+            table th:nth-child(2), table td:nth-child(2),
+            table th:nth-child(3), table td:nth-child(3),
+            table th:nth-child(4), table td:nth-child(4) {
+              white-space: nowrap !important;
+            }
+            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 11px !important; border: 1px solid #666 !important; padding: 2px 4px !important; text-align: center !important; }
+            table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
+              background-color: #fff2cc !important;
+            }
+            table td { font-size: 12.5px !important; border: 1px dotted #888 !important; padding: 3px 4px !important; color: #000 !important; }
+            table tr:last-child td { font-weight: bold !important; background-color: #e2e8f0 !important; border: 1px solid #000 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
           }
         </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
@@ -3851,12 +3892,22 @@ function exportTableToPDF(tableId, filename) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0, user-scalable=yes">
         <title>${cleanTitle}</title>
         <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 50px 15px 15px 15px; color: #0f172a; background: #ffffff; margin: 0; }
-          table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 5px; }
-          th, td { border: 1px solid #94a3b8; padding: 4px 6px; text-align: left; }
-          th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; }
+          body { font-family: 'Times New Roman', Times, serif; padding: 50px 15px 15px 15px; color: #000; background: #ffffff; margin: 0; }
+          table { width: 100%; border-collapse: collapse !important; font-size: 11px; margin-top: 5px; border: 1px solid #000 !important; font-family: 'Times New Roman', Times, serif !important; }
+          table th, table td { white-space: normal !important; word-wrap: break-word !important; }
+          table th:nth-child(1), table td:nth-child(1),
+          table th:nth-child(2), table td:nth-child(2),
+          table th:nth-child(3), table td:nth-child(3),
+          table th:nth-child(4), table td:nth-child(4) {
+            white-space: nowrap !important;
+          }
+          th, td { border: 1px dotted #888 !important; padding: 3px 4px !important; color: #000 !important; }
+          th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; border: 1px solid #666 !important; }
+          table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
+            background-color: #fff2cc !important;
+          }
+          tr:last-child td { font-weight: bold !important; border: 1px solid #000 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
           .text-right { text-align: right; white-space: nowrap; }
-          tfoot tr { background-color: #e2e8f0; font-weight: bold; }
           code { font-family: monospace; font-size: 9.5px; }
           
           /* Force header repeating on every printed page */
@@ -3868,6 +3919,13 @@ function exportTableToPDF(tableId, filename) {
             .no-print, .print-preview-header { display: none !important; }
             body { padding: 0 !important; margin: 0 !important; zoom: 0.55; }
             @page { size: A4 landscape; margin: 5mm; }
+            
+            /* FORCE BROWSER TO PRINT BACKGROUND COLORS */
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
             table { page-break-inside: auto; margin: 0 auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group !important; }
@@ -5657,7 +5715,7 @@ function deleteDirMemberCrud(regNo) {
   if (confirm(`Are you sure you want to completely delete member ${regNo}?`)) {
     state.members = state.members.filter(m => getColVal(m, "B") !== String(regNo));
     localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members)); if (window.syncAppStateToCloud) window.syncAppStateToCloud();
-    
+
     // Sync deletion to Administration
     state.individual = state.individual.filter(r => getColVal(r, "B") !== String(regNo));
     localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
@@ -5715,7 +5773,7 @@ function importMemberDirectoryCSV(event) {
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(e) {
+  reader.onload = function (e) {
     try {
       const text = e.target.result;
       const lines = parseCSVText(text);
@@ -5725,7 +5783,7 @@ function importMemberDirectoryCSV(event) {
       }
 
       const headers = lines[0].map(h => h.trim().toLowerCase());
-      
+
       const regIdx = headers.findIndex(h => h.includes("reg") || h.includes("member no") || h.includes("no."));
       const nameIdx = headers.findIndex(h => h.includes("name") || h.includes("hof") || h.includes("head"));
       const phoneIdx = headers.findIndex(h => h.includes("mob") || h.includes("phone") || h.includes("cell") || h.includes("contact"));
@@ -5796,7 +5854,7 @@ function importMemberDirectoryCSV(event) {
       if (state.isAdminUnlocked) renderAdminMembersTable();
 
       alert(`✅ CSV Import Complete!\n- Imported ${importCount} new members\n- Updated ${updateCount} existing member profiles.`);
-    } catch(err) {
+    } catch (err) {
       alert("Error parsing CSV: " + err.message);
     }
   };
@@ -5811,7 +5869,7 @@ function parseCSVText(text) {
 
   for (let i = 0; i < text.length; i++) {
     const c = text[i];
-    const next = text[i+1];
+    const next = text[i + 1];
 
     if (c === '"') {
       if (inQuotes && next === '"') {
@@ -5841,57 +5899,57 @@ function parseCSVText(text) {
 
 // === CLOUD DATABASE SYNC ===
 window._syncStateTimeout = null;
-window.syncAppStateToCloud = function() {
-    if (window._syncStateTimeout) clearTimeout(window._syncStateTimeout);
-    window._syncStateTimeout = setTimeout(() => {
-        const stateData = {
-            "CHURCH_MEMBERS": state.individual || [],
-            "CHURCH_ACCOUNT_HEADS": state.customAccountHeads || [],
-            "CHURCH_DELETED_HEADS": state.deletedAccountHeads || [],
-            "CHURCH_DELETED_MEMBERS": state.deletedMembers || [],
-            "CHURCH_MASTER_MEMBERS": state.members || []
-        };
-        
-        fetch('./api.php?_t=' + Date.now(), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'save_app_state', state_data: stateData })
-        }).then(r => r.json()).then(r => {
-            if (r.success) console.log('App state successfully synced to cloud MySQL:', r.message);
-            else console.warn('Failed to sync app state:', r.message);
-        }).catch(err => console.warn('App state cloud sync skipped:', err.message));
-    }, 500); // 500ms debounce
+window.syncAppStateToCloud = function () {
+  if (window._syncStateTimeout) clearTimeout(window._syncStateTimeout);
+  window._syncStateTimeout = setTimeout(() => {
+    const stateData = {
+      "CHURCH_MEMBERS": state.individual || [],
+      "CHURCH_ACCOUNT_HEADS": state.customAccountHeads || [],
+      "CHURCH_DELETED_HEADS": state.deletedAccountHeads || [],
+      "CHURCH_DELETED_MEMBERS": state.deletedMembers || [],
+      "CHURCH_MASTER_MEMBERS": state.members || []
+    };
+
+    fetch('./api.php?_t=' + Date.now(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'save_app_state', state_data: stateData })
+    }).then(r => r.json()).then(r => {
+      if (r.success) console.log('App state successfully synced to cloud MySQL:', r.message);
+      else console.warn('Failed to sync app state:', r.message);
+    }).catch(err => console.warn('App state cloud sync skipped:', err.message));
+  }, 500); // 500ms debounce
 };
 
-window.loadCloudData = async function(isManualRefresh = false) {
-    console.log("Loading cashbook from cloud database...");
-    try {
-        const response = await fetch('./api.php?_t=' + Date.now(), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'get_cashbook' })
-        });
-        const result = await response.json();
-        if (result.success && result.data) {
-            state.cashbook = result.data;
-            calculateNextNumbers();
-            renderAllViews();
-            console.log("Cloud cashbook loaded successfully!");
-            if (isManualRefresh) {
-                alert("✅ Cloud Sync Successful! The application will now hard refresh to ensure all data is fully up to date.");
-                window.location.reload(true);
-            }
-        } else {
-            console.log("No cloud cashbook data yet (or empty).");
-            if (isManualRefresh) {
-                alert("✅ Cloud Sync Successful! No records found. The application will now hard refresh.");
-                window.location.reload(true);
-            }
-        }
-    } catch (e) {
-        console.warn("Cloud fetch skipped (api.php not available):", e.message);
-        if (isManualRefresh) {
-            alert("❌ Cloud Sync Failed! Please check your connection.");
-        }
+window.loadCloudData = async function (isManualRefresh = false) {
+  console.log("Loading cashbook from cloud database...");
+  try {
+    const response = await fetch('./api.php?_t=' + Date.now(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'get_cashbook' })
+    });
+    const result = await response.json();
+    if (result.success && result.data) {
+      state.cashbook = result.data;
+      calculateNextNumbers();
+      renderAllViews();
+      console.log("Cloud cashbook loaded successfully!");
+      if (isManualRefresh) {
+        alert("✅ Cloud Sync Successful! The application will now hard refresh to ensure all data is fully up to date.");
+        window.location.reload(true);
+      }
+    } else {
+      console.log("No cloud cashbook data yet (or empty).");
+      if (isManualRefresh) {
+        alert("✅ Cloud Sync Successful! No records found. The application will now hard refresh.");
+        window.location.reload(true);
+      }
     }
+  } catch (e) {
+    console.warn("Cloud fetch skipped (api.php not available):", e.message);
+    if (isManualRefresh) {
+      alert("❌ Cloud Sync Failed! Please check your connection.");
+    }
+  }
 };
