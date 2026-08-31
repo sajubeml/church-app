@@ -3598,6 +3598,9 @@ function exportTableToPDF(tableId, filename) {
               white-space: nowrap !important;
             }
             table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 11px !important; border: 0.1mm solid #000 !important; padding: 2px 4px !important; text-align: center !important; }
+            table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
+              background-color: #fff2cc !important;
+            }
             table td { font-size: 11px !important; border: 0.1mm solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
             table tr:last-child td { font-weight: bold !important; border-top: 1px solid #000 !important; border-bottom: 1px solid #000 !important; }
           }
@@ -3651,6 +3654,9 @@ function exportTableToPDF(tableId, filename) {
           }
           th, td { border: 0.1mm solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
           th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; }
+          table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
+            background-color: #fff2cc !important;
+          }
           tr:last-child td { font-weight: bold !important; border-top: 1px solid #000 !important; border-bottom: 1px solid #000 !important; }
           .text-right { text-align: right; white-space: nowrap; }
           code { font-family: monospace; font-size: 11px; }
