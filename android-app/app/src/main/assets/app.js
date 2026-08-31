@@ -3582,6 +3582,13 @@ function exportTableToPDF(tableId, filename) {
             #printPreviewOverlay, #printPreviewOverlay * { visibility: visible !important; }
             .print-preview-header { display: none !important; }
             @page { size: A4 landscape; margin: 5mm; }
+            
+            /* FORCE BROWSER TO PRINT BACKGROUND COLORS */
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
             table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Segoe UI', Arial, sans-serif !important; border: 1.5px solid #000 !important; }
             table th { background-color: #f1f5f9 !important; color: #000 !important; font-weight: 800 !important; font-size: 10px !important; border: 1px solid #475569 !important; padding: 5px !important; text-align: center !important; }
             table td { font-size: 10px !important; border: 1px solid #94a3b8 !important; padding: 4px !important; color: #000 !important; }
