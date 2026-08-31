@@ -366,7 +366,7 @@ function formatCurrency(val) {
   if (!cleaned) return "";
   const num = Math.round(parseFloat(cleaned));
   if (isNaN(num)) return "";
-  return "₹ " + num.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  return num.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
 // ----------------------------------------------------
@@ -3109,7 +3109,7 @@ function renderIndividualLedgers() {
       <td class="sticky-col col-name" title="${m.name}"><strong>${m.name}</strong></td>
       <td><strong>${formatSubUptoMonthYear(m.subUpto)}</strong></td>
       ${colCellsHtml}
-      <td class="text-right sticky-col col-grand" style="font-weight:800; color:var(--accent-color);">${formatCurrency(m.grandNum) || '₹ 0.00'}</td>
+      <td class="text-right sticky-col col-grand" style="font-weight:800; color:var(--accent-color);">${formatCurrency(m.grandNum) || '0'}</td>
       <td class="text-center sticky-col" style="background:#fff;"><button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; font-weight:700; color:var(--primary-color); border-color:var(--primary-color);" onclick="promptAdminPassword('EDIT_MEMBER', '${m.regNo}')">✏️ Edit</button></td>
     `;
     tbody.appendChild(tr);
@@ -3771,7 +3771,7 @@ function exportTableToPDF(tableId, filename) {
               print-color-adjust: exact !important;
             }
             
-            table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Times New Roman', Times, serif !important; border: 0.1mm solid #000 !important; }
+            table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Times New Roman', Times, serif !important; border: 1px solid #000 !important; }
             table th, table td { white-space: normal !important; word-wrap: break-word !important; }
             table th:nth-child(1), table td:nth-child(1),
             table th:nth-child(2), table td:nth-child(2),
@@ -3779,12 +3779,12 @@ function exportTableToPDF(tableId, filename) {
             table th:nth-child(4), table td:nth-child(4) {
               white-space: nowrap !important;
             }
-            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 11px !important; border: 0.1mm solid #000 !important; padding: 2px 4px !important; text-align: center !important; }
+            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 11px !important; border: 1px solid #666 !important; padding: 2px 4px !important; text-align: center !important; }
             table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
               background-color: #fff2cc !important;
             }
-            table td { font-size: 11px !important; border: 0.1mm solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
-            table tr:last-child td { font-weight: bold !important; background-color: #e2e8f0 !important; border-top: 1px solid #000 !important; border-bottom: 1px solid #000 !important; }
+            table td { font-size: 12.5px !important; border: 1px solid #777 !important; padding: 3px 4px !important; color: #000 !important; }
+            table tr:last-child td { font-weight: bold !important; background-color: #e2e8f0 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
           }
         </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
@@ -3826,7 +3826,7 @@ function exportTableToPDF(tableId, filename) {
         <title>${cleanTitle}</title>
         <style>
           body { font-family: 'Times New Roman', Times, serif; padding: 50px 15px 15px 15px; color: #000; background: #ffffff; margin: 0; }
-          table { width: 100%; border-collapse: collapse !important; font-size: 11px; margin-top: 5px; border: 0.1mm solid #000 !important; font-family: 'Times New Roman', Times, serif !important; }
+          table { width: 100%; border-collapse: collapse !important; font-size: 11px; margin-top: 5px; border: 1px solid #000 !important; font-family: 'Times New Roman', Times, serif !important; }
           table th, table td { white-space: normal !important; word-wrap: break-word !important; }
           table th:nth-child(1), table td:nth-child(1),
           table th:nth-child(2), table td:nth-child(2),
@@ -3834,12 +3834,12 @@ function exportTableToPDF(tableId, filename) {
           table th:nth-child(4), table td:nth-child(4) {
             white-space: nowrap !important;
           }
-          th, td { border: 0.1mm solid #000 !important; padding: 2px 4px !important; color: #000 !important; }
-          th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; }
+          th, td { border: 1px solid #777 !important; padding: 3px 4px !important; color: #000 !important; }
+          th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; border: 1px solid #666 !important; }
           table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
             background-color: #fff2cc !important;
           }
-          tr:last-child td { font-weight: bold !important; border-top: 1px solid #000 !important; border-bottom: 1px solid #000 !important; }
+          tr:last-child td { font-weight: bold !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
           .text-right { text-align: right; white-space: nowrap; }
           code { font-family: monospace; font-size: 9.5px; }
           

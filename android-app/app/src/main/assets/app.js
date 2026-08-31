@@ -122,7 +122,7 @@ function formatCurrency(val) {
   if (!cleaned) return "";
   const num = Math.round(parseFloat(cleaned));
   if (isNaN(num)) return "";
-  return "₹ " + num.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  return num.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
 // ----------------------------------------------------
@@ -2927,7 +2927,7 @@ function renderIndividualLedgers() {
       <td class="sticky-col col-name" title="${m.name}"><strong>${m.name}</strong></td>
       <td><strong>${formatSubUptoMonthYear(m.subUpto)}</strong></td>
       ${colCellsHtml}
-      <td class="text-right sticky-col col-grand" style="font-weight:800; color:var(--accent-color);">${formatCurrency(m.grandNum) || '₹ 0.00'}</td>
+      <td class="text-right sticky-col col-grand" style="font-weight:800; color:var(--accent-color);">${formatCurrency(m.grandNum) || '0'}</td>
       <td class="text-center sticky-col" style="background:#fff;"><button class="btn btn-outline" style="padding:2px 8px; font-size:0.75rem; font-weight:700; color:var(--primary-color); border-color:var(--primary-color);" onclick="promptAdminPassword('EDIT_MEMBER', '${m.regNo}')">✏️ Edit</button></td>
     `;
     tbody.appendChild(tr);
