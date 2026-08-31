@@ -3070,11 +3070,17 @@ function renderIndividualLedgers() {
     const grandVal = grandNum.toLocaleString('en-IN');
 
     const cashbookRemark = getLatestSubscriptionRemark(regNo);
+    let rawSubUpto = getColVal(row, "D");
     if (cashbookRemark) {
       rawSubUpto = cashbookRemark;
     }
 
-    const subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["E"] || 0) > 0);
+    let subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["E"] || 0) > 0);
+    
+    // Non-members don't have subscriptions
+    if (regNo && regNo.toUpperCase() === "NM") {
+      subUpto = "-";
+    }
 
     return { sl, regNo, name, subUpto, grandVal, grandNum, colValues };
   });
