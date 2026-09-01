@@ -3070,7 +3070,6 @@ function renderIndividualLedgers() {
     const grandVal = grandNum.toLocaleString('en-IN');
 
     const cashbookRemark = getLatestSubscriptionRemark(regNo);
-    let rawSubUpto = getColVal(row, "D");
     if (cashbookRemark) {
       rawSubUpto = cashbookRemark;
     }
