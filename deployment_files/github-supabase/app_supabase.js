@@ -2318,18 +2318,39 @@ function printReceiptModal() {
       <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0, user-scalable=yes">
       <title>${pdfTitle}</title>
       <style>
-        body { font-family: system-ui, -apple-system, sans-serif; padding: 60px 20px 20px 20px; background: #fff; color: #000; }
+        body { font-family: system-ui, -apple-system, sans-serif; padding: 60px 20px 20px 20px; background: #f8fafc; color: #000; }
         button[onclick*="closeReceiptModal"], .receipt-modal-close-btn, .modal-close-btn { display: none !important; }
-        .dual-receipt-container { display: flex; gap: 20px; justify-content: center; align-items: stretch; }
-        .receipt-card { flex: 1; border: 2px solid #0f172a; border-radius: 8px; padding: 15px; background: #fff; min-width: 320px; max-width: 48%; position: relative; box-sizing: border-box; }
+      </style>
+      <style id="dynamicPrintStyle">
+        /* Default: A5 Landscape Mode (Page 1 Original, Page 2 Copy) */
         @media print {
           .no-print, .print-preview-header { display: none !important; }
-          @page { size: A4 landscape; margin: 0; }
-          body { padding: 5mm !important; background: #fff; width: 100%; margin: 0; box-sizing: border-box; }
-          .dual-receipt-container { position: relative; gap: 15px !important; width: 100%; min-height: 190mm; align-items: flex-start !important; }
-          .dual-receipt-container::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed #94a3b8; }
-          .receipt-card { max-width: 48% !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 10mm !important; }
+          @page { size: A5 landscape; margin: 4mm; }
+          html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; }
+          .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+          .dual-receipt-container::after { display: none !important; }
+          .receipt-card {
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            height: 135mm !important;
+            box-sizing: border-box !important;
+            border: 2px solid #0f172a !important;
+            border-radius: 8px !important;
+            padding: 5mm 8mm !important;
+            margin: 0 0 0 0 !important;
+            page-break-after: always !important;
+            break-after: page !important;
+          }
+          .receipt-card:last-child {
+            page-break-after: auto !important;
+            break-after: auto !important;
+          }
         }
+        .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; }
+        .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }
       </style>
     </head>
     <body>
@@ -2338,13 +2359,97 @@ function printReceiptModal() {
           <span style="font-size:1.1rem;">📄</span>
           <span style="font-weight:800; font-size:0.92rem; color:#ffffff;">${pdfTitle}</span>
         </div>
-        <div style="display:flex; gap:8px; align-items:center;">
+        <div style="display:flex; gap:10px; align-items:center;">
+          <label style="font-size:0.82rem; font-weight:700; color:#94a3b8; margin:0;">Format:</label>
+          <select id="printFmtSelect" onchange="switchPrintFmt(this.value)" style="background:#1e293b; color:#ffffff; border:1px solid #475569; padding:6px 10px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.85rem; outline:none;">
+            <option value="a5-landscape">📑 A5 Landscape (Page 1 Original, Page 2 Copy)</option>
+            <option value="a4-landscape">📄 A4 Landscape (2-up Side-by-Side)</option>
+            <option value="a5-portrait">📄 A5 Portrait (Page 1 Original, Page 2 Copy)</option>
+          </select>
           <button onclick="window.print()" style="background:#0284c7; color:#ffffff; border:none; padding:8px 14px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.85rem;">🖨️ Print / Save PDF</button>
-          <button onclick="if(window.history.length>1){window.history.back();}else{window.close();}" style="background:#dc2626; color:#ffffff; border:none; padding:8px 18px; border-radius:24px; font-weight:800; cursor:pointer; font-size:0.9rem; box-shadow:0 2px 10px rgba(220,38,38,0.5);">✖ Close & Return to App</button>
+          <button onclick="if(window.history.length>1){window.history.back();}else{window.close();}" style="background:#dc2626; color:#ffffff; border:none; padding:8px 18px; border-radius:24px; font-weight:800; cursor:pointer; font-size:0.9rem; box-shadow:0 2px 10px rgba(220,38,38,0.5);">✖ Close & Return</button>
         </div>
       </div>
       ${modalArea ? modalArea.innerHTML : ''}
       <script>
+        function switchPrintFmt(fmt) {
+          var el = document.getElementById('dynamicPrintStyle');
+          if (!el) return;
+          if (fmt === 'a4-landscape') {
+            el.innerHTML = \`
+              @media print {
+                .no-print, .print-preview-header { display: none !important; }
+                @page { size: A4 landscape; margin: 0; }
+                body { padding: 5mm !important; background: #fff; width: 100%; margin: 0; box-sizing: border-box; }
+                .dual-receipt-container { display: flex !important; position: relative; gap: 15px !important; width: 100%; min-height: 190mm; align-items: flex-start !important; }
+                .dual-receipt-container::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed #94a3b8; }
+                .receipt-card { flex: 1 !important; max-width: 48% !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 8mm !important; page-break-after: auto !important; break-after: auto !important; }
+              }
+              .dual-receipt-container { display: flex !important; gap: 20px; flex-direction: row; }
+              .receipt-card { flex: 1 !important; max-width: 48% !important; margin-bottom: 0 !important; }
+            \`;
+          } else if (fmt === 'a5-portrait') {
+            el.innerHTML = \`
+              @media print {
+                .no-print, .print-preview-header { display: none !important; }
+                @page { size: A5 portrait; margin: 5mm; }
+                body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; }
+                .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; }
+                .dual-receipt-container::after { display: none !important; }
+                .receipt-card {
+                  display: block !important;
+                  width: 100% !important;
+                  max-width: 100% !important;
+                  min-height: 195mm !important;
+                  box-sizing: border-box !important;
+                  border: 2px solid #0f172a !important;
+                  border-radius: 8px !important;
+                  padding: 8mm !important;
+                  margin: 0 0 0 0 !important;
+                  page-break-after: always !important;
+                  break-after: page !important;
+                }
+                .receipt-card:last-child {
+                  page-break-after: auto !important;
+                  break-after: auto !important;
+                }
+              }
+              .dual-receipt-container { display: block !important; width: 100% !important; max-width: 520px; margin: 0 auto; }
+              .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }
+            \`;
+          } else {
+            el.innerHTML = \`
+              @media print {
+                .no-print, .print-preview-header { display: none !important; }
+                @page { size: A5 landscape; margin: 4mm; }
+                html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; }
+                .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; }
+                .dual-receipt-container::after { display: none !important; }
+                .receipt-card {
+                  display: flex !important;
+                  flex-direction: column !important;
+                  justify-content: space-between !important;
+                  width: 100% !important;
+                  max-width: 100% !important;
+                  height: 135mm !important;
+                  box-sizing: border-box !important;
+                  border: 2px solid #0f172a !important;
+                  border-radius: 8px !important;
+                  padding: 5mm 8mm !important;
+                  margin: 0 0 0 0 !important;
+                  page-break-after: always !important;
+                  break-after: page !important;
+                }
+                .receipt-card:last-child {
+                  page-break-after: auto !important;
+                  break-after: auto !important;
+                }
+              }
+              .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; }
+              .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }
+            \`;
+          }
+        }
         document.title = "${pdfTitle}";
         window.onload = function() {
           document.title = "${pdfTitle}";
@@ -2355,7 +2460,7 @@ function printReceiptModal() {
       </script>
     </body>
     </html>
-  `);
+  \`);
   printWin.document.close();
   printWin.document.title = pdfTitle;
 }
