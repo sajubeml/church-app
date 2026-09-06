@@ -1,7 +1,7 @@
 # St. Gregorios Church Accounting Portal — Handover Document & Continuation Guide
 **St. Gregorios Orthodox Syrian Church & Pilgrim Centre, Mysuru**  
 **Workspace:** `c:\saju_old pc\Church_App\anti_gravity_v9.2`  
-**Current Active Release:** v10.1 (A5 Receipt Edition & Pilgrim Centre Branding)  
+**Current Active Release:** v10.6 (A5 Portrait Print Engine & Script Fixes)  
 **Last Updated:** September 6, 2026  
 
 ---
@@ -10,9 +10,9 @@
 
 This project serves as a comprehensive cross-platform accounting system replacing the legacy Excel Macro-Enabled Accounting Workbook. It features:
 1. **Multi-Platform Cloud Sync (Supabase PostgreSQL):** Serverless architecture connected to Supabase PostgreSQL, deployed in sync across GitHub Pages (`church-app` repo) and cPanel host.
-2. **Standalone Offline Mobile Applications (.apk):** Standalone offline version (v10.1) for Android devices running pure LocalStorage with zero internet dependency, supporting full JSON export/import.
+2. **Standalone Offline Mobile Applications (.apk):** Standalone offline version for Android devices running pure LocalStorage with zero internet dependency, supporting full JSON export/import.
 3. **Cashbook-Brain Architecture:** Monolithic state where the Cash Book (`cashbook` array) acts as the **absolute single source of truth** for Trial Balance, Individual Ledgers, and Subscription Validity dates.
-4. **Enhanced Receipt Printing Module (v10.1):** Built-in A5 Portrait printing engine separating Original and Office Copy into 2 distinct pages (`page-break-after: always`), formatted with `DD-MM-YYYY` date strings, bold member names, and full `"ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"` header.
+4. **Enhanced Receipt Printing Engine (v10.6):** Built-in A5 Portrait printing engine separating Original and Office Copy into 2 distinct pages (`page-break-after: always`), formatted with `DD-MM-YYYY` date strings, bold member names, and full `"ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"` header. Includes interactive orientation switcher (A5 Portrait, A5 Landscape, A4 2-Up).
 
 ---
 
@@ -38,25 +38,27 @@ Source of truth hardcoded in `app_supabase.js` (`MASTER_RECEIPT_HEADS` and `MAST
 
 ---
 
-## 🛠️ Work Accomplished & Recent Enhancements (v10.0 → v10.1)
+## 🛠️ Work Accomplished & Recent Enhancements (v10.0 → v10.6)
 
-### 1. A5 Portrait Receipt & Voucher Printing (v10.1 Update)
-- **Page Separation:** Formatted Original and Office Copy into 2 distinct pages (`A5 Portrait`) with clean page breaks.
+### 1. A5 Portrait Receipt & Voucher Printing (v10.6 Update)
+- **Page Separation:** Formatted Original and Office Copy into 2 distinct pages (`A5 Portrait`) with clean page breaks (`page-break-after: always`).
+- **Zero Spillover Height:** Set `@page { size: A5 portrait; margin: 3mm; }` with receipt card `height: 182mm !important;` and `padding: 6mm 8mm;`, guaranteeing Page 1 (ORIGINAL) and Page 2 (OFFICE COPY) span strictly across 2 sheets of paper without a 3rd blank/overflow page (tested & verified on Canon LBP2900).
+- **Interactive Orientation Control:** Live dropdown toggle inside the receipt print window allowing switching between **A5 Portrait (Default)**, **A5 Landscape**, and **A4 Landscape 2-Up**.
 - **Date Formatting:** Dates formatted as `DD-MM-YYYY` (e.g., `06-09-2026`).
-- **Member Label & Styling:** Changed label from `"Party / Member:"` to `"Member:"` and made member name **bold** (`<strong>Santhosh K. A.</strong>`).
+- **Member Label & Styling:** Changed label from `"Party / Member:"` to `"Member:"` and made member name **bold** (`<strong>Abraham.M.O</strong>`).
 - **Full Church Branding:** Enforced `"ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"` header across all receipts and vouchers.
 
-### 2. Cashbook-Brain Member Ledger Engine
+### 2. JavaScript Engine & Browser Pre-parser Stability
+- **ReferenceError Fix:** Re-ordered `attemptLogin` declaration before initial execution in `app_supabase.js` to ensure function hoisting and early initialization.
+- **HTML Pre-parser Rule (`<\/script>`):** Escaped closing script tags inside JS string literals passed to child window `document.write()` to prevent premature script block termination in Edge and Chrome.
+
+### 3. Cashbook-Brain Member Ledger Engine
 - Financial amounts dynamically calculated via `findIndividualColKey({ head, code })`.
 - Fixed fallback mapping issues that misallocated non-subscription items to subscription columns.
 
-### 3. Automatic Subscription Upto Parsing (`getLatestSubscriptionRemark`)
+### 4. Automatic Subscription Upto Parsing (`getLatestSubscriptionRemark`)
 - Scans `RP-3.82` and `RP-3.83` receipt remarks (e.g., "Apr 25 to Sept 26") and auto-calculates Subscription Upto date (`09/2026`).
 - Displays `-` if no subscription receipts exist. Fixed default `03/2027` fallback bug.
-
-### 4. Non-Member (NM) UI & Sorting Rules
-- `NM NON Members` row is forced to always sort at the bottom of the Individual Ledger table.
-- Disabled Subscription Upto calculation for Non-Members.
 
 ---
 
@@ -68,7 +70,7 @@ Source of truth hardcoded in `app_supabase.js` (`MASTER_RECEIPT_HEADS` and `MAST
 | [app.js](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/app.js) | Core client JS application code using offline LocalStorage (for APK & offline mode). |
 | [index_supabase.html](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/index_supabase.html) | Main web portal HTML layout with Supabase auth login overlay. |
 | [index_offline.html](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/index_offline.html) | Standalone local/offline portal HTML layout. |
-| [AGENTS.md](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/AGENTS.md) | Knowledge base containing domain rules, deployment targets, and code mappings. |
+| [AGENTS.md](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/AGENTS.md) | Knowledge base containing domain rules, deployment targets, print engine rules, and code mappings. |
 | [prepare_deployments.py](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/prepare_deployments.py) | Packaging script that populates `deployment_files/`. |
 | `android-app/` | Native Android Gradle application source (Offline release APK build target). |
 
@@ -85,7 +87,7 @@ Source of truth hardcoded in `app_supabase.js` (`MASTER_RECEIPT_HEADS` and `MAST
 2. **GitHub Pages (`church-app` live site):**
    ```powershell
    git add .
-   git commit -m "deploy: release update v10.1 with A5 receipt printing & Pilgrim Centre branding"
+   git commit -m "deploy: release update v10.6 with A5 portrait receipt printing engine & stability fixes"
    git push origin main
    git push church-app main
    ```
@@ -101,7 +103,7 @@ Source of truth hardcoded in `app_supabase.js` (`MASTER_RECEIPT_HEADS` and `MAST
    ```
 2. The compiled APK is located at:
    `android-app\app\build\outputs\apk\full\release\app-full-release.apk`
-3. Copy to project root and rename to `St_Gregorios_Church_Accounting_v10.1.apk`.
+3. Copy to project root and rename to `St_Gregorios_Church_Accounting_v10.6.apk`.
 
 ---
 

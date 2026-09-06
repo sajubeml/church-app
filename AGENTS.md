@@ -46,3 +46,9 @@ The local repository has TWO remotes:
 - `origin` → `https://github.com/sajubeml/Church_account.git` (main codebase backup)
 - `church-app` → `https://github.com/sajubeml/church-app.git` (GitHub Pages live site)
 - Always push to BOTH: `git push origin main` AND `git push church-app main`.
+
+## 8. Print Engine & HTML Script Parsing Rules (Updated Sep 2026)
+- **Nested Script Escaping:** When generating dynamic HTML windows inside string literals (e.g. `printWin.document.write(...)`), NEVER write unescaped literal `</script>` tags or inner backticks (`` ` ``). In HTML specifications, ANY literal `</script>` string inside a JS file immediately terminates the outer script tag. Always escape closing script tags inside JS string literals as `<\/script>`.
+- **Receipt Print Layouts:** Receipt printing supports 3 format modes: **A5 Portrait (Default)**, **A5 Landscape**, and **A4 Landscape 2-Up**.
+- **A5 Portrait Dimensions:** Set `@page { size: A5 portrait; margin: 3mm; }` with receipt card `height: 182mm !important;` and `padding: 6mm 8mm;` so Page 1 (ORIGINAL) and Page 2 (OFFICE COPY) fit strictly across 2 sheets of paper without triggering a 3rd page spillover.
+
