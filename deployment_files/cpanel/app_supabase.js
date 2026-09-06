@@ -2371,98 +2371,27 @@ function printReceiptModal() {
         </div>
       </div>
       ${modalArea ? modalArea.innerHTML : ''}
-      <script>
-        function switchPrintFmt(fmt) {
-          var el = document.getElementById('dynamicPrintStyle');
-          if (!el) return;
-          if (fmt === 'a4-landscape') {
-            el.innerHTML = \`
-              @media print {
-                .no-print, .print-preview-header { display: none !important; }
-                @page { size: A4 landscape; margin: 0; }
-                body { padding: 5mm !important; background: #fff; width: 100%; margin: 0; box-sizing: border-box; }
-                .dual-receipt-container { display: flex !important; position: relative; gap: 15px !important; width: 100%; min-height: 190mm; align-items: flex-start !important; }
-                .dual-receipt-container::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed #94a3b8; }
-                .receipt-card { flex: 1 !important; max-width: 48% !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 8mm !important; page-break-after: auto !important; break-after: auto !important; }
-              }
-              .dual-receipt-container { display: flex !important; gap: 20px; flex-direction: row; }
-              .receipt-card { flex: 1 !important; max-width: 48% !important; margin-bottom: 0 !important; }
-            \`;
-          } else if (fmt === 'a5-portrait') {
-            el.innerHTML = \`
-              @media print {
-                .no-print, .print-preview-header { display: none !important; }
-                @page { size: A5 portrait; margin: 5mm; }
-                body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; }
-                .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; }
-                .dual-receipt-container::after { display: none !important; }
-                .receipt-card {
-                  display: block !important;
-                  width: 100% !important;
-                  max-width: 100% !important;
-                  min-height: 195mm !important;
-                  box-sizing: border-box !important;
-                  border: 2px solid #0f172a !important;
-                  border-radius: 8px !important;
-                  padding: 8mm !important;
-                  margin: 0 0 0 0 !important;
-                  page-break-after: always !important;
-                  break-after: page !important;
-                }
-                .receipt-card:last-child {
-                  page-break-after: auto !important;
-                  break-after: auto !important;
-                }
-              }
-              .dual-receipt-container { display: block !important; width: 100% !important; max-width: 520px; margin: 0 auto; }
-              .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }
-            \`;
-          } else {
-            el.innerHTML = \`
-              @media print {
-                .no-print, .print-preview-header { display: none !important; }
-                @page { size: A5 landscape; margin: 4mm; }
-                html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; }
-                .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; }
-                .dual-receipt-container::after { display: none !important; }
-                .receipt-card {
-                  display: flex !important;
-                  flex-direction: column !important;
-                  justify-content: space-between !important;
-                  width: 100% !important;
-                  max-width: 100% !important;
-                  height: 135mm !important;
-                  box-sizing: border-box !important;
-                  border: 2px solid #0f172a !important;
-                  border-radius: 8px !important;
-                  padding: 5mm 8mm !important;
-                  margin: 0 0 0 0 !important;
-                  page-break-after: always !important;
-                  break-after: page !important;
-                }
-                .receipt-card:last-child {
-                  page-break-after: auto !important;
-                  break-after: auto !important;
-                }
-              }
-              .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; }
-              .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }
-            \`;
-          }
-        }
-        document.title = "${pdfTitle}";
-        window.onload = function() {
-          document.title = "${pdfTitle}";
-          setTimeout(function() {
-            window.print();
-          }, 250);
-        };
-      </script>
     </body>
     </html>
-  \`);
+  `);
   printWin.document.close();
   printWin.document.title = pdfTitle;
+
+  printWin.switchPrintFmt = function(fmt) {
+    var el = printWin.document.getElementById('dynamicPrintStyle');
+    if (!el) return;
+    if (fmt === 'a4-landscape') {
+      el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A4 landscape; margin: 0; } body { padding: 5mm !important; background: #fff; width: 100%; margin: 0; box-sizing: border-box; } .dual-receipt-container { display: flex !important; position: relative; gap: 15px !important; width: 100%; min-height: 190mm; align-items: flex-start !important; } .dual-receipt-container::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed #94a3b8; } .receipt-card { flex: 1 !important; max-width: 48% !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 8mm !important; page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: flex !important; gap: 20px; flex-direction: row; } .receipt-card { flex: 1 !important; max-width: 48% !important; margin-bottom: 0 !important; }';
+    } else if (fmt === 'a5-portrait') {
+      el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 5mm; } body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: block !important; width: 100% !important; max-width: 100% !important; min-height: 195mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 8mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 520px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
+    } else {
+      el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 landscape; margin: 4mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 135mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 5mm 8mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
+    }
+  };
+
+  setTimeout(function() {
+    printWin.print();
+  }, 250);
 }
 
 function exportReceiptPdf() {
@@ -4077,20 +4006,14 @@ function exportTableToPDF(tableId, filename) {
         <div style="margin-top:20px; text-align:center; font-size:10px; color:#475569; border-top:1px solid #cbd5e1; padding-top:6px;">
           ⚡ Software developed by <strong>4S POWER SYSTEMS Mysore</strong> | Mob: <strong>9980615758</strong>
         </div>
-        <script>
-          document.title = "${cleanTitle}";
-          window.onload = function() {
-            document.title = "${cleanTitle}";
-            setTimeout(function() {
-              window.print();
-            }, 300);
-          };
-        </script>
       </body>
       </html>
     `);
     printWin.document.close();
     printWin.document.title = cleanTitle;
+    setTimeout(function() {
+      printWin.print();
+    }, 300);
   } catch (err) {
     console.error("PDF Export error:", err);
     alert("PDF Export Error: " + err.message);
