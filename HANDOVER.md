@@ -1,64 +1,112 @@
-# Project Handover Document & Continuation Guide
-**St. Gregorios Orthodox Syrian Church & Pilgrim Centre Accounting Portal**
-*Workspace: c:\saju_old pc\Church_App\anti_gravity_v9.2*
-*Active Release Version: 9.4 (Stable Fallback)*
+# St. Gregorios Church Accounting Portal — Handover Document & Continuation Guide
+**St. Gregorios Orthodox Syrian Church & Pilgrim Centre, Mysuru**  
+**Workspace:** `c:\saju_old pc\Church_App\anti_gravity_v9.2`  
+**Current Active Release:** v10.1 (A5 Receipt Edition & Pilgrim Centre Branding)  
+**Last Updated:** September 6, 2026  
 
 ---
 
 ## 📌 Executive Summary
 
-This project serves as a comprehensive cross-platform accounting system replacing the legacy Excel Macro-Enabled Accounting Workbook. It has evolved through several iterations and now features:
-1.  **Multi-Platform Cloud Sync:** A modern serverless architecture connected to **Supabase (PostgreSQL)**, deployed perfectly in-sync across both GitHub Pages (church-app repo) and CPanel.
-2.  **Standalone Offline Mobile Applications (.apk):** Fully independent offline versions (v9.4) for Android devices, utilizing LocalStorage for environments without internet access, allowing manual exports/imports to the cloud.
-3.  **Automatic Deployment System:** Python-based builders (prepare_deployments.py) that cleanly segregate environments into ready-to-deploy folders.
+This project serves as a comprehensive cross-platform accounting system replacing the legacy Excel Macro-Enabled Accounting Workbook. It features:
+1. **Multi-Platform Cloud Sync (Supabase PostgreSQL):** Serverless architecture connected to Supabase PostgreSQL, deployed in sync across GitHub Pages (`church-app` repo) and cPanel host.
+2. **Standalone Offline Mobile Applications (.apk):** Standalone offline version (v10.1) for Android devices running pure LocalStorage with zero internet dependency, supporting full JSON export/import.
+3. **Cashbook-Brain Architecture:** Monolithic state where the Cash Book (`cashbook` array) acts as the **absolute single source of truth** for Trial Balance, Individual Ledgers, and Subscription Validity dates.
+4. **Enhanced Receipt Printing Module (v10.1):** Built-in A5 Portrait printing engine separating Original and Office Copy into 2 distinct pages (`page-break-after: always`), formatted with `DD-MM-YYYY` date strings, bold member names, and full `"ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"` header.
 
 ---
 
-## 🛠️ Work Accomplished & Recent Fixes (Versions 9.3 to 9.4)
+## 🏗️ Architecture & Single Source of Truth Rules
 
-### 1. The Supabase Serverless Migration (v9.3)
-- **Legacy PHP/MySQL Removed:** The application was fully migrated away from the legacy CPanel PHP/MySQL and local Python SQLite backend architectures.
-- **Fetch Interceptor (pp_supabase.js):** Built a seamless interceptor that catches all legacy pi.php requests and translates them into secure Supabase REST API requests on the fly. This saved us from rewriting thousands of lines of legacy frontend code.
-- **Authentication & Security:** Implemented Supabase JWT Authentication and Row Level Security (RLS). The application now requires an email/password login to fetch or modify data.
+### 1. Database Model
+- Monolithic JSON backup file (e.g., `St_Gregorios_Church_Backup_YYYY-MM-DD.json`).
+- **Cash Book (`cashbook` array):** Absolute single source of truth for:
+  - Trial Balance calculations
+  - Individual Member Ledger amounts & column allocations
+  - Member Subscription Upto validity dates (parsed live from receipt remarks)
+- **Individual Ledger (`individual` array):** Used ONLY for register numbers, names, and column headers (rows 0-3). Financial cells in the ledger grid are dynamically aggregated from the Cash Book at render time and any direct manual edits in ledger cells are ignored.
 
-### 2. Multi-Cloud Deployment Architecture (v9.3)
-- Created prepare_deployments.py which organizes the codebase into three strict deployment folders:
-  - deployment_files/cpanel/: Files ready for CPanel host (using index.html sourced from index_supabase.html).
-  - deployment_files/github-supabase/: Files ready for GitHub Pages (using index.html sourced from index_supabase.html).
-  - deployment_files/mobile apk v1.0/: Files ready for offline mobile apps (using index_offline.html renamed to index.html and pp.js).
-- Both CPanel and GitHub deployments successfully point to the *exact same* Supabase cloud database, remaining perfectly in sync.
+### 2. Master Account Code Standard
+Source of truth hardcoded in `app_supabase.js` (`MASTER_RECEIPT_HEADS` and `MASTER_PAYMENT_HEADS`):
+- **Receipt Head Codes (Left Side - Columns A..I):** Prefix `RP-10.xx`, `RP-2.xx`, `RP-3.xx`.
+  - `RP-3.82` = Monthly Subscription (Current Year)
+  - `RP-3.83` = Monthly Subscription (Previous Year)
+  - `RP-3.32` = St. Mary's Feast Receipt
+- **Payment Head Codes (Right Side - Columns K..P):** Prefix `RP-12.xx`, `RP-14.xx`, `RP-16.xx`, `RP-19.xx`.
+  - `RP-16.47` = St. Mary's Feast Expense
+- **CRITICAL AUDIT RULE:** Receipt code column (`F`) must NEVER contain payment codes, and Payment code column (`N`) must NEVER contain receipt codes. Code swapping breaks Trial Balance totals silently.
 
-### 3. Print Layout, Admin Fixes, and Cache Management (v9.4)
-- **Admin Delete Bug Fix:** Fixed a critical bug in confirmDeleteCashbookEntry inside both pp.js and pp_supabase.js. The payload was incorrectly parsing objects instead of JSON strings. Deletions in the Admin Panel now correctly process and immediately reflect in the Supabase backend.
-- **Receipt Print Styles:** Standardized the print layouts for Receipts to enforce A4 Landscape printing globally, preventing cut-offs and misalignments across different browsers.
-- **Cache Busting Versioning:** Implemented forced cache-busting (e.g. ?v=9.4) in the HTML script tags. This ensures that browsers on cPanel and GitHub immediately download the newest .js code instead of silently loading outdated offline cache.
-- **Two GitHub Repositories:** Clarified the repository structure. 
-  - Church_account (origin) acts as the main local backup repo.
-  - church-app is the actual live GitHub Pages deployment repo. 
-  - Code pushed to church-app main deploys the live site.
+---
+
+## 🛠️ Work Accomplished & Recent Enhancements (v10.0 → v10.1)
+
+### 1. A5 Portrait Receipt & Voucher Printing (v10.1 Update)
+- **Page Separation:** Formatted Original and Office Copy into 2 distinct pages (`A5 Portrait`) with clean page breaks.
+- **Date Formatting:** Dates formatted as `DD-MM-YYYY` (e.g., `06-09-2026`).
+- **Member Label & Styling:** Changed label from `"Party / Member:"` to `"Member:"` and made member name **bold** (`<strong>Santhosh K. A.</strong>`).
+- **Full Church Branding:** Enforced `"ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"` header across all receipts and vouchers.
+
+### 2. Cashbook-Brain Member Ledger Engine
+- Financial amounts dynamically calculated via `findIndividualColKey({ head, code })`.
+- Fixed fallback mapping issues that misallocated non-subscription items to subscription columns.
+
+### 3. Automatic Subscription Upto Parsing (`getLatestSubscriptionRemark`)
+- Scans `RP-3.82` and `RP-3.83` receipt remarks (e.g., "Apr 25 to Sept 26") and auto-calculates Subscription Upto date (`09/2026`).
+- Displays `-` if no subscription receipts exist. Fixed default `03/2027` fallback bug.
+
+### 4. Non-Member (NM) UI & Sorting Rules
+- `NM NON Members` row is forced to always sort at the bottom of the Individual Ledger table.
+- Disabled Subscription Upto calculation for Non-Members.
 
 ---
 
 ## 📁 Key File Inventory
 
-| File / Folder | Purpose |
+| File / Path | Purpose |
 | :--- | :--- |
-| **deployment_files/** | The finalized output directory containing the 3 deployment environments. |
-| **pp_supabase.js** | Core client-side javascript application code connected to Supabase Cloud. |
-| **pp.js** | Core client-side javascript application code using offline LocalStorage (for APK). |
-| **index.html (root)** | The cloud portal layout containing the Secure Gateway Login overlay (Source for cloud deployments). |
-| **index_offline.html** | Offline local portal layout (No login overlay - Source for mobile APKs). |
-| **prepare_deployments.py** | Packages the repository into the 3 deployment folders. |
+| [app_supabase.js](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/app_supabase.js) | Core client JS application code connected to Supabase Cloud backend. |
+| [app.js](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/app.js) | Core client JS application code using offline LocalStorage (for APK & offline mode). |
+| [index_supabase.html](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/index_supabase.html) | Main web portal HTML layout with Supabase auth login overlay. |
+| [index_offline.html](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/index_offline.html) | Standalone local/offline portal HTML layout. |
+| [AGENTS.md](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/AGENTS.md) | Knowledge base containing domain rules, deployment targets, and code mappings. |
+| [prepare_deployments.py](file:///c:/saju_old%20pc/Church_App/anti_gravity_v9.2/prepare_deployments.py) | Packaging script that populates `deployment_files/`. |
+| `android-app/` | Native Android Gradle application source (Offline release APK build target). |
 
 ---
 
-## 🚀 How to Re-Deploy (v9.4 onwards)
+## 🚀 Deployment & Operations Guide
 
-1.  **To Update Web Deployments:** 
-    If you make changes to HTML/CSS/JS, run python prepare_deployments.py. 
-    - For cPanel: Upload the generated contents of the deployment_files/cpanel/ folder to your cPanel File Manager.
-    - For GitHub: Run git push church-app main to push the root files to the live site. (Ensure index.html cache version numbers match between HTML and JS to prevent caching).
-2.  **To Rebuild Mobile APKs:**
-    Navigate to the ndroid-app/ directory and run .\gradlew assembleRelease. The output will be located in ndroid-app/app/build/outputs/apk/full/release/. Then copy the files into deployment_files/mobile apk v1.0/.
-3.  **To sync Offline Mobile Data:**
-    Export the JSON backup from the CPanel web admin portal and import it into the Android Mobile App via **Restore/Replace Data**.
+### 1. Updating Web Portal (Cloud Sync)
+1. Execute packaging script:
+   ```powershell
+   python prepare_deployments.py
+   python copy_assets_to_android.py full
+   ```
+2. **GitHub Pages (`church-app` live site):**
+   ```powershell
+   git add .
+   git commit -m "deploy: release update v10.1 with A5 receipt printing & Pilgrim Centre branding"
+   git push origin main
+   git push church-app main
+   ```
+   *Live URL:* `https://sajubeml.github.io/church-app/`
+3. **cPanel Host:**
+   Upload contents of `deployment_files/cpanel/` to the web root via cPanel File Manager.
+
+### 2. Building Standalone Android Release APK
+1. Navigate to Android project directory:
+   ```powershell
+   cd android-app
+   .\gradlew.bat assembleFullRelease
+   ```
+2. The compiled APK is located at:
+   `android-app\app\build\outputs\apk\full\release\app-full-release.apk`
+3. Copy to project root and rename to `St_Gregorios_Church_Accounting_v10.1.apk`.
+
+---
+
+## 🔍 Diagnostics & Verification Utilities
+
+- **Trial Balance Audit:** `python scratch/audit_tb.py`
+- **Member Ledger Audit:** `python scratch/audit_all_members.py`
+- **Handover Status Checker:** `python handover_status.py`

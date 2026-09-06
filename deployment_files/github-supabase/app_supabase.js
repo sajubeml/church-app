@@ -369,6 +369,18 @@ function formatCurrency(val) {
   return num.toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
+function formatDateDDMMYYYY(dStr) {
+  if (!dStr) return '';
+  const str = String(dStr).trim();
+  if (str.includes('-')) {
+    const parts = str.split('-');
+    if (parts.length === 3 && parts[0].length === 4) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+  }
+  return str;
+}
+
 // ----------------------------------------------------
 // 1. INDIAN RUPEE NUMBER TO WORDS (VBA SpellNumberINR)
 // ----------------------------------------------------
@@ -2037,7 +2049,8 @@ function showReceiptModal() {
   const docTitle = isReceipt ? "RECEIPT" : "PAYMENT VOUCHER";
   const numLabel = isReceipt ? "Receipt No" : "Voucher No";
   const docNo = document.getElementById("txtVoucherNo").value;
-  const dateStr = document.getElementById("txtDate").value;
+  const rawDateStr = document.getElementById("txtDate").value;
+  const formattedDateStr = formatDateDDMMYYYY(rawDateStr);
   const regNo = document.getElementById("txtRegNo").value;
   const cmbMember = document.getElementById("cmbMember");
 
@@ -2075,19 +2088,19 @@ function showReceiptModal() {
   document.title = pdfTitle;
 
   const receiptContent = `
-    <div class="dual-receipt-container" style="display:flex; gap:20px; flex-wrap:wrap;">
+    <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:25px; max-width:540px; margin:0 auto;">
       <!-- ORIGINAL -->
-      <div class="receipt-card" style="flex:1; border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; min-width:320px; position:relative;">
+      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; position:relative; box-sizing:border-box;">
         <span style="position:absolute; right:12px; top:12px; background:#10b981; color:#fff; font-size:10px; font-weight:bold; padding:2px 8px; border-radius:4px;">ORIGINAL</span>
         <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:8px; margin-bottom:12px;">
           <img src="church_logo.png" alt="Church Logo" style="height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:4px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:15px; color:#0f172a; font-weight:800;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH</h3>
+          <h3 style="margin:0; font-size:14px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</h3>
           <p style="margin:2px 0; font-size:10.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
           <p style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:4px;">${docTitle}</p>
         </div>
         <table style="width:90%; margin:0 auto 10px auto; font-size:12px;">
-          <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${dateStr}</td></tr>
-          <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Party / Member:</strong> ${memberName}</td></tr>
+          <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
+          <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
         </table>
         <table style="width:90%; margin:0 auto 12px auto; border-collapse:collapse; font-size:12px;">
           <thead>
@@ -2108,17 +2121,17 @@ function showReceiptModal() {
       </div>
 
       <!-- DUPLICATE COPY -->
-      <div class="receipt-card" style="flex:1; border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; min-width:320px; position:relative;">
+      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; position:relative; box-sizing:border-box;">
         <span style="position:absolute; right:12px; top:12px; background:#f59e0b; color:#fff; font-size:10px; font-weight:bold; padding:2px 8px; border-radius:4px;">COPY</span>
         <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:8px; margin-bottom:12px;">
           <img src="church_logo.png" alt="Church Logo" style="height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:4px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:15px; color:#0f172a; font-weight:800;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH</h3>
+          <h3 style="margin:0; font-size:14px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</h3>
           <p style="margin:2px 0; font-size:10.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
           <p style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:4px;">${docTitle} (OFFICE COPY)</p>
         </div>
         <table style="width:90%; margin:0 auto 10px auto; font-size:12px;">
-          <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${dateStr}</td></tr>
-          <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Party / Member:</strong> ${memberName}</td></tr>
+          <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
+          <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
         </table>
         <table style="width:90%; margin:0 auto 12px auto; border-collapse:collapse; font-size:12px;">
           <thead>
@@ -2842,7 +2855,7 @@ function handleIndivHeaderClick(colKey) {
 
 function getLatestSubscriptionRemark(regNo) {
   if (!state.cashbook) return "";
-  
+
   // Parse DD-MM-YYYY to Date object for comparison
   const parseDate = (dStr) => {
     if (!dStr) return new Date(0);
@@ -3035,7 +3048,7 @@ function renderIndividualLedgers() {
       const code = String(cb["F"] || "").trim();
       const amtText = String(cb["H"] || cb["I"] || "0").replace(/,/g, '');
       const amt = parseFloat(amtText) || 0;
-      
+
       const colKey = findIndividualColKey({ head, code });
       if (colKey) {
         if (!cbAgg[reg]) cbAgg[reg] = {};
@@ -3075,7 +3088,7 @@ function renderIndividualLedgers() {
     }
 
     let subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["E"] || 0) > 0);
-    
+
     // Non-members don't have subscriptions
     if (regNo && regNo.toUpperCase() === "NM") {
       subUpto = "-";
@@ -5026,21 +5039,22 @@ function reprintTxnDocument(type, docNo, index) {
 
   const docTitle = isReceipt ? "RECEIPT" : "PAYMENT VOUCHER";
   const numLabel = isReceipt ? "Receipt No" : "Voucher No";
+  const formattedDateStr = formatDateDDMMYYYY(dateStr);
 
   const cardHtml = `
-    <div class="dual-receipt-container" style="display:flex; gap:20px; flex-wrap:wrap;">
+    <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:25px; max-width:540px; margin:0 auto;">
       <!-- ORIGINAL -->
-      <div class="receipt-card" style="flex:1; border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; min-width:320px; position:relative;">
+      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; position:relative; box-sizing:border-box;">
         <span style="position:absolute; right:12px; top:12px; background:#10b981; color:#fff; font-size:10px; font-weight:bold; padding:2px 8px; border-radius:4px;">ORIGINAL</span>
         <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:8px; margin-bottom:12px;">
           <img src="church_logo.png" alt="Church Logo" style="height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:4px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:15px; color:#0f172a; font-weight:800;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH</h3>
+          <h3 style="margin:0; font-size:14px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</h3>
           <p style="margin:2px 0; font-size:10.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
           <p style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:4px;">${docTitle}</p>
         </div>
         <table style="width:100%; margin-bottom:10px; font-size:12px;">
-          <tr><td><strong>${numLabel}:</strong> #${cleanDocNo || '-'}</td><td style="text-align:right;"><strong>Date:</strong> ${dateStr}</td></tr>
-          <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Party / Member:</strong> ${memberName}</td></tr>
+          <tr><td><strong>${numLabel}:</strong> #${cleanDocNo || '-'}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
+          <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
         </table>
         <table style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px;">
           <thead>
@@ -5070,17 +5084,17 @@ function reprintTxnDocument(type, docNo, index) {
       </div>
 
       <!-- DUPLICATE COPY -->
-      <div class="receipt-card" style="flex:1; border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; min-width:320px; position:relative;">
+      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; position:relative; box-sizing:border-box;">
         <span style="position:absolute; right:12px; top:12px; background:#f59e0b; color:#fff; font-size:10px; font-weight:bold; padding:2px 8px; border-radius:4px;">COPY</span>
         <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:8px; margin-bottom:12px;">
           <img src="church_logo.png" alt="Church Logo" style="height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:4px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:15px; color:#0f172a; font-weight:800;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH</h3>
+          <h3 style="margin:0; font-size:14px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</h3>
           <p style="margin:2px 0; font-size:10.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
           <p style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:4px;">${docTitle} (OFFICE COPY)</p>
         </div>
         <table style="width:100%; margin-bottom:10px; font-size:12px;">
-          <tr><td><strong>${numLabel}:</strong> #${cleanDocNo || '-'}</td><td style="text-align:right;"><strong>Date:</strong> ${dateStr}</td></tr>
-          <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Party / Member:</strong> ${memberName}</td></tr>
+          <tr><td><strong>${numLabel}:</strong> #${cleanDocNo || '-'}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
+          <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
         </table>
         <table style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px;">
           <thead>

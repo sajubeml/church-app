@@ -68,3 +68,13 @@ When auditing or comparing the Web App Trial Balance against the user's manual E
 - **JSON Comma Corruption:** NEVER format numbers with commas (e.g. `"2,000"`) when manually generating or editing JSON backup files via Python scripts. JavaScript's `parseFloat("2,000")` evaluates to `2`, permanently corrupting the entire ledger upon restore. Always use raw floats/integers (e.g. `"2000"`).
 - **Hidden Columns:** The UI allows hiding columns with no data to compress the view (logic in `app_supabase.js` and `app.js` around line 2710). However, ensure this does not break CSV exports.
 - **Python Utilities:** The `scratch/` directory contains highly useful Python scripts (`rebuild_ledger.py`, `audit_tb.py`, `fix_trial_balance.py`) that can mathematically rebuild the entire Individual Ledger from the Cashbook and audit Trial Balance totals. Use these tools if the user suspects data corruption.
+
+## 5. PDF Export Styling & Aesthetics
+The PDF export engine (both the `printWin` desktop popup and Android's `triggerSystemPrint` hidden iframe) must strictly match the user's manual Excel aesthetic:
+- **Hairline & Dotted Borders:** The outer table borders and headers use a solid `1px solid #000`, but all inner data cells (`td`) MUST use a faint dotted line (`1px dotted #888`) so that physical laser prints don't look excessively dark.
+- **Pure White Rows:** Zebra striping (alternating gray backgrounds) is explicitly disabled in print mode.
+- **Header Highlighting:** Standard headers use a mint-green background (`#e6f0ed`). However, the 7 compulsory payment columns (columns 4 through 10: Subscription Upto, Subscription Min 200, Donation General, Catholicate Day, Metropolitan Fund, Mission Sunday, Seminary Day) MUST be highlighted with Excel light yellow (`#fff2cc`) via `nth-child` CSS rules.
+- **No Text Squishing & Font Sizing:** The first 4 columns (`Sl. No`, `Reg No`, `Name of HoF`, `Subscription Upto`) must have `white-space: nowrap !important;` to prevent PDF engines from squeezing names onto multiple lines. Additionally, data cells (`td`) must have a font size of `12.5px` so the text fills the height of the cells elegantly.
+- **Manual Header Line Breaks:** Dynamic headers from the ledger state contain `\n` characters from original Excel `Alt+Enter` inputs. These must be replaced with `<br>` during table HTML generation so they wrap identically to Excel.
+- **No Rupee Symbol Clutter:** The global `formatCurrency` function must return numbers with Indian commas ONLY (e.g. `2,400`), explicitly omitting the "₹" symbol, to prevent visual clutter in the dense ledger cells.
+- **Massive Church Header:** The PDF export must inject the original large `church_logo.png` and full Church title. Never shrink the main church header block.

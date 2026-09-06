@@ -2517,7 +2517,7 @@ function renderIndividualLedgers() {
       colValues[col.key] = parseFloat(val) || 0;
     });
 
-    const subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["F"] || 0) > 0);
+    const subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["E"] || 0) > 0);
 
     return { sl, regNo, name, subUpto, grandVal, grandNum, colValues };
   });
