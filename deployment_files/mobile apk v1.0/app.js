@@ -2240,7 +2240,7 @@ function printReceiptModal() {
         /* Default: A5 Portrait Mode (Page 1 Original, Page 2 Copy) */
         @media print {
           .no-print, .print-preview-header { display: none !important; }
-          @page { size: A5 portrait; margin: 3mm; }
+          @page { size: A5 portrait; margin: 6mm; }
           html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; }
           .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
           .dual-receipt-container::after { display: none !important; }
@@ -2250,11 +2250,11 @@ function printReceiptModal() {
             justify-content: space-between !important;
             width: 100% !important;
             max-width: 100% !important;
-            height: 182mm !important;
+            height: 180mm !important;
             box-sizing: border-box !important;
             border: 2px solid #0f172a !important;
             border-radius: 8px !important;
-            padding: 6mm 8mm !important;
+            padding: 5mm 7mm !important;
             margin: 0 0 0 0 !important;
             page-break-after: always !important;
             break-after: page !important;
@@ -2273,6 +2273,7 @@ function printReceiptModal() {
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:1.1rem;">📄</span>
           <span style="font-weight:800; font-size:0.92rem; color:#ffffff;">${pdfTitle}</span>
+          <span style="font-size:0.75rem; color:#93c5fd; background:#1e293b; padding:3px 8px; border-radius:4px; border:1px solid #3b82f6; margin-left:6px;">💡 Laser Printers: Paper: A5 | Layout: Portrait</span>
         </div>
         <div style="display:flex; gap:10px; align-items:center;">
           <label style="font-size:0.82rem; font-weight:700; color:#94a3b8; margin:0;">Format:</label>
@@ -2293,9 +2294,9 @@ function printReceiptModal() {
           if (fmt === 'a4-landscape') {
             el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A4 landscape; margin: 0; } body { padding: 5mm !important; background: #fff; width: 100%; margin: 0; box-sizing: border-box; } .dual-receipt-container { display: flex !important; position: relative; gap: 15px !important; width: 100%; min-height: 185mm; align-items: flex-start !important; } .dual-receipt-container::after { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; border-left: 1px dashed #94a3b8; } .receipt-card { flex: 1 !important; max-width: 48% !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 8mm !important; page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: flex !important; gap: 20px; flex-direction: row; } .receipt-card { flex: 1 !important; max-width: 48% !important; margin-bottom: 0 !important; }';
           } else if (fmt === 'a5-landscape') {
-            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 landscape; margin: 3mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 130mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 5mm 8mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
+            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 landscape; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 126mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           } else {
-            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 3mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 182mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 6mm 8mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
+            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 180mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 5mm 7mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           }
         }
       <\/script>

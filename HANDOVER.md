@@ -42,7 +42,7 @@ Source of truth hardcoded in `app_supabase.js` (`MASTER_RECEIPT_HEADS` and `MAST
 
 ### 1. A5 Portrait Receipt & Voucher Printing (v10.6 Update)
 - **Page Separation:** Formatted Original and Office Copy into 2 distinct pages (`A5 Portrait`) with clean page breaks (`page-break-after: always`).
-- **Zero Spillover Height:** Set `@page { size: A5 portrait; margin: 3mm; }` with receipt card `height: 182mm !important;` and `padding: 6mm 8mm;`, guaranteeing Page 1 (ORIGINAL) and Page 2 (OFFICE COPY) span strictly across 2 sheets of paper without a 3rd blank/overflow page (tested & verified on Canon LBP2900).
+- **Zero Spillover Height & Hardware Margin Safe:** Set `@page { size: A5 portrait; margin: 6mm; }` with receipt card `height: 180mm !important;` and `padding: 5mm 7mm;`, safely clearing the Canon LBP2900 5mm hardware unprintable margins so all 4 outer borders print completely while guaranteeing Page 1 (ORIGINAL) and Page 2 (OFFICE COPY) span strictly across 2 sheets of paper without a 3rd blank/overflow page.
 - **Interactive Orientation Control:** Live dropdown toggle inside the receipt print window allowing switching between **A5 Portrait (Default)**, **A5 Landscape**, and **A4 Landscape 2-Up**.
 - **Date Formatting:** Dates formatted as `DD-MM-YYYY` (e.g., `06-09-2026`).
 - **Member Label & Styling:** Changed label from `"Party / Member:"` to `"Member:"` and made member name **bold** (`<strong>Abraham.M.O</strong>`).

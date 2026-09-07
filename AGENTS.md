@@ -34,21 +34,28 @@ The `individual` array's header row (index 3) defines the column layout. Financi
 - The old bug where a blank `D` column showed `03/2027` by default has been permanently fixed by correcting the check from `colValues["F"]` to `colValues["E"]` in `getCleanSubUptoLive()`.
 
 ## 6. Deployment Architecture
-The app is deployed to multiple targets. All targets must be kept in sync using the deploy script at `scratch/deploy_cashbook_brain.py`:
+The app is deployed to multiple targets:
 - **Offline (local):** `index_supabase.html` + `app_supabase.js` in the project root.
 - **Online cPanel:** Files in `deployment_files/cpanel/` — manually upload via cPanel File Manager.
 - **Online GitHub Pages:** Files in `deployment_files/github-supabase/` — push to `church-app` remote. Live at `https://sajubeml.github.io/church-app/` (username is `sajubeml`, NOT `sajubeiml`).
-- **Android APK:** Source at `android-app/app/src/main/assets/app.js`. Build using `.\gradlew.bat assembleFullRelease` from inside the `android-app/` folder. The `full` flavor is the offline standalone version. The `fresh` flavor is the fresh-start version.
-- **Built APK output:** `android-app\app\build\outputs\apk\full\release\app-full-release.apk` — copy to project root and rename as `St_Gregorios_Church_Accounting_v9.9.apk`.
+- **Android APK:** 
+  - Assets are populated using `py copy_assets_to_android.py full` (or `fresh`), which copies `index_offline.html` -> `index.html`, `data.js`, and `app.js`. **Never** package `index_supabase.html` into Android assets.
+  - Build APKs using `.\gradlew.bat assembleFullRelease assembleFreshRelease` from inside the `android-app/` folder.
+  - The `full` flavor is the offline standalone version. The `fresh` flavor is the fresh-start version.
+  - **Built APK output:** `android-app\app\build\outputs\apk\full\release\app-full-release.apk` — copied to project root as `St_Gregorios_Church_Accounting_v10.0.apk`, `St_Gregorios_Church_Accounting_v9.9.apk`, and `St_Gregorios_Church_Accounting.apk`.
 
-## 7. GitHub Remote Configuration
+## 7. Android APK Data Management & Backup Restore
+- **Admin Backup Import:** In the standalone Android APK, the in-app **Administration** panel (`tabAdmin`) allows restoring/patching the latest monolithic JSON backup file (`St_Gregorios_Church_Backup_YYYY-MM-DD.json`).
+- Importing a backup writes directly to the WebView `localStorage` and memory `state`, instantly restoring all members, dropdown options, voucher sequences, and cashbook history.
+
+## 8. GitHub Remote Configuration
 The local repository has TWO remotes:
 - `origin` → `https://github.com/sajubeml/Church_account.git` (main codebase backup)
 - `church-app` → `https://github.com/sajubeml/church-app.git` (GitHub Pages live site)
 - Always push to BOTH: `git push origin main` AND `git push church-app main`.
 
-## 8. Print Engine & HTML Script Parsing Rules (Updated Sep 2026)
+## 9. Print Engine & HTML Script Parsing Rules (Updated Sep 2026)
 - **Nested Script Escaping:** When generating dynamic HTML windows inside string literals (e.g. `printWin.document.write(...)`), NEVER write unescaped literal `</script>` tags or inner backticks (`` ` ``). In HTML specifications, ANY literal `</script>` string inside a JS file immediately terminates the outer script tag. Always escape closing script tags inside JS string literals as `<\/script>`.
-- **Receipt Print Layouts:** Receipt printing supports 3 format modes: **A5 Portrait (Default)**, **A5 Landscape**, and **A4 Landscape 2-Up**.
-- **A5 Portrait Dimensions:** Set `@page { size: A5 portrait; margin: 3mm; }` with receipt card `height: 182mm !important;` and `padding: 6mm 8mm;` so Page 1 (ORIGINAL) and Page 2 (OFFICE COPY) fit strictly across 2 sheets of paper without triggering a 3rd page spillover.
+- **A5 Portrait Dimensions:** Set `@page { size: A5 portrait; margin: 6mm; }` with receipt card `height: 180mm !important;` and `padding: 5mm 7mm;` so all 4 outer borders clear the Canon/HP laser 5mm unprintable hardware margin while ensuring Page 1 (ORIGINAL) and Page 2 (OFFICE COPY) fit strictly across 2 sheets of paper without triggering a 3rd page spillover.
+
 
