@@ -3866,12 +3866,12 @@ function exportTableToPDF(tableId, filename) {
 
       const headerBlockHtml = `
         <tr class="pdf-repeat-header">
-          <th colspan="${totalCols}" style="text-align:center; border:none; background:#ffffff; padding:10px 0 15px 0; font-family:'Segoe UI',Arial,sans-serif;">
+          <th colspan="${totalCols}" style="text-align:center; border:none; background:#ffffff; padding:4px 0 6px 0; font-family:'Segoe UI',Arial,sans-serif;">
             <div style="text-align:center; width:100%; margin:0 auto;">
-              <img src="church_logo.png" alt="Church Logo" style="display:block; margin:0 auto 6px auto; height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; object-fit:contain; background:#fff;">
-              <div style="font-size:16px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</div>
-              <div style="font-size:11px; font-weight:600; color:#475569; margin-top:3px;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</div>
-              <div style="font-size:13px; font-weight:800; color:#0f172a; margin-top:6px; padding-top:6px; display:inline-block;">${titleLine3}</div>
+              <img src="church_logo.png" alt="Church Logo" style="display:block; margin:0 auto 3px auto; height:36px; width:36px; border-radius:50%; border:1.5px solid #1e293b; object-fit:contain; background:#fff;">
+              <div style="font-size:13px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.4px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</div>
+              <div style="font-size:9px; font-weight:600; color:#475569; margin-top:2px;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</div>
+              <div style="font-size:10px; font-weight:800; color:#0f172a; margin-top:3px; padding-top:3px; display:inline-block;">${titleLine3}</div>
             </div>
           </th>
         </tr>
@@ -3897,31 +3897,47 @@ function exportTableToPDF(tableId, filename) {
         <style>
           @media print {
             body > *:not(#printPreviewOverlay) { display: none !important; }
-            #printPreviewOverlay { position: static !important; overflow: visible !important; height: auto !important; padding: 0 !important; zoom: 0.55; }
+            #printPreviewOverlay { position: static !important; overflow: visible !important; height: auto !important; padding: 0 !important; }
             #printPreviewOverlay, #printPreviewOverlay * { visibility: visible !important; }
             .print-preview-header { display: none !important; }
-            @page { size: A4 landscape; margin: 5mm; }
-            
+            @page { size: A4 landscape; margin: 4mm 5mm; }
+
             /* FORCE BROWSER TO PRINT BACKGROUND COLORS */
             * {
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
             }
-            
-            table { border-collapse: collapse !important; width: 100% !important; margin-bottom: 20px; font-family: 'Times New Roman', Times, serif !important; border: 1px solid #000 !important; }
-            table th, table td { white-space: normal !important; word-wrap: break-word !important; }
+
+            /* Scale the entire table to fit 1 page */
+            table {
+              border-collapse: collapse !important;
+              width: 100% !important;
+              table-layout: fixed !important;
+              font-family: Arial, sans-serif !important;
+              border: 1px solid #000 !important;
+              font-size: 7.5px !important;
+              transform-origin: top left;
+              page-break-inside: avoid !important;
+            }
+            table th, table td { white-space: normal !important; word-wrap: break-word !important; overflow: hidden; }
             table th:nth-child(1), table td:nth-child(1),
             table th:nth-child(2), table td:nth-child(2),
             table th:nth-child(3), table td:nth-child(3),
             table th:nth-child(4), table td:nth-child(4) {
               white-space: nowrap !important;
             }
-            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 11px !important; border: 1px solid #666 !important; padding: 2px 4px !important; text-align: center !important; }
+            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 7.5px !important; border: 1px solid #666 !important; padding: 1px 2px !important; text-align: center !important; line-height: 1.1 !important; }
             table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
               background-color: #fff2cc !important;
             }
-            table td { font-size: 12.5px !important; border: 1px dotted #888 !important; padding: 3px 4px !important; color: #000 !important; }
+            table td { font-size: 7.5px !important; border: 1px dotted #888 !important; padding: 1px 2px !important; color: #000 !important; line-height: 1.1 !important; }
             table tr:last-child td { font-weight: bold !important; background-color: #e2e8f0 !important; border: 1px solid #000 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
+            /* Compact church header row */
+            table tr.pdf-repeat-header th { padding: 2px 0 4px 0 !important; }
+            table tr.pdf-repeat-header th img { height: 28px !important; width: 28px !important; margin-bottom: 2px !important; }
+            table tr.pdf-repeat-header th div:nth-child(2) { font-size: 9px !important; }
+            table tr.pdf-repeat-header th div:nth-child(3) { font-size: 7px !important; margin-top: 1px !important; }
+            table tr.pdf-repeat-header th div:nth-child(4) { font-size: 8px !important; margin-top: 2px !important; }
           }
         </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
