@@ -3897,7 +3897,14 @@ function exportTableToPDF(tableId, filename) {
         <style>
           @media print {
             body > *:not(#printPreviewOverlay) { display: none !important; }
-            #printPreviewOverlay { position: static !important; overflow: visible !important; height: auto !important; padding: 0 !important; }
+            /* zoom applied here — Chrome uses this BEFORE calculating page breaks */
+            #printPreviewOverlay {
+              position: static !important;
+              overflow: visible !important;
+              height: auto !important;
+              padding: 0 !important;
+              zoom: 0.62;
+            }
             #printPreviewOverlay, #printPreviewOverlay * { visibility: visible !important; }
             .print-preview-header { display: none !important; }
             @page { size: A4 landscape; margin: 4mm 5mm; }
@@ -3908,16 +3915,13 @@ function exportTableToPDF(tableId, filename) {
               print-color-adjust: exact !important;
             }
 
-            /* Scale the entire table to fit 1 page */
             table {
               border-collapse: collapse !important;
               width: 100% !important;
               table-layout: fixed !important;
               font-family: Arial, sans-serif !important;
               border: 1px solid #000 !important;
-              font-size: 7.5px !important;
-              transform-origin: top left;
-              page-break-inside: avoid !important;
+              font-size: 8px !important;
             }
             table th, table td { white-space: normal !important; word-wrap: break-word !important; overflow: hidden; }
             table th:nth-child(1), table td:nth-child(1),
@@ -3926,11 +3930,11 @@ function exportTableToPDF(tableId, filename) {
             table th:nth-child(4), table td:nth-child(4) {
               white-space: nowrap !important;
             }
-            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 7.5px !important; border: 1px solid #666 !important; padding: 1px 2px !important; text-align: center !important; line-height: 1.1 !important; }
+            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 8px !important; border: 1px solid #666 !important; padding: 1px 2px !important; text-align: center !important; line-height: 1.15 !important; }
             table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
               background-color: #fff2cc !important;
             }
-            table td { font-size: 7.5px !important; border: 1px dotted #888 !important; padding: 1px 2px !important; color: #000 !important; line-height: 1.1 !important; }
+            table td { font-size: 8px !important; border: 1px dotted #888 !important; padding: 1px 2px !important; color: #000 !important; line-height: 1.15 !important; }
             table tr:last-child td { font-weight: bold !important; background-color: #e2e8f0 !important; border: 1px solid #000 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
             /* Compact church header row */
             table tr.pdf-repeat-header th { padding: 2px 0 4px 0 !important; }

@@ -1027,40 +1027,47 @@ body {
   font-size: 0.8rem !important;
 }
 
-/* --- CASHBOOK TABLE COMPRESSION & AUTO SCREEN-FILL --- */
+/* --- CASHBOOK TABLE — FIXED LAYOUT, FULL SCREEN WIDTH, ZERO WASTED SPACE --- */
 #cashbookTable {
-  table-layout: auto;
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
 }
 #cashbookTable th,
 #cashbookTable td {
-  padding: 3px 4px !important;
-  font-size: 0.73rem !important;
-  white-space: nowrap !important;
+  padding: 2px 3px !important;
+  font-size: 0.70rem !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   letter-spacing: -0.01em;
+  vertical-align: middle;
 }
 
-#cashbookTable th:nth-child(1), #cashbookTable td:nth-child(1) { min-width: 66px; max-width: 74px; text-align: center; }
-#cashbookTable th:nth-child(2), #cashbookTable td:nth-child(2) { min-width: 46px; max-width: 54px; text-align: center; }
-#cashbookTable th:nth-child(3), #cashbookTable td:nth-child(3) { min-width: 36px; max-width: 42px; text-align: center; }
-#cashbookTable th:nth-child(4), #cashbookTable td:nth-child(4) { white-space: normal !important; min-width: 80px; max-width: 125px; line-height: 1.15; }
-#cashbookTable th:nth-child(5), #cashbookTable td:nth-child(5) { white-space: normal !important; min-width: 85px; max-width: 130px; line-height: 1.15; }
-#cashbookTable th:nth-child(6), #cashbookTable td:nth-child(6) { min-width: 44px; max-width: 52px; text-align: center; font-size: 0.70rem !important; }
-#cashbookTable th:nth-child(7), #cashbookTable td:nth-child(7) { white-space: normal !important; min-width: 75px; max-width: 110px; line-height: 1.15; }
-#cashbookTable th:nth-child(8), #cashbookTable td:nth-child(8) { min-width: 54px; max-width: 68px; text-align: right; }
-#cashbookTable th:nth-child(9), #cashbookTable td:nth-child(9) { min-width: 64px; max-width: 78px; text-align: right; }
-#cashbookTable th:nth-child(10), #cashbookTable td:nth-child(10) { min-width: 66px; max-width: 74px; text-align: center; }
-#cashbookTable th:nth-child(11), #cashbookTable td:nth-child(11) { min-width: 46px; max-width: 54px; text-align: center; }
-#cashbookTable th:nth-child(12), #cashbookTable td:nth-child(12) { white-space: normal !important; min-width: 85px; max-width: 130px; line-height: 1.15; }
-#cashbookTable th:nth-child(13), #cashbookTable td:nth-child(13) { min-width: 44px; max-width: 52px; text-align: center; font-size: 0.70rem !important; }
-#cashbookTable th:nth-child(14), #cashbookTable td:nth-child(14) { white-space: normal !important; min-width: 75px; max-width: 110px; line-height: 1.15; }
-#cashbookTable th:nth-child(15), #cashbookTable td:nth-child(15) { min-width: 54px; max-width: 68px; text-align: right; }
-#cashbookTable th:nth-child(16), #cashbookTable td:nth-child(16) { min-width: 64px; max-width: 78px; text-align: right; }
+/* LEFT SIDE — Receipt Columns (1-9): proportional % widths summing ~51% */
+#cashbookTable th:nth-child(1),  #cashbookTable td:nth-child(1)  { width: 5.8%;  text-align: center; }   /* Date */
+#cashbookTable th:nth-child(2),  #cashbookTable td:nth-child(2)  { width: 3.8%;  text-align: center; }   /* Receipt# */
+#cashbookTable th:nth-child(3),  #cashbookTable td:nth-child(3)  { width: 2.8%;  text-align: center; }   /* Reg# */
+#cashbookTable th:nth-child(4),  #cashbookTable td:nth-child(4)  { width: 9.5%;  white-space: normal; word-break: break-word; line-height: 1.2; }  /* Name */
+#cashbookTable th:nth-child(5),  #cashbookTable td:nth-child(5)  { width: 10%;   white-space: normal; word-break: break-word; line-height: 1.2; }  /* Account Head */
+#cashbookTable th:nth-child(6),  #cashbookTable td:nth-child(6)  { width: 4%;    text-align: center; font-size: 0.66rem !important; }              /* Code */
+#cashbookTable th:nth-child(7),  #cashbookTable td:nth-child(7)  { width: 8%;    white-space: normal; word-break: break-word; line-height: 1.2; }  /* Remarks */
+#cashbookTable th:nth-child(8),  #cashbookTable td:nth-child(8)  { width: 4.6%;  text-align: right; }   /* Cash (Rec) */
+#cashbookTable th:nth-child(9),  #cashbookTable td:nth-child(9)  { width: 4.6%;  text-align: right; }   /* Bank (Rec) */
 
-/* Optimize number columns for readability */
+/* DIVIDER SPACE: remaining ~49% for RIGHT SIDE — Payment Columns (10-16) */
+#cashbookTable th:nth-child(10), #cashbookTable td:nth-child(10) { width: 5.8%;  text-align: center; }   /* Pay Date */
+#cashbookTable th:nth-child(11), #cashbookTable td:nth-child(11) { width: 3.8%;  text-align: center; }   /* Voucher# */
+#cashbookTable th:nth-child(12), #cashbookTable td:nth-child(12) { width: 10.3%; white-space: normal; word-break: break-word; line-height: 1.2; }  /* Payment Head */
+#cashbookTable th:nth-child(13), #cashbookTable td:nth-child(13) { width: 4%;    text-align: center; font-size: 0.66rem !important; }              /* Code */
+#cashbookTable th:nth-child(14), #cashbookTable td:nth-child(14) { width: 8%;    white-space: normal; word-break: break-word; line-height: 1.2; }  /* Remarks */
+#cashbookTable th:nth-child(15), #cashbookTable td:nth-child(15) { width: 4.6%;  text-align: right; }   /* Cash (Pay) */
+#cashbookTable th:nth-child(16), #cashbookTable td:nth-child(16) { width: 4.6%;  text-align: right; }   /* Bank (Pay) */
+
+/* Number column readability */
 #cashbookTable td.text-right {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
 }
+
 
