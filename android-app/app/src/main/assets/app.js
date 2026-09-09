@@ -2112,12 +2112,14 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
           margin: 0,
           filename: pdfFilename,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 800 },
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
           jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
           pagebreak: { mode: ['css', 'legacy'] }
         };
         html2pdf().set(opt).from(cleanEl).outputPdf('datauristring').then(function (pdfDataUri) {
-          if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+          setTimeout(function () {
+            if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+          }, 500);
           if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
             const base64Data = pdfDataUri.split('base64,')[1];
             window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
@@ -2162,7 +2164,7 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
   }
 }
 
-// Prepares a pristine, off-screen A5-dimensioned DOM structure specifically for html2pdf
+// Prepares a pristine, cleanly-rendered A5-dimensioned DOM structure specifically for html2pdf
 function prepareCleanA5PdfElement(containerOrHtml) {
   let innerHtml = "";
   if (typeof containerOrHtml === "string") {
@@ -2179,10 +2181,11 @@ function prepareCleanA5PdfElement(containerOrHtml) {
     innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
   }
 
-  // Outer isolated offscreen wrapper: exactly 148mm (A5 width) with 6mm margins inside
+  // Outer wrapper placed on screen with fixed top:0; left:0; width:148mm; but behind other UI (z-index:-100) or opacity:0.01
+  // Never use left:-9999px because html2canvas clips or produces empty blank pixels for elements outside the layout viewport.
   const wrapper = document.createElement("div");
   wrapper.id = "cleanA5PdfWrapper";
-  wrapper.style.cssText = "position:absolute; left:-9999px; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:-9999;";
+  wrapper.style.cssText = "position:fixed; left:0; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:-100; pointer-events:none; opacity:1;";
   wrapper.innerHTML = innerHtml;
 
   // Remove any modal close buttons or interactive chrome
@@ -2215,12 +2218,14 @@ function saveClientSidePdfSilent(containerOrHtml, pdfFilename) {
       margin: 0,
       filename: pdfFilename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 800 },
+      html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
       jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
       pagebreak: { mode: ['css', 'legacy'] }
     };
     html2pdf().set(opt).from(cleanEl).save().then(function () {
-      if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+      setTimeout(function () {
+        if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+      }, 500);
     }).catch(function (err) {
       if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
       console.warn("saveClientSidePdfSilent promise error:", err);
