@@ -2471,7 +2471,7 @@ function downloadReceiptHtml() {
   URL.revokeObjectURL(url);
 }
 
-function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
+async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
   const cleanDocNo = (docNo || "").replace(/#/g, "").trim();
   const key = getCleanPrintTitle(cleanDocNo ? `${prefix}_${cleanDocNo}` : `${prefix}_Document`);
   const fileName = `${key}.html`;
@@ -2484,11 +2484,37 @@ function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
     localStorage.setItem("CHURCH_SAVED_RECEIPTS", JSON.stringify(savedMap));
   } catch (e) { }
 
-  // 2. Prepare clean HTML for Edge headless PDF rendering & file storage
-  // Fix relative image path so files in Receipts/ directory locate church_logo.png in root folder
-  let cleanContent = (htmlContent || "")
-    .replace(/src="church_logo\.png"/g, 'src="../church_logo.png"')
-    .replace(/src="church_logo\.jpg"/g, 'src="../church_logo.jpg"');
+  // 2. Embed logo as base64 so HTML is fully self-contained (works from any location)
+  async function getLogoBase64() {
+    for (const src of ['church_logo.png', 'church_logo.jpg']) {
+      try {
+        const res = await fetch(src);
+        if (!res.ok) continue;
+        const blob = await res.blob();
+        return await new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+      } catch (e) { }
+    }
+    return null;
+  }
+
+  const logoBase64 = await getLogoBase64();
+  let cleanContent = htmlContent || "";
+  if (logoBase64) {
+    cleanContent = cleanContent
+      .replace(/src="church_logo\.png"/g, `src="${logoBase64}"`)
+      .replace(/src="church_logo\.jpg"/g, `src="${logoBase64}"`)
+      .replace(/src="\.\.\/church_logo\.png"/g, `src="${logoBase64}"`)
+      .replace(/src="\.\.\/church_logo\.jpg"/g, `src="${logoBase64}"`);
+  } else {
+    // Fallback: relative path for local Receipts/ folder
+    cleanContent = cleanContent
+      .replace(/src="church_logo\.png"/g, 'src="../church_logo.png"')
+      .replace(/src="church_logo\.jpg"/g, 'src="../church_logo.jpg"');
+  }
 
   const fullHtml = `<!DOCTYPE html>
 <html>
