@@ -2356,6 +2356,12 @@ function downloadReceiptHtml() {
   const cleanTitle = getCleanPrintTitle(docNo ? `${prefix}_${docNo}` : `${prefix}_Document`);
   const fileName = `${cleanTitle}.html`;
 
+  let dlBodyHtml = modalArea ? modalArea.innerHTML : '';
+  const dlLogo = (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) ? window.CHURCH_LOGO_BASE64 : '';
+  if (dlLogo) {
+    dlBodyHtml = dlBodyHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${dlLogo}"`);
+  }
+
   const content = `<!DOCTYPE html>
 <html>
 <head>
@@ -2370,7 +2376,7 @@ function downloadReceiptHtml() {
 </head>
 <body>
   <div class="dual-receipt-container">
-    ${modalArea ? modalArea.innerHTML : ''}
+    ${dlBodyHtml}
   </div>
 </body>
 </html>`;
@@ -2416,7 +2422,7 @@ async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
     return null;
   }
 
-  const logoBase64 = await getLogoBase64();
+  const logoBase64 = (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) ? window.CHURCH_LOGO_BASE64 : await getLogoBase64();
   let cleanContent = htmlContent || "";
   if (logoBase64) {
     cleanContent = cleanContent.replace(/src="[^"]*church_logo[^"]*"/g, `src="${logoBase64}"`);
