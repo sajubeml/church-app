@@ -256,15 +256,25 @@ class ChurchHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 if not os.path.exists(edge_path):
                     edge_path = r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
 
+                pdf_url = None
                 if os.path.exists(edge_path):
                     import subprocess
-                    cmd = [edge_path, "--headless", f"--print-to-pdf={pdf_filepath}", "--no-pdf-header-footer", filepath]
-                    subprocess.run(cmd, capture_output=True, text=True)
+                    # Use HTTP URL so Edge loads CSS/images correctly (file:// blocks cross-origin resources)
+                    http_url = f"http://localhost:{PORT}/Receipts/{filename}"
+                    cmd = [edge_path, "--headless", f"--print-to-pdf={pdf_filepath}",
+                           "--no-pdf-header-footer", "--disable-gpu", http_url]
+                    try:
+                        subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+                    except Exception:
+                        pass
+                    # Only return pdf_url if the PDF was actually created and has real content (>2KB)
+                    if os.path.exists(pdf_filepath) and os.path.getsize(pdf_filepath) > 2048:
+                        pdf_url = f'Receipts/{pdf_filename}'
 
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json.dumps({'status': 'ok', 'path': filepath, 'pdf_url': f'Receipts/{pdf_filename}'}).encode('utf-8'))
+                self.wfile.write(json.dumps({'status': 'ok', 'path': filepath, 'pdf_url': pdf_url}).encode('utf-8'))
             except Exception as e:
                 self.send_response(500)
                 self.end_headers()
