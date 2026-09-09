@@ -2107,31 +2107,48 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
     // 1. Android Phone Standalone APK -> write bytes via AndroidBridge directly to Downloads/Church_Receipts
     if (window.AndroidBridge && typeof window.AndroidBridge.autoSavePdfToFolder === "function") {
       if (typeof html2pdf !== "undefined") {
-        const cleanEl = prepareCleanA5PdfElement(containerOrHtml);
+        // Build self-contained HTML string — DO NOT pass a DOM element.
+        // Android WebView cannot paint position:fixed elements before html2canvas captures (blank PDF).
+        let innerHtml = "";
+        if (typeof containerOrHtml === "string") {
+          innerHtml = containerOrHtml;
+        } else if (containerOrHtml && containerOrHtml.innerHTML) {
+          innerHtml = containerOrHtml.innerHTML;
+        } else {
+          const modalArea = document.getElementById("receiptModalArea");
+          innerHtml = modalArea ? modalArea.innerHTML : "";
+        }
+        if (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) {
+          innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
+        }
+        const wrappedHtml = `<div style="width:148mm; background:#ffffff; margin:0; padding:0; box-sizing:border-box;">
+          <style>
+            .dual-receipt-container { display:block; width:100%; margin:0; padding:0; background:#fff; box-sizing:border-box; }
+            .receipt-card { display:flex !important; flex-direction:column !important; justify-content:space-between !important;
+              width:136mm !important; max-width:136mm !important; height:172mm !important; max-height:172mm !important;
+              margin:6mm auto !important; padding:4mm 6mm !important; box-sizing:border-box !important;
+              border:2px solid #0f172a !important; border-radius:8px !important; background:#ffffff !important; }
+            .receipt-card:first-child { page-break-after:always !important; break-after:page !important; }
+            .receipt-card:last-child { page-break-after:avoid !important; break-after:avoid !important; }
+            button, .receipt-modal-close-btn, .modal-close-btn, .no-print { display:none !important; }
+          <\/style>
+          ${innerHtml}
+        <\/div>`;
         const opt = {
           margin: 0,
           filename: pdfFilename,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, windowWidth: 560, windowHeight: 1600 },
+          html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
           jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
           pagebreak: { mode: ['css', 'legacy'] }
         };
-        // Wait 2 animation frames so the browser paints cleanEl before html2canvas captures it
-        requestAnimationFrame(function() {
-          requestAnimationFrame(function() {
-            html2pdf().set(opt).from(cleanEl).outputPdf('datauristring').then(function (pdfDataUri) {
-              setTimeout(function () {
-                if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-              }, 500);
-              if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
-                const base64Data = pdfDataUri.split('base64,')[1];
-                window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
-              }
-            }).catch(function (err) {
-              if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-              console.warn("Android autoSavePdf error:", err);
-            });
-          });
+        html2pdf().set(opt).from(wrappedHtml).outputPdf('datauristring').then(function (pdfDataUri) {
+          if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
+            const base64Data = pdfDataUri.split('base64,')[1];
+            window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
+          }
+        }).catch(function (err) {
+          console.warn("Android autoSavePdf error:", err);
         });
         return;
       }
