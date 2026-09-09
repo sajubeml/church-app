@@ -2112,21 +2112,26 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
           margin: 0,
           filename: pdfFilename,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+          html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0, windowWidth: 560, windowHeight: 1600 },
           jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
           pagebreak: { mode: ['css', 'legacy'] }
         };
-        html2pdf().set(opt).from(cleanEl).outputPdf('datauristring').then(function (pdfDataUri) {
-          setTimeout(function () {
-            if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-          }, 500);
-          if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
-            const base64Data = pdfDataUri.split('base64,')[1];
-            window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
-          }
-        }).catch(function (err) {
-          if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-          console.warn("Android autoSavePdf error:", err);
+        // Wait 2 animation frames so the browser paints cleanEl before html2canvas captures it
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            html2pdf().set(opt).from(cleanEl).outputPdf('datauristring').then(function (pdfDataUri) {
+              setTimeout(function () {
+                if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+              }, 500);
+              if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
+                const base64Data = pdfDataUri.split('base64,')[1];
+                window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
+              }
+            }).catch(function (err) {
+              if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+              console.warn("Android autoSavePdf error:", err);
+            });
+          });
         });
         return;
       }
@@ -2181,11 +2186,12 @@ function prepareCleanA5PdfElement(containerOrHtml) {
     innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
   }
 
-  // Outer wrapper placed on screen with fixed top:0; left:0; width:148mm; but behind other UI (z-index:-100) or opacity:0.01
-  // Never use left:-9999px because html2canvas clips or produces empty blank pixels for elements outside the layout viewport.
+  // Outer wrapper: must be on-screen and visible for html2canvas to rasterize it.
+  // Use z-index:99999 so it sits above all other UI during the brief capture window.
+  // NEVER use left:-9999px or z-index<0 — html2canvas will produce a blank canvas.
   const wrapper = document.createElement("div");
   wrapper.id = "cleanA5PdfWrapper";
-  wrapper.style.cssText = "position:fixed; left:0; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:-100; pointer-events:none; opacity:1;";
+  wrapper.style.cssText = "position:fixed; left:0; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:99999; pointer-events:none; opacity:1;";
   wrapper.innerHTML = innerHtml;
 
   // Remove any modal close buttons or interactive chrome
@@ -2213,23 +2219,52 @@ function prepareCleanA5PdfElement(containerOrHtml) {
 
 function saveClientSidePdfSilent(containerOrHtml, pdfFilename) {
   try {
-    const cleanEl = prepareCleanA5PdfElement(containerOrHtml);
+    // Build the clean HTML string with inline A5 wrapper styling.
+    // Pass as a string to html2pdf so it manages its own DOM insertion + paint timing.
+    // DO NOT pass a DOM element — html2canvas captures before the browser paints it (blank PDF).
+    let innerHtml = "";
+    if (typeof containerOrHtml === "string") {
+      innerHtml = containerOrHtml;
+    } else if (containerOrHtml && containerOrHtml.innerHTML) {
+      innerHtml = containerOrHtml.innerHTML;
+    } else {
+      const modalArea = document.getElementById("receiptModalArea");
+      innerHtml = modalArea ? modalArea.innerHTML : "";
+    }
+
+    // Embed logo as base64 so html2canvas doesn't block on cross-origin image load
+    if (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) {
+      innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
+    }
+
+    // Wrap in a self-contained A5-sized div with all styles inline
+    const wrappedHtml = `<div style="width:148mm; background:#ffffff; margin:0; padding:0; box-sizing:border-box;">
+      <style>
+        .dual-receipt-container { display:block; width:100%; margin:0; padding:0; background:#fff; box-sizing:border-box; }
+        .receipt-card { display:flex !important; flex-direction:column !important; justify-content:space-between !important;
+          width:136mm !important; max-width:136mm !important; height:172mm !important; max-height:172mm !important;
+          margin:6mm auto !important; padding:4mm 6mm !important; box-sizing:border-box !important;
+          border:2px solid #0f172a !important; border-radius:8px !important; background:#ffffff !important; }
+        .receipt-card:first-child { page-break-after:always !important; break-after:page !important; }
+        .receipt-card:last-child { page-break-after:avoid !important; break-after:avoid !important; }
+        button, .receipt-modal-close-btn, .modal-close-btn, .no-print { display:none !important; }
+      <\/style>
+      ${innerHtml}
+    <\/div>`;
+
     const opt = {
       margin: 0,
       filename: pdfFilename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
       jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
       pagebreak: { mode: ['css', 'legacy'] }
     };
-    html2pdf().set(opt).from(cleanEl).save().then(function () {
-      setTimeout(function () {
-        if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-      }, 500);
-    }).catch(function (err) {
-      if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-      console.warn("saveClientSidePdfSilent promise error:", err);
-    });
+
+    html2pdf().set(opt).from(wrappedHtml).save()
+      .catch(function (err) {
+        console.warn("saveClientSidePdfSilent promise error:", err);
+      });
   } catch (e) {
     console.warn("saveClientSidePdfSilent error:", e);
   }
