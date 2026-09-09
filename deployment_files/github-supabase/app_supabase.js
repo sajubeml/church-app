@@ -2059,6 +2059,15 @@ function showReceiptModal() {
     memberName = cmbMember.options[cmbMember.selectedIndex].dataset.name || cmbMember.options[cmbMember.selectedIndex].text;
   }
 
+  // Detect payment mode (Cash or Bank) from cart items or form selection
+  let paymentMode = "Cash";
+  if (state.cart.length > 0 && state.cart[0].paymentType) {
+    paymentMode = state.cart[0].paymentType;
+  } else {
+    const isCashOpt = document.getElementById("optCash")?.checked;
+    paymentMode = isCashOpt ? "Cash" : "Bank";
+  }
+
   let grandTotal = 0;
   let itemRowsHtml = "";
 
@@ -2101,6 +2110,7 @@ function showReceiptModal() {
         <table style="width:100%; font-size:11.5px; margin-bottom:6px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
+          <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
         <table style="width:100%; border-collapse:collapse; font-size:11.5px; flex:1;">
           <thead>
@@ -2132,6 +2142,7 @@ function showReceiptModal() {
         <table style="width:100%; font-size:11.5px; margin-bottom:6px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
+          <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
         <table style="width:100%; border-collapse:collapse; font-size:11.5px; flex:1;">
           <thead>
@@ -2168,62 +2179,6 @@ function showReceiptModal() {
   autoSaveReceiptPdf(docNo, prefix, modalArea || receiptContent);
 }
 
-function buildCleanA5PdfElement(containerOrHtml) {
-  let sourceHtml = "";
-  if (typeof containerOrHtml === "string") {
-    sourceHtml = containerOrHtml;
-  } else if (typeof containerOrHtml === "object" && containerOrHtml?.innerHTML) {
-    sourceHtml = containerOrHtml.innerHTML;
-  } else {
-    const modalArea = document.getElementById("receiptModalArea");
-    sourceHtml = modalArea ? modalArea.innerHTML : "";
-  }
-
-  // Replace logo path with base64 if available to prevent CORS/rendering delays
-  const logoBase64 = (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) ? window.CHURCH_LOGO_BASE64 : '';
-  if (logoBase64) {
-    sourceHtml = sourceHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${logoBase64}"`);
-  }
-
-  const wrapper = document.createElement("div");
-  wrapper.className = "silent-pdf-render-root";
-  wrapper.style.cssText = "position:absolute; left:-9999px; top:0; width:136mm; margin:0; padding:0; background:#ffffff; color:#000000; box-sizing:border-box; font-family:'Segoe UI', system-ui, -apple-system, sans-serif;";
-  wrapper.innerHTML = sourceHtml;
-
-  // Ensure inner cards are styled cleanly for A5 PDF pages without screen modal interference
-  const cards = wrapper.querySelectorAll(".receipt-card");
-  cards.forEach((card, idx) => {
-    card.style.width = "100%";
-    card.style.maxWidth = "100%";
-    card.style.height = "180mm";
-    card.style.minHeight = "180mm";
-    card.style.boxSizing = "border-box";
-    card.style.border = "2px solid #0f172a";
-    card.style.borderRadius = "8px";
-    card.style.padding = "5mm 7mm";
-    card.style.margin = "0";
-    card.style.display = "flex";
-    card.style.flexDirection = "column";
-    card.style.justifyContent = "space-between";
-    card.style.background = "#ffffff";
-
-    // Insert explicit html2pdf page break after the first card
-    if (idx === 0 && cards.length > 1) {
-      card.style.pageBreakAfter = "always";
-      card.style.breakAfter = "page";
-      const breakDiv = document.createElement("div");
-      breakDiv.className = "html2pdf__page-break";
-      breakDiv.style.cssText = "page-break-after:always; break-after:page; height:0; margin:0; padding:0;";
-      card.after(breakDiv);
-    }
-  });
-
-  const hideEls = wrapper.querySelectorAll(".no-print, .print-preview-header, button, .modal-close-btn");
-  hideEls.forEach(el => el.remove());
-
-  return wrapper;
-}
-
 // Automatically generates and saves PDF without opening print prompt
 function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
   try {
@@ -2233,26 +2188,29 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
 
     // 1. Android Phone Standalone APK -> write bytes via AndroidBridge directly to Downloads/Church_Receipts
     if (window.AndroidBridge && typeof window.AndroidBridge.autoSavePdfToFolder === "function") {
-      if (typeof html2pdf !== "undefined") {
-        const targetEl = buildCleanA5PdfElement(containerOrHtml);
-        document.body.appendChild(targetEl);
+      let targetEl = (typeof containerOrHtml === "object" && containerOrHtml?.nodeType)
+        ? containerOrHtml
+        : document.getElementById("receiptModalArea");
 
+      if (!targetEl) {
+        targetEl = document.createElement("div");
+        targetEl.innerHTML = typeof containerOrHtml === "string" ? containerOrHtml : "";
+      }
+
+      if (typeof html2pdf !== "undefined") {
         const opt = {
           margin: [6, 6, 6, 6],
           filename: pdfFilename,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
-          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
-          pagebreak: { mode: ['css', 'legacy'] }
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
         };
-        html2pdf().set(opt).from(targetEl).outputPdf('datauristring').then(function(pdfDataUri) {
-          if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
+        html2pdf().set(opt).from(targetEl).outputPdf('datauristring').then(function (pdfDataUri) {
           if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
             const base64Data = pdfDataUri.split('base64,')[1];
             window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
           }
-        }).catch(function(err) {
-          if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
+        }).catch(function (err) {
           console.warn("Android autoSavePdf error:", err);
         });
         return;
@@ -2262,11 +2220,11 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
     // 2. Local PC Server (start_server.py) -> save_print generates Receipts/Receipt_XXXX.pdf automatically.
     // Also trigger direct browser download of the PDF so it lands in PC Downloads folder without print prompt.
     if (typeof fetch === "function") {
-      const htmlStr = (typeof containerOrHtml === "string") 
-        ? containerOrHtml 
+      const htmlStr = (typeof containerOrHtml === "string")
+        ? containerOrHtml
         : (containerOrHtml?.innerHTML || document.getElementById("receiptModalArea")?.innerHTML || "");
-      
-      saveReceiptPrintCopy(docNo, prefix, htmlStr, function(res) {
+
+      saveReceiptPrintCopy(docNo, prefix, htmlStr, function (res) {
         if (res && res.pdf_url) {
           const a = document.createElement("a");
           a.href = res.pdf_url;
@@ -2293,23 +2251,23 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
 
 function saveClientSidePdfSilent(containerOrHtml, pdfFilename) {
   try {
-    const targetEl = buildCleanA5PdfElement(containerOrHtml);
-    document.body.appendChild(targetEl);
+    let targetEl = (typeof containerOrHtml === "object" && containerOrHtml?.nodeType)
+      ? containerOrHtml
+      : document.getElementById("receiptModalArea");
+
+    if (!targetEl) {
+      targetEl = document.createElement("div");
+      targetEl.innerHTML = typeof containerOrHtml === "string" ? containerOrHtml : "";
+    }
 
     const opt = {
       margin: [6, 6, 6, 6],
       filename: pdfFilename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
-      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
-      pagebreak: { mode: ['css', 'legacy'] }
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
     };
-    html2pdf().set(opt).from(targetEl).save().then(function() {
-      if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
-    }).catch(function(err) {
-      if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
-      console.warn("saveClientSidePdfSilent error:", err);
-    });
+    html2pdf().set(opt).from(targetEl).save();
   } catch (e) {
     console.warn("saveClientSidePdfSilent error:", e);
   }
@@ -2544,14 +2502,14 @@ function printReceiptModal() {
 
   const sel = printWin.document.getElementById('printFmtSelect');
   if (sel) {
-    sel.addEventListener('change', function() {
+    sel.addEventListener('change', function () {
       if (typeof printWin.switchPrintFmt === 'function') {
         printWin.switchPrintFmt(this.value);
       }
     });
   }
 
-  setTimeout(function() {
+  setTimeout(function () {
     printWin.print();
   }, 300);
 }
@@ -4252,7 +4210,7 @@ function exportTableToPDF(tableId, filename) {
     `);
     printWin.document.close();
     printWin.document.title = cleanTitle;
-    setTimeout(function() {
+    setTimeout(function () {
       printWin.print();
     }, 300);
   } catch (err) {
