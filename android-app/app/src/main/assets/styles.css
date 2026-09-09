@@ -549,67 +549,85 @@ body {
 /* Print Rules */
 @media print {
   @page { 
-    size: A4 landscape; 
-    margin: 0; 
+    size: A5 portrait; 
+    margin: 6mm; 
   }
-  body {
+  html, body {
     padding: 0 !important;
     margin: 0 !important;
+    background: #fff !important;
+    width: 100% !important;
   }
   .app-header, .app-nav, .main-content, .app-footer, .no-print, .modal-header {
     display: none !important;
   }
-  .modal-backdrop, #receiptModal {
+  /* Hide all modal backdrops completely during print */
+  .modal-backdrop,
+  #memberCrudModal,
+  #passwordModal,
+  #editMemberModal,
+  #editCashbookModal,
+  #addMemberModal,
+  #addAccountHeadModal,
+  #editAccountHeadModal,
+  #trialActivationModal {
+    display: none !important;
+  }
+  /* Only display receiptModal if active */
+  #receiptModal.active {
     display: block !important;
     position: static !important;
     background: #fff !important;
     padding: 0 !important;
     margin: 0 !important;
+    width: 100% !important;
+  }
+  .modal-body-container {
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
   #receiptModalArea {
-    padding: 5mm !important;
+    padding: 0 !important;
+    margin: 0 !important;
     box-sizing: border-box !important;
     background: #fff !important;
     width: 100% !important;
   }
   
   .dual-receipt-container {
-    position: relative !important;
-    display: flex !important;
-    gap: 15px !important;
+    display: block !important;
     width: 100% !important;
-    min-height: 190mm !important;
-    align-items: flex-start !important;
-    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   .dual-receipt-container::after {
-    content: "" !important;
-    position: absolute !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    left: 50% !important;
-    border-left: 1px dashed #94a3b8 !important;
+    display: none !important;
   }
   .receipt-card {
-    flex: 1 !important;
-    max-width: 48% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 180mm !important;
+    box-sizing: border-box !important;
     border: 2px solid #0f172a !important;
     border-radius: 8px !important;
-    padding: 10mm !important;
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-    page-break-inside: avoid !important;
+    padding: 5mm 7mm !important;
+    margin: 0 !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  .receipt-card:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
 
-  /* Make sure tables compact themselves to fit */
-  .receipt-card table td, .receipt-card table th {
-    padding: 3px !important;
-    font-size: 10px !important;
-  }
-  
-  .receipt-card h3 { font-size: 13px !important; }
-  .receipt-card p { font-size: 9.5px !important; }
-  
   .modal-header, .no-print { display: none !important; }
 }
 /* Individual Member Ledger Table - Sticky Headers, Footer & Columns */
@@ -814,9 +832,7 @@ body {
   body {
     background: #ffffff !important;
     color: #000000 !important;
-
-
-
+  }
 }
 
 @media print {

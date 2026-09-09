@@ -492,7 +492,7 @@ async function loadAllData() {
     }
     if (!Array.isArray(state.deletedMembers)) state.deletedMembers = [];
 
-    // If Fresh Start Build: Purge any old full-data localStorage caches and force empty cashbook/trial balance
+    // If Fresh Start Build: Purge any old full-data localStorage caches ONLY on very first initial launch
     if (window.isFreshStartBuild) {
       if (!localStorage.getItem("CHURCH_FRESH_START_INITIALIZED")) {
         localStorage.removeItem("CHURCH_CASHBOOK");
@@ -500,12 +500,15 @@ async function loadAllData() {
         localStorage.removeItem("CHURCH_ACCOUNT_HEADS");
         localStorage.removeItem("CHURCH_DELETED_HEADS");
         localStorage.removeItem("CHURCH_DELETED_MEMBERS");
+        localStorage.removeItem("CHURCH_TRIAL_BALANCE");
+        localStorage.removeItem("CHURCH_BUDGET");
+        localStorage.removeItem("CHURCH_AUCTION");
         localStorage.setItem("CHURCH_FRESH_START_INITIALIZED", "true");
+        state.cashbook = [];
+        state.trialBalance = [];
+        state.auction = [];
+        state.budget = [];
       }
-      state.cashbook = [];
-      state.trialBalance = [];
-      state.auction = [];
-      state.budget = [];
     }
 
     const savedCashbook = localStorage.getItem("CHURCH_CASHBOOK");

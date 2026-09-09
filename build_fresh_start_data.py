@@ -30,13 +30,30 @@ if os.path.exists(os.path.join(data_export_dir, "Individual.json")):
                     new_row[k] = ""
             zero_individual.append(new_row)
 
+# 4. Create zeroed trial balance (Keep Codes and Account Heads, remove amounts)
+zero_trial_balance = []
+if os.path.exists(os.path.join(data_export_dir, "Trial_Balance.json")):
+    tb_data = json.load(open(os.path.join(data_export_dir, "Trial_Balance.json"), "r", encoding="utf-8"))
+    for idx, row in enumerate(tb_data):
+        if idx < 3:
+            zero_trial_balance.append(row) # Headers
+        else:
+            new_row = {}
+            for k, v in row.items():
+                col_letter = "".join([c for c in k if c.isalpha()]).upper()
+                if col_letter in ["A", "B", "D", "E"]:
+                    new_row[k] = v # Keep code & account head
+                else:
+                    new_row[k] = "" # Zero out amount
+            zero_trial_balance.append(new_row)
+
 js_content = f"""// St. Gregorios Church Accounting - Fresh Start Dataset (7-Day Trial)
 window.isFreshStartBuild = true;
 
 window.INITIAL_MEMBERS = {json.dumps(members, indent=2)};
 window.INITIAL_CASHBOOK = {json.dumps(empty_cashbook, indent=2)};
 window.INITIAL_INDIVIDUAL = {json.dumps(zero_individual, indent=2)};
-window.INITIAL_TRIAL_BALANCE = {json.dumps(trial_balance, indent=2)};
+window.INITIAL_TRIAL_BALANCE = {json.dumps(zero_trial_balance, indent=2)};
 window.INITIAL_CODES = {json.dumps(codes, indent=2)};
 """
 
