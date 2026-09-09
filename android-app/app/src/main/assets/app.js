@@ -2419,11 +2419,7 @@ async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
   const logoBase64 = await getLogoBase64();
   let cleanContent = htmlContent || "";
   if (logoBase64) {
-    cleanContent = cleanContent
-      .replace(/src="church_logo\.png"/g, `src="${logoBase64}"`)
-      .replace(/src="church_logo\.jpg"/g, `src="${logoBase64}"`)
-      .replace(/src="\.\.\/church_logo\.png"/g, `src="${logoBase64}"`)
-      .replace(/src="\.\.\/church_logo\.jpg"/g, `src="${logoBase64}"`);
+    cleanContent = cleanContent.replace(/src="[^"]*church_logo[^"]*"/g, `src="${logoBase64}"`);
   } else {
     cleanContent = cleanContent
       .replace(/src="church_logo\.png"/g, 'src="../church_logo.png"')
