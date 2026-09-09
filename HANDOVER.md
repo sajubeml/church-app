@@ -60,6 +60,13 @@ Source of truth hardcoded in `app_supabase.js` (`MASTER_RECEIPT_HEADS` and `MAST
 - Scans `RP-3.82` and `RP-3.83` receipt remarks (e.g., "Apr 25 to Sept 26") and auto-calculates Subscription Upto date (`09/2026`).
 - Displays `-` if no subscription receipts exist. Fixed default `03/2027` fallback bug.
 
+### 5. Automatic Silent PDF Generation & Direct Save (v10.8 Update)
+- **Zero Print Prompt Requirement:** Whenever a receipt or payment voucher is submitted and generated (`showReceiptModal`), the app automatically generates `Receipt_XXXX.pdf` (or `Voucher_XXXX.pdf`) without forcing the user through the Android or browser print spooler dialog.
+- **Android Phone APK (`MainActivity.kt`):** Invokes `window.AndroidBridge.autoSavePdfToFolder(base64Data, filename)`. The native Android layer decodes the PDF bytes and writes directly into public `Downloads/` and `Downloads/Church_Receipts/`, triggering `MediaScannerConnection` so the PDF immediately appears in the phone's file manager and Downloads folder. A non-intrusive toast confirms the save.
+- **Local PC Server (`start_server.py`):** Posts HTML to `/api/save_print` where Microsoft Edge headless generates `Receipts/Receipt_XXXX.pdf` directly on disk, simultaneously initiating a silent browser download directly into the user's PC Downloads directory.
+- **Online Cloud Web App (cPanel / GitHub Pages):** Leverages `html2pdf.bundle.min.js` to render client-side A5 portrait PDF blobs and silently downloads them via a virtual link (`a.download`), landing in the device's default Downloads folder without opening the print prompt.
+- **Preserved Existing Manual Controls:** Users can still click `🖨️ System Print` or choose formats if they desire a physical paper printout.
+
 ---
 
 ## 📁 Key File Inventory
