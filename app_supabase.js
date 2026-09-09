@@ -2168,6 +2168,62 @@ function showReceiptModal() {
   autoSaveReceiptPdf(docNo, prefix, modalArea || receiptContent);
 }
 
+function buildCleanA5PdfElement(containerOrHtml) {
+  let sourceHtml = "";
+  if (typeof containerOrHtml === "string") {
+    sourceHtml = containerOrHtml;
+  } else if (typeof containerOrHtml === "object" && containerOrHtml?.innerHTML) {
+    sourceHtml = containerOrHtml.innerHTML;
+  } else {
+    const modalArea = document.getElementById("receiptModalArea");
+    sourceHtml = modalArea ? modalArea.innerHTML : "";
+  }
+
+  // Replace logo path with base64 if available to prevent CORS/rendering delays
+  const logoBase64 = (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) ? window.CHURCH_LOGO_BASE64 : '';
+  if (logoBase64) {
+    sourceHtml = sourceHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${logoBase64}"`);
+  }
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "silent-pdf-render-root";
+  wrapper.style.cssText = "position:absolute; left:-9999px; top:0; width:136mm; margin:0; padding:0; background:#ffffff; color:#000000; box-sizing:border-box; font-family:'Segoe UI', system-ui, -apple-system, sans-serif;";
+  wrapper.innerHTML = sourceHtml;
+
+  // Ensure inner cards are styled cleanly for A5 PDF pages without screen modal interference
+  const cards = wrapper.querySelectorAll(".receipt-card");
+  cards.forEach((card, idx) => {
+    card.style.width = "100%";
+    card.style.maxWidth = "100%";
+    card.style.height = "180mm";
+    card.style.minHeight = "180mm";
+    card.style.boxSizing = "border-box";
+    card.style.border = "2px solid #0f172a";
+    card.style.borderRadius = "8px";
+    card.style.padding = "5mm 7mm";
+    card.style.margin = "0";
+    card.style.display = "flex";
+    card.style.flexDirection = "column";
+    card.style.justifyContent = "space-between";
+    card.style.background = "#ffffff";
+
+    // Insert explicit html2pdf page break after the first card
+    if (idx === 0 && cards.length > 1) {
+      card.style.pageBreakAfter = "always";
+      card.style.breakAfter = "page";
+      const breakDiv = document.createElement("div");
+      breakDiv.className = "html2pdf__page-break";
+      breakDiv.style.cssText = "page-break-after:always; break-after:page; height:0; margin:0; padding:0;";
+      card.after(breakDiv);
+    }
+  });
+
+  const hideEls = wrapper.querySelectorAll(".no-print, .print-preview-header, button, .modal-close-btn");
+  hideEls.forEach(el => el.remove());
+
+  return wrapper;
+}
+
 // Automatically generates and saves PDF without opening print prompt
 function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
   try {
@@ -2177,29 +2233,26 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
 
     // 1. Android Phone Standalone APK -> write bytes via AndroidBridge directly to Downloads/Church_Receipts
     if (window.AndroidBridge && typeof window.AndroidBridge.autoSavePdfToFolder === "function") {
-      let targetEl = (typeof containerOrHtml === "object" && containerOrHtml?.nodeType) 
-        ? containerOrHtml 
-        : document.getElementById("receiptModalArea");
-
-      if (!targetEl) {
-        targetEl = document.createElement("div");
-        targetEl.innerHTML = typeof containerOrHtml === "string" ? containerOrHtml : "";
-      }
-
       if (typeof html2pdf !== "undefined") {
+        const targetEl = buildCleanA5PdfElement(containerOrHtml);
+        document.body.appendChild(targetEl);
+
         const opt = {
           margin: [6, 6, 6, 6],
           filename: pdfFilename,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false },
-          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
+          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'] }
         };
         html2pdf().set(opt).from(targetEl).outputPdf('datauristring').then(function(pdfDataUri) {
+          if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
           if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
             const base64Data = pdfDataUri.split('base64,')[1];
             window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
           }
         }).catch(function(err) {
+          if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
           console.warn("Android autoSavePdf error:", err);
         });
         return;
@@ -2240,23 +2293,23 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
 
 function saveClientSidePdfSilent(containerOrHtml, pdfFilename) {
   try {
-    let targetEl = (typeof containerOrHtml === "object" && containerOrHtml?.nodeType) 
-      ? containerOrHtml 
-      : document.getElementById("receiptModalArea");
-
-    if (!targetEl) {
-      targetEl = document.createElement("div");
-      targetEl.innerHTML = typeof containerOrHtml === "string" ? containerOrHtml : "";
-    }
+    const targetEl = buildCleanA5PdfElement(containerOrHtml);
+    document.body.appendChild(targetEl);
 
     const opt = {
       margin: [6, 6, 6, 6],
       filename: pdfFilename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+      html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0 },
+      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
     };
-    html2pdf().set(opt).from(targetEl).save();
+    html2pdf().set(opt).from(targetEl).save().then(function() {
+      if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
+    }).catch(function(err) {
+      if (targetEl.parentNode) targetEl.parentNode.removeChild(targetEl);
+      console.warn("saveClientSidePdfSilent error:", err);
+    });
   } catch (e) {
     console.warn("saveClientSidePdfSilent error:", e);
   }
