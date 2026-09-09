@@ -10,20 +10,19 @@ dest_assets = os.path.join(src_dir, "android-app", "app", "src", "main", "assets
 os.makedirs(dest_assets, exist_ok=True)
 
 files_to_copy = [
-    "index.html",
-    "styles.css",
-    "app.js",
-    "church_logo.png",
-    "church_logo.jpg",
-    "html2pdf.bundle.min.js"
+    ("index_offline.html", "index.html"),
+    ("styles.css", "styles.css"),
+    ("app.js", "app.js"),
+    ("church_logo.png", "church_logo.png"),
+    ("church_logo.jpg", "church_logo.jpg"),
+    ("html2pdf.bundle.min.js", "html2pdf.bundle.min.js")
 ]
 
-for fname in files_to_copy:
-    src_path = os.path.join(src_dir, fname)
+for src_name, dest_name in files_to_copy:
+    src_path = os.path.join(src_dir, src_name)
     if os.path.exists(src_path):
-        dest_name = fname
         shutil.copy2(src_path, os.path.join(dest_assets, dest_name))
-        print(f"Copied: {fname} -> {dest_name}")
+        print(f"Copied: {src_name} -> {dest_name}")
 
 if mode == "fresh":
     # Copy data_fresh.js as data.js
