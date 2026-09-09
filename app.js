@@ -5338,14 +5338,23 @@ function processBackupRestoreData(jsonText) {
       if (Array.isArray(cbArr)) {
         state.cashbook = cbArr;
         localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
-        // Bulk import to SQLite Backend
-        fetch('/api/bulk_import', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(cbArr)
-        }).then(res => {
-          if (!res.ok) console.error("Failed to sync backup to SQLite DB");
-        }).catch(err => console.error("DB Sync error:", err));
+        // Bulk import to Android SQLite Backend
+        if (window.AndroidBridge && typeof window.AndroidBridge.bulkSync === "function") {
+          try {
+            window.AndroidBridge.bulkSync(JSON.stringify(cbArr));
+            console.log("Synced restored cashbook to Native Android SQLite DB (" + cbArr.length + " entries)");
+          } catch (e) {
+            console.error("AndroidBridge bulkSync error:", e);
+          }
+        } else {
+          fetch('/api/bulk_import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cbArr)
+          }).then(res => {
+            if (!res.ok) console.error("Failed to sync backup to SQLite DB");
+          }).catch(err => console.error("DB Sync error:", err));
+        }
       }
 
       const indArr = Array.isArray(data.individual) ? data.individual :
