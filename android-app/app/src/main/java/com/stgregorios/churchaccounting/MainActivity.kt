@@ -192,6 +192,53 @@ class MainActivity : ComponentActivity() {
         }
 
         @JavascriptInterface
+        fun autoSavePdfToFolder(base64Content: String, filename: String): Boolean {
+            return try {
+                val bytes = android.util.Base64.decode(base64Content, android.util.Base64.DEFAULT)
+                val cleanName = if (filename.endsWith(".pdf", ignoreCase = true)) filename else "$filename.pdf"
+
+                // 1. App internal external files dir
+                val exportDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: cacheDir
+                if (!exportDir.exists()) exportDir.mkdirs()
+                val exportFile = File(exportDir, cleanName)
+                exportFile.writeBytes(bytes)
+
+                // 2. Public Downloads and Downloads/Church_Receipts
+                val pubDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                if (pubDownloads.exists() || pubDownloads.mkdirs()) {
+                    // Save directly in Downloads
+                    val pubFile = File(pubDownloads, cleanName)
+                    pubFile.writeBytes(bytes)
+
+                    // Also save in dedicated Church_Receipts folder
+                    val receiptsFolder = File(pubDownloads, "Church_Receipts")
+                    if (receiptsFolder.exists() || receiptsFolder.mkdirs()) {
+                        val receiptFile = File(receiptsFolder, cleanName)
+                        receiptFile.writeBytes(bytes)
+                    }
+
+                    MediaScannerConnection.scanFile(
+                        this@MainActivity,
+                        arrayOf(pubFile.absolutePath),
+                        arrayOf("application/pdf"),
+                        null
+                    )
+                }
+
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "📄 Saved $cleanName to Downloads/Church_Receipts", Toast.LENGTH_SHORT).show()
+                }
+                true
+            } catch (e: Exception) {
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "Error auto-saving PDF: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+                false
+            }
+        }
+
+        @JavascriptInterface
+
         fun shareCsvFile(csvContent: String, filename: String) {
             runOnUiThread {
                 try {

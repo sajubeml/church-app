@@ -2081,7 +2081,105 @@ function showReceiptModal() {
 
   // Auto-save print copy HTML immediately upon generation
   saveReceiptPrintCopy(docNo, prefix, receiptContent);
+
+  // Auto-save Receipt_XXXX.pdf directly without opening print prompt
+  autoSaveReceiptPdf(docNo, prefix, modalArea || receiptContent);
 }
+
+// Automatically generates and saves PDF without opening print prompt
+function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
+  try {
+    const cleanDocNo = (docNo || "").replace(/#/g, "").trim();
+    const pdfBaseName = getCleanPrintTitle(cleanDocNo ? `${prefix}_${cleanDocNo}` : `${prefix}_Document`);
+    const pdfFilename = `${pdfBaseName}.pdf`;
+
+    // 1. Android Phone Standalone APK -> write bytes via AndroidBridge directly to Downloads/Church_Receipts
+    if (window.AndroidBridge && typeof window.AndroidBridge.autoSavePdfToFolder === "function") {
+      let targetEl = (typeof containerOrHtml === "object" && containerOrHtml?.nodeType) 
+        ? containerOrHtml 
+        : document.getElementById("receiptModalArea");
+
+      if (!targetEl) {
+        targetEl = document.createElement("div");
+        targetEl.innerHTML = typeof containerOrHtml === "string" ? containerOrHtml : "";
+      }
+
+      if (typeof html2pdf !== "undefined") {
+        const opt = {
+          margin: [6, 6, 6, 6],
+          filename: pdfFilename,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false },
+          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(targetEl).outputPdf('datauristring').then(function(pdfDataUri) {
+          if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
+            const base64Data = pdfDataUri.split('base64,')[1];
+            window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
+          }
+        }).catch(function(err) {
+          console.warn("Android autoSavePdf error:", err);
+        });
+        return;
+      }
+    }
+
+    // 2. Local PC Server (start_server.py) -> save_print generates Receipts/Receipt_XXXX.pdf automatically.
+    // Also trigger direct browser download of the PDF so it lands in PC Downloads folder without print prompt.
+    if (typeof fetch === "function") {
+      const htmlStr = (typeof containerOrHtml === "string") 
+        ? containerOrHtml 
+        : (containerOrHtml?.innerHTML || document.getElementById("receiptModalArea")?.innerHTML || "");
+      
+      saveReceiptPrintCopy(docNo, prefix, htmlStr, function(res) {
+        if (res && res.pdf_url) {
+          const a = document.createElement("a");
+          a.href = res.pdf_url;
+          a.download = pdfFilename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else if (typeof html2pdf !== "undefined") {
+          // Cloud or server without edge fallback: generate client-side PDF and save
+          saveClientSidePdfSilent(containerOrHtml, pdfFilename);
+        }
+      });
+      return;
+    }
+
+    // 3. Cloud / Offline Client-side Web browser fallback
+    if (typeof html2pdf !== "undefined") {
+      saveClientSidePdfSilent(containerOrHtml, pdfFilename);
+    }
+  } catch (err) {
+    console.warn("autoSaveReceiptPdf failed:", err);
+  }
+}
+
+function saveClientSidePdfSilent(containerOrHtml, pdfFilename) {
+  try {
+    let targetEl = (typeof containerOrHtml === "object" && containerOrHtml?.nodeType) 
+      ? containerOrHtml 
+      : document.getElementById("receiptModalArea");
+
+    if (!targetEl) {
+      targetEl = document.createElement("div");
+      targetEl.innerHTML = typeof containerOrHtml === "string" ? containerOrHtml : "";
+    }
+
+    const opt = {
+      margin: [6, 6, 6, 6],
+      filename: pdfFilename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(targetEl).save();
+  } catch (e) {
+    console.warn("saveClientSidePdfSilent error:", e);
+  }
+}
+
 
 function triggerSystemPrint(pdfTitle) {
   if (pdfTitle) {
