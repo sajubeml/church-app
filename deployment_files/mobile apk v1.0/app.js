@@ -492,7 +492,7 @@ async function loadAllData() {
     }
     if (!Array.isArray(state.deletedMembers)) state.deletedMembers = [];
 
-    // If Fresh Start Build: Purge any old full-data localStorage caches and force empty cashbook/trial balance
+    // If Fresh Start Build: Purge any old full-data localStorage caches ONLY on very first initial launch
     if (window.isFreshStartBuild) {
       if (!localStorage.getItem("CHURCH_FRESH_START_INITIALIZED")) {
         localStorage.removeItem("CHURCH_CASHBOOK");
@@ -500,12 +500,15 @@ async function loadAllData() {
         localStorage.removeItem("CHURCH_ACCOUNT_HEADS");
         localStorage.removeItem("CHURCH_DELETED_HEADS");
         localStorage.removeItem("CHURCH_DELETED_MEMBERS");
+        localStorage.removeItem("CHURCH_TRIAL_BALANCE");
+        localStorage.removeItem("CHURCH_BUDGET");
+        localStorage.removeItem("CHURCH_AUCTION");
         localStorage.setItem("CHURCH_FRESH_START_INITIALIZED", "true");
+        state.cashbook = [];
+        state.trialBalance = [];
+        state.auction = [];
+        state.budget = [];
       }
-      state.cashbook = [];
-      state.trialBalance = [];
-      state.auction = [];
-      state.budget = [];
     }
 
     const savedCashbook = localStorage.getItem("CHURCH_CASHBOOK");
@@ -1974,6 +1977,15 @@ function showReceiptModal() {
     memberName = cmbMember.options[cmbMember.selectedIndex].dataset.name || cmbMember.options[cmbMember.selectedIndex].text;
   }
 
+  // Detect payment mode (Cash or Bank) from cart items or form selection
+  let paymentMode = "Cash";
+  if (state.cart.length > 0 && state.cart[0].paymentType) {
+    paymentMode = state.cart[0].paymentType;
+  } else {
+    const isCashOpt = document.getElementById("optCash")?.checked;
+    paymentMode = isCashOpt ? "Cash" : "Bank";
+  }
+
   let grandTotal = 0;
   let itemRowsHtml = "";
 
@@ -2005,63 +2017,65 @@ function showReceiptModal() {
   const receiptContent = `
     <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:0; width:100%; margin:0; padding:0;">
       <!-- ORIGINAL -->
-      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:5mm 7mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:180mm;">
+      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:4mm 6mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm;">
         <span style="position:absolute; right:10px; top:10px; background:#10b981; color:#fff; font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:4px;">ORIGINAL</span>
-        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:6px; margin-bottom:8px;">
-          <img src="church_logo.png" alt="Church Logo" style="height:44px; width:44px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:3px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:13px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
-          <p style="margin:2px 0; font-size:10px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
-          <p style="font-weight:bold; font-size:11.5px; color:#1e293b; margin-top:3px;">${docTitle}</p>
+        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:4px; margin-bottom:6px;">
+          <img src="church_logo.png" alt="Church Logo" style="height:40px; width:40px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
+          <h3 style="margin:0; font-size:12.5px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
+          <p style="margin:1px 0; font-size:9.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
+          <p style="font-weight:bold; font-size:11px; color:#1e293b; margin-top:2px;">${docTitle}</p>
         </div>
-        <table style="width:100%; font-size:11.5px; margin-bottom:6px;">
+        <table style="width:100%; font-size:11px; margin-bottom:4px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
+          <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; font-size:11.5px; flex:1;">
+        <table style="width:100%; border-collapse:collapse; font-size:11px; flex:1;">
           <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right;">Amount</th></tr>
+            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:8px 10px; border-radius:4px; margin-top:6px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
-          <div style="font-size:10.5px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
-          <div style="font-size:13.5px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:6px 10px; border-radius:4px; margin-top:4px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
+          <div style="font-size:10px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
+          <div style="font-size:13px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-top:6px;">
+        <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
         </div>
-        <div style="text-align:center; font-size:9px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:5px; margin-top:4px; font-weight:600; font-style:italic;">
+        <div style="text-align:center; font-size:8.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:4px; margin-top:3px; font-weight:600; font-style:italic;">
           ✓ Computer Generated Document — Digitally Signed &amp; Authenticated
         </div>
       </div>
 
       <!-- DUPLICATE COPY -->
-      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:5mm 7mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:180mm;">
+      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:4mm 6mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm;">
         <span style="position:absolute; right:10px; top:10px; background:#f59e0b; color:#fff; font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:4px;">COPY</span>
-        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:6px; margin-bottom:8px;">
-          <img src="church_logo.png" alt="Church Logo" style="height:44px; width:44px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:3px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:13px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
-          <p style="margin:2px 0; font-size:10px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
-          <p style="font-weight:bold; font-size:11.5px; color:#1e293b; margin-top:3px;">${docTitle} (OFFICE COPY)</p>
+        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:4px; margin-bottom:6px;">
+          <img src="church_logo.png" alt="Church Logo" style="height:40px; width:40px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
+          <h3 style="margin:0; font-size:12.5px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
+          <p style="margin:1px 0; font-size:9.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
+          <p style="font-weight:bold; font-size:11px; color:#1e293b; margin-top:2px;">${docTitle} (OFFICE COPY)</p>
         </div>
-        <table style="width:100%; font-size:11.5px; margin-bottom:6px;">
+        <table style="width:100%; font-size:11px; margin-bottom:4px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
+          <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; font-size:11.5px; flex:1;">
+        <table style="width:100%; border-collapse:collapse; font-size:11px; flex:1;">
           <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right;">Amount</th></tr>
+            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:8px 10px; border-radius:4px; margin-top:6px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
-          <div style="font-size:10.5px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
-          <div style="font-size:13.5px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:6px 10px; border-radius:4px; margin-top:4px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
+          <div style="font-size:10px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
+          <div style="font-size:13px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-top:6px;">
+        <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
         </div>
-        <div style="text-align:center; font-size:9px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:5px; margin-top:4px; font-weight:600; font-style:italic;">
+        <div style="text-align:center; font-size:8.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:4px; margin-top:3px; font-weight:600; font-style:italic;">
           ✓ Computer Generated Document — Digitally Signed &amp; Authenticated
         </div>
       </div>
@@ -2078,7 +2092,144 @@ function showReceiptModal() {
 
   // Auto-save print copy HTML immediately upon generation
   saveReceiptPrintCopy(docNo, prefix, receiptContent);
+
+  // Auto-save Receipt_XXXX.pdf directly without opening print prompt
+  autoSaveReceiptPdf(docNo, prefix, modalArea || receiptContent);
 }
+
+// Automatically generates and saves PDF without opening print prompt
+function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
+  try {
+    const cleanDocNo = (docNo || "").replace(/#/g, "").trim();
+    const pdfBaseName = getCleanPrintTitle(cleanDocNo ? `${prefix}_${cleanDocNo}` : `${prefix}_Document`);
+    const pdfFilename = `${pdfBaseName}.pdf`;
+
+    // 1. Android Phone Standalone APK -> write bytes via AndroidBridge directly to Downloads/Church_Receipts
+    if (window.AndroidBridge && typeof window.AndroidBridge.autoSavePdfToFolder === "function") {
+      if (typeof html2pdf !== "undefined") {
+        const cleanEl = prepareCleanA5PdfElement(containerOrHtml);
+        const opt = {
+          margin: 0,
+          filename: pdfFilename,
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 800 },
+          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'] }
+        };
+        html2pdf().set(opt).from(cleanEl).outputPdf('datauristring').then(function (pdfDataUri) {
+          if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+          if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
+            const base64Data = pdfDataUri.split('base64,')[1];
+            window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
+          }
+        }).catch(function (err) {
+          if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+          console.warn("Android autoSavePdf error:", err);
+        });
+        return;
+      }
+    }
+
+    // 2. Local PC Server (start_server.py) -> save_print generates Receipts/Receipt_XXXX.pdf automatically.
+    // Also trigger direct browser download of the PDF so it lands in PC Downloads folder without print prompt.
+    if (typeof fetch === "function") {
+      const htmlStr = (typeof containerOrHtml === "string")
+        ? containerOrHtml
+        : (containerOrHtml?.innerHTML || document.getElementById("receiptModalArea")?.innerHTML || "");
+
+      saveReceiptPrintCopy(docNo, prefix, htmlStr, function (res) {
+        if (res && res.pdf_url) {
+          const a = document.createElement("a");
+          a.href = res.pdf_url;
+          a.download = pdfFilename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else if (typeof html2pdf !== "undefined") {
+          // Cloud or server without edge fallback: generate client-side PDF and save
+          saveClientSidePdfSilent(containerOrHtml, pdfFilename);
+        }
+      });
+      return;
+    }
+
+    // 3. Cloud / Offline Client-side Web browser fallback
+    if (typeof html2pdf !== "undefined") {
+      saveClientSidePdfSilent(containerOrHtml, pdfFilename);
+    }
+  } catch (err) {
+    console.warn("autoSaveReceiptPdf failed:", err);
+  }
+}
+
+// Prepares a pristine, off-screen A5-dimensioned DOM structure specifically for html2pdf
+function prepareCleanA5PdfElement(containerOrHtml) {
+  let innerHtml = "";
+  if (typeof containerOrHtml === "string") {
+    innerHtml = containerOrHtml;
+  } else if (containerOrHtml && containerOrHtml.innerHTML) {
+    innerHtml = containerOrHtml.innerHTML;
+  } else {
+    const modalArea = document.getElementById("receiptModalArea");
+    innerHtml = modalArea ? modalArea.innerHTML : "";
+  }
+
+  // Embed church logo as base64 if available to avoid any cross-origin/loading delays in html2canvas
+  if (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) {
+    innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
+  }
+
+  // Outer isolated offscreen wrapper: exactly 148mm (A5 width) with 6mm margins inside
+  const wrapper = document.createElement("div");
+  wrapper.id = "cleanA5PdfWrapper";
+  wrapper.style.cssText = "position:absolute; left:-9999px; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:-9999;";
+  wrapper.innerHTML = innerHtml;
+
+  // Remove any modal close buttons or interactive chrome
+  wrapper.querySelectorAll("button, .receipt-modal-close-btn, .modal-close-btn, .no-print").forEach(el => el.remove());
+
+  // Normalize dual-receipt-container
+  const dualContainer = wrapper.querySelector(".dual-receipt-container") || wrapper;
+  dualContainer.style.cssText = "display:block; width:100%; margin:0; padding:0; background:#fff; box-sizing:border-box;";
+
+  // Normalize cards: exactly 172mm height with 6mm margins inside each 210mm A5 sheet
+  const cards = wrapper.querySelectorAll(".receipt-card");
+  cards.forEach((card, idx) => {
+    card.style.cssText = "display:flex !important; flex-direction:column !important; justify-content:space-between !important;" +
+      "width:136mm !important; max-width:136mm !important; height:172mm !important; max-height:172mm !important;" +
+      "margin:6mm auto !important; padding:4mm 6mm !important; box-sizing:border-box !important;" +
+      "border:2px solid #0f172a !important; border-radius:8px !important; background:#ffffff !important;" +
+      (idx === 0
+        ? "page-break-after:always !important; break-after:page !important;"
+        : "page-break-after:avoid !important; break-after:avoid !important;");
+  });
+
+  document.body.appendChild(wrapper);
+  return wrapper;
+}
+
+function saveClientSidePdfSilent(containerOrHtml, pdfFilename) {
+  try {
+    const cleanEl = prepareCleanA5PdfElement(containerOrHtml);
+    const opt = {
+      margin: 0,
+      filename: pdfFilename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 800 },
+      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
+    };
+    html2pdf().set(opt).from(cleanEl).save().then(function () {
+      if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+    }).catch(function (err) {
+      if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+      console.warn("saveClientSidePdfSilent promise error:", err);
+    });
+  } catch (e) {
+    console.warn("saveClientSidePdfSilent error:", e);
+  }
+}
+
 
 function triggerSystemPrint(pdfTitle) {
   if (pdfTitle) {
@@ -2250,18 +2401,18 @@ function printReceiptModal() {
             justify-content: space-between !important;
             width: 100% !important;
             max-width: 100% !important;
-            height: 180mm !important;
+            height: 172mm !important;
             box-sizing: border-box !important;
             border: 2px solid #0f172a !important;
             border-radius: 8px !important;
-            padding: 5mm 7mm !important;
+            padding: 4mm 6mm !important;
             margin: 0 0 0 0 !important;
             page-break-after: always !important;
             break-after: page !important;
           }
           .receipt-card:last-child {
-            page-break-after: auto !important;
-            break-after: auto !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
           }
         }
         .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; }
@@ -2296,7 +2447,7 @@ function printReceiptModal() {
           } else if (fmt === 'a5-landscape') {
             el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 landscape; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 126mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           } else {
-            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 180mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 5mm 7mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
+            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 172mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: avoid !important; break-after: avoid !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           }
         }
       <\/script>
@@ -2308,14 +2459,14 @@ function printReceiptModal() {
 
   const sel = printWin.document.getElementById('printFmtSelect');
   if (sel) {
-    sel.addEventListener('change', function() {
+    sel.addEventListener('change', function () {
       if (typeof printWin.switchPrintFmt === 'function') {
         printWin.switchPrintFmt(this.value);
       }
     });
   }
 
-  setTimeout(function() {
+  setTimeout(function () {
     printWin.print();
   }, 300);
 }
@@ -2356,6 +2507,12 @@ function downloadReceiptHtml() {
   const cleanTitle = getCleanPrintTitle(docNo ? `${prefix}_${docNo}` : `${prefix}_Document`);
   const fileName = `${cleanTitle}.html`;
 
+  let dlBodyHtml = modalArea ? modalArea.innerHTML : '';
+  const dlLogo = (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) ? window.CHURCH_LOGO_BASE64 : '';
+  if (dlLogo) {
+    dlBodyHtml = dlBodyHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${dlLogo}"`);
+  }
+
   const content = `<!DOCTYPE html>
 <html>
 <head>
@@ -2370,7 +2527,7 @@ function downloadReceiptHtml() {
 </head>
 <body>
   <div class="dual-receipt-container">
-    ${modalArea ? modalArea.innerHTML : ''}
+    ${dlBodyHtml}
   </div>
 </body>
 </html>`;
@@ -2386,7 +2543,7 @@ function downloadReceiptHtml() {
   URL.revokeObjectURL(url);
 }
 
-function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
+async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
   const cleanDocNo = (docNo || "").replace(/#/g, "").trim();
   const key = getCleanPrintTitle(cleanDocNo ? `${prefix}_${cleanDocNo}` : `${prefix}_Document`);
   const fileName = `${key}.html`;
@@ -2399,11 +2556,32 @@ function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
     localStorage.setItem("CHURCH_SAVED_RECEIPTS", JSON.stringify(savedMap));
   } catch (e) { }
 
-  // 2. Prepare clean HTML for Edge headless PDF rendering & file storage
-  // Fix relative image path so files in Receipts/ directory locate church_logo.png in root folder
-  let cleanContent = (htmlContent || "")
-    .replace(/src="church_logo\.png"/g, 'src="../church_logo.png"')
-    .replace(/src="church_logo\.jpg"/g, 'src="../church_logo.jpg"');
+  // 2. Embed logo as base64 so HTML is fully self-contained (works from any location)
+  async function getLogoBase64() {
+    for (const src of ['church_logo.png', 'church_logo.jpg']) {
+      try {
+        const res = await fetch(src);
+        if (!res.ok) continue;
+        const blob = await res.blob();
+        return await new Promise(resolve => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+      } catch (e) { }
+    }
+    return null;
+  }
+
+  const logoBase64 = (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) ? window.CHURCH_LOGO_BASE64 : await getLogoBase64();
+  let cleanContent = htmlContent || "";
+  if (logoBase64) {
+    cleanContent = cleanContent.replace(/src="[^"]*church_logo[^"]*"/g, `src="${logoBase64}"`);
+  } else {
+    cleanContent = cleanContent
+      .replace(/src="church_logo\.png"/g, 'src="../church_logo.png"')
+      .replace(/src="church_logo\.jpg"/g, 'src="../church_logo.jpg"');
+  }
 
   const fullHtml = `<!DOCTYPE html>
 <html>
@@ -2417,8 +2595,8 @@ function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
     .no-print, .print-preview-header { display: none !important; }
     .dual-receipt-container { display: block; width: 100%; margin: 0; padding: 0; }
     .dual-receipt-container::after { display: none; }
-    .receipt-card { display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 180mm; border: 2px solid #0f172a; border-radius: 8px; padding: 5mm 7mm; margin: 0; box-sizing: border-box; page-break-after: always; break-after: page; }
-    .receipt-card:last-child { page-break-after: auto; break-after: auto; }
+    .receipt-card { display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 172mm; border: 2px solid #0f172a; border-radius: 8px; padding: 4mm 6mm; margin: 0; box-sizing: border-box; page-break-after: always; break-after: page; }
+    .receipt-card:last-child { page-break-after: avoid; break-after: avoid; }
   </style>
 </head>
 <body>
@@ -3868,7 +4046,7 @@ function exportTableToPDF(tableId, filename) {
     `);
     printWin.document.close();
     printWin.document.title = cleanTitle;
-    setTimeout(function() {
+    setTimeout(function () {
       printWin.print();
     }, 300);
   } catch (err) {
@@ -5308,14 +5486,23 @@ function processBackupRestoreData(jsonText) {
       if (Array.isArray(cbArr)) {
         state.cashbook = cbArr;
         localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
-        // Bulk import to SQLite Backend
-        fetch('/api/bulk_import', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(cbArr)
-        }).then(res => {
-          if (!res.ok) console.error("Failed to sync backup to SQLite DB");
-        }).catch(err => console.error("DB Sync error:", err));
+        // Bulk import to Android SQLite Backend
+        if (window.AndroidBridge && typeof window.AndroidBridge.bulkSync === "function") {
+          try {
+            window.AndroidBridge.bulkSync(JSON.stringify(cbArr));
+            console.log("Synced restored cashbook to Native Android SQLite DB (" + cbArr.length + " entries)");
+          } catch (e) {
+            console.error("AndroidBridge bulkSync error:", e);
+          }
+        } else {
+          fetch('/api/bulk_import', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cbArr)
+          }).then(res => {
+            if (!res.ok) console.error("Failed to sync backup to SQLite DB");
+          }).catch(err => console.error("DB Sync error:", err));
+        }
       }
 
       const indArr = Array.isArray(data.individual) ? data.individual :

@@ -29,7 +29,7 @@ def copy_files(file_list, dest_folder):
             shutil.copy2(src, os.path.join(dest_folder, f))
 
 # Common files across all
-common_files = ["styles.css", "church_logo.png", "church_logo.jpg", "logo.jpg", "data.js", "html2pdf.bundle.min.js"]
+common_files = ["styles.css", "church_logo.png", "church_logo.jpg", "logo.jpg", "logo_data.js", "data.js", "html2pdf.bundle.min.js"]
 
 # 1. GitHub (Cloud Sync)
 # Uses index_supabase.html as index.html, app_supabase.js, and supabase.js

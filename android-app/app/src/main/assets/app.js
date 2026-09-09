@@ -2106,29 +2106,24 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
 
     // 1. Android Phone Standalone APK -> write bytes via AndroidBridge directly to Downloads/Church_Receipts
     if (window.AndroidBridge && typeof window.AndroidBridge.autoSavePdfToFolder === "function") {
-      let targetEl = (typeof containerOrHtml === "object" && containerOrHtml?.nodeType)
-        ? containerOrHtml
-        : document.getElementById("receiptModalArea");
-
-      if (!targetEl) {
-        targetEl = document.createElement("div");
-        targetEl.innerHTML = typeof containerOrHtml === "string" ? containerOrHtml : "";
-      }
-
       if (typeof html2pdf !== "undefined") {
+        const cleanEl = prepareCleanA5PdfElement(containerOrHtml);
         const opt = {
-          margin: [6, 6, 6, 6],
+          margin: 0,
           filename: pdfFilename,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false },
-          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+          html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 800 },
+          jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
+          pagebreak: { mode: ['css', 'legacy'] }
         };
-        html2pdf().set(opt).from(targetEl).outputPdf('datauristring').then(function (pdfDataUri) {
+        html2pdf().set(opt).from(cleanEl).outputPdf('datauristring').then(function (pdfDataUri) {
+          if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
           if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
             const base64Data = pdfDataUri.split('base64,')[1];
             window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
           }
         }).catch(function (err) {
+          if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
           console.warn("Android autoSavePdf error:", err);
         });
         return;
@@ -2167,25 +2162,69 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
   }
 }
 
+// Prepares a pristine, off-screen A5-dimensioned DOM structure specifically for html2pdf
+function prepareCleanA5PdfElement(containerOrHtml) {
+  let innerHtml = "";
+  if (typeof containerOrHtml === "string") {
+    innerHtml = containerOrHtml;
+  } else if (containerOrHtml && containerOrHtml.innerHTML) {
+    innerHtml = containerOrHtml.innerHTML;
+  } else {
+    const modalArea = document.getElementById("receiptModalArea");
+    innerHtml = modalArea ? modalArea.innerHTML : "";
+  }
+
+  // Embed church logo as base64 if available to avoid any cross-origin/loading delays in html2canvas
+  if (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) {
+    innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
+  }
+
+  // Outer isolated offscreen wrapper: exactly 148mm (A5 width) with 6mm margins inside
+  const wrapper = document.createElement("div");
+  wrapper.id = "cleanA5PdfWrapper";
+  wrapper.style.cssText = "position:absolute; left:-9999px; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:-9999;";
+  wrapper.innerHTML = innerHtml;
+
+  // Remove any modal close buttons or interactive chrome
+  wrapper.querySelectorAll("button, .receipt-modal-close-btn, .modal-close-btn, .no-print").forEach(el => el.remove());
+
+  // Normalize dual-receipt-container
+  const dualContainer = wrapper.querySelector(".dual-receipt-container") || wrapper;
+  dualContainer.style.cssText = "display:block; width:100%; margin:0; padding:0; background:#fff; box-sizing:border-box;";
+
+  // Normalize cards: exactly 172mm height with 6mm margins inside each 210mm A5 sheet
+  const cards = wrapper.querySelectorAll(".receipt-card");
+  cards.forEach((card, idx) => {
+    card.style.cssText = "display:flex !important; flex-direction:column !important; justify-content:space-between !important;" +
+      "width:136mm !important; max-width:136mm !important; height:172mm !important; max-height:172mm !important;" +
+      "margin:6mm auto !important; padding:4mm 6mm !important; box-sizing:border-box !important;" +
+      "border:2px solid #0f172a !important; border-radius:8px !important; background:#ffffff !important;" +
+      (idx === 0
+        ? "page-break-after:always !important; break-after:page !important;"
+        : "page-break-after:avoid !important; break-after:avoid !important;");
+  });
+
+  document.body.appendChild(wrapper);
+  return wrapper;
+}
+
 function saveClientSidePdfSilent(containerOrHtml, pdfFilename) {
   try {
-    let targetEl = (typeof containerOrHtml === "object" && containerOrHtml?.nodeType)
-      ? containerOrHtml
-      : document.getElementById("receiptModalArea");
-
-    if (!targetEl) {
-      targetEl = document.createElement("div");
-      targetEl.innerHTML = typeof containerOrHtml === "string" ? containerOrHtml : "";
-    }
-
+    const cleanEl = prepareCleanA5PdfElement(containerOrHtml);
     const opt = {
-      margin: [6, 6, 6, 6],
+      margin: 0,
       filename: pdfFilename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' }
+      html2canvas: { scale: 2, useCORS: true, logging: false, scrollY: 0, windowWidth: 800 },
+      jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy'] }
     };
-    html2pdf().set(opt).from(targetEl).save();
+    html2pdf().set(opt).from(cleanEl).save().then(function () {
+      if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+    }).catch(function (err) {
+      if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
+      console.warn("saveClientSidePdfSilent promise error:", err);
+    });
   } catch (e) {
     console.warn("saveClientSidePdfSilent error:", e);
   }
@@ -2556,8 +2595,8 @@ async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
     .no-print, .print-preview-header { display: none !important; }
     .dual-receipt-container { display: block; width: 100%; margin: 0; padding: 0; }
     .dual-receipt-container::after { display: none; }
-    .receipt-card { display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 180mm; border: 2px solid #0f172a; border-radius: 8px; padding: 5mm 7mm; margin: 0; box-sizing: border-box; page-break-after: always; break-after: page; }
-    .receipt-card:last-child { page-break-after: auto; break-after: auto; }
+    .receipt-card { display: flex; flex-direction: column; justify-content: space-between; width: 100%; height: 172mm; border: 2px solid #0f172a; border-radius: 8px; padding: 4mm 6mm; margin: 0; box-sizing: border-box; page-break-after: always; break-after: page; }
+    .receipt-card:last-child { page-break-after: avoid; break-after: avoid; }
   </style>
 </head>
 <body>
