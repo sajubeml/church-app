@@ -56,7 +56,8 @@ The local repository has TWO remotes:
 
 ## 9. Print Engine & HTML Script Parsing Rules (Updated Sep 2026)
 - **Nested Script Escaping:** When generating dynamic HTML windows inside string literals (e.g. `printWin.document.write(...)`), NEVER write unescaped literal `</script>` tags or inner backticks (`` ` ``). In HTML specifications, ANY literal `</script>` string inside a JS file immediately terminates the outer script tag. Always escape closing script tags inside JS string literals as `<\/script>`.
-- **A5 Portrait Dimensions:** Set `@page { size: A5 portrait; margin: 6mm; }` with receipt card `height: 180mm !important;` and `padding: 5mm 7mm;` so all 4 outer borders clear the Canon/HP laser 5mm unprintable hardware margin while ensuring Page 1 (ORIGINAL) and Page 2 (OFFICE COPY) fit strictly across 2 sheets of paper without triggering a 3rd page spillover.
+- **A5 Portrait Dimensions (Zero Spillover):** Set `@page { size: A5 portrait; margin: 6mm; }` with receipt card `height: 172mm !important;`, `padding: 4mm 6mm !important;`, and `margin: 0 !important;`. This leaves ~17mm physical margin cushion for laser printer hardware unprintable boundaries (e.g. Canon LBP2900 / HP LaserJet), guaranteeing Page 1 (ORIGINAL) and Page 2 (OFFICE COPY) fit strictly across 2 sheets of paper without spilling over onto 3 or 4 pages.
+- **Trailing Page Break Avoidance:** Always ensure `.receipt-card:last-child` has `page-break-after: avoid !important;` and `break-after: avoid !important;`. Never leave conflicting landscape `@page` declarations in `styles.css`.
 
 ## 10. Print Engine Modal Bleed Isolation (Updated Sep 2026)
 - **Strict Modal Suppression in Print CSS:** When native Android print (`window.AndroidBridge.printPage()`) or browser `window.print()` triggers, the WebView captures the active DOM. All backdrops (`.modal-backdrop`, `#memberCrudModal`, `#passwordModal`, `#editMemberModal`, `#editCashbookModal`, `#addMemberModal`, `#addAccountHeadModal`, `#trialActivationModal`) must be strictly set to `display: none !important;` in `@media print`. Only `#receiptModal.active` should be permitted to display, preventing empty/unrelated modal forms from bleeding across 3-4 printed pages.
@@ -64,3 +65,10 @@ The local repository has TWO remotes:
 ## 11. Cashbook Mobile Responsiveness & Android SQLite Sync (Updated Sep 2026)
 - **Cashbook Table Layout:** Never use `table-layout: fixed; width: 100%;` with proportional percentages for `#cashbookTable`. On mobile devices (360px–420px width), 16 accounting columns will crush to 15px–25px, breaking words vertically letter-by-letter. Always use `table-layout: auto; width: max-content; min-width: 100%;` with individual column minimum widths (`min-width: 40px` to `200px`) inside `.table-container { overflow-x: auto; }` for smooth horizontal panning.
 - **Android SQLite Backup Sync:** When restoring a JSON backup in Android APK (`processBackupRestoreData`), always call `window.AndroidBridge.bulkSync(JSON.stringify(cbArr))` in addition to `localStorage.setItem("CHURCH_CASHBOOK")`. Failing to do so causes `window.AndroidBridge.fetchDatabaseState()` in `loadAllData()` to overwrite memory on reload with stale SQLite data.
+
+## 12. Automated Silent PDF Generation & Transaction Mode (Updated Sep 2026)
+- **Zero-Prompt Auto PDF Generation:** Whenever a receipt or voucher is created via `showReceiptModal()`, `autoSaveReceiptPdf()` must trigger automatically without opening the print prompt.
+  - On **Android standalone APK**: Generates PDF base64 via `html2pdf.js` and calls `window.AndroidBridge.autoSavePdfToFolder(base64Data, filename)` to write directly into `Downloads/Church_Receipts/`.
+  - On **PC / Web (online & offline)**: Invokes `saveReceiptPrintCopy()` to generate `Receipts/Receipt_XXXX.pdf` on the server and initiates a direct browser download `<a>` click to save to the Downloads folder silently.
+- **Transaction Mode (CASH / BANK) Badge:** Receipts and payment vouchers must display the transaction mode badge (`CASH` or `BANK`) directly in the document meta header table (`Mode: CASH / BANK`) on both Original (Page 1) and Office Copy (Page 2).
+
