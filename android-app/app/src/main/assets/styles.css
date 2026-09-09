@@ -614,18 +614,18 @@ body {
     justify-content: space-between !important;
     width: 100% !important;
     max-width: 100% !important;
-    height: 180mm !important;
+    height: 172mm !important;
     box-sizing: border-box !important;
     border: 2px solid #0f172a !important;
     border-radius: 8px !important;
-    padding: 5mm 7mm !important;
+    padding: 4mm 6mm !important;
     margin: 0 !important;
     page-break-after: always !important;
     break-after: page !important;
   }
   .receipt-card:last-child {
-    page-break-after: auto !important;
-    break-after: auto !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
   .modal-header, .no-print { display: none !important; }
@@ -821,14 +821,9 @@ body {
 }
 
 /* ====================================================
-   🖨️ PRINT MEDIA STYLES (SINGLE-PAGE DUAL RECEIPT PRINT)
+   🖨️ PRINT MEDIA STYLES
    ==================================================== */
 @media print {
-  @page {
-    size: landscape;
-    margin: 6mm;
-  }
-
   body {
     background: #ffffff !important;
     color: #000000 !important;

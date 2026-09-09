@@ -2099,65 +2099,65 @@ function showReceiptModal() {
   const receiptContent = `
     <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:0; width:100%; margin:0; padding:0;">
       <!-- ORIGINAL -->
-      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:5mm 7mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:180mm;">
+      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:4mm 6mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm;">
         <span style="position:absolute; right:10px; top:10px; background:#10b981; color:#fff; font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:4px;">ORIGINAL</span>
-        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:6px; margin-bottom:8px;">
-          <img src="church_logo.png" alt="Church Logo" style="height:44px; width:44px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:3px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:13px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
-          <p style="margin:2px 0; font-size:10px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
-          <p style="font-weight:bold; font-size:11.5px; color:#1e293b; margin-top:3px;">${docTitle}</p>
+        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:4px; margin-bottom:6px;">
+          <img src="church_logo.png" alt="Church Logo" style="height:40px; width:40px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
+          <h3 style="margin:0; font-size:12.5px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
+          <p style="margin:1px 0; font-size:9.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
+          <p style="font-weight:bold; font-size:11px; color:#1e293b; margin-top:2px;">${docTitle}</p>
         </div>
-        <table style="width:100%; font-size:11.5px; margin-bottom:6px;">
+        <table style="width:100%; font-size:11px; margin-bottom:4px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
           <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; font-size:11.5px; flex:1;">
+        <table style="width:100%; border-collapse:collapse; font-size:11px; flex:1;">
           <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right;">Amount</th></tr>
+            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:8px 10px; border-radius:4px; margin-top:6px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
-          <div style="font-size:10.5px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
-          <div style="font-size:13.5px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:6px 10px; border-radius:4px; margin-top:4px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
+          <div style="font-size:10px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
+          <div style="font-size:13px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-top:6px;">
+        <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
         </div>
-        <div style="text-align:center; font-size:9px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:5px; margin-top:4px; font-weight:600; font-style:italic;">
+        <div style="text-align:center; font-size:8.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:4px; margin-top:3px; font-weight:600; font-style:italic;">
           &#x2713; Computer Generated Document &mdash; Digitally Signed &amp; Authenticated
         </div>
       </div>
 
       <!-- DUPLICATE COPY -->
-      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:5mm 7mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:180mm;">
+      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:4mm 6mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm;">
         <span style="position:absolute; right:10px; top:10px; background:#f59e0b; color:#fff; font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:4px;">COPY</span>
-        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:6px; margin-bottom:8px;">
-          <img src="church_logo.png" alt="Church Logo" style="height:44px; width:44px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:3px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:13px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
-          <p style="margin:2px 0; font-size:10px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
-          <p style="font-weight:bold; font-size:11.5px; color:#1e293b; margin-top:3px;">${docTitle} (OFFICE COPY)</p>
+        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:4px; margin-bottom:6px;">
+          <img src="church_logo.png" alt="Church Logo" style="height:40px; width:40px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
+          <h3 style="margin:0; font-size:12.5px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
+          <p style="margin:1px 0; font-size:9.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
+          <p style="font-weight:bold; font-size:11px; color:#1e293b; margin-top:2px;">${docTitle} (OFFICE COPY)</p>
         </div>
-        <table style="width:100%; font-size:11.5px; margin-bottom:6px;">
+        <table style="width:100%; font-size:11px; margin-bottom:4px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
           <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; font-size:11.5px; flex:1;">
+        <table style="width:100%; border-collapse:collapse; font-size:11px; flex:1;">
           <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:5px 6px; text-align:right;">Amount</th></tr>
+            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:8px 10px; border-radius:4px; margin-top:6px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
-          <div style="font-size:10.5px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
-          <div style="font-size:13.5px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:6px 10px; border-radius:4px; margin-top:4px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
+          <div style="font-size:10px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
+          <div style="font-size:13px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-top:6px;">
+        <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
         </div>
-        <div style="text-align:center; font-size:9px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:5px; margin-top:4px; font-weight:600; font-style:italic;">
+        <div style="text-align:center; font-size:8.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:4px; margin-top:3px; font-weight:600; font-style:italic;">
           &#x2713; Computer Generated Document &mdash; Digitally Signed &amp; Authenticated
         </div>
       </div>
@@ -2444,18 +2444,18 @@ function printReceiptModal() {
             justify-content: space-between !important;
             width: 100% !important;
             max-width: 100% !important;
-            height: 180mm !important;
+            height: 172mm !important;
             box-sizing: border-box !important;
             border: 2px solid #0f172a !important;
             border-radius: 8px !important;
-            padding: 5mm 7mm !important;
+            padding: 4mm 6mm !important;
             margin: 0 0 0 0 !important;
             page-break-after: always !important;
             break-after: page !important;
           }
           .receipt-card:last-child {
-            page-break-after: auto !important;
-            break-after: auto !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
           }
         }
         .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; }
@@ -2490,7 +2490,7 @@ function printReceiptModal() {
           } else if (fmt === 'a5-landscape') {
             el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 landscape; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 126mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           } else {
-            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 180mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 5mm 7mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
+            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 172mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: avoid !important; break-after: avoid !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           }
         }
       <\/script>
