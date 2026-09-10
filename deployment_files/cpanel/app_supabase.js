@@ -2238,7 +2238,8 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
 
     // 2. Local PC Server (start_server.py) -> save_print generates Receipts/Receipt_XXXX.pdf automatically.
     // Also trigger direct browser download of the PDF so it lands in PC Downloads folder without print prompt.
-    if (typeof fetch === "function") {
+    const isLocalServer = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+    if (isLocalServer && typeof fetch === "function") {
       const htmlStr = (typeof containerOrHtml === "string")
         ? containerOrHtml
         : (containerOrHtml?.innerHTML || document.getElementById("receiptModalArea")?.innerHTML || "");
@@ -2259,10 +2260,18 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
       return;
     }
 
-    // 3. Cloud / Offline Client-side Web browser fallback
+    // 3. Cloud / Offline Client-side Web browser fallback (cPanel, GitHub Pages, etc.)
     if (typeof html2pdf !== "undefined") {
       saveClientSidePdfSilent(containerOrHtml, pdfFilename);
     }
+
+    // Background cloud storage archive
+    try {
+      const htmlStr = (typeof containerOrHtml === "string")
+        ? containerOrHtml
+        : (containerOrHtml?.innerHTML || document.getElementById("receiptModalArea")?.innerHTML || "");
+      saveReceiptPrintCopy(docNo, prefix, htmlStr);
+    } catch (e) {}
   } catch (err) {
     console.warn("autoSaveReceiptPdf failed:", err);
   }

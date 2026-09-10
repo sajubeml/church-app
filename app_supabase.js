@@ -2290,7 +2290,7 @@ function prepareCleanA5PdfElement(containerOrHtml) {
   // NEVER use left:-9999px or z-index<0 — html2canvas will produce a blank canvas.
   const wrapper = document.createElement("div");
   wrapper.id = "cleanA5PdfWrapper";
-  wrapper.style.cssText = "position:fixed; left:0; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:99999; pointer-events:none; opacity:1;"; 
+  wrapper.style.cssText = "position:fixed; left:0; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:99999; pointer-events:none; opacity:1;";
   wrapper.innerHTML = innerHtml;
 
   // Remove any modal close buttons or interactive chrome
