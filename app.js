@@ -1669,40 +1669,83 @@ function clearForm() {
   if (txtSrcHead) txtSrcHead.value = "";
 }
 
+function extractSubDatesFromText(text) {
+  if (!text) return [];
+  const s = String(text).trim().toLowerCase();
+  if (!s || s === "-" || s === "null" || s === "undefined") return [];
+
+  const MONTH_MAP = {
+    jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4,
+    may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8, sep: 9, sept: 9, september: 9,
+    oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
+  };
+
+  const results = [];
+
+  // 1. Full 3-part dates: DD-MM-YYYY or DD/MM/YYYY (e.g. 01-10-2026, 01/04/2026, 12-07-2026)
+  const matchesDateDMY = Array.from(s.matchAll(/\b(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})\b/g));
+  for (const m of matchesDateDMY) {
+    let p1 = parseInt(m[1], 10);
+    let p2 = parseInt(m[2], 10);
+    let yy = parseInt(m[3], 10);
+    if (yy < 100) yy += 2000;
+    let mm = p2;
+    // If second number is > 12 and first number is 1..12, it's MM-DD-YYYY
+    if (p2 > 12 && p1 >= 1 && p1 <= 12) {
+      mm = p1;
+    }
+    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
+  }
+
+  // 2. Full 3-part dates: YYYY-MM-DD or YYYY/MM/DD (e.g. 2026-10-01, 2026-08-09)
+  const matchesDateYMD = Array.from(s.matchAll(/\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})\b/g));
+  for (const m of matchesDateYMD) {
+    const yy = parseInt(m[1], 10);
+    const mm = parseInt(m[2], 10);
+    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
+  }
+
+  // 3. Month names with spaces, hyphens, or directly attached to year:
+  // e.g. "oct-25", "march-26", "apr26", "Sept 26", "apr 26 to march 27", "jan 2027"
+  const matchesMonthName = Array.from(s.matchAll(/\b(jan|feb|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)[\s-]*(\d{2,4})\b/g));
+  for (const m of matchesMonthName) {
+    const mm = MONTH_MAP[m[1]] || 0;
+    let yy = parseInt(m[2], 10);
+    if (yy < 100) yy += 2000;
+    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
+  }
+
+  // 4. Two-part dates: MM-YYYY or MM/YYYY (e.g. 10/2026, 03-2027, 09/2026)
+  const matches2Part = Array.from(s.matchAll(/(?:^|[^\d\-\/])(\d{1,2})[\/\-](\d{2,4})(?:$|[^\d\-\/])/g));
+  for (const m of matches2Part) {
+    const mm = parseInt(m[1], 10);
+    let yy = parseInt(m[2], 10);
+    if (yy < 100) yy += 2000;
+    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
+  }
+
+  if (s.includes("current year") || s.includes("monthly subscription")) {
+    results.push({ yy: 2027, mm: 3 });
+  }
+
+  return results;
+}
+
 function formatSubUptoMonthYear(val) {
   if (!val) return "-";
   const str = String(val).trim();
-  if (!str || str === "-") return "-";
+  if (!str || str === "-" || str === "null" || str === "undefined") return "-";
 
   // Check if it's already MM/YYYY or MM-YYYY
   if (/^\d{2}[\/\-]\d{4}$/.test(str)) {
     return str.replace('-', '/');
   }
 
-  const monthsMap = {
-    jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06",
-    jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12"
-  };
-
-  const lower = str.toLowerCase();
-
-  // Extract month and year, e.g. "Apr 26 to march 27", "mar27", "march 2027", "mar 2027"
-  const matches = [...lower.matchAll(/([a-z]{3,9})\s*['\s-]?\s*(\d{2,4})/g)];
-  if (matches.length > 0) {
-    // Pick the LAST match (latest month/year entry)
-    const lastMatch = matches[matches.length - 1];
-    const monthStr = lastMatch[1].substring(0, 3);
-    const monthNum = monthsMap[monthStr] || "03";
-    let yearNum = lastMatch[2];
-    if (yearNum.length === 2) yearNum = "20" + yearNum;
-    return `${monthNum}/${yearNum}`;
-  }
-
-  // Fallback pattern match for date in string
-  const dateMatch = str.match(/(\d{1,2})[\/\-](\d{4})/);
-  if (dateMatch) {
-    const m = dateMatch[1].padStart(2, '0');
-    return `${m}/${dateMatch[2]}`;
+  const results = extractSubDatesFromText(str);
+  if (results && results.length > 0) {
+    results.sort((a, b) => (a.yy !== b.yy ? a.yy - b.yy : a.mm - b.mm));
+    const latest = results[results.length - 1];
+    return `${String(latest.mm).padStart(2, '0')}/${latest.yy}`;
   }
 
   return str;
@@ -3052,33 +3095,21 @@ function handleIndivHeaderClick(colKey) {
 
 function getLatestSubscriptionRemark(regNo) {
   if (!state.cashbook) return "";
+  const targetReg = String(regNo || "").trim();
+  if (!targetReg) return "";
 
-  const parseDate = (dStr) => {
-    if (!dStr) return new Date(0);
-    const parts = String(dStr).trim().split('-');
-    if (parts.length === 3) {
-      return new Date(parts[2], parts[1] - 1, parts[0]);
-    }
-    return new Date(0);
-  };
-
-  let latestDate = new Date(0);
-  let latestRemark = "";
-
+  const remarks = [];
   for (const cb of state.cashbook) {
     const cbRegNo = String(cb["C"] || "").trim();
-    if (cbRegNo === String(regNo).trim()) {
+    if (cbRegNo === targetReg) {
       const code = String(cb["F"] || "").trim().toUpperCase();
       if (code.includes("3.82") || code.includes("3.83")) {
-        const cbDate = parseDate(cb["A"]);
-        if (cbDate > latestDate) {
-          latestDate = cbDate;
-          latestRemark = String(cb["G"] || "").trim();
-        }
+        const rem = String(cb["G"] || "").trim();
+        if (rem) remarks.push(rem);
       }
     }
   }
-  return latestRemark;
+  return remarks.join(" ; ");
 }
 
 function getCleanSubUptoLive(text, hasSub) {
@@ -3086,32 +3117,7 @@ function getCleanSubUptoLive(text, hasSub) {
   const s = String(text).trim().toLowerCase();
   if (s === "-" || s === "null" || s === "undefined") return hasSub ? "03/2027" : "-";
 
-  const MONTH_MAP = {
-    jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4,
-    may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8, sep: 9, sept: 9, september: 9,
-    oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
-  };
-
-  const results = [];
-  const matches1 = Array.from(s.matchAll(/\b(\d{1,2})[-/](\d{2,4})\b/g));
-  for (const m of matches1) {
-    const mm = parseInt(m[1], 10);
-    let yy = parseInt(m[2], 10);
-    if (yy < 100) yy += 2000;
-    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
-  }
-
-  const matches2 = Array.from(s.matchAll(/\b(jan|feb|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)\s*(\d{2,4})\b/g));
-  for (const m of matches2) {
-    const mm = MONTH_MAP[m[1]] || 0;
-    let yy = parseInt(m[2], 10);
-    if (yy < 100) yy += 2000;
-    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
-  }
-
-  if (s.includes("current year") || s.includes("monthly subscription")) {
-    results.push({ yy: 2027, mm: 3 });
-  }
+  const results = extractSubDatesFromText(s);
 
   if (results.length === 0) return hasSub ? "03/2027" : "-";
 
@@ -3271,9 +3277,13 @@ function renderIndividualLedgers() {
     const grandVal = grandNum.toLocaleString('en-IN');
 
     const cashbookRemark = getLatestSubscriptionRemark(regNo);
-    if (cashbookRemark) rawSubUpto = cashbookRemark;
+    const combinedRemarks = [rawSubUpto, cashbookRemark].filter(Boolean).join(" ; ");
+    let subUpto = getCleanSubUptoLive(combinedRemarks, (colValues["E"] || 0) > 0);
 
-    const subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["E"] || 0) > 0);
+    // Non-members don't have subscriptions
+    if (regNo && regNo.toUpperCase() === "NM") {
+      subUpto = "-";
+    }
 
     return { sl, regNo, name, subUpto, grandVal, grandNum, colValues };
   });
@@ -4857,7 +4867,10 @@ function renderAdminMembersTable() {
     state.individual.forEach((r) => {
       const regNo = getColVal(r, "B");
       const name = getColVal(r, "C");
-      const subUpto = getColVal(r, "D");
+      const rawSub = getColVal(r, "D");
+      const cbRem = getLatestSubscriptionRemark(regNo);
+      const combinedSub = [rawSub, cbRem].filter(Boolean).join(" ; ");
+      const subUpto = (regNo && regNo.toUpperCase() === "NM") ? "-" : getCleanSubUptoLive(combinedSub, true);
       const total = getColVal(r, "AM") || "0.00";
       const totalNum = parseFloat(total) || 0;
 

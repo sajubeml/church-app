@@ -1669,40 +1669,83 @@ function clearForm() {
   if (txtSrcHead) txtSrcHead.value = "";
 }
 
+function extractSubDatesFromText(text) {
+  if (!text) return [];
+  const s = String(text).trim().toLowerCase();
+  if (!s || s === "-" || s === "null" || s === "undefined") return [];
+
+  const MONTH_MAP = {
+    jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4,
+    may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8, sep: 9, sept: 9, september: 9,
+    oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
+  };
+
+  const results = [];
+
+  // 1. Full 3-part dates: DD-MM-YYYY or DD/MM/YYYY (e.g. 01-10-2026, 01/04/2026, 12-07-2026)
+  const matchesDateDMY = Array.from(s.matchAll(/\b(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})\b/g));
+  for (const m of matchesDateDMY) {
+    let p1 = parseInt(m[1], 10);
+    let p2 = parseInt(m[2], 10);
+    let yy = parseInt(m[3], 10);
+    if (yy < 100) yy += 2000;
+    let mm = p2;
+    // If second number is > 12 and first number is 1..12, it's MM-DD-YYYY
+    if (p2 > 12 && p1 >= 1 && p1 <= 12) {
+      mm = p1;
+    }
+    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
+  }
+
+  // 2. Full 3-part dates: YYYY-MM-DD or YYYY/MM/DD (e.g. 2026-10-01, 2026-08-09)
+  const matchesDateYMD = Array.from(s.matchAll(/\b(20\d{2})[-/](\d{1,2})[-/](\d{1,2})\b/g));
+  for (const m of matchesDateYMD) {
+    const yy = parseInt(m[1], 10);
+    const mm = parseInt(m[2], 10);
+    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
+  }
+
+  // 3. Month names with spaces, hyphens, or directly attached to year:
+  // e.g. "oct-25", "march-26", "apr26", "Sept 26", "apr 26 to march 27", "jan 2027"
+  const matchesMonthName = Array.from(s.matchAll(/\b(jan|feb|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)[\s-]*(\d{2,4})\b/g));
+  for (const m of matchesMonthName) {
+    const mm = MONTH_MAP[m[1]] || 0;
+    let yy = parseInt(m[2], 10);
+    if (yy < 100) yy += 2000;
+    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
+  }
+
+  // 4. Two-part dates: MM-YYYY or MM/YYYY (e.g. 10/2026, 03-2027, 09/2026)
+  const matches2Part = Array.from(s.matchAll(/(?:^|[^\d\-\/])(\d{1,2})[\/\-](\d{2,4})(?:$|[^\d\-\/])/g));
+  for (const m of matches2Part) {
+    const mm = parseInt(m[1], 10);
+    let yy = parseInt(m[2], 10);
+    if (yy < 100) yy += 2000;
+    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
+  }
+
+  if (s.includes("current year") || s.includes("monthly subscription")) {
+    results.push({ yy: 2027, mm: 3 });
+  }
+
+  return results;
+}
+
 function formatSubUptoMonthYear(val) {
   if (!val) return "-";
   const str = String(val).trim();
-  if (!str || str === "-") return "-";
+  if (!str || str === "-" || str === "null" || str === "undefined") return "-";
 
   // Check if it's already MM/YYYY or MM-YYYY
   if (/^\d{2}[\/\-]\d{4}$/.test(str)) {
     return str.replace('-', '/');
   }
 
-  const monthsMap = {
-    jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06",
-    jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12"
-  };
-
-  const lower = str.toLowerCase();
-
-  // Extract month and year, e.g. "Apr 26 to march 27", "mar27", "march 2027", "mar 2027"
-  const matches = [...lower.matchAll(/([a-z]{3,9})\s*['\s-]?\s*(\d{2,4})/g)];
-  if (matches.length > 0) {
-    // Pick the LAST match (latest month/year entry)
-    const lastMatch = matches[matches.length - 1];
-    const monthStr = lastMatch[1].substring(0, 3);
-    const monthNum = monthsMap[monthStr] || "03";
-    let yearNum = lastMatch[2];
-    if (yearNum.length === 2) yearNum = "20" + yearNum;
-    return `${monthNum}/${yearNum}`;
-  }
-
-  // Fallback pattern match for date in string
-  const dateMatch = str.match(/(\d{1,2})[\/\-](\d{4})/);
-  if (dateMatch) {
-    const m = dateMatch[1].padStart(2, '0');
-    return `${m}/${dateMatch[2]}`;
+  const results = extractSubDatesFromText(str);
+  if (results && results.length > 0) {
+    results.sort((a, b) => (a.yy !== b.yy ? a.yy - b.yy : a.mm - b.mm));
+    const latest = results[results.length - 1];
+    return `${String(latest.mm).padStart(2, '0')}/${latest.yy}`;
   }
 
   return str;
@@ -2107,25 +2150,47 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
     // 1. Android Phone Standalone APK -> write bytes via AndroidBridge directly to Downloads/Church_Receipts
     if (window.AndroidBridge && typeof window.AndroidBridge.autoSavePdfToFolder === "function") {
       if (typeof html2pdf !== "undefined") {
-        const cleanEl = prepareCleanA5PdfElement(containerOrHtml);
+        // Build self-contained HTML string — DO NOT pass a DOM element.
+        // Android WebView cannot paint position:fixed elements before html2canvas captures (blank PDF).
+        let innerHtml = "";
+        if (typeof containerOrHtml === "string") {
+          innerHtml = containerOrHtml;
+        } else if (containerOrHtml && containerOrHtml.innerHTML) {
+          innerHtml = containerOrHtml.innerHTML;
+        } else {
+          const modalArea = document.getElementById("receiptModalArea");
+          innerHtml = modalArea ? modalArea.innerHTML : "";
+        }
+        if (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) {
+          innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
+        }
+        const wrappedHtml = `<div style="width:148mm; background:#ffffff; margin:0; padding:0; box-sizing:border-box;">
+          <style>
+            .dual-receipt-container { display:block; width:100%; margin:0; padding:0; background:#fff; box-sizing:border-box; }
+            .receipt-card { display:flex !important; flex-direction:column !important; justify-content:space-between !important;
+              width:136mm !important; max-width:136mm !important; height:172mm !important; max-height:172mm !important;
+              margin:6mm auto !important; padding:4mm 6mm !important; box-sizing:border-box !important;
+              border:2px solid #0f172a !important; border-radius:8px !important; background:#ffffff !important; }
+            .receipt-card:first-child { page-break-after:always !important; break-after:page !important; }
+            .receipt-card:last-child { page-break-after:avoid !important; break-after:avoid !important; }
+            button, .receipt-modal-close-btn, .modal-close-btn, .no-print { display:none !important; }
+          <\/style>
+          ${innerHtml}
+        <\/div>`;
         const opt = {
           margin: 0,
           filename: pdfFilename,
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+          html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
           jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
           pagebreak: { mode: ['css', 'legacy'] }
         };
-        html2pdf().set(opt).from(cleanEl).outputPdf('datauristring').then(function (pdfDataUri) {
-          setTimeout(function () {
-            if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-          }, 500);
+        html2pdf().set(opt).from(wrappedHtml).outputPdf('datauristring').then(function (pdfDataUri) {
           if (pdfDataUri && pdfDataUri.indexOf('base64,') > -1) {
             const base64Data = pdfDataUri.split('base64,')[1];
             window.AndroidBridge.autoSavePdfToFolder(base64Data, pdfFilename);
           }
         }).catch(function (err) {
-          if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
           console.warn("Android autoSavePdf error:", err);
         });
         return;
@@ -2181,11 +2246,12 @@ function prepareCleanA5PdfElement(containerOrHtml) {
     innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
   }
 
-  // Outer wrapper placed on screen with fixed top:0; left:0; width:148mm; but behind other UI (z-index:-100) or opacity:0.01
-  // Never use left:-9999px because html2canvas clips or produces empty blank pixels for elements outside the layout viewport.
+  // Outer wrapper: must be on-screen and visible for html2canvas to rasterize it.
+  // Use z-index:99999 so it sits above all other UI during the brief capture window.
+  // NEVER use left:-9999px or z-index<0 — html2canvas will produce a blank canvas.
   const wrapper = document.createElement("div");
   wrapper.id = "cleanA5PdfWrapper";
-  wrapper.style.cssText = "position:fixed; left:0; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:-100; pointer-events:none; opacity:1;";
+  wrapper.style.cssText = "position:fixed; left:0; top:0; width:148mm; margin:0; padding:0; background:#ffffff; box-sizing:border-box; z-index:99999; pointer-events:none; opacity:1;";
   wrapper.innerHTML = innerHtml;
 
   // Remove any modal close buttons or interactive chrome
@@ -2213,23 +2279,52 @@ function prepareCleanA5PdfElement(containerOrHtml) {
 
 function saveClientSidePdfSilent(containerOrHtml, pdfFilename) {
   try {
-    const cleanEl = prepareCleanA5PdfElement(containerOrHtml);
+    // Build the clean HTML string with inline A5 wrapper styling.
+    // Pass as a string to html2pdf so it manages its own DOM insertion + paint timing.
+    // DO NOT pass a DOM element — html2canvas captures before the browser paints it (blank PDF).
+    let innerHtml = "";
+    if (typeof containerOrHtml === "string") {
+      innerHtml = containerOrHtml;
+    } else if (containerOrHtml && containerOrHtml.innerHTML) {
+      innerHtml = containerOrHtml.innerHTML;
+    } else {
+      const modalArea = document.getElementById("receiptModalArea");
+      innerHtml = modalArea ? modalArea.innerHTML : "";
+    }
+
+    // Embed logo as base64 so html2canvas doesn't block on cross-origin image load
+    if (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) {
+      innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
+    }
+
+    // Wrap in a self-contained A5-sized div with all styles inline
+    const wrappedHtml = `<div style="width:148mm; background:#ffffff; margin:0; padding:0; box-sizing:border-box;">
+      <style>
+        .dual-receipt-container { display:block; width:100%; margin:0; padding:0; background:#fff; box-sizing:border-box; }
+        .receipt-card { display:flex !important; flex-direction:column !important; justify-content:space-between !important;
+          width:136mm !important; max-width:136mm !important; height:172mm !important; max-height:172mm !important;
+          margin:6mm auto !important; padding:4mm 6mm !important; box-sizing:border-box !important;
+          border:2px solid #0f172a !important; border-radius:8px !important; background:#ffffff !important; }
+        .receipt-card:first-child { page-break-after:always !important; break-after:page !important; }
+        .receipt-card:last-child { page-break-after:avoid !important; break-after:avoid !important; }
+        button, .receipt-modal-close-btn, .modal-close-btn, .no-print { display:none !important; }
+      <\/style>
+      ${innerHtml}
+    <\/div>`;
+
     const opt = {
       margin: 0,
       filename: pdfFilename,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, logging: false, scrollX: 0, scrollY: 0 },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false, backgroundColor: '#ffffff', scrollX: 0, scrollY: 0 },
       jsPDF: { unit: 'mm', format: 'a5', orientation: 'portrait' },
       pagebreak: { mode: ['css', 'legacy'] }
     };
-    html2pdf().set(opt).from(cleanEl).save().then(function () {
-      setTimeout(function () {
-        if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-      }, 500);
-    }).catch(function (err) {
-      if (cleanEl.parentNode) cleanEl.parentNode.removeChild(cleanEl);
-      console.warn("saveClientSidePdfSilent promise error:", err);
-    });
+
+    html2pdf().set(opt).from(wrappedHtml).save()
+      .catch(function (err) {
+        console.warn("saveClientSidePdfSilent promise error:", err);
+      });
   } catch (e) {
     console.warn("saveClientSidePdfSilent error:", e);
   }
@@ -3000,33 +3095,21 @@ function handleIndivHeaderClick(colKey) {
 
 function getLatestSubscriptionRemark(regNo) {
   if (!state.cashbook) return "";
+  const targetReg = String(regNo || "").trim();
+  if (!targetReg) return "";
 
-  const parseDate = (dStr) => {
-    if (!dStr) return new Date(0);
-    const parts = String(dStr).trim().split('-');
-    if (parts.length === 3) {
-      return new Date(parts[2], parts[1] - 1, parts[0]);
-    }
-    return new Date(0);
-  };
-
-  let latestDate = new Date(0);
-  let latestRemark = "";
-
+  const remarks = [];
   for (const cb of state.cashbook) {
     const cbRegNo = String(cb["C"] || "").trim();
-    if (cbRegNo === String(regNo).trim()) {
+    if (cbRegNo === targetReg) {
       const code = String(cb["F"] || "").trim().toUpperCase();
       if (code.includes("3.82") || code.includes("3.83")) {
-        const cbDate = parseDate(cb["A"]);
-        if (cbDate > latestDate) {
-          latestDate = cbDate;
-          latestRemark = String(cb["G"] || "").trim();
-        }
+        const rem = String(cb["G"] || "").trim();
+        if (rem) remarks.push(rem);
       }
     }
   }
-  return latestRemark;
+  return remarks.join(" ; ");
 }
 
 function getCleanSubUptoLive(text, hasSub) {
@@ -3034,32 +3117,7 @@ function getCleanSubUptoLive(text, hasSub) {
   const s = String(text).trim().toLowerCase();
   if (s === "-" || s === "null" || s === "undefined") return hasSub ? "03/2027" : "-";
 
-  const MONTH_MAP = {
-    jan: 1, january: 1, feb: 2, february: 2, mar: 3, march: 3, apr: 4, april: 4,
-    may: 5, jun: 6, june: 6, jul: 7, july: 7, aug: 8, august: 8, sep: 9, sept: 9, september: 9,
-    oct: 10, october: 10, nov: 11, november: 11, dec: 12, december: 12
-  };
-
-  const results = [];
-  const matches1 = Array.from(s.matchAll(/\b(\d{1,2})[-/](\d{2,4})\b/g));
-  for (const m of matches1) {
-    const mm = parseInt(m[1], 10);
-    let yy = parseInt(m[2], 10);
-    if (yy < 100) yy += 2000;
-    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
-  }
-
-  const matches2 = Array.from(s.matchAll(/\b(jan|feb|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)\s*(\d{2,4})\b/g));
-  for (const m of matches2) {
-    const mm = MONTH_MAP[m[1]] || 0;
-    let yy = parseInt(m[2], 10);
-    if (yy < 100) yy += 2000;
-    if (mm >= 1 && mm <= 12 && yy >= 2000 && yy <= 2099) results.push({ yy, mm });
-  }
-
-  if (s.includes("current year") || s.includes("monthly subscription")) {
-    results.push({ yy: 2027, mm: 3 });
-  }
+  const results = extractSubDatesFromText(s);
 
   if (results.length === 0) return hasSub ? "03/2027" : "-";
 
@@ -3074,7 +3132,7 @@ function findIndividualColKey({ head, code }) {
 
   head = (head || "").toLowerCase().trim();
   code = (code || "").toUpperCase().trim();
-  code = code.replace(/^RP[-\s]*/i, "RP-").replace(/\s+/g, '');
+  code = code.replace(/RP[\s-]/gi, "RP-");
 
   const incomeCols = [];
   for (let key in headerRow) {
@@ -3093,23 +3151,23 @@ function findIndividualColKey({ head, code }) {
 
   if (head.includes("subscription ( current year)") || code === "RP-3.82") return "E";
   if (head.includes("donation general") || code === "RP-2.02" || code === "RP-2.02(A)") return "F";
-  if (head.includes("catholicate day") || code === "RP-19.03&.04") return "G";
-  if (head.includes("metropolitan fund") || code === "RP-19.11") return "H";
-  if (head.includes("mission sunday") || code === "RP-19.21") return "I";
-  if (head.includes("seminary day") || code === "RP-19.23") return "J";
-  if (head.includes("priest welfare") || code === "RP-19.15") return "K";
+  if (head.includes("catholicate day") || code === "RP-19.03&.04" || code === "RP-10.04/05") return "G";
+  if (head.includes("metropolitan fund") || code === "RP-19.11" || code === "RP-10.08") return "H";
+  if (head.includes("mission sunday") || code === "RP-19.21" || code === "RP-10.13") return "I";
+  if (head.includes("seminary day") || code === "RP-19.23" || code === "RP-10.15") return "J";
+  if (head.includes("priest welfare") || code === "RP-19.15" || code === "RP-10.10") return "K";
   if (head.includes("old cover collection") || code === "RP-10.17") return "L";
   if (head.includes("wedding anniversary") || code === "RP-3.17") return "M";
   if (head.includes("birthday offering") || code === "RP-3.16") return "N";
   if (head.includes("baptism") || code === "RP-3.14") return "O";
   if (head.includes("orma qurbana") || head.includes("holy qurbana") || code === "RP-3.12") return "P";
-  if (head.includes("sunday school day collection") || code === "RP-19.22") return "Q";
+  if (head.includes("sunday school day collection") || head.includes("sunday school") || code === "RP-19.22" || code === "RP-10.14") return "Q";
   if (head.includes("st.gregorios feast") || code === "RP-3.33") return "R";
   if (head.includes("parish day") || code === "RP-2.12") return "S";
   if (head.includes("christmas") || head.includes("new year") || code === "RP-3.11") return "T";
   if (head.includes("perunnal vanchika") || head.includes("house offertory box") || code === "RP-3.05") return "U";
   if (head.includes("passion week") || code === "RP-2.13") return "V";
-  if (head.includes("st. george feast") || code === "RP-16.50") return "W";
+  if (head.includes("st. george feast") || head.includes("st george feast") || code === "RP-16.50" || code === "RP-3.35") return "W";
   if (head.includes("st. thomas feast") || code === "RP-3.31") return "X";
   if (head.includes("st. mary's feast") || code === "RP-3.32") return "Y";
   if (head.includes("marriage bann") || code === "RP-3.15(A)") return "Z";
@@ -3126,7 +3184,7 @@ function findIndividualColKey({ head, code }) {
   if (head.includes("donation-breakfast") || code === "RP-2.16") return "AK";
   if (head.includes("miscellaneous income") || code === "RP-3.22") return "AL";
   if (head.includes("monthly subscription ( pervious year)") || code === "RP-3.83") return "E";
-  return "E";
+  return null;
 }
 
 function renderIndividualLedgers() {
@@ -3219,9 +3277,13 @@ function renderIndividualLedgers() {
     const grandVal = grandNum.toLocaleString('en-IN');
 
     const cashbookRemark = getLatestSubscriptionRemark(regNo);
-    if (cashbookRemark) rawSubUpto = cashbookRemark;
+    const combinedRemarks = [rawSubUpto, cashbookRemark].filter(Boolean).join(" ; ");
+    let subUpto = getCleanSubUptoLive(combinedRemarks, (colValues["E"] || 0) > 0);
 
-    const subUpto = getCleanSubUptoLive(rawSubUpto, (colValues["E"] || 0) > 0);
+    // Non-members don't have subscriptions
+    if (regNo && regNo.toUpperCase() === "NM") {
+      subUpto = "-";
+    }
 
     return { sl, regNo, name, subUpto, grandVal, grandNum, colValues };
   });
@@ -4805,7 +4867,10 @@ function renderAdminMembersTable() {
     state.individual.forEach((r) => {
       const regNo = getColVal(r, "B");
       const name = getColVal(r, "C");
-      const subUpto = getColVal(r, "D");
+      const rawSub = getColVal(r, "D");
+      const cbRem = getLatestSubscriptionRemark(regNo);
+      const combinedSub = [rawSub, cbRem].filter(Boolean).join(" ; ");
+      const subUpto = (regNo && regNo.toUpperCase() === "NM") ? "-" : getCleanSubUptoLive(combinedSub, true);
       const total = getColVal(r, "AM") || "0.00";
       const totalNum = parseFloat(total) || 0;
 

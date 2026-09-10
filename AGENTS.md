@@ -28,10 +28,13 @@ The `individual` array's header row (index 3) defines the column layout. Financi
 - The app function `getLatestSubscriptionRemark(regNo)` reads the Cash Book to find the latest subscription remarks for the member and auto-calculates their Subscription Upto date.
 - **CRITICAL:** If the Individual Ledger shows wrong totals, the bug is in the **Cash Book** entries (wrong Reg No, wrong code, wrong Account Head spelling) — NOT in the Individual Ledger grid.
 
-## 5. Subscription Upto Date — Automatic Sync (Updated Aug 2026)
-- The app now automatically scans the Cash Book for each member's latest receipt with code `RP-3.82` or `RP-3.83` and extracts the validity date from the **Remarks** column (e.g., "Apr 25 to Sept 26" displays as `09/2026`).
-- If a member has NO subscription receipts in the Cash Book, the app displays `-`.
-- The old bug where a blank `D` column showed `03/2027` by default has been permanently fixed by correcting the check from `colValues["F"]` to `colValues["E"]` in `getCleanSubUptoLive()`.
+## 5. Subscription Upto Date — Automatic Sync (Updated Sep 2026)
+- The app scans the Cash Book for all subscription receipts (`RP-3.82` and `RP-3.83`) plus initial `rawSubUpto` (Col D) for each member.
+- Extracts all validity periods across full 3-part dates (`DD-MM-YYYY`, `YYYY-MM-DD`), hyphenated or spaced month names (e.g. `oct-25`, `march-26`, `apr 26 to june 26`), and 2-part dates (`MM/YYYY`).
+- Always computes and displays the absolute MAXIMUM (latest) paid month and year (e.g., `10/2026`).
+- Fixes the bug where 3-part dates like `01-10-2026` were mistakenly parsed as `01/2010`.
+- If a member has NO subscription receipts or validity dates, the app displays `-`. NM non-members always display `-`.
+
 
 ## 6. Deployment Architecture
 The app is deployed to multiple targets:
