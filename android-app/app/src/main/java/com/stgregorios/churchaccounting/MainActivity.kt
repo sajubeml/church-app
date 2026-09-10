@@ -1,12 +1,15 @@
 package com.stgregorios.churchaccounting
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.webkit.JavascriptInterface
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -197,32 +200,48 @@ class MainActivity : ComponentActivity() {
                 val bytes = android.util.Base64.decode(base64Content, android.util.Base64.DEFAULT)
                 val cleanName = if (filename.endsWith(".pdf", ignoreCase = true)) filename else "$filename.pdf"
 
-                // 1. App internal external files dir
+                // 1. Always save to app-private external files dir (no permissions needed)
                 val exportDir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: cacheDir
                 if (!exportDir.exists()) exportDir.mkdirs()
                 val exportFile = File(exportDir, cleanName)
                 exportFile.writeBytes(bytes)
 
-                // 2. Public Downloads and Downloads/Church_Receipts
-                val pubDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                if (pubDownloads.exists() || pubDownloads.mkdirs()) {
-                    // Save directly in Downloads
-                    val pubFile = File(pubDownloads, cleanName)
-                    pubFile.writeBytes(bytes)
-
-                    // Also save in dedicated Church_Receipts folder
-                    val receiptsFolder = File(pubDownloads, "Church_Receipts")
-                    if (receiptsFolder.exists() || receiptsFolder.mkdirs()) {
-                        val receiptFile = File(receiptsFolder, cleanName)
-                        receiptFile.writeBytes(bytes)
+                // 2. Save to public Downloads/Church_Receipts
+                // Android 10+ (API 29+): Use MediaStore API — direct File writes to public dirs are blocked
+                // Android 9 and below: Use legacy direct File write
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    val resolver = contentResolver
+                    val contentValues = ContentValues().apply {
+                        put(MediaStore.Downloads.DISPLAY_NAME, cleanName)
+                        put(MediaStore.Downloads.MIME_TYPE, "application/pdf")
+                        put(MediaStore.Downloads.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/Church_Receipts")
+                        put(MediaStore.Downloads.IS_PENDING, 1)
                     }
-
-                    MediaScannerConnection.scanFile(
-                        this@MainActivity,
-                        arrayOf(pubFile.absolutePath),
-                        arrayOf("application/pdf"),
-                        null
-                    )
+                    val collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+                    val itemUri = resolver.insert(collection, contentValues)
+                    if (itemUri != null) {
+                        resolver.openOutputStream(itemUri)?.use { it.write(bytes) }
+                        contentValues.clear()
+                        contentValues.put(MediaStore.Downloads.IS_PENDING, 0)
+                        resolver.update(itemUri, contentValues, null, null)
+                    }
+                } else {
+                    // Legacy path for Android 9 and below
+                    @Suppress("DEPRECATION")
+                    val pubDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                    if (pubDownloads.exists() || pubDownloads.mkdirs()) {
+                        val receiptsFolder = File(pubDownloads, "Church_Receipts")
+                        if (receiptsFolder.exists() || receiptsFolder.mkdirs()) {
+                            val receiptFile = File(receiptsFolder, cleanName)
+                            receiptFile.writeBytes(bytes)
+                            MediaScannerConnection.scanFile(
+                                this@MainActivity,
+                                arrayOf(receiptFile.absolutePath),
+                                arrayOf("application/pdf"),
+                                null
+                            )
+                        }
+                    }
                 }
 
                 runOnUiThread {
