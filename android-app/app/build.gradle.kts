@@ -5,10 +5,10 @@ plugins {
 }
 
 android {
-    namespace = "com.saju.cashbook"
+    namespace = "com.stgregorios.churchaccounting"
     compileSdk = 36
     defaultConfig {
-        applicationId = "com.saju.cashbook"
+        applicationId = "com.stgregorios.churchaccounting"
         minSdk = 24
         targetSdk = 36
         versionCode = 66
@@ -29,7 +29,7 @@ android {
     productFlavors {
         create("full") {
             dimension = "version"
-            applicationId = "com.saju.cashbook"
+            applicationId = "com.stgregorios.churchaccounting"
             versionCode = 66
             versionName = "11.2"
             resValue("string", "app_name", "St Gregorios Church Accounting")
@@ -37,7 +37,7 @@ android {
         }
         create("fresh") {
             dimension = "version"
-            applicationId = "com.saju.cashbook.fresh"
+            applicationId = "com.stgregorios.churchaccounting.fresh"
             versionCode = 66
             versionName = "11.2"
             resValue("string", "app_name", "St Gregorios Church Accounting (Fresh)")
