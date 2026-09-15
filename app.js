@@ -1945,6 +1945,7 @@ function commitCartToLedgers() {
 
   // 4. Save updated Cash Book, Member Ledgers to LocalStorage and Backend API
   localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
+  localStorage.setItem("CHURCH_FRESH_START_HAS_USER_DATA", "true");
   localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
   localStorage.setItem("CHURCH_RECEIPT_NO", state.currentReceiptNo.toString());
   localStorage.setItem("CHURCH_VOUCHER_NO", state.currentVoucherNo.toString());
@@ -5576,6 +5577,7 @@ function processBackupRestoreData(jsonText) {
     }
 
     if (confirm(`Are you sure you want to restore backup from ${data.exportDate || 'selected backup'}? This will update cashbook entries and member records.`)) {
+      localStorage.setItem("CHURCH_FRESH_START_HAS_USER_DATA", "true");
       // Flexible key extraction for cashbook and members
       const cbArr = Array.isArray(data.cashbook) ? data.cashbook :
         Array.isArray(data.cashBook) ? data.cashBook :
@@ -5587,6 +5589,7 @@ function processBackupRestoreData(jsonText) {
       if (Array.isArray(cbArr)) {
         state.cashbook = cbArr;
         localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
+        localStorage.setItem("CHURCH_FRESH_START_HAS_USER_DATA", "true");
         // Bulk import to Android SQLite Backend
         if (window.AndroidBridge && typeof window.AndroidBridge.bulkSync === "function") {
           try {
