@@ -61,4 +61,10 @@ target_js = os.path.join(base_dir, "data_fresh.js")
 with open(target_js, "w", encoding="utf-8") as f:
     f.write(js_content)
 
+# Also save zeroed json files for assets export
+with open(os.path.join(base_dir, "Individual_fresh.json"), "w", encoding="utf-8") as f:
+    json.dump(zero_individual, f, indent=2)
+with open(os.path.join(base_dir, "Trial_Balance_fresh.json"), "w", encoding="utf-8") as f:
+    json.dump(zero_trial_balance, f, indent=2)
+
 print(f"[OK] Generated Fresh Start bundle data_fresh.js ({os.path.getsize(target_js) / 1024:.2f} KB) successfully!")

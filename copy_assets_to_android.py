@@ -49,11 +49,19 @@ if os.path.exists(data_export_dest):
 if os.path.exists(data_export_src):
     shutil.copytree(data_export_src, data_export_dest)
     if mode == "fresh":
-        # Overwrite Cash_Book.json and Trial_Balance.json with empty [] in fresh mode
+        # Overwrite Cash_Book.json with empty [] in fresh mode
         with open(os.path.join(data_export_dest, "Cash_Book.json"), "w", encoding="utf-8") as f:
             json.dump([], f)
-        with open(os.path.join(data_export_dest, "Trial_Balance.json"), "w", encoding="utf-8") as f:
-            json.dump([], f)
-        print("Emptied Cash_Book.json and Trial_Balance.json in android assets for Fresh Start build.")
+        
+        # Overwrite Individual.json and Trial_Balance.json with zeroed fresh datasets
+        ind_fresh = os.path.join(src_dir, "Individual_fresh.json")
+        if os.path.exists(ind_fresh):
+            shutil.copy2(ind_fresh, os.path.join(data_export_dest, "Individual.json"))
+
+        tb_fresh = os.path.join(src_dir, "Trial_Balance_fresh.json")
+        if os.path.exists(tb_fresh):
+            shutil.copy2(tb_fresh, os.path.join(data_export_dest, "Trial_Balance.json"))
+
+        print("Emptied Cash_Book.json, Individual.json, and Trial_Balance.json in android assets for Fresh Start build.")
 
 print(f"[OK] Android assets populated for {mode.upper()} mode successfully!")

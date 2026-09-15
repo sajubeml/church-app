@@ -244,21 +244,48 @@ function verifyLicenseGuard() {
 
 async function loadAllData() {
   try {
+    if (window.isFreshStartBuild) {
+      if (!localStorage.getItem("CHURCH_FRESH_START_INITIALIZED_V11_2")) {
+        localStorage.removeItem("CHURCH_CASHBOOK");
+        localStorage.removeItem("CHURCH_MEMBERS");
+        localStorage.removeItem("CHURCH_MASTER_MEMBERS");
+        localStorage.removeItem("CHURCH_ACCOUNT_HEADS");
+        localStorage.removeItem("CHURCH_DELETED_HEADS");
+        localStorage.removeItem("CHURCH_DELETED_MEMBERS");
+        localStorage.removeItem("CHURCH_TRIAL_BALANCE");
+        localStorage.removeItem("CHURCH_BUDGET");
+        localStorage.removeItem("CHURCH_AUCTION");
+        localStorage.setItem("CHURCH_FRESH_START_INITIALIZED_V11_2", "true");
+        if (window.AndroidBridge && typeof window.AndroidBridge.bulkSync === 'function') {
+          window.AndroidBridge.bulkSync("[]");
+        }
+        state.cashbook = [];
+      }
+    }
+
     if (window.AndroidBridge) {
       try {
-        const stateJson = window.AndroidBridge.fetchDatabaseState();
-        const data = JSON.parse(stateJson);
-        if (data.cashbook && data.cashbook.length > 0) {
-          state.cashbook = data.cashbook;
-          calculateNextNumbers();
-          console.log("Loaded cashbook from Native Android SQLite!");
+        if (window.isFreshStartBuild && !localStorage.getItem("CHURCH_FRESH_START_HAS_USER_DATA")) {
+          state.cashbook = [];
+          window.AndroidBridge.bulkSync("[]");
+          console.log("Fresh Start Build: Initialized empty cashbook and purged native SQLite DB.");
         } else {
-          const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || [];
-          if (fallbackCb.length > 0) {
-            state.cashbook = fallbackCb;
+          const stateJson = window.AndroidBridge.fetchDatabaseState();
+          const data = JSON.parse(stateJson);
+          if (data.cashbook && data.cashbook.length > 0) {
+            state.cashbook = data.cashbook;
             calculateNextNumbers();
-            window.AndroidBridge.bulkSync(JSON.stringify(fallbackCb));
-            console.log("Populated Android SQLite DB from data.js package!");
+            console.log("Loaded cashbook from Native Android SQLite!");
+          } else {
+            const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || window.INITIAL_CASHBOOK || [];
+            if (fallbackCb.length > 0) {
+              state.cashbook = fallbackCb;
+              calculateNextNumbers();
+              window.AndroidBridge.bulkSync(JSON.stringify(fallbackCb));
+              console.log("Populated Android SQLite DB from data.js package!");
+            } else {
+              state.cashbook = [];
+            }
           }
         }
       } catch (e) {
@@ -511,13 +538,17 @@ async function loadAllData() {
       }
     }
 
-    const savedCashbook = localStorage.getItem("CHURCH_CASHBOOK");
-    if (savedCashbook) {
-      try { state.cashbook = JSON.parse(savedCashbook); } catch (e) { }
+    if (!window.isFreshStartBuild || localStorage.getItem("CHURCH_FRESH_START_HAS_USER_DATA")) {
+      const savedCashbook = localStorage.getItem("CHURCH_CASHBOOK");
+      if (savedCashbook) {
+        try { state.cashbook = JSON.parse(savedCashbook); } catch (e) { }
+      }
+    } else {
+      state.cashbook = [];
     }
 
     // Safety Fallback: If Cashbook is STILL empty (API failed and cache cleared), load from data.js
-    if (!state.cashbook || state.cashbook.length === 0) {
+    if (!window.isFreshStartBuild && (!state.cashbook || state.cashbook.length === 0)) {
       const fallbackCb = (window.CHURCH_DATA && window.CHURCH_DATA.cashbook) || window.INITIAL_CASHBOOK || [];
       if (fallbackCb.length > 0) {
         state.cashbook = JSON.parse(JSON.stringify(fallbackCb));
