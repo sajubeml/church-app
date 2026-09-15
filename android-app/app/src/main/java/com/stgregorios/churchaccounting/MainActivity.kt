@@ -46,8 +46,6 @@ class MainActivity : ComponentActivity() {
             settings.javaScriptEnabled = true
             settings.cacheMode = WebSettings.LOAD_DEFAULT
             settings.domStorageEnabled = true
-            @Suppress("DEPRECATION")
-            settings.databaseEnabled = true
             settings.allowFileAccess = true
             settings.allowContentAccess = true
             @Suppress("DEPRECATION")
@@ -74,14 +72,11 @@ class MainActivity : ComponentActivity() {
             }
 
             override fun onRenderProcessGone(view: WebView?, detail: android.webkit.RenderProcessGoneDetail?): Boolean {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if (detail?.didCrash() == false) {
-                        view?.destroy()
-                        recreate()
-                        return true
-                    }
-                }
-                return super.onRenderProcessGone(view, detail)
+                try {
+                    view?.destroy()
+                } catch (e: Exception) {}
+                recreate()
+                return true
             }
         }
 

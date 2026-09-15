@@ -22,10 +22,10 @@ env["JAVA_HOME"] = r"C:\Users\sajub\AppData\Local\JDK17\jdk-17.0.10+7"
 env["ANDROID_HOME"] = r"C:\Users\sajub\AppData\Local\Android\Sdk"
 env["PATH"] = f"{env['JAVA_HOME']}\\bin;{env.get('PATH', '')}"
 
-# Step 3: Build Full & Fresh Android APKs
+# Step 3: Build FULL Android APK
 print("\n--- STEP 3: Compiling FULL Android APK ---")
 subprocess.run(["py", "copy_assets_to_android.py", "full"], cwd=base_dir, check=True)
-subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat clean assembleFullRelease assembleFreshRelease"], cwd=os.path.join(base_dir, "android-app"), env=env, check=True)
+subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat assembleFullRelease"], cwd=os.path.join(base_dir, "android-app"), env=env, check=True)
 
 src_full_apk = os.path.join(base_dir, "android-app", "app", "build", "outputs", "apk", "full", "release", "app-full-release.apk")
 full_apk_dest = os.path.join(base_dir, "St_Gregorios_Church_Accounting.apk")
@@ -34,8 +34,11 @@ shutil.copy2(src_full_apk, full_apk_dest)
 shutil.copy2(src_full_apk, full_apk_v11)
 print(f"[OK] Full APK Compiled: {full_apk_dest} & {full_apk_v11} ({os.path.getsize(full_apk_dest)/(1024*1024):.2f} MB)")
 
-# Step 4: Copy Fresh Start Android APK
-print("\n--- STEP 4: Copying FRESH START Android APK ---")
+# Step 4: Build FRESH START Android APK
+print("\n--- STEP 4: Compiling FRESH START Android APK ---")
+subprocess.run(["py", "copy_assets_to_android.py", "fresh"], cwd=base_dir, check=True)
+subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat assembleFreshRelease"], cwd=os.path.join(base_dir, "android-app"), env=env, check=True)
+
 src_fresh_apk = os.path.join(base_dir, "android-app", "app", "build", "outputs", "apk", "fresh", "release", "app-fresh-release.apk")
 fresh_apk_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Fresh_v11.2.apk")
 shutil.copy2(src_fresh_apk, fresh_apk_v11)
