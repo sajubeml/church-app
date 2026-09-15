@@ -1,10 +1,10 @@
 # St. Gregorios Orthodox Syrian Church Accounting Portal
-## Master Handover Document & Historical Continuation Guide (From Project Origin to v11.2)
+## Master Handover Document & Historical Continuation Guide (From Project Origin to v11.3)
 
 **Church:** St. Gregorios Orthodox Syrian Church & Pilgrim Centre, Mysuru  
-**Workspace Root:** `c:\saju_old pc\Church_App\anti_gravity_v9.2`  
-**Current Active Version:** **v11.0** (Android APKs) / **v11.2** (Web & Cloud Deployments)  
-**Last Updated:** September 10, 2026  
+**Workspace Root:** `C:\CASHBOOK_APP`  
+**Current Active Version:** **v11.3** (Android APKs / Web / Cloud Deployments)  
+**Last Updated:** September 15, 2026  
 **Git Remote Origin:** `https://github.com/sajubeml/Church_account.git` (Main Codebase Backup)  
 **Git Remote Church-App:** `https://github.com/sajubeml/church-app.git` (GitHub Pages Live Site)  
 **Live GitHub Pages URL:** `https://sajubeml.github.io/church-app/`  

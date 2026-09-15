@@ -67,11 +67,34 @@ The local repository has TWO remotes:
 
 ## 11. Cashbook Mobile Responsiveness & Android SQLite Sync (Updated Sep 2026)
 - **Cashbook Table Layout:** Never use `table-layout: fixed; width: 100%;` with proportional percentages for `#cashbookTable`. On mobile devices (360px–420px width), 16 accounting columns will crush to 15px–25px, breaking words vertically letter-by-letter. Always use `table-layout: auto; width: max-content; min-width: 100%;` with individual column minimum widths (`min-width: 40px` to `200px`) inside `.table-container { overflow-x: auto; }` for smooth horizontal panning.
-- **Android SQLite Backup Sync:** When restoring a JSON backup in Android APK (`processBackupRestoreData`), always call `window.AndroidBridge.bulkSync(JSON.stringify(cbArr))` in addition to `localStorage.setItem("CHURCH_CASHBOOK")`. Failing to do so causes `window.AndroidBridge.fetchDatabaseState()` in `loadAllData()` to overwrite memory on reload with stale SQLite data.
+## 13. Mandatory Automatic Version Bumping Rule (Updated Sep 2026)
+- **EVERY single update, patch, fix, or build release MUST increment the version string and versionCode** across the entire project before building (e.g., `v11.3` -> `v11.4`, `versionCode 67` -> `versionCode 68`).
+- Update version in:
+  1. `android-app/app/build.gradle.kts` (`versionCode = XX`, `versionName = "11.X"`)
+  2. `build_all_releases.py` (`full_apk_v11`, `fresh_apk_v11`)
+  3. `index_supabase.html` (`app_supabase.js?v=11.X`)
+  4. `index_offline.html` (`app.js?v=11.X`)
+  5. `HANDOVER.md` and `HANDOVER_v11.X.md`
 
-## 12. Automated Silent PDF Generation & Transaction Mode (Updated Sep 2026)
-- **Zero-Prompt Auto PDF Generation:** Whenever a receipt or voucher is created via `showReceiptModal()`, `autoSaveReceiptPdf()` must trigger automatically without opening the print prompt.
-  - On **Android standalone APK**: Generates PDF base64 via `html2pdf.js` and calls `window.AndroidBridge.autoSavePdfToFolder(base64Data, filename)` to write directly into `Downloads/Church_Receipts/`.
-  - On **PC / Web (online & offline)**: Invokes `saveReceiptPrintCopy()` to generate `Receipts/Receipt_XXXX.pdf` on the server and initiates a direct browser download `<a>` click to save to the Downloads folder silently.
-- **Transaction Mode (CASH / BANK) Badge:** Receipts and payment vouchers must display the transaction mode badge (`CASH` or `BANK`) directly in the document meta header table (`Mode: CASH / BANK`) on both Original (Page 1) and Office Copy (Page 2).
+## 14. Sequential Twin Asset Copy & APK Build Pipeline (Updated Sep 2026)
+- **Environment Variables**:
+  - `JAVA_HOME` = `C:\Users\sajub\AppData\Local\JDK17\jdk-17.0.10+7`
+  - `ANDROID_HOME` = `C:\Users\sajub\AppData\Local\Android\Sdk`
+- **Package Name Alignment (CRITICAL)**:
+  - `namespace` and `applicationId` in `build.gradle.kts` MUST be `com.stgregorios.churchaccounting`.
+  - `AndroidManifest.xml` activity MUST be `android:name="com.stgregorios.churchaccounting.MainActivity"`. Never use relative `.MainActivity` with a different namespace, or Android will throw `ClassNotFoundException` and auto-close the app on tap.
+- **Build Sequence**:
+  - Always run `py build_all_releases.py` or the sequential steps:
+    1. `py build_data_js.py` & `py build_fresh_start_data.py`
+    2. `py build_executable.py` (Desktop .exe)
+    3. `py copy_assets_to_android.py full` ➔ `.\gradlew.bat assembleFullRelease`
+    4. `py copy_assets_to_android.py fresh` ➔ `.\gradlew.bat assembleFreshRelease`
+  - **CRITICAL:** NEVER combine `assembleFullRelease` and `assembleFreshRelease` into a single Gradle invocation without executing `copy_assets_to_android.py fresh` in between, or the `fresh` release will get contaminated with `full` data.
+
+## 15. Fresh Start Build User Data Flag (`CHURCH_FRESH_START_HAS_USER_DATA`)
+- In `data_fresh.js`, `window.isFreshStartBuild = true`.
+- On initial launch, `loadAllData()` purges native SQLite (`window.AndroidBridge.bulkSync("[]")`) and resets `localStorage` to start with 0 transactions and ₹ 0.00 balances.
+- Whenever a user restores a JSON backup (`processBackupRestoreData`) or creates a transaction (`showReceiptModal`), the app sets `localStorage.setItem("CHURCH_FRESH_START_HAS_USER_DATA", "true")`.
+- This ensures `loadAllData()` permanently retains all imported/entered records across app restarts without wiping them.
+
 
