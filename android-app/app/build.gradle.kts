@@ -11,8 +11,8 @@ android {
         applicationId = "com.saju.cashbook"
         minSdk = 24
         targetSdk = 36
-        versionCode = 65
-        versionName = "11.1"
+        versionCode = 66
+        versionName = "11.2"
         resValue("string", "app_name", "St Gregorios Church Accounting")
     }
 
@@ -30,16 +30,16 @@ android {
         create("full") {
             dimension = "version"
             applicationId = "com.saju.cashbook"
-            versionCode = 65
-            versionName = "11.1"
+            versionCode = 66
+            versionName = "11.2"
             resValue("string", "app_name", "St Gregorios Church Accounting")
             signingConfig = signingConfigs.getByName("release")
         }
         create("fresh") {
             dimension = "version"
             applicationId = "com.saju.cashbook.fresh"
-            versionCode = 65
-            versionName = "11.1"
+            versionCode = 66
+            versionName = "11.2"
             resValue("string", "app_name", "St Gregorios Church Accounting (Fresh)")
             signingConfig = signingConfigs.getByName("release")
         }
