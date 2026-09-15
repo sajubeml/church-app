@@ -1,0 +1,11 @@
+import os
+
+with open('index_supabase.html', 'r', encoding='utf-8') as f:
+    html = f.read()
+
+# Comment out the supabase script
+html = html.replace('<script src="supabase.js"></script>', '<!-- <script src="supabase.js"></script> -->')
+
+with open('index_supabase.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print('Disabled supabase.js script.')

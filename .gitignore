@@ -1,29 +1,18 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+# Git Ignore Rules for St. Gregorios Church Accounting Portal
 
-# Android / Buildozer outputs and caches
-.buildozer/
-bin/
-*.apk
-*.aab
-
-# Local database and reports
-*.db
-cashbook.db
-reports/*.pdf
-
-# Environments
-venv/
-env/
-ENV/
-.env
-
-# Testing and IDE
-.pytest_cache/
-.vscode/
-.idea/
+# Distribution & Build Outputs
 dist/
-build/
-*.spec
+*.zip
+
+# Python Cache & Environment
+__pycache__/
+*.pyc
+*.pyo
+
+# Excel Temporary Lock Files
+~$*.xlsm
+~$*.xlsx
+
+# System & OS Files
+.DS_Store
+Thumbs.db

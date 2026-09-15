@@ -1,0 +1,722 @@
+[
+  {
+    "A1": "St. Gregorios Orthodox Syrian Church, Mysore",
+    "B1": null,
+    "C1": null,
+    "D1": null,
+    "E1": null,
+    "F1": null,
+    "G1": null
+  },
+  {
+    "A2": "Auction 2025 Auctioned Details",
+    "B2": null,
+    "C2": null,
+    "D2": null,
+    "E2": null,
+    "F2": null,
+    "G2": null
+  },
+  {
+    "A3": "Member ID",
+    "B3": "Member Name",
+    "C3": "Auctioned Item",
+    "D3": "Auctioned Amount",
+    "E3": "Auctioned Amount",
+    "F3": "Amount Received",
+    "G3": "Balance"
+  },
+  {
+    "A4": "5",
+    "B4": "Mariamma V M",
+    "C4": "Horlicks + Oats",
+    "D4": "1000",
+    "E4": "1700",
+    "F4": "700",
+    "G4": "1000"
+  },
+  {
+    "A5": null,
+    "B5": null,
+    "C5": "Pepper + Nendhra Banana",
+    "D5": "700",
+    "E5": null,
+    "F5": null,
+    "G5": null
+  },
+  {
+    "A6": "12",
+    "B6": "Dr.Anil Thomas",
+    "C6": "St.Mary Photo",
+    "D6": "5000",
+    "E6": "9500",
+    "F6": null,
+    "G6": "9500"
+  },
+  {
+    "A7": null,
+    "B7": null,
+    "C7": "Kadai",
+    "D7": "3500",
+    "E7": null,
+    "F7": null,
+    "G7": "0"
+  },
+  {
+    "A8": null,
+    "B8": null,
+    "C8": "Casserole",
+    "D8": "1000",
+    "E8": null,
+    "F8": null,
+    "G8": "0"
+  },
+  {
+    "A9": "14",
+    "B9": "Lucy V I",
+    "C9": "Dates",
+    "D9": "2200",
+    "E9": "14700",
+    "F9": null,
+    "G9": "14700"
+  },
+  {
+    "A10": null,
+    "B10": null,
+    "C10": "Mysore Sandal Soap",
+    "D10": "1000",
+    "E10": null,
+    "F10": null,
+    "G10": "0"
+  },
+  {
+    "A11": null,
+    "B11": null,
+    "C11": "Gold Plated Cross - Photo Frame",
+    "D11": "11500",
+    "E11": null,
+    "F11": null,
+    "G11": "0"
+  },
+  {
+    "A12": "16",
+    "B12": "Sheela Johnson",
+    "C12": "Bournvita - 2 Packets",
+    "D12": "700",
+    "E12": "19100",
+    "F12": "17000",
+    "G12": "2100"
+  },
+  {
+    "A13": null,
+    "B13": null,
+    "C13": "Tapioca + Coconut Oil",
+    "D13": "600",
+    "E13": null,
+    "F13": null,
+    "G13": null
+  },
+  {
+    "A14": null,
+    "B14": null,
+    "C14": "Guava Halwa + Black Halwa",
+    "D14": "700",
+    "E14": null,
+    "F14": null,
+    "G14": null
+  },
+  {
+    "A15": null,
+    "B15": null,
+    "C15": "Onion - 5 kg",
+    "D15": "200",
+    "E15": null,
+    "F15": null,
+    "G15": null
+  },
+  {
+    "A16": null,
+    "B16": null,
+    "C16": "Coconut - 10",
+    "D16": "1200",
+    "E16": null,
+    "F16": null,
+    "G16": null
+  },
+  {
+    "A17": null,
+    "B17": null,
+    "C17": "Coconut - 10",
+    "D17": "600",
+    "E17": null,
+    "F17": null,
+    "G17": null
+  },
+  {
+    "A18": null,
+    "B18": null,
+    "C18": "Air Fryer",
+    "D18": "13000",
+    "E18": null,
+    "F18": null,
+    "G18": null
+  },
+  {
+    "A19": null,
+    "B19": null,
+    "C19": "Cardamom",
+    "D19": "1200",
+    "E19": null,
+    "F19": null,
+    "G19": null
+  },
+  {
+    "A20": null,
+    "B20": null,
+    "C20": "Sapota + Coconut Oil",
+    "D20": "900",
+    "E20": null,
+    "F20": null,
+    "G20": null
+  },
+  {
+    "A21": "17",
+    "B21": "Saju Jacob",
+    "C21": "Dark Fantasy",
+    "D21": "150",
+    "E21": "1750",
+    "F21": null,
+    "G21": "1750"
+  },
+  {
+    "A22": null,
+    "B22": null,
+    "C22": "Sugar",
+    "D22": "600",
+    "E22": null,
+    "F22": null,
+    "G22": "0"
+  },
+  {
+    "A23": null,
+    "B23": null,
+    "C23": "Gooseberry + Saffola + Sapota",
+    "D23": "1000",
+    "E23": null,
+    "F23": null,
+    "G23": "0"
+  },
+  {
+    "A24": "27",
+    "B24": "Daniel J",
+    "C24": "Tapioca",
+    "D24": "1400",
+    "E24": "1400",
+    "F24": "1400",
+    "G24": "0"
+  },
+  {
+    "A25": "49",
+    "B25": "Johnson K U",
+    "C25": "Glass Jug",
+    "D25": "1000",
+    "E25": "1000",
+    "F25": "1000",
+    "G25": "0"
+  },
+  {
+    "A26": "59",
+    "B26": "Koshy T T",
+    "C26": "Menthe + Soap + Bitter Guard",
+    "D26": "500",
+    "E26": "1850",
+    "F26": null,
+    "G26": "1850"
+  },
+  {
+    "A27": null,
+    "B27": null,
+    "C27": "Tomato",
+    "D27": "50",
+    "E27": null,
+    "F27": null,
+    "G27": "0"
+  },
+  {
+    "A28": null,
+    "B28": null,
+    "C28": "Coffee Powder",
+    "D28": "500",
+    "E28": null,
+    "F28": null,
+    "G28": "0"
+  },
+  {
+    "A29": null,
+    "B29": null,
+    "C29": "Chembu (Colocasia) + Mango",
+    "D29": "800",
+    "E29": null,
+    "F29": null,
+    "G29": "0"
+  },
+  {
+    "A30": "73",
+    "B30": "Monamma Baby",
+    "C30": "Bed sheet",
+    "D30": "4500",
+    "E30": "13000",
+    "F30": "13000",
+    "G30": "0"
+  },
+  {
+    "A31": null,
+    "B31": null,
+    "C31": "Dinner Set",
+    "D31": "3500",
+    "E31": null,
+    "F31": null,
+    "G31": "0"
+  },
+  {
+    "A32": null,
+    "B32": null,
+    "C32": "Chocolates + Tang",
+    "D32": "800",
+    "E32": null,
+    "F32": null,
+    "G32": "0"
+  },
+  {
+    "A33": null,
+    "B33": null,
+    "C33": "Cardamom",
+    "D33": "1000",
+    "E33": null,
+    "F33": null,
+    "G33": "0"
+  },
+  {
+    "A34": null,
+    "B34": null,
+    "C34": "Pepper",
+    "D34": "700",
+    "E34": null,
+    "F34": null,
+    "G34": "0"
+  },
+  {
+    "A35": null,
+    "B35": null,
+    "C35": "Coffee Powder",
+    "D35": "800",
+    "E35": null,
+    "F35": null,
+    "G35": "0"
+  },
+  {
+    "A36": null,
+    "B36": null,
+    "C36": "Sunpure Oil + Flower wase",
+    "D36": "1700",
+    "E36": null,
+    "F36": null,
+    "G36": "0"
+  },
+  {
+    "A37": "91",
+    "B37": "Sabu Abraham",
+    "C37": "Jesus Photo",
+    "D37": "2000",
+    "E37": "3300",
+    "F37": "3300",
+    "G37": "0"
+  },
+  {
+    "A38": null,
+    "B38": null,
+    "C38": "Dhoobha Kutti",
+    "D38": "10500",
+    "E38": null,
+    "F38": null,
+    "G38": "0"
+  },
+  {
+    "A39": "94",
+    "B39": "Samkutty P",
+    "C39": "Bedsheet",
+    "D39": "2700",
+    "E39": "13200",
+    "F39": "13200",
+    "G39": "0"
+  },
+  {
+    "A40": null,
+    "B40": null,
+    "C40": "Dhoobha Kutti",
+    "D40": "10500",
+    "E40": null,
+    "F40": null,
+    "G40": "0"
+  },
+  {
+    "A41": "97",
+    "B41": "Shanthamma Thampi",
+    "C41": "Parumala Thirumeni Photo",
+    "D41": "5500",
+    "E41": "29500",
+    "F41": "5000",
+    "G41": "24500"
+  },
+  {
+    "A42": null,
+    "B42": null,
+    "C42": "Thooku Vilakku",
+    "D42": "10000",
+    "E42": null,
+    "F42": null,
+    "G42": null
+  },
+  {
+    "A43": null,
+    "B43": null,
+    "C43": "Homemade Wine - Grape",
+    "D43": "3500",
+    "E43": null,
+    "F43": null,
+    "G43": null
+  },
+  {
+    "A44": null,
+    "B44": null,
+    "C44": "Bed sheet",
+    "D44": "3000",
+    "E44": null,
+    "F44": null,
+    "G44": null
+  },
+  {
+    "A45": null,
+    "B45": null,
+    "C45": "Bed sheet",
+    "D45": "4600",
+    "E45": null,
+    "F45": null,
+    "G45": null
+  },
+  {
+    "A46": null,
+    "B46": null,
+    "C46": "Water Bottle",
+    "D46": "1500",
+    "E46": null,
+    "F46": null,
+    "G46": null
+  },
+  {
+    "A47": null,
+    "B47": null,
+    "C47": "Cardamom",
+    "D47": "1400",
+    "E47": null,
+    "F47": null,
+    "G47": null
+  },
+  {
+    "A48": "107",
+    "B48": "Thomas A M",
+    "C48": "Coffee Powder",
+    "D48": "800",
+    "E48": "2300",
+    "F48": null,
+    "G48": "2300"
+  },
+  {
+    "A49": null,
+    "B49": null,
+    "C49": "Basmati Rice + Star Fruit + Menthe Levaes + Chilly",
+    "D49": "1500",
+    "E49": null,
+    "F49": null,
+    "G49": "0"
+  },
+  {
+    "A50": "110",
+    "B50": "Thomas M O (Biju)",
+    "C50": "Nendhra Banana + Oreo Biscuit",
+    "D50": "1100",
+    "E50": "4050",
+    "F50": null,
+    "G50": "4050"
+  },
+  {
+    "A51": null,
+    "B51": null,
+    "C51": "Sapota + Menthe Leaves",
+    "D51": "150",
+    "E51": null,
+    "F51": null,
+    "G51": "0"
+  },
+  {
+    "A52": null,
+    "B52": null,
+    "C52": "Coconut - 10",
+    "D52": "1200",
+    "E52": null,
+    "F52": null,
+    "G52": "0"
+  },
+  {
+    "A53": null,
+    "B53": null,
+    "C53": "Idi Erachi",
+    "D53": "600",
+    "E53": null,
+    "F53": null,
+    "G53": "0"
+  },
+  {
+    "A54": null,
+    "B54": null,
+    "C54": "Pepper",
+    "D54": "700",
+    "E54": null,
+    "F54": null,
+    "G54": "0"
+  },
+  {
+    "A55": null,
+    "B55": null,
+    "C55": "Chembu (Colocasia) + Papaya",
+    "D55": "300",
+    "E55": null,
+    "F55": null,
+    "G55": "0"
+  },
+  {
+    "A56": "119",
+    "B56": "Sunny P I",
+    "C56": "Sunflower Oil + Chena",
+    "D56": "1000",
+    "E56": "1500",
+    "F56": null,
+    "G56": "1500"
+  },
+  {
+    "A57": null,
+    "B57": null,
+    "C57": "Coffee Powder",
+    "D57": "500",
+    "E57": null,
+    "F57": null,
+    "G57": "0"
+  },
+  {
+    "A58": "150",
+    "B58": "Santhosh K A",
+    "C58": "London Wine",
+    "D58": "2500",
+    "E58": "10000",
+    "F58": null,
+    "G58": "10000"
+  },
+  {
+    "A59": null,
+    "B59": null,
+    "C59": "Nendhra Banana",
+    "D59": "2100",
+    "E59": null,
+    "F59": null,
+    "G59": "0"
+  },
+  {
+    "A60": null,
+    "B60": null,
+    "C60": "Coffee Powder",
+    "D60": "800",
+    "E60": null,
+    "F60": null,
+    "G60": "0"
+  },
+  {
+    "A61": null,
+    "B61": null,
+    "C61": "Pepper",
+    "D61": "700",
+    "E61": null,
+    "F61": null,
+    "G61": "0"
+  },
+  {
+    "A62": null,
+    "B62": null,
+    "C62": "Cake",
+    "D62": "1800",
+    "E62": null,
+    "F62": null,
+    "G62": "0"
+  },
+  {
+    "A63": null,
+    "B63": null,
+    "C63": "Cake",
+    "D63": "1100",
+    "E63": null,
+    "F63": null,
+    "G63": "0"
+  },
+  {
+    "A64": null,
+    "B64": null,
+    "C64": "Biscuit + Choco Pie",
+    "D64": "400",
+    "E64": null,
+    "F64": null,
+    "G64": "0"
+  },
+  {
+    "A65": null,
+    "B65": null,
+    "C65": "Coconut - 10",
+    "D65": "600",
+    "E65": null,
+    "F65": null,
+    "G65": "0"
+  },
+  {
+    "A66": "160",
+    "B66": "Biju Jacob",
+    "C66": "Homemade Wine - Grape",
+    "D66": "3000",
+    "E66": "10200",
+    "F66": "10200",
+    "G66": "0"
+  },
+  {
+    "A67": null,
+    "B67": null,
+    "C67": "Kadai",
+    "D67": "6000",
+    "E67": null,
+    "F67": null,
+    "G67": "0"
+  },
+  {
+    "A68": null,
+    "B68": null,
+    "C68": "Pepper + Choco pie + Chocolate",
+    "D68": "900",
+    "E68": null,
+    "F68": null,
+    "G68": "0"
+  },
+  {
+    "A69": null,
+    "B69": null,
+    "C69": "Chocolate + Chips",
+    "D69": "300",
+    "E69": null,
+    "F69": null,
+    "G69": "0"
+  },
+  {
+    "A70": "165",
+    "B70": "Sinoy Kuriakose",
+    "C70": "Glassware",
+    "D70": "800",
+    "E70": "6900",
+    "F70": "3000",
+    "G70": "3900"
+  },
+  {
+    "A71": null,
+    "B71": null,
+    "C71": "Honey",
+    "D71": "1500",
+    "E71": null,
+    "F71": null,
+    "G71": "0"
+  },
+  {
+    "A72": null,
+    "B72": null,
+    "C72": "Coconut - 10",
+    "D72": "1200",
+    "E72": null,
+    "F72": null,
+    "G72": "0"
+  },
+  {
+    "A73": null,
+    "B73": null,
+    "C73": "Coconut - 10",
+    "D73": "600",
+    "E73": null,
+    "F73": null,
+    "G73": "0"
+  },
+  {
+    "A74": null,
+    "B74": null,
+    "C74": "Coconut - 10",
+    "D74": "600",
+    "E74": null,
+    "F74": null,
+    "G74": "0"
+  },
+  {
+    "A75": null,
+    "B75": null,
+    "C75": "Cardamom",
+    "D75": "1000",
+    "E75": null,
+    "F75": null,
+    "G75": "0"
+  },
+  {
+    "A76": null,
+    "B76": null,
+    "C76": "Pepper",
+    "D76": "500",
+    "E76": null,
+    "F76": null,
+    "G76": "0"
+  },
+  {
+    "A77": null,
+    "B77": null,
+    "C77": "Pepper",
+    "D77": "700",
+    "E77": null,
+    "F77": null,
+    "G77": "0"
+  },
+  {
+    "A78": "Total",
+    "B78": null,
+    "C78": null,
+    "D78": "492550",
+    "E78": "492550",
+    "F78": null,
+    "G78": "77150"
+  },
+  {
+    "A79": null,
+    "B79": "Previous Year due",
+    "C79": "Reji Simon",
+    "D79": null,
+    "E79": null,
+    "F79": "8200",
+    "G79": null
+  },
+  {
+    "A80": null,
+    "B80": null,
+    "C80": "Grand Total",
+    "D80": null,
+    "E80": null,
+    "F80": null,
+    "G80": "77150"
+  }
+]

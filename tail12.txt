@@ -1,0 +1,45 @@
+     } : {
+        payment_date: dateStr, payment_voucher_no: docNo, 
+        payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
+        payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+      };
+      window.AndroidBridge.saveTransaction(JSON.stringify(payload), isReceipt);
+    });
+    console.log("Saved to Native Android SQLite!");
+  } else {
+    Promise.all(state.cart.map(item => {
+      const isCash = item.paymentType === "Cash";
+      const payload = isReceipt ? {
+        date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
+        receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
+        receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
+      } : {
+        payment_date: dateStr, payment_voucher_no: docNo, 
+        payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
+        payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+      };
+
+      const newRow = {
+        A: dateStr, 
+        B: isReceipt ? docNo : "",
+        C: isReceipt ? regNo : "",
+        D: isReceipt ? memberName : "",
+        E: isReceipt ? item.particulars : "",
+        F: isReceipt ? item.code : "",
+        G: isReceipt ? item.details : "",
+        H: isReceipt && isCash ? item.amount : "",
+        I: isReceipt && !isCash ? item.amount : "",
+        K: !isReceipt ? dateStr : "",
+        L: !isReceipt ? docNo : "",
+        M: !isReceipt ? item.particulars : "",
+        N: !isReceipt ? item.code : "",
+        O: !isReceipt ? item.details : "",
+        P: !isReceipt && isCash ? item.amount : "",
+        Q: !isReceipt && !isCash ? item.amount : ""
+      };
+      
+      return fetch('./api.php?_t=' + Date.now(), {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: '

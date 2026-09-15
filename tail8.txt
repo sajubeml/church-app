@@ -1,0 +1,47 @@
+if (body.action === 'import_cashbook') {
+        const rows = body.rows;
+        
+        // 1. Delete all existing rows
+        await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?id=gt.0`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+            }
+        });
+        
+        // 2. Prepare new rows for bulk insert with EXACTLY matching schema structure
+        const insertArr = rows.map((row, idx) => {
+            const insertObj = { id: (idx + 1) }; 
+            const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
+            cols.forEach(c => {
+                insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
+            });
+            return insertObj;
+        });
+        
+        // 3. Insert in batches
+        for (let i=0; i<insertArr.length; i+=500) {
+            const batch = insertArr.slice(i, i+500);
+            const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
+                method: 'POST',
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(batch)
+            });
+            if (!res.ok) {
+                const errText = await res.text();
+                throw new Error("Batch insert failed: " + res.status + " " + errText);
+            }
+        }
+        
+        return new Response(JSON.stringify({ success: true }));
+      }
+      
+    } catch(err) {
+      console.error('Supabase Mock Fetch Error:', err);
+      alert("Database Save Error:\n" + err.message);
+      return new Response(JSON.stringify({ 

@@ -1,0 +1,80 @@
+const originalFetch = window.fetch;
+window.fetch = async function(url, options) {
+  if (url && typeof url === 'string' && url.includes('api.php')) {
+    try {
+      const body = JSON.parse(options.body);
+      
+      if (body.action === 'get_app_state') {
+        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?select=*`, {
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+            }
+        });
+        if (!res.ok) throw new Error("App state fetch failed: " + res.status);
+        const data = await res.json();
+        
+        const stateMap = {};
+        data.forEach(row => { 
+            try { 
+                stateMap[row.key_name] = typeof row.json_data === 'string' ? JSON.parse(row.json_data || '[]') : row.json_data; 
+            } catch(e){}
+        });
+        return new Response(JSON.stringify({ success: true, data: stateMap }));
+      }
+      
+      if (body.action === 'get_cashbook') {
+        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?select=*&order=id.asc`, {
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+            }
+        });
+        if (!res.ok) throw new Error("Cashbook fetch failed: " + res.status);
+        const data = await res.json();
+
+        const mappedRows = data.map(row => {
+            const mapped = {};
+            if(row.id) mapped.id = row.id;
+            const cols = ['A','B','C','D','E','F','G','H','I','K','L','M','N','O','P','Q'];
+            cols.forEach(c => {
+                if (row['col_'+c] !== undefined && row['col_'+c] !== null && row['col_'+c] !== 'NULL') mapped[c] = row['col_'+c];
+            });
+            return mapped;
+        });
+        return new Response(JSON.stringify({ success: true, data: mappedRows }));
+      }
+      
+      if (body.action === 'save_app_state') {
+        const updates = [];
+        for (let key in body.state_data) {
+           updates.push({ key_name: key, json_data: body.state_data[key] }); 
+        }
+        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?on_conflict=key_name`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(updates)
+        });
+        if (!res.ok) throw new Error("Failed to save app state: " + res.status);
+        return new Response(JSON.stringify({ success: true }));
+      }
+      
+      if (body.action === 'import_cashbook') {
+        const rows = body.rows;
+        
+        // 1. Delete all existing rows
+        await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?id=gt.0`, {
+            method: 'DELETE',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+            }
+        });
+        
+        // 2. Prepare new rows for bulk insert with EXACTLY matching schema structure
+       
