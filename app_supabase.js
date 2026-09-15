@@ -898,7 +898,7 @@ function getAllAccountHeads(type = "ALL") {
     },
     {
       "code": "RP-3.33",
-      "name": "St.Gregorios Feast ( Annual Feast)",
+      "name": "St.Gregorios Feast(Annual Feast)",
       "category": "RECEIPT"
     },
     {
@@ -1195,7 +1195,7 @@ function getAllAccountHeads(type = "ALL") {
     },
     {
       "code": "RP- 16.48",
-      "name": "St.Gregorios Feast ( Annual Feast)",
+      "name": "St.Gregorios Feast(Annual Feast)",
       "category": "PAYMENT"
     },
     {
