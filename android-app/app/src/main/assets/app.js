@@ -5778,15 +5778,20 @@ function renderMemberDirectory() {
   validMembers.forEach(member => {
     const regNo = getColVal(member, "B") || "";
     const name = getColVal(member, "C") || "";
+    const promisedRaw = getColVal(member, "F") || "";
     const phone = getColVal(member, "D") || "";
     const address = getColVal(member, "E") || "";
+
+    const promisedNum = parseFloat(String(promisedRaw).replace(/,/g, '')) || 0;
+    const promisedStr = promisedNum > 0 ? `₹ ${promisedNum.toLocaleString('en-IN')}` : (promisedRaw ? String(promisedRaw) : "-");
 
     html += `
       <tr>
         <td style="font-weight:700;">${regNo}</td>
-        <td>${name}</td>
+        <td style="font-weight:600; color:#0f172a;">${name}</td>
+        <td style="text-align:right; font-weight:700; color:#0369a1;">${promisedStr}</td>
         <td>${phone}</td>
-        <td>${address}</td>
+        <td style="white-space:normal; word-break:break-word;">${address}</td>
         <td style="text-align:center;">
           <button class="btn btn-outline" style="padding:4px 8px; font-size:0.8rem; margin-right:4px;" onclick="promptAdminPassword('DIR_EDIT', '${escapeJsString(regNo)}')">✏️ Edit</button>
           <button class="btn btn-outline" style="padding:4px 8px; font-size:0.8rem; color:#ef4444; border-color:#ef4444;" onclick="promptAdminPassword('DIR_DELETE', '${escapeJsString(regNo)}')">🗑️</button>
@@ -5803,6 +5808,7 @@ function openDirAddMemberModal() {
   document.getElementById("txtMemOriginalRegNo").value = "";
   document.getElementById("txtMemRegNo").value = "";
   document.getElementById("txtMemName").value = "";
+  if (document.getElementById("txtMemPromised")) document.getElementById("txtMemPromised").value = "";
   document.getElementById("txtMemPhone").value = "";
   document.getElementById("txtMemAddress").value = "";
   document.getElementById("memberCrudModal").style.display = "flex";
@@ -5816,6 +5822,7 @@ function openDirEditMemberModal(regNo) {
   document.getElementById("txtMemOriginalRegNo").value = regNo;
   document.getElementById("txtMemRegNo").value = regNo;
   document.getElementById("txtMemName").value = getColVal(member, "C") || "";
+  if (document.getElementById("txtMemPromised")) document.getElementById("txtMemPromised").value = getColVal(member, "F") || "";
   document.getElementById("txtMemPhone").value = getColVal(member, "D") || "";
   document.getElementById("txtMemAddress").value = getColVal(member, "E") || "";
   document.getElementById("memberCrudModal").style.display = "flex";
@@ -5829,6 +5836,7 @@ function saveDirMemberCrud() {
   const originalRegNo = document.getElementById("txtMemOriginalRegNo").value.trim();
   const regNo = document.getElementById("txtMemRegNo").value.trim();
   const name = document.getElementById("txtMemName").value.trim();
+  const promised = document.getElementById("txtMemPromised") ? document.getElementById("txtMemPromised").value.trim() : "";
   const phone = document.getElementById("txtMemPhone").value.trim();
   const address = document.getElementById("txtMemAddress").value.trim();
 
@@ -5849,6 +5857,7 @@ function saveDirMemberCrud() {
       setColVal(state.members[idx], "C", name);
       setColVal(state.members[idx], "D", phone);
       setColVal(state.members[idx], "E", address);
+      setColVal(state.members[idx], "F", promised);
     }
   } else {
     // Adding new member
@@ -5866,7 +5875,8 @@ function saveDirMemberCrud() {
       "B": regNo,
       "C": name,
       "D": phone,
-      "E": address
+      "E": address,
+      "F": promised
     });
   }
 
@@ -5926,15 +5936,16 @@ function exportMemberDirectoryCSV() {
     });
 
     let csvContent = "\ufeff"; // BOM for UTF-8 Excel compatibility
-    csvContent += "Register No.,Name,Mobile,Address\n";
+    csvContent += "Register No.,Name,Amount Promised,Mobile,Address\n";
 
     validMembers.forEach(member => {
       const regNo = String(getColVal(member, "B") || "").replace(/"/g, '""');
       const name = String(getColVal(member, "C") || "").replace(/"/g, '""');
+      const promised = String(getColVal(member, "F") || "").replace(/"/g, '""');
       const phone = String(getColVal(member, "D") || "").replace(/"/g, '""');
       const address = String(getColVal(member, "E") || "").replace(/"/g, '""');
 
-      csvContent += `"${regNo}","${name}","${phone}","${address}"\n`;
+      csvContent += `"${regNo}","${name}","${promised}","${phone}","${address}"\n`;
     });
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -5969,6 +5980,7 @@ function importMemberDirectoryCSV(event) {
 
       const regIdx = headers.findIndex(h => h.includes("reg") || h.includes("member no") || h.includes("no."));
       const nameIdx = headers.findIndex(h => h.includes("name") || h.includes("hof") || h.includes("head"));
+      const promisedIdx = headers.findIndex(h => h.includes("promise") || h.includes("pledge") || h.includes("amount"));
       const phoneIdx = headers.findIndex(h => h.includes("mob") || h.includes("phone") || h.includes("cell") || h.includes("contact"));
       const addrIdx = headers.findIndex(h => h.includes("add") || h.includes("address") || h.includes("location") || h.includes("residence"));
 
@@ -5982,10 +5994,11 @@ function importMemberDirectoryCSV(event) {
 
       for (let i = 1; i < lines.length; i++) {
         const row = lines[i];
-        if (row.length < 2) continue;
+        if (!row || row.length < 2) continue;
 
         const regNo = row[regIdx] ? row[regIdx].trim() : "";
         const name = row[nameIdx] ? row[nameIdx].trim() : "";
+        const promised = promisedIdx !== -1 && row[promisedIdx] ? row[promisedIdx].trim() : "";
         const phone = phoneIdx !== -1 && row[phoneIdx] ? row[phoneIdx].trim() : "";
         const address = addrIdx !== -1 && row[addrIdx] ? row[addrIdx].trim() : "";
 
@@ -5997,6 +6010,7 @@ function importMemberDirectoryCSV(event) {
           setColVal(state.members[existingIdx], "C", name);
           setColVal(state.members[existingIdx], "D", phone);
           setColVal(state.members[existingIdx], "E", address);
+          if (promised) setColVal(state.members[existingIdx], "F", promised);
           updateCount++;
         } else {
           const maxSl = state.members.reduce((max, m) => {
@@ -6009,7 +6023,8 @@ function importMemberDirectoryCSV(event) {
             "B": regNo,
             "C": name,
             "D": phone,
-            "E": address
+            "E": address,
+            "F": promised
           });
           importCount++;
         }
