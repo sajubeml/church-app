@@ -3439,8 +3439,9 @@ function renderIndividualLedgers() {
       if (!reg) return;
       const head = String(cb["E"] || "").trim();
       const code = String(cb["F"] || "").trim();
-      const amtText = String(cb["H"] || cb["I"] || "0").replace(/,/g, '');
-      const amt = parseFloat(amtText) || 0;
+      const amtH = parseFloat(String(cb["H"] || cb["receipt_cash"] || "0").replace(/,/g, '')) || 0;
+      const amtI = parseFloat(String(cb["I"] || cb["receipt_bank"] || "0").replace(/,/g, '')) || 0;
+      const amt = amtH + amtI;
 
       const colKey = findIndividualColKey({ head, code });
       if (colKey) {
