@@ -5426,25 +5426,54 @@ function reprintTxnDocument(type, docNo, index) {
   } catch (e) { }
 
   // Fallback: Construct dual side-by-side cards from cashbook row data
-  const row = state.cashbook[index];
-  if (!row) {
+  let matchingRows = [];
+  if (cleanDocNo) {
+    matchingRows = (state.cashbook || []).filter(r => {
+      const rDocNo = String(getColVal(r, isReceipt ? "B" : "L") || "").replace(/#/g, "").trim();
+      return rDocNo === cleanDocNo;
+    });
+  }
+  if (!matchingRows.length && index !== undefined && state.cashbook && state.cashbook[index]) {
+    matchingRows = [state.cashbook[index]];
+  }
+
+  if (!matchingRows.length) {
     alert("Transaction details not found!");
     return;
   }
 
-  const dateStr = formatExcelDate(isReceipt ? getColVal(row, "A") : getColVal(row, "K"));
-  const regNo = isReceipt ? getColVal(row, "C") : "";
-  const memberName = isReceipt ? (getColVal(row, "D") || "General Member") : (getColVal(row, "O") || "General Payment");
-  const head = isReceipt ? getColVal(row, "E") : getColVal(row, "M");
-  const code = isReceipt ? getColVal(row, "F") : getColVal(row, "N");
-  const details = isReceipt ? getColVal(row, "G") : getColVal(row, "O");
-  const detailsText = details ? String(details).trim() : "";
-  const detailsHtml = detailsText ? `<div style="font-size:10.5px; color:#475569; font-style:italic; margin-top:3px; padding-top:2px; border-top:1px dashed #cbd5e1;"><strong>Details:</strong> ${detailsText}</div>` : "";
-  const cashAmt = parseFloat(isReceipt ? getColVal(row, "H") : getColVal(row, "P")) || 0;
-  const bankAmt = parseFloat(isReceipt ? getColVal(row, "I") : getColVal(row, "Q")) || 0;
-  const grandTotal = cashAmt + bankAmt;
-  const totalWords = numberToIndianWords(grandTotal);
+  const firstRow = matchingRows[0];
+  const dateStr = formatExcelDate(isReceipt ? getColVal(firstRow, "A") : getColVal(firstRow, "K"));
+  const regNo = isReceipt ? getColVal(firstRow, "C") : "";
+  const memberName = isReceipt ? (getColVal(firstRow, "D") || "General Member") : (getColVal(firstRow, "O") || "General Payment");
 
+  let grandTotal = 0;
+  let itemsRowsHtml = "";
+
+  matchingRows.forEach((r, itemIdx) => {
+    const head = isReceipt ? getColVal(r, "E") : getColVal(r, "M");
+    const code = isReceipt ? getColVal(r, "F") : getColVal(r, "N");
+    const details = isReceipt ? getColVal(r, "G") : getColVal(r, "O");
+    const detailsText = details ? String(details).trim() : "";
+    const detailsHtml = detailsText ? `<div style="font-size:10.5px; color:#475569; font-style:italic; margin-top:3px; padding-top:2px; border-top:1px dashed #cbd5e1;"><strong>Details:</strong> ${detailsText}</div>` : "";
+    const cashAmt = parseFloat(String(isReceipt ? getColVal(r, "H") : getColVal(r, "P")).replace(/,/g, '')) || 0;
+    const bankAmt = parseFloat(String(isReceipt ? getColVal(r, "I") : getColVal(r, "Q")).replace(/,/g, '')) || 0;
+    const itemTotal = cashAmt + bankAmt;
+    grandTotal += itemTotal;
+
+    itemsRowsHtml += `
+      <tr>
+        <td style="text-align:center; vertical-align:top; padding:6px; border:1px solid #cbd5e1;">${itemIdx + 1}</td>
+        <td style="padding:6px; border:1px solid #cbd5e1;">
+          <div style="font-weight:700; color:#0f172a;">${head} ${code ? '(' + code + ')' : ''}</div>
+          ${detailsHtml}
+        </td>
+        <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700; border:1px solid #cbd5e1;">₹ ${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      </tr>
+    `;
+  });
+
+  const totalWords = numberToIndianWords(grandTotal);
   const docTitle = isReceipt ? "RECEIPT" : "PAYMENT VOUCHER";
   const numLabel = isReceipt ? "Receipt No" : "Voucher No";
   const formattedDateStr = formatDateDDMMYYYY(dateStr);
@@ -5469,14 +5498,7 @@ function reprintTxnDocument(type, docNo, index) {
             <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td style="text-align:center; vertical-align:top; padding:6px;">1</td>
-              <td style="padding:6px;">
-                <div style="font-weight:700; color:#0f172a;">${head} (${code})</div>
-                ${detailsHtml}
-              </td>
-              <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700;">₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-            </tr>
+            ${itemsRowsHtml}
           </tbody>
         </table>
         <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-size:12px; font-weight:bold; margin-bottom:15px;">
@@ -5509,14 +5531,7 @@ function reprintTxnDocument(type, docNo, index) {
             <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>
-            <tr>
-              <td style="text-align:center; vertical-align:top; padding:6px;">1</td>
-              <td style="padding:6px;">
-                <div style="font-weight:700; color:#0f172a;">${head} (${code})</div>
-                ${detailsHtml}
-              </td>
-              <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700;">₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-            </tr>
+            ${itemsRowsHtml}
           </tbody>
         </table>
         <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-size:12px; font-weight:bold; margin-bottom:15px;">
