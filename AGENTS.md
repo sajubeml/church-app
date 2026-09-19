@@ -91,10 +91,11 @@ The local repository has TWO remotes:
     4. `py copy_assets_to_android.py fresh` ➔ `.\gradlew.bat assembleFreshRelease`
   - **CRITICAL:** NEVER combine `assembleFullRelease` and `assembleFreshRelease` into a single Gradle invocation without executing `copy_assets_to_android.py fresh` in between, or the `fresh` release will get contaminated with `full` data.
 
-## 15. Fresh Start Build User Data Flag (`CHURCH_FRESH_START_HAS_USER_DATA`)
-- In `data_fresh.js`, `window.isFreshStartBuild = true`.
-- On initial launch, `loadAllData()` purges native SQLite (`window.AndroidBridge.bulkSync("[]")`) and resets `localStorage` to start with 0 transactions and ₹ 0.00 balances.
-- Whenever a user restores a JSON backup (`processBackupRestoreData`) or creates a transaction (`showReceiptModal`), the app sets `localStorage.setItem("CHURCH_FRESH_START_HAS_USER_DATA", "true")`.
-- This ensures `loadAllData()` permanently retains all imported/entered records across app restarts without wiping them.
+## 16. Member Contact Directory (Address Book) Schema & Multi-Target Sync (Updated Sep 2026)
+- Member rows in `state.members` map columns as follows: `Col A` = Sl No, `Col B` = Reg No, `Col C` = Name of HoF, `Col D` = Mobile/Phone, `Col E` = Address, `Col F` = Amount Promised.
+- Column `F` stores `Amount Promised` without mutating or interfering with `state.individual` (which only maps columns `A`, `B`, `C` for identity).
+- CSV Export and Import handle `Amount Promised` seamlessly.
+- **GitHub Pages & cPanel Deployment Rule**: GitHub Pages serves `index.html` at root (`https://sajubeml.github.io/church-app/`), which MUST be kept identical to `index_supabase.html`. When updating HTML modal fields or table structures, always run `py prepare_deployments.py` or manually update `index.html`, `index_supabase.html`, and `index_offline.html` in tandem.
+
 
 
