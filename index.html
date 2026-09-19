@@ -763,16 +763,17 @@ window.addEventListener("unhandledrejection", function(e) {
           <button class="btn btn-primary" onclick="promptAdminPassword('DIR_ADD')">➕ Add New Member</button>
         </div>
       </div>
-      <div class="card">
-        <div class="table-container">
-          <table class="table" id="memberDirectoryTable">
+      <div class="card" style="max-width:1250px; margin:0 auto; padding:1rem;">
+        <div class="table-container" style="overflow-x:auto;">
+          <table class="table" id="memberDirectoryTable" style="table-layout:auto; width:100%;">
             <thead>
-              <tr>
-                <th style="width:10%;">Reg No</th>
-                <th style="width:30%;">Name of HoF</th>
-                <th style="width:20%;">Mobile</th>
-                <th style="width:25%;">Address</th>
-                <th style="width:15%; text-align:center;">Actions</th>
+              <tr style="background:#f8fafc;">
+                <th style="width:80px; text-align:left;">Reg No</th>
+                <th style="min-width:180px; text-align:left;">Name of HoF</th>
+                <th style="width:140px; text-align:right;">Amount Promised</th>
+                <th style="width:130px; text-align:left;">Mobile</th>
+                <th style="min-width:240px; text-align:left;">Address</th>
+                <th style="width:110px; text-align:center;">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -815,6 +816,10 @@ window.addEventListener("unhandledrejection", function(e) {
         <div class="form-group">
           <label>Name of HoF</label>
           <input type="text" id="txtMemName" class="form-control" placeholder="Member Name">
+        </div>
+        <div class="form-group">
+          <label>Amount Promised (₹)</label>
+          <input type="text" id="txtMemPromised" class="form-control" placeholder="e.g. 5000">
         </div>
         <div class="form-group">
           <label>Mobile / Phone</label>
@@ -1023,6 +1028,6 @@ window.addEventListener("unhandledrejection", function(e) {
 
     <script src="html2pdf.bundle.min.js"></script>
     <script src="logo_data.js?v=10.8"></script>
-    <script src="app_supabase.js?v=11.3"></script>
+    <script src="app_supabase.js?v=11.6"></script>
 </body>
 </html>
