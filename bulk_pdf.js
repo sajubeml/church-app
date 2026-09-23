@@ -1,5 +1,5 @@
 async function startBulkPdfExport() {
-  if (!window.state || !window.state.individual || !window.state.cashbook) {
+  if (typeof state === 'undefined' || !state.individual || !state.cashbook) {
     alert("Data not loaded yet. Please wait.");
     return;
   }
@@ -16,8 +16,8 @@ async function startBulkPdfExport() {
   }
 
   try {
-    const indRows = window.state.individual;
-    const cbEntries = window.state.cashbook;
+    const indRows = state.individual;
+    const cbEntries = state.cashbook;
     const headerRow = indRows[3] || {};
     
     const memberMap = {};
