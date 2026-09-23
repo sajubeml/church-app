@@ -528,6 +528,7 @@ window.addEventListener("unhandledrejection", function(e) {
             </p>
           </div>
           <div style="display:flex; gap:0.5rem; align-items:center;">
+            <button class="btn btn-outline" style="padding:6px 12px; font-size:0.85rem; border-color:var(--primary-color); color:var(--primary-color); font-weight:700;" id="bulkZipPdfBtn" onclick="window.startBulkPdfExport()">📄 Export All PDFs (ZIP)</button>
             <span class="header-badge" style="background:#dcfce7; color:#15803d; font-size:0.85rem; padding:6px 12px; border-radius:20px; font-weight:700;">
               🔓 Session Unlocked
             </span>
@@ -973,8 +974,10 @@ window.addEventListener("unhandledrejection", function(e) {
   </div>
 
   <script src="html2pdf.bundle.min.js"></script>
+  <script src="jszip.min.js"></script>
+  <script src="bulk_pdf.js?v=11.7"></script>
   <script src="logo_data.js?v=10.8"></script>
   <script src="data.js?v=3.6"></script>
-  <script src="app.js?v=11.6"></script>
+  <script src="app.js?v=11.7"></script>
 </body>
 </html>
