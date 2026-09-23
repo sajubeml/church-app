@@ -221,7 +221,7 @@ async function startBulkPdfExport() {
       </div>
       `;
       
-      const blob = await window.html2pdf().set(opt).from(wrappedHtml).output('blob');
+      const blob = await html2pdf().set(opt).from(wrappedHtml).output('blob');
       zip.file(filename, blob);
     }
     
@@ -246,7 +246,7 @@ async function startBulkPdfExport() {
     
   } catch (err) {
     console.error("Error generating bulk PDFs:", err);
-    alert("Error generating PDFs. See console for details.");
+    alert("Error generating PDFs: " + err.message + "\n" + (err.stack ? err.stack.substring(0, 100) : ""));
     if (btn) {
       btn.innerText = "Export All Member PDFs (ZIP)";
       btn.disabled = false;
