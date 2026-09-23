@@ -158,7 +158,7 @@ async function startBulkPdfExport() {
       const wrappedHtml = `
       <div style="font-family: Helvetica, Arial, sans-serif; padding: 20px; color: #2D3748;">
         <div style="display: flex; align-items: center; border-bottom: 2px solid #1A365D; padding-bottom: 15px; margin-bottom: 20px;">
-           <img src="church_logo.png" style="width: 60px; height: 60px; margin-right: 15px;" onerror="this.style.display='none'">
+           <img src="${(typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) ? window.CHURCH_LOGO_BASE64 : 'church_logo.png'}" style="width: 60px; height: 60px; margin-right: 15px;" onerror="this.style.display='none'">
            <div>
              <div style="font-size: 18px; font-weight: bold; color: #1A365D;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</div>
              <div style="font-size: 11px; color: #4A5568;">Government House Road, Nazarbad, Mysuru, Karnataka — 570010</div>
