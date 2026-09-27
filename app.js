@@ -1466,12 +1466,16 @@ function setupFormEventListeners() {
   cmbMember.addEventListener("change", (e) => {
     const regNo = e.target.value;
     document.getElementById("txtRegNo").value = regNo;
+    const txtNmName = document.getElementById("txtNmName");
+    if (txtNmName) txtNmName.style.display = (regNo.toUpperCase() === "NM") ? "block" : "none";
   });
 
   // 2-Way Sync: Reg No Input -> Member Select
   document.getElementById("txtRegNo").addEventListener("input", (e) => {
     const regNo = e.target.value.trim();
     cmbMember.value = regNo;
+    const txtNmName = document.getElementById("txtNmName");
+    if (txtNmName) txtNmName.style.display = (regNo.toUpperCase() === "NM") ? "block" : "none";
   });
 
   // Document Type Change (Receipt vs Payment Voucher)
@@ -1694,6 +1698,11 @@ function clearForm() {
   if (txtDet) txtDet.value = "";
   const amtEl = document.getElementById("txtAmount");
   if (amtEl) amtEl.value = "";
+  const txtNmName = document.getElementById("txtNmName");
+  if (txtNmName) {
+    txtNmName.value = "";
+    txtNmName.style.display = "none";
+  }
   const txtSrcMem = document.getElementById("txtSearchMember");
   if (txtSrcMem) txtSrcMem.value = "";
   const txtSrcHead = document.getElementById("txtSearchAccountHead");
@@ -1843,6 +1852,10 @@ function commitCartToLedgers() {
   let memberName = "";
   if (cmbMember && cmbMember.selectedIndex > 0) {
     memberName = cmbMember.options[cmbMember.selectedIndex].dataset.name || cmbMember.options[cmbMember.selectedIndex].text;
+  }
+  if (regNo.toUpperCase() === "NM") {
+    const customNmName = document.getElementById("txtNmName") ? document.getElementById("txtNmName").value.trim() : "";
+    if (customNmName) memberName = customNmName;
   }
 
   // 1. Commit each cart item to state.cashbook
@@ -2050,6 +2063,10 @@ function showReceiptModal() {
   let memberName = "General / N/A";
   if (cmbMember.selectedIndex > 0) {
     memberName = cmbMember.options[cmbMember.selectedIndex].dataset.name || cmbMember.options[cmbMember.selectedIndex].text;
+  }
+  if (regNo.toUpperCase() === "NM") {
+    const customNmName = document.getElementById("txtNmName") ? document.getElementById("txtNmName").value.trim() : "";
+    if (customNmName) memberName = customNmName;
   }
 
   // Detect payment mode (Cash or Bank) from cart items or form selection
