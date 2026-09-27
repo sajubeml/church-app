@@ -99,3 +99,9 @@ The local repository has TWO remotes:
 
 
 
+
+
+## 17. HTML2PDF, Offline Canvases & Deployments (Updated Sep 2026)
+- **Tainted Canvas SecurityError:** When using html2pdf.js in an offline file:// context (like the local desktop index_offline.html or Android APK), attempting to render an img directly will throw a Tainted canvases may not be exported SecurityError. **Fix:** Always inject the base64 string (window.CHURCH_LOGO_BASE64 from logo_data.js) directly into the src attribute of the img tags before passing the HTML to html2pdf.
+- **html2pdf Namespace:** The html2pdf.bundle.min.js file used in this project does NOT export to window.html2pdf. It strictly exports html2pdf(). Do not use the window. prefix for it.
+- **prepare_deployments.py:** When adding new global JS libraries (like jszip.min.js or bulk_pdf.js), you MUST append them to the common_files array inside prepare_deployments.py, otherwise they will not be pushed to the cpanel/ or github-supabase/ deployment folders.

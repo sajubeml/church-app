@@ -11,7 +11,7 @@ android {
         applicationId = "com.stgregorios.churchaccounting"
         minSdk = 24
         targetSdk = 36
-        versionCode = 70
+        versionCode = 72
         versionName = "11.6"
         resValue("string", "app_name", "St Gregorios Church Accounting")
     }
@@ -30,7 +30,7 @@ android {
         create("full") {
             dimension = "version"
             applicationId = "com.stgregorios.churchaccounting"
-            versionCode = 69
+            versionCode = 71
             versionName = "11.5"
             resValue("string", "app_name", "St Gregorios Church Accounting")
             signingConfig = signingConfigs.getByName("release")
@@ -38,7 +38,7 @@ android {
         create("fresh") {
             dimension = "version"
             applicationId = "com.stgregorios.churchaccounting.fresh"
-            versionCode = 69
+            versionCode = 71
             versionName = "11.5"
             resValue("string", "app_name", "St Gregorios Church Accounting (Fresh)")
             signingConfig = signingConfigs.getByName("release")
