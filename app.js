@@ -2087,7 +2087,7 @@ function showReceiptModal() {
     const detailsHtml = detailsText ? `<div style="font-size:10.5px; color:#475569; font-style:italic; margin-top:3px; padding-top:2px; border-top:1px dashed #cbd5e1;"><strong>Details:</strong> ${detailsText}</div>` : '';
     itemRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:middle; padding:6px; white-space:nowrap;">${idx + 1}</td>
+        <td style="text-align:center; vertical-align:top; padding:6px; white-space:nowrap;">${idx + 1}</td>
         <td style="padding:6px; vertical-align:top;">
           <div style="font-weight:700; color:#0f172a;">${item.particulars} (${item.code})</div>
           ${detailsHtml}
@@ -5229,7 +5229,7 @@ function reprintTxnDocument(type, docNo, index) {
 
     itemsRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:middle; padding:6px; border:1px solid #cbd5e1; white-space:nowrap;">${itemIdx + 1}</td>
+        <td style="text-align:center; vertical-align:top; padding:6px; border:1px solid #cbd5e1; white-space:nowrap;">${itemIdx + 1}</td>
         <td style="padding:6px; border:1px solid #cbd5e1; vertical-align:top;">
           <div style="font-weight:700; color:#0f172a;">${head} ${code ? '(' + code + ')' : ''}</div>
           ${detailsHtml}

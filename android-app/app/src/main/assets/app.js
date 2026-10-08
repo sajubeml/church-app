@@ -2087,12 +2087,12 @@ function showReceiptModal() {
     const detailsHtml = detailsText ? `<div style="font-size:10.5px; color:#475569; font-style:italic; margin-top:3px; padding-top:2px; border-top:1px dashed #cbd5e1;"><strong>Details:</strong> ${detailsText}</div>` : '';
     itemRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:top; padding:6px;">${idx + 1}</td>
-        <td style="padding:6px;">
+        <td style="text-align:center; vertical-align:middle; padding:6px; white-space:nowrap;">${idx + 1}</td>
+        <td style="padding:6px; vertical-align:top;">
           <div style="font-weight:700; color:#0f172a;">${item.particulars} (${item.code})</div>
           ${detailsHtml}
         </td>
-        <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700;">₹ ${item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700; white-space:nowrap;">₹ ${item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
       </tr>
     `;
   });
@@ -5199,6 +5199,20 @@ function reprintTxnDocument(type, docNo, index) {
   const regNo = isReceipt ? getColVal(firstRow, "C") : "";
   const memberName = isReceipt ? (getColVal(firstRow, "D") || "General Member") : (getColVal(firstRow, "O") || "General Payment");
 
+  // Detect payment mode from cashbook: H = cash amount, I = bank amount (for receipts); P/Q for payments
+  let reprintPayMode = "CASH";
+  {
+    let totalCash = 0, totalBank = 0;
+    matchingRows.forEach(r => {
+      totalCash += parseFloat(String(isReceipt ? getColVal(r, "H") : getColVal(r, "P")).replace(/,/g, '')) || 0;
+      totalBank += parseFloat(String(isReceipt ? getColVal(r, "I") : getColVal(r, "Q")).replace(/,/g, '')) || 0;
+    });
+    if (totalBank > 0 && totalCash === 0) reprintPayMode = "BANK";
+    else if (totalBank > 0 && totalCash > 0) reprintPayMode = "CASH+BANK";
+    else reprintPayMode = "CASH";
+  }
+  const modeRowHtml = `<tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${reprintPayMode}</span></td><td style="text-align:right;"></td></tr>`;
+
   let grandTotal = 0;
   let itemsRowsHtml = "";
 
@@ -5215,12 +5229,12 @@ function reprintTxnDocument(type, docNo, index) {
 
     itemsRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:top; padding:6px; border:1px solid #cbd5e1;">${itemIdx + 1}</td>
-        <td style="padding:6px; border:1px solid #cbd5e1;">
+        <td style="text-align:center; vertical-align:middle; padding:6px; border:1px solid #cbd5e1; white-space:nowrap;">${itemIdx + 1}</td>
+        <td style="padding:6px; border:1px solid #cbd5e1; vertical-align:top;">
           <div style="font-weight:700; color:#0f172a;">${head} ${code ? '(' + code + ')' : ''}</div>
           ${detailsHtml}
         </td>
-        <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700; border:1px solid #cbd5e1;">₹ ${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap;">₹ ${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
       </tr>
     `;
   });
@@ -5244,6 +5258,7 @@ function reprintTxnDocument(type, docNo, index) {
         <table style="width:100%; margin-bottom:10px; font-size:12px;">
           <tr><td><strong>${numLabel}:</strong> #${cleanDocNo || '-'}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
+          ${modeRowHtml}
         </table>
         <table style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px;">
           <thead>
@@ -5277,6 +5292,7 @@ function reprintTxnDocument(type, docNo, index) {
         <table style="width:100%; margin-bottom:10px; font-size:12px;">
           <tr><td><strong>${numLabel}:</strong> #${cleanDocNo || '-'}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
+          ${modeRowHtml}
         </table>
         <table style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px;">
           <thead>
