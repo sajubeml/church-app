@@ -49,8 +49,8 @@ print("\n--- STEP 5: Packaging Distribution ZIP Files ---")
 dist_dir = os.path.join(base_dir, "dist")
 os.makedirs(dist_dir, exist_ok=True)
 shutil.copy2(full_apk_dest, os.path.join(dist_dir, "St_Gregorios_Church_Accounting.apk"))
-shutil.copy2(full_apk_v11, os.path.join(dist_dir, "St_Gregorios_Church_Accounting_v11.12.apk"))
-shutil.copy2(fresh_apk_v11, os.path.join(dist_dir, "St_Gregorios_Church_Accounting_Fresh_v11.12.apk"))
+shutil.copy2(full_apk_v11, os.path.join(dist_dir, "St_Gregorios_Church_Accounting_v11.13.apk"))
+shutil.copy2(fresh_apk_v11, os.path.join(dist_dir, "St_Gregorios_Church_Accounting_Fresh_v11.13.apk"))
 
 try:
     subprocess.run(["py", "package_distributable.py"], cwd=base_dir, check=True)
