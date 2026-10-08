@@ -29,7 +29,7 @@ subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat assembleFullRelease"], cwd=os.p
 
 src_full_apk = os.path.join(base_dir, "android-app", "app", "build", "outputs", "apk", "full", "release", "app-full-release.apk")
 full_apk_dest = os.path.join(base_dir, "St_Gregorios_Church_Accounting.apk")
-full_apk_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_v11.12.apk")
+full_apk_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_v11.13.apk")
 shutil.copy2(src_full_apk, full_apk_dest)
 shutil.copy2(src_full_apk, full_apk_v11)
 print(f"[OK] Full APK Compiled: {full_apk_dest} & {full_apk_v11} ({os.path.getsize(full_apk_dest)/(1024*1024):.2f} MB)")
@@ -40,7 +40,7 @@ subprocess.run(["py", "copy_assets_to_android.py", "fresh"], cwd=base_dir, check
 subprocess.run(["cmd.exe", "/c", ".\\gradlew.bat assembleFreshRelease"], cwd=os.path.join(base_dir, "android-app"), env=env, check=True)
 
 src_fresh_apk = os.path.join(base_dir, "android-app", "app", "build", "outputs", "apk", "fresh", "release", "app-fresh-release.apk")
-fresh_apk_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Fresh_v11.12.apk")
+fresh_apk_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Fresh_v11.13.apk")
 shutil.copy2(src_fresh_apk, fresh_apk_v11)
 print(f"[OK] Fresh Start APK Compiled: {fresh_apk_v11} ({os.path.getsize(fresh_apk_v11)/(1024*1024):.2f} MB)")
 

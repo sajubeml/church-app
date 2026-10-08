@@ -2152,12 +2152,12 @@ function showReceiptModal() {
     const detailsHtml = detailsText ? `<div style="font-size:10.5px; color:#475569; font-style:italic; margin-top:3px; padding-top:2px; border-top:1px dashed #cbd5e1;"><strong>Details:</strong> ${detailsText}</div>` : '';
     itemRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:top; padding:6px; white-space:nowrap;">${idx + 1}</td>
-        <td style="padding:6px; vertical-align:top;">
+        <td style="text-align:center; vertical-align:top; padding:4px 6px; border:1px solid #cbd5e1; white-space:nowrap;">${idx + 1}</td>
+        <td style="padding:4px 6px; border:1px solid #cbd5e1; vertical-align:top;">
           <div style="font-weight:700; color:#0f172a;">${item.particulars} (${item.code})</div>
           ${detailsHtml}
         </td>
-        <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700; white-space:nowrap;">₹ ${item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        <td style="text-align:right; vertical-align:top; padding:4px 6px; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap;">₹ ${item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
       </tr>
     `;
   });
@@ -2187,7 +2187,7 @@ function showReceiptModal() {
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
           <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; font-size:11px; flex:1;">
+        <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:4px;">
           <thead>
             <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Amount</th></tr>
           </thead>
@@ -2197,6 +2197,7 @@ function showReceiptModal() {
           <div style="font-size:10px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
           <div style="font-size:13px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
+        <div style="flex:1;"></div>
         <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
         </div>
@@ -2219,7 +2220,7 @@ function showReceiptModal() {
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
           <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; font-size:11px; flex:1;">
+        <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:4px;">
           <thead>
             <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Amount</th></tr>
           </thead>
@@ -2229,6 +2230,7 @@ function showReceiptModal() {
           <div style="font-size:10px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
           <div style="font-size:13px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
+        <div style="flex:1;"></div>
         <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
           <div style="text-align:right;">Vicar / Trustee: ___________________</div>
         </div>
