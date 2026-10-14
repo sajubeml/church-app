@@ -1432,6 +1432,8 @@ function setupNavigation() {
         renderAdminTab();
       } else if (paneId === "tabMemberDirectory") {
         renderMemberDirectory();
+      } else if (paneId === "tabBalanceSheet") {
+        renderBalanceSheet();
       }
     });
   });
@@ -2779,6 +2781,7 @@ function renderAllViews() {
   renderCashbook();
   renderIndividualLedgers();
   renderTrialBalance();
+  renderBalanceSheet();
   renderAudit();
   if (state.isAdminUnlocked) {
     renderAdminTab();
@@ -3625,6 +3628,233 @@ function renderTrialBalance() {
         <td class="text-right" style="color:var(--primary-color); font-size:0.95rem;">${formatCurrency(totalDebit)}</td>
         <td colspan="2">TOTAL TRIAL BALANCE (PAYMENTS / CREDIT)</td>
         <td class="text-right" style="color:var(--accent-color); font-size:0.95rem;">${formatCurrency(totalCredit)}</td>
+      </tr>
+    `;
+  }
+}
+
+function renderBalanceSheet() {
+  const tbody = document.getElementById("bsTbody");
+  const tfoot = document.getElementById("bsTfoot");
+  if (!tbody) return;
+  tbody.innerHTML = "";
+  if (tfoot) tfoot.innerHTML = "";
+
+  const normalizeCode = (c) => String(c || "").replace(/^RP[-\s]*/i, "RP-").replace(/\s+/g, '').toUpperCase();
+
+  // 1. Get live opening & closing balances from Cashbook Brain
+  const totals = calculateCashbookTotals();
+  const openingCash = totals.openingCash || 0;
+  const openingBank = totals.openingBank || 0;
+  const closingCash = totals.closingCash || 0;
+  const closingBank = totals.closingBank || 0;
+  const grandClosing = totals.grandClosing || 0;
+  const openingTotal = openingCash + openingBank;
+
+  // 2. Aggregate live amounts by code from state.cashbook
+  const receiptTotalsByCode = {};
+  const paymentTotalsByCode = {};
+  const receiptHeadNames = {};
+  const paymentHeadNames = {};
+
+  if (Array.isArray(state.cashbook)) {
+    state.cashbook.forEach(row => {
+      const isContraEntry = (head, details, code) => {
+        const comb = (String(head || '') + ' ' + String(details || '') + ' ' + String(code || '')).toLowerCase();
+        const codeTrim = String(code || '').trim().toUpperCase();
+        return comb.includes('cash deposited') || comb.includes('contra') || comb.includes('cash to bank') || comb.includes('excess cash deposited') || codeTrim === 'CD' || codeTrim === 'RP-1.03';
+      };
+
+      // Receipts
+      let rCodeRaw = getColVal(row, "F");
+      const rHeadRaw = getColVal(row, "E").trim();
+      const rDetailsRaw = getColVal(row, "G").trim();
+
+      if (isContraEntry(rHeadRaw, rDetailsRaw, rCodeRaw) || rHeadRaw.toLowerCase().includes("opening") || rDetailsRaw.toLowerCase().includes("opening balance")) {
+        // Excluded from operational receipts
+      } else {
+        if (!rCodeRaw && rDetailsRaw.toLowerCase().includes("kanika on 3-5-26")) {
+          rCodeRaw = "RP-3.10";
+        }
+        if (rCodeRaw && rHeadRaw.toLowerCase().includes("sunday school day collection")) {
+          rCodeRaw = "RP-10.14";
+        }
+
+        let recNorm = normalizeCode(rCodeRaw);
+        if (!recNorm && rHeadRaw) {
+          recNorm = "RP-MISC";
+        }
+
+        const hR = parseFloat(String(getColVal(row, "H")).replace(/,/g, '')) || 0;
+        const iR = parseFloat(String(getColVal(row, "I")).replace(/,/g, '')) || 0;
+        const totalR = (hR > 0 && !isNaN(hR) ? hR : 0) + (iR > 0 && !isNaN(iR) ? iR : 0);
+
+        if (recNorm && totalR > 0) {
+          receiptTotalsByCode[recNorm] = (receiptTotalsByCode[recNorm] || 0) + totalR;
+          if (rHeadRaw) receiptHeadNames[recNorm] = rHeadRaw;
+        }
+      }
+
+      // Payments
+      let pCodeRaw = getColVal(row, "N");
+      const pHeadRaw = getColVal(row, "M").trim();
+      const pDetailsRaw = getColVal(row, "O").trim();
+
+      if (isContraEntry(pHeadRaw, pDetailsRaw, pCodeRaw)) {
+        // Excluded contra
+      } else {
+        const payNorm = normalizeCode(pCodeRaw);
+        const pP = parseFloat(String(getColVal(row, "P")).replace(/,/g, '')) || 0;
+        const qP = parseFloat(String(getColVal(row, "Q")).replace(/,/g, '')) || 0;
+        const totalP = (pP > 0 && !isNaN(pP) ? pP : 0) + (qP > 0 && !isNaN(qP) ? qP : 0);
+
+        if (payNorm && totalP > 0) {
+          paymentTotalsByCode[payNorm] = (paymentTotalsByCode[payNorm] || 0) + totalP;
+          if (pHeadRaw) paymentHeadNames[payNorm] = pHeadRaw;
+        }
+      }
+    });
+  }
+
+  // Master accounts
+  const allReceiptHeads = getAllAccountHeads("RECEIPT");
+  const allPaymentHeads = getAllAccountHeads("PAYMENT");
+
+  const activeReceiptHeads = [];
+  const processedR = new Set();
+  allReceiptHeads.forEach(hObj => {
+    const rNorm = normalizeCode(hObj.code);
+    let amt = receiptTotalsByCode[rNorm] || 0;
+    if (amt > 0) {
+      activeReceiptHeads.push({ code: hObj.code, name: hObj.name, amount: amt });
+      processedR.add(rNorm);
+    }
+  });
+  Object.keys(receiptTotalsByCode).forEach(rNorm => {
+    if (!processedR.has(rNorm) && receiptTotalsByCode[rNorm] > 0) {
+      activeReceiptHeads.push({ code: rNorm, name: receiptHeadNames[rNorm] || rNorm, amount: receiptTotalsByCode[rNorm] });
+    }
+  });
+
+  const activePaymentHeads = [];
+  const processedP = new Set();
+  allPaymentHeads.forEach(hObj => {
+    const pNorm = normalizeCode(hObj.code);
+    if (pNorm === "RP-12.02") return;
+    let amt = paymentTotalsByCode[pNorm] || 0;
+    if (amt > 0) {
+      activePaymentHeads.push({ code: hObj.code, name: hObj.name, amount: amt });
+      processedP.add(pNorm);
+    }
+  });
+  Object.keys(paymentTotalsByCode).forEach(pNorm => {
+    if (!processedP.has(pNorm) && paymentTotalsByCode[pNorm] > 0) {
+      activePaymentHeads.push({ code: pNorm, name: paymentHeadNames[pNorm] || pNorm, amount: paymentTotalsByCode[pNorm] });
+    }
+  });
+
+  let totalReceiptsCollected = 0;
+  activeReceiptHeads.forEach(h => totalReceiptsCollected += h.amount);
+
+  let totalPaymentsIncurred = 0;
+  activePaymentHeads.forEach(h => totalPaymentsIncurred += h.amount);
+
+  // Update Stat Cards & Financial Position Cards
+  const elBsOp = document.getElementById("bsOpLiquidity");
+  if (elBsOp) elBsOp.textContent = formatCurrency(openingTotal);
+  const elBsRc = document.getElementById("bsTotalReceipts");
+  if (elBsRc) elBsRc.textContent = formatCurrency(totalReceiptsCollected);
+  const elBsPy = document.getElementById("bsTotalPayments");
+  if (elBsPy) elBsPy.textContent = formatCurrency(totalPaymentsIncurred);
+  const elBsCl = document.getElementById("bsClLiquidity");
+  if (elBsCl) elBsCl.textContent = formatCurrency(grandClosing);
+
+  const elPosOpFund = document.getElementById("bsPosOpFund");
+  if (elPosOpFund) elPosOpFund.textContent = formatCurrency(openingTotal);
+  const netSurplus = totalReceiptsCollected - totalPaymentsIncurred;
+  const elPosSurplus = document.getElementById("bsPosSurplus");
+  if (elPosSurplus) {
+    elPosSurplus.textContent = (netSurplus >= 0 ? "+" : "") + formatCurrency(netSurplus);
+    elPosSurplus.style.color = netSurplus >= 0 ? "#059669" : "#dc2626";
+  }
+  const elPosTotalLiab = document.getElementById("bsPosTotalLiab");
+  if (elPosTotalLiab) elPosTotalLiab.textContent = formatCurrency(openingTotal + netSurplus);
+
+  const elPosCash = document.getElementById("bsPosCash");
+  if (elPosCash) elPosCash.textContent = formatCurrency(closingCash);
+  const elPosBank = document.getElementById("bsPosBank");
+  if (elPosBank) elPosBank.textContent = formatCurrency(closingBank);
+  const elPosTotalAssets = document.getElementById("bsPosTotalAssets");
+  if (elPosTotalAssets) elPosTotalAssets.textContent = formatCurrency(grandClosing);
+
+  // 3. Assemble Balanced Statement Rows
+  const debitRows = [
+    { code: "RP-1.01", name: "Opening Balance - Cash in Hand (01/04/2026)", amount: openingCash, isSpecial: true },
+    { code: "RP-1.02", name: "Opening Balance - Cash at Bank (01/04/2026)", amount: openingBank, isSpecial: true }
+  ];
+  activeReceiptHeads.forEach(h => debitRows.push({ code: h.code, name: h.name, amount: h.amount, isSpecial: false }));
+
+  const creditRows = [];
+  activePaymentHeads.forEach(h => creditRows.push({ code: h.code, name: h.name, amount: h.amount, isSpecial: false }));
+  creditRows.push({ code: "CB-CASH", name: "Closing Balance - Cash in Hand", amount: closingCash, isSpecial: true });
+  creditRows.push({ code: "CB-BANK", name: "Closing Balance - Federal Bank SB A/c", amount: closingBank, isSpecial: true });
+
+  const maxRows = Math.max(debitRows.length, creditRows.length);
+  let totalDebit = 0;
+  let totalCredit = 0;
+
+  for (let i = 0; i < maxRows; i++) {
+    const dItem = debitRows[i] || null;
+    const cItem = creditRows[i] || null;
+
+    let dCode = "", dName = "", dAmt = 0, dStyle = "";
+    if (dItem) {
+      dCode = dItem.code;
+      dName = dItem.name;
+      dAmt = dItem.amount;
+      totalDebit += dAmt;
+      if (dItem.isSpecial) dStyle = "background:rgba(37,99,235,0.06); font-weight:700;";
+    }
+
+    let cCode = "", cName = "", cAmt = 0, cStyle = "";
+    if (cItem) {
+      cCode = cItem.code;
+      cName = cItem.name;
+      cAmt = cItem.amount;
+      totalCredit += cAmt;
+      if (cItem.isSpecial) cStyle = "background:rgba(16,185,129,0.06); font-weight:700;";
+    }
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td style="${dStyle}"><code>${dCode}</code></td>
+      <td style="${dStyle}">${dName}</td>
+      <td class="text-right" style="${dStyle}; font-weight:600;">${dAmt > 0 ? formatCurrency(dAmt) : ''}</td>
+      <td style="${cStyle}"><code>${cCode}</code></td>
+      <td style="${cStyle}">${cName}</td>
+      <td class="text-right" style="${cStyle}; font-weight:600;">${cAmt > 0 ? formatCurrency(cAmt) : ''}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  const variance = Math.abs(totalDebit - totalCredit);
+  const isBalanced = variance < 0.05;
+
+  if (tfoot) {
+    tfoot.innerHTML = `
+      <tr class="grand-total-row" style="background:#f1f5f9; font-weight:800; font-size:0.9rem;">
+        <td colspan="2">TOTAL RECEIPTS & OPENING BALANCES (DEBIT)</td>
+        <td class="text-right" style="color:var(--primary-color); font-size:0.95rem;">${formatCurrency(totalDebit)}</td>
+        <td colspan="2">TOTAL PAYMENTS & CLOSING BALANCES (CREDIT)</td>
+        <td class="text-right" style="color:var(--accent-color); font-size:0.95rem;">${formatCurrency(totalCredit)}</td>
+      </tr>
+      <tr style="background:${isBalanced ? '#ecfdf5' : '#fef2f2'}; font-weight:700; font-size:0.85rem; border-top:2px solid ${isBalanced ? '#10b981' : '#ef4444'};">
+        <td colspan="3" style="color:${isBalanced ? '#059669' : '#dc2626'}; text-align:center;">
+          ${isBalanced ? '✅ PERFECTLY BALANCED STATEMENT (Variance: ₹0.00)' : '⚠️ Statement Variance: ' + formatCurrency(variance)}
+        </td>
+        <td colspan="3" style="color:${isBalanced ? '#059669' : '#dc2626'}; text-align:center;">
+          ${isBalanced ? 'Net Cash & Bank Liquidity: ' + formatCurrency(grandClosing) : 'Out of balance'}
+        </td>
       </tr>
     `;
   }

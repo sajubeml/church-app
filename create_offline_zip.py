@@ -5,7 +5,7 @@ import zipfile
 base_dir = r"c:\CASHBOOK_APP"
 target_folder_name = "St_Gregorios_Church_Accounting_Offline"
 staging_dir = os.path.join(base_dir, "temp_offline_staging", target_folder_name)
-zip_name_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Offline_PC_v11.13.zip")
+zip_name_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Offline_PC_v11.14.zip")
 zip_name_latest = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Offline_PC.zip")
 
 # Recreate staging directory

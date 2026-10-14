@@ -852,10 +852,9 @@ window.INITIAL_INDIVIDUAL = [
     "A": "2",
     "B": "2",
     "C": "Abraham.M.O",
-    "AM": "",
-    "F": "",
     "D": "",
     "E": "",
+    "F": "",
     "G": "",
     "H": "",
     "I": "",
@@ -887,7 +886,8 @@ window.INITIAL_INDIVIDUAL = [
     "AI": "",
     "AJ": "",
     "AK": "",
-    "AL": ""
+    "AL": "",
+    "AM": ""
   },
   {
     "A": "3",
@@ -895,8 +895,8 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Ajish K Abraham Dr.",
     "V": "",
     "W": "",
-    "AM": "",
-    "Y": ""
+    "Y": "",
+    "AM": ""
   },
   {
     "A": "4",
@@ -918,16 +918,16 @@ window.INITIAL_INDIVIDUAL = [
     "M": "",
     "N": "",
     "Q": "",
-    "AM": "",
-    "AF": ""
+    "AF": "",
+    "AM": ""
   },
   {
     "A": "6",
     "B": "13",
     "C": "Aniyan Peter",
-    "AM": "",
+    "E": "",
     "L": "",
-    "E": ""
+    "AM": ""
   },
   {
     "A": "7",
@@ -958,13 +958,13 @@ window.INITIAL_INDIVIDUAL = [
     "J": "",
     "K": "",
     "N": "",
+    "P": "",
     "Q": "",
     "V": "",
     "W": "",
+    "Y": "",
     "AK": "",
-    "AM": "",
-    "P": "",
-    "Y": ""
+    "AM": ""
   },
   {
     "A": "9",
@@ -983,6 +983,7 @@ window.INITIAL_INDIVIDUAL = [
     "Q": "",
     "V": "",
     "W": "",
+    "Y": "",
     "AM": ""
   },
   {
@@ -1032,24 +1033,24 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Biju T. Mathew",
     "D": "Apr 26 to march 27",
     "E": "",
+    "F": "",
     "G": "",
+    "H": "",
+    "I": "",
+    "J": "",
     "K": "",
+    "M": "",
+    "N": "",
     "V": "",
     "AF": "",
-    "AM": "",
-    "F": "",
-    "N": "",
-    "M": "",
-    "I": "",
-    "H": "",
-    "J": ""
+    "AM": ""
   },
   {
     "A": "14",
     "B": "135",
     "C": "Binu Papachan",
-    "AM": "",
-    "F": ""
+    "F": "",
+    "AM": ""
   },
   {
     "A": "15",
@@ -1118,23 +1119,25 @@ window.INITIAL_INDIVIDUAL = [
     "A": "20",
     "B": "26",
     "C": "Cherian K. M.",
-    "V": "",
-    "AK": "",
-    "AM": "",
     "E": "",
     "G": "",
-    "I": "",
-    "K": "",
     "H": "",
+    "I": "",
     "J": "",
-    "Q": ""
+    "K": "",
+    "Q": "",
+    "V": "",
+    "AK": "",
+    "AM": ""
   },
   {
     "A": "21",
     "B": "32",
     "C": "Chinnamma George",
     "N": "",
+    "P": "",
     "W": "",
+    "Y": "",
     "AM": ""
   },
   {
@@ -1149,9 +1152,9 @@ window.INITIAL_INDIVIDUAL = [
     "K": "",
     "P": "",
     "W": "",
+    "Y": "",
     "AH": "",
-    "AM": "",
-    "Y": ""
+    "AM": ""
   },
   {
     "A": "23",
@@ -1165,6 +1168,7 @@ window.INITIAL_INDIVIDUAL = [
     "I": "",
     "J": "",
     "K": "",
+    "P": "",
     "Q": "",
     "V": "",
     "W": "",
@@ -1209,6 +1213,7 @@ window.INITIAL_INDIVIDUAL = [
     "B": "30",
     "C": "George Abraham",
     "F": "",
+    "N": "",
     "V": "",
     "AM": ""
   },
@@ -1227,8 +1232,8 @@ window.INITIAL_INDIVIDUAL = [
     "N": "",
     "Q": "",
     "V": "",
-    "AM": "",
-    "Y": ""
+    "Y": "",
+    "AM": ""
   },
   {
     "A": "29",
@@ -1289,8 +1294,18 @@ window.INITIAL_INDIVIDUAL = [
     "A": "33",
     "B": "38",
     "C": "Indira Abraham",
+    "E": "",
+    "G": "",
+    "H": "",
+    "I": "",
+    "J": "",
+    "K": "",
     "M": "",
     "N": "",
+    "R": "",
+    "S": "",
+    "U": "",
+    "Y": "",
     "AM": ""
   },
   {
@@ -1322,9 +1337,9 @@ window.INITIAL_INDIVIDUAL = [
     "Q": "",
     "V": "",
     "W": "",
+    "Y": "",
     "AK": "",
-    "AM": "",
-    "Y": ""
+    "AM": ""
   },
   {
     "A": "36",
@@ -1345,6 +1360,7 @@ window.INITIAL_INDIVIDUAL = [
     "A": "37",
     "B": "130",
     "C": "Jacob K. Abraham",
+    "F": "",
     "AM": ""
   },
   {
@@ -1437,7 +1453,7 @@ window.INITIAL_INDIVIDUAL = [
   {
     "A": "47",
     "B": "58",
-    "C": "Kashy C. N.",
+    "C": "Koshy C. N.",
     "D": "Apr 26 to march 27",
     "E": "",
     "F": "",
@@ -1468,11 +1484,12 @@ window.INITIAL_INDIVIDUAL = [
     "A": "49",
     "B": "57",
     "C": "Kochumon P. K.",
+    "F": "",
     "N": "",
     "V": "",
+    "Y": "",
     "AK": "",
-    "AM": "",
-    "F": ""
+    "AM": ""
   },
   {
     "A": "Sl. No.",
@@ -1542,7 +1559,8 @@ window.INITIAL_INDIVIDUAL = [
     "K": "",
     "N": "",
     "Q": "",
-    "AM": ""
+    "AM": "",
+    "P": ""
   },
   {
     "A": "53",
@@ -1583,6 +1601,7 @@ window.INITIAL_INDIVIDUAL = [
     "N": "",
     "Q": "",
     "V": "",
+    "Y": "",
     "AF": "",
     "AK": "",
     "AM": ""
@@ -1591,9 +1610,9 @@ window.INITIAL_INDIVIDUAL = [
     "A": "56",
     "B": "92",
     "C": "Mariamma Philipose",
+    "F": "",
     "V": "",
-    "AM": "",
-    "F": ""
+    "AM": ""
   },
   {
     "A": "57",
@@ -1608,7 +1627,9 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Mariamma V. M.",
     "D": "Apr 26 to march 27",
     "E": "",
+    "P": "",
     "V": "",
+    "Y": "",
     "AH": "",
     "AM": ""
   },
@@ -1623,9 +1644,11 @@ window.INITIAL_INDIVIDUAL = [
     "I": "",
     "J": "",
     "K": "",
+    "P": "",
     "Q": "",
     "U": "",
     "AE": "",
+    "AK": "",
     "AM": ""
   },
   {
@@ -1668,12 +1691,12 @@ window.INITIAL_INDIVIDUAL = [
     "K": "",
     "M": "",
     "N": "",
+    "P": "",
     "Q": "",
     "V": "",
     "W": "",
     "Y": "",
-    "AM": "",
-    "P": ""
+    "AM": ""
   },
   {
     "A": "63",
@@ -1706,6 +1729,7 @@ window.INITIAL_INDIVIDUAL = [
     "A": "65",
     "B": "66",
     "C": "Monzy Thomas",
+    "AK": "",
     "AM": ""
   },
   {
@@ -1724,6 +1748,7 @@ window.INITIAL_INDIVIDUAL = [
     "N": "",
     "Q": "",
     "V": "",
+    "Y": "",
     "AM": ""
   },
   {
@@ -1738,8 +1763,8 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Peter K. A.",
     "F": "",
     "G": "",
-    "AM": "",
-    "Y": ""
+    "Y": "",
+    "AM": ""
   },
   {
     "A": "69",
@@ -1767,8 +1792,8 @@ window.INITIAL_INDIVIDUAL = [
     "J": "",
     "K": "",
     "Q": "",
-    "AM": "",
-    "Y": ""
+    "Y": "",
+    "AM": ""
   },
   {
     "A": "72",
@@ -1796,36 +1821,36 @@ window.INITIAL_INDIVIDUAL = [
     "K": "",
     "M": "",
     "N": "",
-    "V": "",
-    "AK": "",
-    "AM": "",
     "Q": "",
-    "X": ""
+    "V": "",
+    "X": "",
+    "Y": "",
+    "AK": "",
+    "AM": ""
   },
   {
     "A": "75",
     "B": "86",
     "C": "Rajan Mathai",
-    "N": "",
-    "V": "",
-    "AM": "",
-    "E": "",
-    "M": "",
-    "G": "",
-    "I": "",
-    "K": "",
-    "H": "",
-    "J": "",
-    "Q": "",
-    "F": "",
     "D": "",
+    "E": "",
+    "F": "",
+    "G": "",
+    "H": "",
+    "I": "",
+    "J": "",
+    "K": "",
     "L": "",
+    "M": "",
+    "N": "",
     "O": "",
     "P": "",
+    "Q": "",
     "R": "",
     "S": "",
     "T": "",
     "U": "",
+    "V": "",
     "W": "",
     "X": "",
     "Y": "",
@@ -1841,7 +1866,8 @@ window.INITIAL_INDIVIDUAL = [
     "AI": "",
     "AJ": "",
     "AK": "",
-    "AL": ""
+    "AL": "",
+    "AM": ""
   },
   {
     "A": "76",
@@ -1905,15 +1931,15 @@ window.INITIAL_INDIVIDUAL = [
     "A": "82",
     "B": "60",
     "C": "Sabu K. Chacko",
-    "F": "",
-    "I": "",
-    "AM": "",
     "E": "",
+    "F": "",
     "G": "",
-    "K": "",
     "H": "",
+    "I": "",
     "J": "",
-    "Q": ""
+    "K": "",
+    "Q": "",
+    "AM": ""
   },
   {
     "A": "83",
@@ -1926,11 +1952,11 @@ window.INITIAL_INDIVIDUAL = [
     "B": "17",
     "C": "Saju Jacob",
     "F": "",
-    "V": "",
-    "AM": "",
     "N": "",
+    "V": "",
     "Y": "",
-    "AK": ""
+    "AK": "",
+    "AM": ""
   },
   {
     "A": "85",
@@ -1965,6 +1991,7 @@ window.INITIAL_INDIVIDUAL = [
     "M": "",
     "N": "",
     "V": "",
+    "AH": "",
     "AM": ""
   },
   {
@@ -1977,12 +2004,12 @@ window.INITIAL_INDIVIDUAL = [
     "A": "89",
     "B": "97",
     "C": "Shanthamma Thampi",
+    "E": "",
     "F": "",
     "V": "",
-    "AH": "",
-    "AM": "",
     "AF": "",
-    "E": ""
+    "AH": "",
+    "AM": ""
   },
   {
     "A": "90",
@@ -1990,6 +2017,7 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Sheela Johnson",
     "F": "",
     "W": "",
+    "Y": "",
     "AH": "",
     "AM": ""
   },
@@ -2033,6 +2061,8 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Sinoy Kuriakose",
     "D": "apr26 to Aug26",
     "E": "",
+    "M": "",
+    "N": "",
     "V": "",
     "AH": "",
     "AM": ""
@@ -2075,6 +2105,7 @@ window.INITIAL_INDIVIDUAL = [
     "I": "",
     "M": "",
     "V": "",
+    "Y": "",
     "AH": "",
     "AM": ""
   },
@@ -2088,14 +2119,14 @@ window.INITIAL_INDIVIDUAL = [
     "A": "100",
     "B": "103",
     "C": "Thampan V. K. Thomas",
+    "F": "",
     "G": "",
     "N": "",
     "P": "",
     "V": "",
     "W": "",
-    "AM": "",
-    "F": "",
-    "Y": ""
+    "Y": "",
+    "AM": ""
   },
   {
     "A": "101",
@@ -2111,8 +2142,8 @@ window.INITIAL_INDIVIDUAL = [
     "N": "",
     "P": "",
     "U": "",
-    "AM": "",
-    "Y": ""
+    "Y": "",
+    "AM": ""
   },
   {
     "A": "102",
@@ -2157,6 +2188,7 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Thomas A. M.",
     "P": "",
     "W": "",
+    "Y": "",
     "AM": ""
   },
   {
@@ -2212,13 +2244,14 @@ window.INITIAL_INDIVIDUAL = [
   {
     "B": "NM",
     "C": "NM NON Members",
+    "E": "",
     "F": "",
     "I": "",
     "P": "",
     "V": "",
     "W": "",
-    "AM": "",
-    "E": ""
+    "Y": "",
+    "AM": ""
   },
   {
     "C": "GRAND TOTAL",
