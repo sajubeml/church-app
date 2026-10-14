@@ -3821,6 +3821,61 @@ function renderTrialBalance() {
   }
 }
 
+let currentBsPreset = 'FULL';
+
+function setBalanceSheetPreset(preset) {
+  currentBsPreset = preset;
+  const fromEl = document.getElementById("txtBsFromDate");
+  const toEl = document.getElementById("txtBsToDate");
+
+  if (preset === 'FULL') {
+    if (fromEl) fromEl.value = "2026-04-01";
+    if (toEl) toEl.value = "2027-03-31";
+  } else if (preset === 'HALF') {
+    if (fromEl) fromEl.value = "2026-04-01";
+    if (toEl) toEl.value = "2026-09-30";
+  } else if (preset === 'Q1') {
+    if (fromEl) fromEl.value = "2026-04-01";
+    if (toEl) toEl.value = "2026-06-30";
+  } else if (preset === 'Q2') {
+    if (fromEl) fromEl.value = "2026-07-01";
+    if (toEl) toEl.value = "2026-09-30";
+  }
+
+  const btnFull = document.getElementById("btnBsPresetFull");
+  const btnHalf = document.getElementById("btnBsPresetHalf");
+  const btnQ1 = document.getElementById("btnBsPresetQ1");
+  const btnQ2 = document.getElementById("btnBsPresetQ2");
+  [btnFull, btnHalf, btnQ1, btnQ2].forEach(b => {
+    if (b) {
+      b.style.background = "";
+      b.style.color = "";
+      b.style.borderColor = "";
+    }
+  });
+
+  const activeBtn = preset === 'FULL' ? btnFull : preset === 'HALF' ? btnHalf : preset === 'Q1' ? btnQ1 : btnQ2;
+  if (activeBtn) {
+    activeBtn.style.background = "#2563eb";
+    activeBtn.style.color = "#ffffff";
+    activeBtn.style.borderColor = "#2563eb";
+  }
+
+  renderBalanceSheet();
+}
+
+function getBalanceSheetExportFilename() {
+  const fromEl = document.getElementById("txtBsFromDate");
+  const toEl = document.getElementById("txtBsToDate");
+  const fromVal = fromEl && fromEl.value ? fromEl.value : "2026-04-01";
+  const toVal = toEl && toEl.value ? toEl.value : "2027-03-31";
+
+  if (fromVal === "2026-04-01" && toVal === "2026-09-30") {
+    return "St_Gregorios_Half_Yearly_Audited_Balance_Sheet_30_09_2026";
+  }
+  return `St_Gregorios_Balance_Sheet_${fromVal}_to_${toVal}`;
+}
+
 function renderBalanceSheet() {
   const tbody = document.getElementById("bsTbody");
   const tfoot = document.getElementById("bsTfoot");
@@ -3830,16 +3885,38 @@ function renderBalanceSheet() {
 
   const normalizeCode = (c) => String(c || "").replace(/^RP[-\s]*/i, "RP-").replace(/\s+/g, '').toUpperCase();
 
-  // 1. Get live opening & closing balances from Cashbook Brain
-  const totals = calculateCashbookTotals();
-  const openingCash = totals.openingCash || 0;
-  const openingBank = totals.openingBank || 0;
-  const closingCash = totals.closingCash || 0;
-  const closingBank = totals.closingBank || 0;
-  const grandClosing = totals.grandClosing || 0;
-  const openingTotal = openingCash + openingBank;
+  // Date Range extraction
+  const fromEl = document.getElementById("txtBsFromDate");
+  const toEl = document.getElementById("txtBsToDate");
+  const fromVal = fromEl && fromEl.value ? fromEl.value : "2026-04-01";
+  const toVal = toEl && toEl.value ? toEl.value : "2027-03-31";
 
-  // 2. Aggregate live amounts by code from state.cashbook
+  const startKey = parseDateForSort(fromVal);
+  const endKey = parseDateForSort(toVal);
+
+  const titleEl = document.getElementById("bsStatementTitle");
+  const subtitleEl = document.getElementById("bsStatementSubtitle");
+  const isHalfYearly = (startKey === 20260401 && endKey === 20260930);
+
+  if (titleEl) {
+    titleEl.textContent = isHalfYearly 
+      ? "📑 Half-Yearly Audited Statement of Receipts & Payments / Balance Sheet"
+      : "📑 Audited Statement of Receipts & Payments / Balance Sheet";
+  }
+  if (subtitleEl) {
+    subtitleEl.textContent = isHalfYearly
+      ? "Audited for Presentation to Annual General Body Meeting (AGM) | Period: 01-April-2026 to 30-September-2026"
+      : `Complete Statement with Opening & Closing Cash & Bank Balances | Period: ${fromVal} to ${toVal}`;
+  }
+
+  // 1. Get baseline FY Opening Balances (01/04/2026)
+  const totals = calculateCashbookTotals();
+  const fyOpCash = totals.openingCash || 9879.0;
+  const fyOpBank = totals.openingBank || 651682.0;
+
+  let priorCashR = 0, priorBankR = 0, priorCashP = 0, priorBankP = 0;
+  let rangeCashR = 0, rangeBankR = 0, rangeCashP = 0, rangeBankP = 0;
+
   const receiptTotalsByCode = {};
   const paymentTotalsByCode = {};
   const receiptHeadNames = {};
@@ -3853,56 +3930,83 @@ function renderBalanceSheet() {
         return comb.includes('cash deposited') || comb.includes('contra') || comb.includes('cash to bank') || comb.includes('excess cash deposited') || codeTrim === 'CD' || codeTrim === 'RP-1.03';
       };
 
-      // Receipts
-      let rCodeRaw = getColVal(row, "F");
+      const dtRRaw = getColVal(row, "A");
+      const dtPRaw = getColVal(row, "K") || dtRRaw;
+      const dtRKey = parseDateForSort(dtRRaw);
+      const dtPKey = parseDateForSort(dtPRaw);
+
       const rHeadRaw = getColVal(row, "E").trim();
       const rDetailsRaw = getColVal(row, "G").trim();
+      let rCodeRaw = getColVal(row, "F");
 
-      if (isContraEntry(rHeadRaw, rDetailsRaw, rCodeRaw) || rHeadRaw.toLowerCase().includes("opening") || rDetailsRaw.toLowerCase().includes("opening balance")) {
-        // Excluded from operational receipts
-      } else {
-        if (!rCodeRaw && rDetailsRaw.toLowerCase().includes("kanika on 3-5-26")) {
-          rCodeRaw = "RP-3.10";
-        }
-        if (rCodeRaw && rHeadRaw.toLowerCase().includes("sunday school day collection")) {
-          rCodeRaw = "RP-10.14";
-        }
+      const pHeadRaw = getColVal(row, "M").trim();
+      const pDetailsRaw = getColVal(row, "O").trim();
+      let pCodeRaw = getColVal(row, "N");
 
-        let recNorm = normalizeCode(rCodeRaw);
-        if (!recNorm && rHeadRaw) {
-          recNorm = "RP-MISC";
-        }
+      const hR = parseFloat(String(getColVal(row, "H")).replace(/,/g, '')) || 0;
+      const iR = parseFloat(String(getColVal(row, "I")).replace(/,/g, '')) || 0;
+      const pP = parseFloat(String(getColVal(row, "P")).replace(/,/g, '')) || 0;
+      const qP = parseFloat(String(getColVal(row, "Q")).replace(/,/g, '')) || 0;
 
-        const hR = parseFloat(String(getColVal(row, "H")).replace(/,/g, '')) || 0;
-        const iR = parseFloat(String(getColVal(row, "I")).replace(/,/g, '')) || 0;
-        const totalR = (hR > 0 && !isNaN(hR) ? hR : 0) + (iR > 0 && !isNaN(iR) ? iR : 0);
+      const isOpening = rHeadRaw.toLowerCase().includes("opening") || rDetailsRaw.toLowerCase().includes("opening balance");
+      if (isOpening) return;
 
-        if (recNorm && totalR > 0) {
-          receiptTotalsByCode[recNorm] = (receiptTotalsByCode[recNorm] || 0) + totalR;
-          if (rHeadRaw) receiptHeadNames[recNorm] = rHeadRaw;
+      // Receipts
+      if (hR > 0 || iR > 0 || rCodeRaw || rHeadRaw) {
+        if (dtRKey < startKey) {
+          priorCashR += hR;
+          priorBankR += iR;
+        } else if (dtRKey <= endKey) {
+          rangeCashR += hR;
+          rangeBankR += iR;
+          if (!isContraEntry(rHeadRaw, rDetailsRaw, rCodeRaw)) {
+            if (!rCodeRaw && rDetailsRaw.toLowerCase().includes("kanika on 3-5-26")) {
+              rCodeRaw = "RP-3.10";
+            }
+            if (rCodeRaw && rHeadRaw.toLowerCase().includes("sunday school day collection")) {
+              rCodeRaw = "RP-10.14";
+            }
+            let recNorm = normalizeCode(rCodeRaw);
+            if (!recNorm && rHeadRaw) recNorm = "RP-MISC";
+            const totR = hR + iR;
+            if (recNorm && totR > 0) {
+              receiptTotalsByCode[recNorm] = (receiptTotalsByCode[recNorm] || 0) + totR;
+              if (rHeadRaw) receiptHeadNames[recNorm] = rHeadRaw;
+            }
+          }
         }
       }
 
       // Payments
-      let pCodeRaw = getColVal(row, "N");
-      const pHeadRaw = getColVal(row, "M").trim();
-      const pDetailsRaw = getColVal(row, "O").trim();
-
-      if (isContraEntry(pHeadRaw, pDetailsRaw, pCodeRaw)) {
-        // Excluded contra
-      } else {
-        const payNorm = normalizeCode(pCodeRaw);
-        const pP = parseFloat(String(getColVal(row, "P")).replace(/,/g, '')) || 0;
-        const qP = parseFloat(String(getColVal(row, "Q")).replace(/,/g, '')) || 0;
-        const totalP = (pP > 0 && !isNaN(pP) ? pP : 0) + (qP > 0 && !isNaN(qP) ? qP : 0);
-
-        if (payNorm && totalP > 0) {
-          paymentTotalsByCode[payNorm] = (paymentTotalsByCode[payNorm] || 0) + totalP;
-          if (pHeadRaw) paymentHeadNames[payNorm] = pHeadRaw;
+      if (pP > 0 || qP > 0 || pCodeRaw || pHeadRaw) {
+        if (dtPKey < startKey) {
+          priorCashP += pP;
+          priorBankP += qP;
+        } else if (dtPKey <= endKey) {
+          rangeCashP += pP;
+          rangeBankP += qP;
+          if (!isContraEntry(pHeadRaw, pDetailsRaw, pCodeRaw)) {
+            const payNorm = normalizeCode(pCodeRaw);
+            const totP = pP + qP;
+            if (payNorm && totP > 0) {
+              paymentTotalsByCode[payNorm] = (paymentTotalsByCode[payNorm] || 0) + totP;
+              if (pHeadRaw) paymentHeadNames[payNorm] = pHeadRaw;
+            }
+          }
         }
       }
     });
   }
+
+  // Effective Opening Balances for this period
+  const periodOpCash = fyOpCash + priorCashR - priorCashP;
+  const periodOpBank = fyOpBank + priorBankR - priorBankP;
+  const periodOpTotal = periodOpCash + periodOpBank;
+
+  // Effective Closing Balances at end of period
+  const periodClCash = periodOpCash + rangeCashR - rangeCashP;
+  const periodClBank = periodOpBank + rangeBankR - rangeBankP;
+  const periodClTotal = periodClCash + periodClBank;
 
   // Master accounts
   const allReceiptHeads = getAllAccountHeads("RECEIPT");
@@ -3949,16 +4053,16 @@ function renderBalanceSheet() {
 
   // Update Stat Cards & Financial Position Cards
   const elBsOp = document.getElementById("bsOpLiquidity");
-  if (elBsOp) elBsOp.textContent = formatCurrency(openingTotal);
+  if (elBsOp) elBsOp.textContent = formatCurrency(periodOpTotal);
   const elBsRc = document.getElementById("bsTotalReceipts");
   if (elBsRc) elBsRc.textContent = formatCurrency(totalReceiptsCollected);
   const elBsPy = document.getElementById("bsTotalPayments");
   if (elBsPy) elBsPy.textContent = formatCurrency(totalPaymentsIncurred);
   const elBsCl = document.getElementById("bsClLiquidity");
-  if (elBsCl) elBsCl.textContent = formatCurrency(grandClosing);
+  if (elBsCl) elBsCl.textContent = formatCurrency(periodClTotal);
 
   const elPosOpFund = document.getElementById("bsPosOpFund");
-  if (elPosOpFund) elPosOpFund.textContent = formatCurrency(openingTotal);
+  if (elPosOpFund) elPosOpFund.textContent = formatCurrency(periodOpTotal);
   const netSurplus = totalReceiptsCollected - totalPaymentsIncurred;
   const elPosSurplus = document.getElementById("bsPosSurplus");
   if (elPosSurplus) {
@@ -3966,26 +4070,30 @@ function renderBalanceSheet() {
     elPosSurplus.style.color = netSurplus >= 0 ? "#059669" : "#dc2626";
   }
   const elPosTotalLiab = document.getElementById("bsPosTotalLiab");
-  if (elPosTotalLiab) elPosTotalLiab.textContent = formatCurrency(openingTotal + netSurplus);
+  if (elPosTotalLiab) elPosTotalLiab.textContent = formatCurrency(periodOpTotal + netSurplus);
 
   const elPosCash = document.getElementById("bsPosCash");
-  if (elPosCash) elPosCash.textContent = formatCurrency(closingCash);
+  if (elPosCash) elPosCash.textContent = formatCurrency(periodClCash);
   const elPosBank = document.getElementById("bsPosBank");
-  if (elPosBank) elPosBank.textContent = formatCurrency(closingBank);
+  if (elPosBank) elPosBank.textContent = formatCurrency(periodClBank);
   const elPosTotalAssets = document.getElementById("bsPosTotalAssets");
-  if (elPosTotalAssets) elPosTotalAssets.textContent = formatCurrency(grandClosing);
+  if (elPosTotalAssets) elPosTotalAssets.textContent = formatCurrency(periodClTotal);
+
+  // Label for Opening & Closing in table
+  const opLabelDate = startKey === 20260401 ? "(01/04/2026)" : `(${fromVal})`;
+  const clLabelDate = endKey === 20260930 ? "(30/09/2026)" : `(${toVal})`;
 
   // 3. Assemble Balanced Statement Rows
   const debitRows = [
-    { code: "RP-1.01", name: "Opening Balance - Cash in Hand (01/04/2026)", amount: openingCash, isSpecial: true },
-    { code: "RP-1.02", name: "Opening Balance - Cash at Bank (01/04/2026)", amount: openingBank, isSpecial: true }
+    { code: "RP-1.01", name: `Opening Balance - Cash in Hand ${opLabelDate}`, amount: periodOpCash, isSpecial: true },
+    { code: "RP-1.02", name: `Opening Balance - Cash at Bank ${opLabelDate}`, amount: periodOpBank, isSpecial: true }
   ];
   activeReceiptHeads.forEach(h => debitRows.push({ code: h.code, name: h.name, amount: h.amount, isSpecial: false }));
 
   const creditRows = [];
   activePaymentHeads.forEach(h => creditRows.push({ code: h.code, name: h.name, amount: h.amount, isSpecial: false }));
-  creditRows.push({ code: "CB-CASH", name: "Closing Balance - Cash in Hand", amount: closingCash, isSpecial: true });
-  creditRows.push({ code: "CB-BANK", name: "Closing Balance - Federal Bank SB A/c", amount: closingBank, isSpecial: true });
+  creditRows.push({ code: "CB-CASH", name: `Closing Balance - Cash in Hand ${clLabelDate}`, amount: periodClCash, isSpecial: true });
+  creditRows.push({ code: "CB-BANK", name: `Closing Balance - Federal Bank SB A/c ${clLabelDate}`, amount: periodClBank, isSpecial: true });
 
   const maxRows = Math.max(debitRows.length, creditRows.length);
   let totalDebit = 0;
@@ -4041,7 +4149,7 @@ function renderBalanceSheet() {
           ${isBalanced ? '✅ PERFECTLY BALANCED STATEMENT (Variance: ₹0.00)' : '⚠️ Statement Variance: ' + formatCurrency(variance)}
         </td>
         <td colspan="3" style="color:${isBalanced ? '#059669' : '#dc2626'}; text-align:center;">
-          ${isBalanced ? 'Net Cash & Bank Liquidity: ' + formatCurrency(grandClosing) : 'Out of balance'}
+          ${isBalanced ? 'Net Cash & Bank Liquidity: ' + formatCurrency(periodClTotal) : 'Out of balance'}
         </td>
       </tr>
     `;

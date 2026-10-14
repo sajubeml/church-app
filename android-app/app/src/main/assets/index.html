@@ -390,6 +390,32 @@ window.addEventListener("unhandledrejection", function(e) {
 
     <!-- TAB: BALANCE SHEET / FINANCIAL STATEMENT -->
     <div class="tab-pane" id="tabBalanceSheet">
+      <!-- Date Range & Period Filter Bar -->
+      <div class="card" style="margin-bottom: 1.25rem; padding: 0.85rem 1.25rem; background: #ffffff; border-radius: 10px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+          <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <span style="font-weight:700; font-size:0.85rem; color:var(--primary-color);">📅 Statement Period:</span>
+            <button class="btn btn-secondary bs-period-btn" id="btnBsPresetFull" onclick="setBalanceSheetPreset('FULL')" style="padding:4px 10px; font-size:0.78rem; font-weight:700; border-radius:6px; background:#2563eb; color:#ffffff; border-color:#2563eb;">Full Year</button>
+            <button class="btn btn-secondary bs-period-btn" id="btnBsPresetHalf" onclick="setBalanceSheetPreset('HALF')" style="padding:4px 10px; font-size:0.78rem; font-weight:700; border-radius:6px; background:#eff6ff; color:#2563eb; border-color:#bfdbfe;">⭐ Half-Yearly (Apr-Sep)</button>
+            <button class="btn btn-secondary bs-period-btn" id="btnBsPresetQ1" onclick="setBalanceSheetPreset('Q1')" style="padding:4px 10px; font-size:0.78rem; font-weight:700; border-radius:6px;">Q1 (Apr-Jun)</button>
+            <button class="btn btn-secondary bs-period-btn" id="btnBsPresetQ2" onclick="setBalanceSheetPreset('Q2')" style="padding:4px 10px; font-size:0.78rem; font-weight:700; border-radius:6px;">Q2 (Jul-Sep)</button>
+          </div>
+
+          <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:0.35rem;">
+              <label for="txtBsFromDate" style="font-size:0.8rem; font-weight:700; color:#64748b; margin:0;">From:</label>
+              <input type="date" id="txtBsFromDate" value="2026-04-01" class="form-control" style="font-size:0.8rem; padding:4px 8px; width:auto; border-radius:6px;" onchange="renderBalanceSheet()">
+            </div>
+            <div style="display:flex; align-items:center; gap:0.35rem;">
+              <label for="txtBsToDate" style="font-size:0.8rem; font-weight:700; color:#64748b; margin:0;">To:</label>
+              <input type="date" id="txtBsToDate" value="2027-03-31" class="form-control" style="font-size:0.8rem; padding:4px 8px; width:auto; border-radius:6px;" onchange="renderBalanceSheet()">
+            </div>
+            <button class="btn btn-primary" onclick="renderBalanceSheet()" style="padding:4px 12px; font-size:0.8rem; font-weight:700; border-radius:6px;">🔍 Apply</button>
+            <button class="btn btn-outline" onclick="setBalanceSheetPreset('FULL')" style="padding:4px 10px; font-size:0.8rem; border-radius:6px;">🔄 Reset</button>
+          </div>
+        </div>
+      </div>
+
       <!-- Top Stat Cards -->
       <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-bottom: 1.25rem;">
         <div class="stat-card" style="background:#f8fafc; border-left:4px solid var(--primary-color);">
@@ -429,14 +455,14 @@ window.addEventListener("unhandledrejection", function(e) {
       <div class="card">
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
           <div>
-            <span style="font-size:1.1rem; font-weight:700;">📑 Audited Balance Sheet & Financial Statement</span>
-            <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:2px;">Complete Statement of Receipts & Payments with Opening & Closing Cash & Bank Balances</span>
+            <span style="font-size:1.1rem; font-weight:700;" id="bsStatementTitle">📑 Audited Balance Sheet & Financial Statement</span>
+            <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:2px;" id="bsStatementSubtitle">Complete Statement of Receipts & Payments with Opening & Closing Cash & Bank Balances</span>
           </div>
           <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
-            <button class="btn btn-pdf" onclick="exportTableToPDF('balanceSheetTable', 'St_Gregorios_Balance_Sheet')" style="font-size:0.825rem; padding:6px 12px;">
+            <button class="btn btn-pdf" onclick="exportTableToPDF('balanceSheetTable', getBalanceSheetExportFilename())" style="font-size:0.825rem; padding:6px 12px;">
               📄 Export to PDF
             </button>
-            <button class="btn btn-excel" onclick="exportTableToExcel('balanceSheetTable', 'St_Gregorios_Balance_Sheet')" style="font-size:0.825rem; padding:6px 12px;">
+            <button class="btn btn-excel" onclick="exportTableToExcel('balanceSheetTable', getBalanceSheetExportFilename())" style="font-size:0.825rem; padding:6px 12px;">
               📊 Export Balance Sheet to Excel (.xlsx)
             </button>
           </div>
@@ -1099,6 +1125,6 @@ window.addEventListener("unhandledrejection", function(e) {
   <script src="bulk_pdf.js?v=11.7.2"></script>
   <script src="logo_data.js?v=10.8"></script>
   <script src="data.js?v=3.6"></script>
-  <script src="app.js?v=11.14"></script>
+  <script src="app.js?v=11.15"></script>
 </body>
 </html>
