@@ -1,10 +1,10 @@
 # St. Gregorios Orthodox Syrian Church Accounting Portal
-## Master Handover Document & System Architecture Guide (v11.15)
+## Master Handover Document & System Architecture Guide (v11.16)
 
 **Church:** St. Gregorios Orthodox Syrian Church & Pilgrim Centre, Mysuru  
 **Workspace Root:** `C:\CASHBOOK_APP`  
-**Current Active Version:** **v11.15** (Android `versionCode 78` / Web / Cloud / Offline PC)  
-**Date of Release:** October 14, 2026  
+**Current Active Version:** **v11.16** (Android `versionCode 79` / Web / Cloud / Offline PC)  
+**Date of Release:** October 17, 2026  
 **Git Remote Origin:** `https://github.com/sajubeml/Church_account.git` (Main Codebase Backup)  
 **Git Remote Church-App:** `https://github.com/sajubeml/church-app.git` (GitHub Pages Live Site)  
 **Live GitHub Pages Site:** `https://sajubeml.github.io/church-app/`  
@@ -31,7 +31,19 @@ The **St. Gregorios Church Accounting Portal** is a cross-platform financial acc
 
 ---
 
-## 2. Key Updates & Bug Fixes in v11.11 – v11.13
+## 2. Key Updates in v11.16 (October 17, 2026)
+
+### A. Digital Signature Integration into Receipts & Vouchers
+* **Requirement:** Add the Vicar / Trustee handwritten signature to receipts without disturbing any calculations, accounting ledger sync, or print layouts.
+* **Implementation:**
+  - **Clean Ink Extraction:** Digitally cleaned paper texture, shadows, and dust flecks from the signature photograph to produce a sharp, transparent 480x281 PNG (`signature.png`).
+  - **Embedded Base64:** Injected as `window.CHURCH_SIGNATURE_BASE64` into `logo_data.js`, ensuring self-contained offline rendering and 100% immunity from `Tainted canvas` errors during PDF export.
+  - **A5 Layout Preservation:** Formatted seamlessly inside the signatory block above `Vicar / Trustee` (`height: 34px; max-width: 120px;`). The flex spacer absorbs any extra space, strictly keeping the receipt card height at `172mm` with zero print spillover.
+  - **Synchronized Deployment:** Integrated across Android assets (`full` and `fresh` releases), desktop launcher, GitHub Pages, cPanel deployment files, and offline portable ZIP.
+
+---
+
+## 3. Key Updates & Bug Fixes in v11.11 – v11.15
 
 ### A. Receipt Item Row Spacing & Grid Borders (v11.13 - Major Fix)
 * **Problem:** In newly generated receipts (e.g., RT4472), receipt items had huge 3–4 inch blank gaps between them, whereas admin reprints looked compact and clean.

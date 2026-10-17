@@ -21,6 +21,7 @@ FILES_TO_COPY = [
     "app.js",
     "church_logo.png",
     "church_logo.jpg",
+    "signature.png",
     "church_automation.py",
     "convert_xlsm_data.py",
     "build_data_js.py",

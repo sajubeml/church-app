@@ -2136,7 +2136,10 @@ function showReceiptModal() {
         </div>
         <div style="flex:1;"></div>
         <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
-          <div style="text-align:right;">Vicar / Trustee: ___________________</div>
+          <div style="text-align:center; min-width:130px;">
+            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" alt="Signature" style="height:34px; max-width:120px; object-fit:contain; display:block; margin:0 auto 2px auto;">
+            <div style="border-top:1px solid #1e293b; padding-top:2px;">Vicar / Trustee</div>
+          </div>
         </div>
         <div style="text-align:center; font-size:8.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:4px; margin-top:3px; font-weight:600; font-style:italic;">
           ✓ Computer Generated Document — Digitally Signed &amp; Authenticated
@@ -2169,7 +2172,10 @@ function showReceiptModal() {
         </div>
         <div style="flex:1;"></div>
         <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
-          <div style="text-align:right;">Vicar / Trustee: ___________________</div>
+          <div style="text-align:center; min-width:130px;">
+            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" alt="Signature" style="height:34px; max-width:120px; object-fit:contain; display:block; margin:0 auto 2px auto;">
+            <div style="border-top:1px solid #1e293b; padding-top:2px;">Vicar / Trustee</div>
+          </div>
         </div>
         <div style="text-align:center; font-size:8.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:4px; margin-top:3px; font-weight:600; font-style:italic;">
           ✓ Computer Generated Document — Digitally Signed &amp; Authenticated
@@ -2216,6 +2222,9 @@ function autoSaveReceiptPdf(docNo, prefix, containerOrHtml) {
         }
         if (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) {
           innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
+        }
+        if (typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) {
+          innerHtml = innerHtml.replace(/src="[^"]*signature[^"]*"/g, `src="${window.CHURCH_SIGNATURE_BASE64}"`);
         }
         const wrappedHtml = `<div style="width:148mm; background:#ffffff; margin:0; padding:0; box-sizing:border-box;">
           <style>
@@ -2297,6 +2306,9 @@ function prepareCleanA5PdfElement(containerOrHtml) {
   // Embed church logo as base64 if available to avoid any cross-origin/loading delays in html2canvas
   if (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) {
     innerHtml = innerHtml.replace(/src="[^"]*church_logo[^"]*"/g, `src="${window.CHURCH_LOGO_BASE64}"`);
+  }
+  if (typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) {
+    innerHtml = innerHtml.replace(/src="[^"]*signature[^"]*"/g, `src="${window.CHURCH_SIGNATURE_BASE64}"`);
   }
 
   // Outer wrapper: must be on-screen and visible for html2canvas to rasterize it.
@@ -2734,6 +2746,12 @@ async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
     cleanContent = cleanContent
       .replace(/src="church_logo\.png"/g, 'src="../church_logo.png"')
       .replace(/src="church_logo\.jpg"/g, 'src="../church_logo.jpg"');
+  }
+  const sigBase64 = (typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : null;
+  if (sigBase64) {
+    cleanContent = cleanContent.replace(/src="[^"]*signature[^"]*"/g, `src="${sigBase64}"`);
+  } else {
+    cleanContent = cleanContent.replace(/src="signature\.png"/g, 'src="../signature.png"');
   }
 
   const fullHtml = `<!DOCTYPE html>
@@ -5613,7 +5631,10 @@ function reprintTxnDocument(type, docNo, index) {
           <div style="font-size:11px; font-weight:normal; font-style:italic; margin-top:2px;">(${totalWords})</div>
         </div>
         <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-bottom:8px;">
-          <div style="text-align:right;">Vicar / Trustee: ___________________</div>
+          <div style="text-align:center; min-width:130px;">
+            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" alt="Signature" style="height:34px; max-width:120px; object-fit:contain; display:block; margin:0 auto 2px auto;">
+            <div style="border-top:1px solid #1e293b; padding-top:2px;">Vicar / Trustee</div>
+          </div>
         </div>
         <div style="text-align:center; font-size:9.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:6px; font-weight:600; font-style:italic;">
           ✓ Computer Generated Document — Digitally Signed & Authenticated
@@ -5647,7 +5668,10 @@ function reprintTxnDocument(type, docNo, index) {
           <div style="font-size:11px; font-weight:normal; font-style:italic; margin-top:2px;">(${totalWords})</div>
         </div>
         <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-bottom:8px;">
-          <div style="text-align:right;">Vicar / Trustee: ___________________</div>
+          <div style="text-align:center; min-width:130px;">
+            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" alt="Signature" style="height:34px; max-width:120px; object-fit:contain; display:block; margin:0 auto 2px auto;">
+            <div style="border-top:1px solid #1e293b; padding-top:2px;">Vicar / Trustee</div>
+          </div>
         </div>
         <div style="text-align:center; font-size:9.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:6px; font-weight:600; font-style:italic;">
           ✓ Computer Generated Document — Digitally Signed & Authenticated

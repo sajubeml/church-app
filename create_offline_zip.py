@@ -5,7 +5,7 @@ import zipfile
 base_dir = r"c:\CASHBOOK_APP"
 target_folder_name = "St_Gregorios_Church_Accounting_Offline"
 staging_dir = os.path.join(base_dir, "temp_offline_staging", target_folder_name)
-zip_name_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Offline_PC_v11.15.zip")
+zip_name_v11 = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Offline_PC_v11.16.zip")
 zip_name_latest = os.path.join(base_dir, "St_Gregorios_Church_Accounting_Offline_PC.zip")
 
 # Recreate staging directory
@@ -24,6 +24,7 @@ files_map = [
     ("logo_data.js", "logo_data.js"),
     ("church_logo.png", "church_logo.png"),
     ("church_logo.jpg", "church_logo.jpg"),
+    ("signature.png", "signature.png"),
     ("html2pdf.bundle.min.js", "html2pdf.bundle.min.js"),
     ("jszip.min.js", "jszip.min.js"),
     ("bulk_pdf.js", "bulk_pdf.js"),
@@ -51,7 +52,7 @@ print("Created: Receipts directory")
 readme_text = """============================================================
  ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE
  Offline Accounting Portal (Windows Standalone)
- Version 11.13
+ Version 11.16
 ============================================================
 
 HOW TO USE ON THIS PC (100% OFFLINE - NO INTERNET NEEDED):

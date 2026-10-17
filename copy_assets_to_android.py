@@ -15,6 +15,7 @@ files_to_copy = [
     ("app.js", "app.js"),
     ("church_logo.png", "church_logo.png"),
     ("church_logo.jpg", "church_logo.jpg"),
+    ("signature.png", "signature.png"),
     ("logo_data.js", "logo_data.js"),
     ("html2pdf.bundle.min.js", "html2pdf.bundle.min.js")
 ]
