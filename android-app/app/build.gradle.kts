@@ -30,16 +30,12 @@ android {
         create("full") {
             dimension = "version"
             applicationId = "com.stgregorios.churchaccounting"
-            versionCode = 72
-            versionName = "11.5"
             resValue("string", "app_name", "St Gregorios Church Accounting")
             signingConfig = signingConfigs.getByName("release")
         }
         create("fresh") {
             dimension = "version"
             applicationId = "com.stgregorios.churchaccounting.fresh"
-            versionCode = 72
-            versionName = "11.5"
             resValue("string", "app_name", "St Gregorios Church Accounting (Fresh)")
             signingConfig = signingConfigs.getByName("release")
         }
