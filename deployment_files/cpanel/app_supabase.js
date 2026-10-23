@@ -4014,10 +4014,9 @@ function renderBalanceSheet() {
       const qP = parseFloat(String(getColVal(row, "Q")).replace(/,/g, '')) || 0;
 
       const isOpening = rHeadRaw.toLowerCase().includes("opening") || rDetailsRaw.toLowerCase().includes("opening balance");
-      if (isOpening) return;
 
-      // Receipts
-      if (hR > 0 || iR > 0 || rCodeRaw || rHeadRaw) {
+      // Receipts (skip Opening Balance as it is captured in baseline opening funds)
+      if (!isOpening && (hR > 0 || iR > 0 || rCodeRaw || rHeadRaw)) {
         if (dtRKey < startKey) {
           priorCashR += hR;
           priorBankR += iR;
