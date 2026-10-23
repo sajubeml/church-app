@@ -422,6 +422,8 @@ async function loadAllData() {
               const codeStr = String(item.code || "").trim().toUpperCase();
               if (codeStr === "RP-3.82" || codeStr === "RP-3.83" || partStr.includes("subscription")) {
                 targetColKey = "E";
+              } else if (codeStr === "RP-3.66" || codeStr === "RP-3.61" || codeStr === "RP-10.14" || codeStr === "RP-19.22" || partStr.includes("ovbs") || partStr.includes("sunday school")) {
+                targetColKey = "Q";
               } else {
                 for (let key in headerRow) {
                   const title = String(headerRow[key] || "").trim().toLowerCase();
@@ -449,7 +451,8 @@ async function loadAllData() {
                     (partStr.includes("mission") && title.includes("mission")) ||
                     (partStr.includes("seminary") && title.includes("seminary")) ||
                     (partStr.includes("priest") && title.includes("priest")) ||
-                    (partStr.includes("sunday school") && title.includes("sunday school")) ||
+                    (partStr.includes("sunday school") && (title.includes("sunday school") || title.includes("ovbs"))) ||
+                    (partStr.includes("ovbs") && (title.includes("ovbs") || title.includes("sunday school"))) ||
                     (partStr.includes("harvest") && title.includes("harvest")) ||
                     (partStr.includes("christmas") && title.includes("christmas")) ||
                     title.includes(partStr) || partStr.includes(title)
@@ -571,6 +574,13 @@ async function loadAllData() {
     if (savedVouNo) {
       const parsedVou = parseInt(savedVouNo, 10);
       if (!isNaN(parsedVou)) state.currentVoucherNo = parsedVou;
+    }
+
+    if (state.individual && state.individual.length >= 4 && state.individual[3]) {
+      const currentQ = String(state.individual[3]["Q"] || "").trim().toLowerCase();
+      if (currentQ.includes("sunday school") && !currentQ.includes("ovbs")) {
+        state.individual[3]["Q"] = "Sunday School / OVBS";
+      }
     }
 
     calculateNextNumbers();
@@ -1804,6 +1814,11 @@ function findIndividualColKey(item) {
     return "E";
   }
 
+  // Combine Sunday School & OVBS under Column Q "Sunday School / OVBS"
+  if (codeStr === "RP-3.66" || codeStr === "RP-3.61" || codeStr === "RP-10.14" || codeStr === "RP-19.22" || partStr.includes("ovbs") || partStr.includes("sunday school")) {
+    return "Q";
+  }
+
   for (let key in headerRow) {
     const title = String(headerRow[key] || "").trim().toLowerCase();
     if (!title) continue;
@@ -1831,7 +1846,8 @@ function findIndividualColKey(item) {
       (partStr.includes("mission") && title.includes("mission")) ||
       (partStr.includes("seminary") && title.includes("seminary")) ||
       (partStr.includes("priest") && title.includes("priest")) ||
-      (partStr.includes("sunday school") && title.includes("sunday school")) ||
+      (partStr.includes("sunday school") && (title.includes("sunday school") || title.includes("ovbs"))) ||
+      (partStr.includes("ovbs") && (title.includes("ovbs") || title.includes("sunday school"))) ||
       (partStr.includes("harvest") && title.includes("harvest")) ||
       (partStr.includes("christmas") && title.includes("christmas")) ||
       title.includes(partStr) || partStr.includes(title)
@@ -3233,7 +3249,7 @@ function findIndividualColKey({ head, code }) {
   if (head.includes("birthday offering") || code === "RP-3.16") return "N";
   if (head.includes("baptism") || code === "RP-3.14") return "O";
   if (head.includes("orma qurbana") || head.includes("holy qurbana") || code === "RP-3.12") return "P";
-  if (head.includes("sunday school day collection") || head.includes("sunday school") || code === "RP-19.22" || code === "RP-10.14") return "Q";
+  if (head.includes("sunday school day collection") || head.includes("sunday school") || head.includes("ovbs") || code === "RP-19.22" || code === "RP-10.14" || code === "RP-3.66" || code === "RP-3.61") return "Q";
   if (head.includes("st.gregorios feast") || code === "RP-3.33") return "R";
   if (head.includes("parish day") || code === "RP-2.12") return "S";
   if (head.includes("christmas") || head.includes("new year") || code === "RP-3.11") return "T";
@@ -3282,13 +3298,19 @@ function renderIndividualLedgers() {
 
   // 1. Identify Row 4 (Excel row 4) as headers
   let headerRow = allRows[3] || {};
+  if (headerRow["Q"] && !String(headerRow["Q"]).toLowerCase().includes("ovbs")) {
+    headerRow["Q"] = "Sunday School / OVBS";
+  }
 
   // 2. Build list of dynamic income columns (E through AL)
   const incomeCols = [];
   for (let key in headerRow) {
     const colLetter = key.replace(/[^A-Za-z]/g, '').toUpperCase();
     if (colLetter !== "A" && colLetter !== "B" && colLetter !== "C" && colLetter !== "D" && colLetter !== "AM") {
-      const title = String(headerRow[key] || "").trim();
+      let title = String(headerRow[key] || "").trim().replace(/\n/g, '<br>');
+      if (colLetter === "Q" && !title.toLowerCase().includes("ovbs")) {
+        title = "Sunday School / OVBS";
+      }
       if (title && title.toLowerCase() !== "grand total") {
         if (!incomeCols.some(c => c.key === colLetter)) {
           incomeCols.push({ key: colLetter, title });
@@ -6028,6 +6050,12 @@ function processBackupRestoreData(jsonText) {
             Array.isArray(data.Members) && !data.masterMembers ? data.Members : null;
 
       if (Array.isArray(indArr)) {
+        if (indArr.length >= 4 && indArr[3]) {
+          const currentQ = String(indArr[3]["Q"] || "").trim().toLowerCase();
+          if (currentQ.includes("sunday school") && !currentQ.includes("ovbs")) {
+            indArr[3]["Q"] = "Sunday School / OVBS";
+          }
+        }
         state.individual = indArr;
         localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
       }

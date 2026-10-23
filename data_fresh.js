@@ -808,7 +808,7 @@ window.INITIAL_INDIVIDUAL = [
     "N": "Birthday Offerings",
     "O": "Baptism",
     "P": "Orma Qurbana/Holy Qurbana",
-    "Q": "Sunday School Day Collection",
+    "Q": "Sunday School / OVBS",
     "R": "St.Gregorios Feast ( Annual Feast)",
     "S": "Parish Day/Harvest / Collection",
     "T": "Christmas / New Year Collection",
@@ -1312,6 +1312,7 @@ window.INITIAL_INDIVIDUAL = [
     "A": "34",
     "B": "39",
     "C": "Ittan.A.M",
+    "E": "",
     "F": "",
     "H": "",
     "I": "",
@@ -1453,7 +1454,7 @@ window.INITIAL_INDIVIDUAL = [
   {
     "A": "47",
     "B": "58",
-    "C": "Koshy C. N.",
+    "C": "Kashy C. N.",
     "D": "Apr 26 to march 27",
     "E": "",
     "F": "",
@@ -1559,8 +1560,7 @@ window.INITIAL_INDIVIDUAL = [
     "K": "",
     "N": "",
     "Q": "",
-    "AM": "",
-    "P": ""
+    "AM": ""
   },
   {
     "A": "53",
@@ -1951,6 +1951,7 @@ window.INITIAL_INDIVIDUAL = [
     "A": "84",
     "B": "17",
     "C": "Saju Jacob",
+    "E": "",
     "F": "",
     "N": "",
     "V": "",
@@ -2086,6 +2087,7 @@ window.INITIAL_INDIVIDUAL = [
     "A": "96",
     "B": "177",
     "C": "Sunil Lukose Jesso",
+    "F": "",
     "AE": "",
     "AK": "",
     "AM": ""
@@ -2160,6 +2162,7 @@ window.INITIAL_INDIVIDUAL = [
     "M": "",
     "N": "",
     "Q": "",
+    "AK": "",
     "AM": ""
   },
   {

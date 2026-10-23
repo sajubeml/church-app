@@ -1,10 +1,10 @@
 # St. Gregorios Orthodox Syrian Church Accounting Portal
-## Master Handover Document & System Architecture Guide (v11.16)
+## Master Handover Document & System Architecture Guide (v11.17)
 
 **Church:** St. Gregorios Orthodox Syrian Church & Pilgrim Centre, Mysuru  
 **Workspace Root:** `C:\CASHBOOK_APP`  
-**Current Active Version:** **v11.16** (Android `versionCode 79` / Web / Cloud / Offline PC)  
-**Date of Release:** October 17, 2026  
+**Current Active Version:** **v11.17** (Android `versionCode 80` / Web / Cloud / Offline PC)  
+**Date of Release:** October 23, 2026  
 **Git Remote Origin:** `https://github.com/sajubeml/Church_account.git` (Main Codebase Backup)  
 **Git Remote Church-App:** `https://github.com/sajubeml/church-app.git` (GitHub Pages Live Site)  
 **Live GitHub Pages Site:** `https://sajubeml.github.io/church-app/`  
@@ -18,7 +18,7 @@ The **St. Gregorios Church Accounting Portal** is a cross-platform financial acc
 
 1. **Multi-Target Synchronized Deployment:**
    - **Local Offline PC:** Standalone Windows desktop launcher (`St_Gregorios_Church_Accounting.exe` + `index.html` + `app.js`).
-   - **Android Mobile Application:** Standalone native APK with embedded WebView SQLite/LocalStore (`St_Gregorios_Church_Accounting_v11.13.apk`).
+   - **Android Mobile Application:** Standalone native APK with embedded WebView SQLite/LocalStore (`St_Gregorios_Church_Accounting_v11.17.apk`).
    - **Cloud cPanel Web Portal:** `https://orthodoxchurchmysore.in/accounting/` (Apache/cPanel).
    - **GitHub Pages:** `https://sajubeml.github.io/church-app/`.
    - **Cloud PostgreSQL DB:** Supabase cloud database synchronization (`app_supabase.js`).
@@ -31,7 +31,19 @@ The **St. Gregorios Church Accounting Portal** is a cross-platform financial acc
 
 ---
 
-## 2. Key Updates in v11.16 (October 17, 2026)
+## 2. Key Updates in v11.17 (October 23, 2026)
+
+### A. Appended OVBS Income to Sunday School in Individual Member Ledgers
+* **Requirement:** Group OVBS (Orthodox Vacation Bible School) contributions under Sunday School in the **Individual Member Accounts & Ledgers** tab, renaming the column header to **`Sunday School / OVBS`**.
+* **Implementation:**
+  - `findIndividualColKey({ head, code })` updated in both Cloud (`app_supabase.js`) and Offline/Android (`app.js`) to route `RP-3.66` (OVBS), `RP-10.14` (Sunday School Day Collection), `RP-3.61` (Sunday School), `RP-19.22`, and keywords (`sunday school`, `ovbs`) directly into Column `Q`.
+  - Column `Q` header renamed to **`Sunday School / OVBS`** in the DOM table, Excel export, and PDF export.
+  - Automatic normalization ensures backward compatibility when importing older monolithic JSON backups.
+  - Sunday School collection (₹5,750.00 across 35 members) and OVBS contributions (₹62,000.00 across 23 members / NM) aggregate to a combined total of **₹67,750.00** across individual members.
+
+---
+
+## 3. Key Updates in v11.16 (October 17, 2026)
 
 ### A. Digital Signature Integration into Receipts & Vouchers
 * **Requirement:** Add the Vicar / Trustee handwritten signature to receipts without disturbing any calculations, accounting ledger sync, or print layouts.

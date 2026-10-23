@@ -236,6 +236,8 @@ def check_and_sync_latest_backups():
             except Exception as e:
                 print(f"       [WARN] Trial Balance sync warning: {e}")
         if "individual" in backup_data and len(backup_data["individual"]) > 0:
+            if len(backup_data["individual"]) >= 4 and isinstance(backup_data["individual"][3], dict):
+                backup_data["individual"][3]["Q"] = "Sunday School / OVBS"
             with open(os.path.join(EXPORT_DIR, "Individual.json"), "w", encoding="utf-8") as f:
                 json.dump(backup_data["individual"], f, indent=2)
             print(f"       -> Updated {EXPORT_DIR}/Individual.json")
