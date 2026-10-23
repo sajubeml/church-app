@@ -94,7 +94,6 @@ window.addEventListener("unhandledrejection", function(e) {
         <button class="nav-tab active" data-tab="tabVoucher">💳 New Voucher / Receipt</button>
         <button class="nav-tab" data-tab="tabCashbook">📘 Cash Book</button>
         <button class="nav-tab" data-tab="tabMembers">👥 Individual Member Ledgers</button>
-        <button class="nav-tab" data-tab="tabTrialBalance">⚖️ Trial Balance</button>
         <button class="nav-tab" data-tab="tabBalanceSheet">📑 Balance Sheet</button>
         <button class="nav-tab" data-tab="tabAudit">🔍 Reconciliation Audit</button>
         <button class="nav-tab" data-tab="tabAdmin">🔐 Administration</button>
@@ -402,43 +401,6 @@ window.addEventListener("unhandledrejection", function(e) {
           <button onclick="prevIndivPage()" class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;">⬅️ Previous</button>
           <span id="indivPageLabel" style="font-weight:700; font-size:0.85rem; color:#334155;">Page 1</span>
           <button onclick="nextIndivPage()" class="btn btn-secondary" style="padding:4px 12px; font-size:0.8rem;">Next ➡️</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 4: TRIAL BALANCE -->
-    <div class="tab-pane" id="tabTrialBalance">
-      <div class="card">
-        <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
-          <div>
-            <span>⚖️ Trial Balance Statement</span>
-            <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:2px;">Account Code Ledger Totals</span>
-          </div>
-          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
-            <button class="btn btn-pdf" onclick="exportTableToPDF('trialBalanceTable', 'St_Gregorios_Trial_Balance_Statement')" style="font-size:0.825rem; padding:6px 12px;">
-              📄 Export to PDF
-            </button>
-            <button class="btn btn-excel" onclick="exportTableToExcel('trialBalanceTable', 'St_Gregorios_Trial_Balance_Statement')" style="font-size:0.825rem; padding:6px 12px;">
-              📊 Export Trial Balance to Excel (.xlsx)
-            </button>
-          </div>
-        </div>
-
-        <div class="table-container">
-          <table class="data-table" id="trialBalanceTable">
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Receipts Account Head</th>
-                <th class="text-right">Debit (₹)</th>
-                <th>Code</th>
-                <th>Payments Account Head</th>
-                <th class="text-right">Credit (₹)</th>
-              </tr>
-            </thead>
-            <tbody id="tbTbody"></tbody>
-            <tfoot id="tbTfoot"></tfoot>
-          </table>
         </div>
       </div>
     </div>
@@ -1332,7 +1294,7 @@ window.addEventListener("unhandledrejection", function(e) {
     <script src="html2pdf.bundle.min.js"></script>
     <script src="jszip.min.js"></script>
     <script src="bulk_pdf.js?v=11.7.2"></script>
-    <script src="logo_data.js?v=11.17"></script>
-    <script src="app_supabase.js?v=11.18"></script>
+    <script src="logo_data.js?v=11.19"></script>
+    <script src="app_supabase.js?v=11.19"></script>
 </body>
 </html>
