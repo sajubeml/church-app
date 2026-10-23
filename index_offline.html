@@ -47,6 +47,7 @@ window.addEventListener("unhandledrejection", function(e) {
       <button class="nav-tab" data-tab="tabAudit">🔍 Reconciliation Audit</button>
       <button class="nav-tab" data-tab="tabAdmin">🔐 Administration</button>
       <button class="nav-tab" data-tab="tabMemberDirectory">📞 Member Directory</button>
+      <button class="nav-tab" data-tab="tabSmartReport" style="background: linear-gradient(135deg, #1e3a8a, #0284c7); color: #fff; font-weight: 700;">📊 Smart Reports</button>
     </div>
   </nav>
 
@@ -878,6 +879,160 @@ window.addEventListener("unhandledrejection", function(e) {
       </div>
     </div>
 
+    <!-- TAB 9: SMART REPORT STUDIO (OFFLINE ONLY INITIAL BUILD) -->
+    <div id="tabSmartReport" class="tab-pane">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <h2 style="font-size:1.35rem; color:var(--primary-color); margin:0; display:flex; align-items:center; gap:8px;">
+            📊 <span>Smart Report Studio</span>
+            <span style="font-size:0.75rem; background:#0284c7; color:#fff; padding:2px 8px; border-radius:12px; font-weight:600;">Offline Mode</span>
+          </h2>
+          <p style="margin:4px 0 0 0; font-size:0.85rem; color:var(--text-muted);">
+            Generate custom filtered statements across RP Codes, Remarks, Date Ranges, Members, and Receipt/Voucher numbers.
+          </p>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <button class="btn btn-pdf" onclick="exportSmartReportPDF()" style="padding:7px 14px; font-size:0.875rem;">
+            📄 Export PDF / Print
+          </button>
+          <button class="btn btn-excel" onclick="exportSmartReportExcel()" style="padding:7px 14px; font-size:0.875rem;">
+            📊 Export Excel (.xlsx)
+          </button>
+        </div>
+      </div>
+
+      <!-- FILTER CONTROLS CARD -->
+      <div class="card" style="margin-bottom:1.25rem; padding:1.25rem; border-top: 3px solid #0284c7;">
+        <div style="font-weight:700; font-size:0.95rem; color:var(--primary-color); margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+          <span>🔍 Statement Filter Criteria</span>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-outline" style="padding:3px 8px; font-size:0.75rem;" onclick="setSmartDatePreset('ALL')">All Dates</button>
+            <button class="btn btn-outline" style="padding:3px 8px; font-size:0.75rem;" onclick="setSmartDatePreset('LAST_30')">Past 30 Days</button>
+            <button class="btn btn-outline" style="padding:3px 8px; font-size:0.75rem;" onclick="setSmartDatePreset('LAST_60')">Past 2 Months</button>
+            <button class="btn btn-outline" style="padding:3px 8px; font-size:0.75rem;" onclick="setSmartDatePreset('FY')">Current FY (2026-27)</button>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem; margin-bottom:1rem;">
+          <!-- 1. Date Range -->
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:0.8rem; font-weight:600;">📅 From Date</label>
+            <input type="date" id="smartDateFrom" class="form-control" onchange="runSmartReport()">
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:0.8rem; font-weight:600;">📅 To Date</label>
+            <input type="date" id="smartDateTo" class="form-control" onchange="runSmartReport()">
+          </div>
+
+          <!-- 2. Entry Type -->
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:0.8rem; font-weight:600;">🔄 Flow Type</label>
+            <select id="smartFlowType" class="form-control" onchange="runSmartReport()">
+              <option value="ALL">All Entries (Receipts & Payments)</option>
+              <option value="RECEIPT" selected>📥 Receipts (Income) Only</option>
+              <option value="PAYMENT">📤 Payments (Expense) Only</option>
+            </select>
+          </div>
+
+          <!-- 3. Payment Mode -->
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:0.8rem; font-weight:600;">💳 Payment Mode</label>
+            <select id="smartPayMode" class="form-control" onchange="runSmartReport()">
+              <option value="ALL">Cash & Bank / Online</option>
+              <option value="CASH">Cash Only</option>
+              <option value="BANK">Bank / Online Only</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:1rem; margin-bottom:1rem;">
+          <!-- 4. Account Head & RP Code -->
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:0.8rem; font-weight:600;">🏷️ Account Head & RP Code</label>
+            <select id="smartAccountHead" class="form-control" onchange="runSmartReport()">
+              <option value="ALL">-- All Account Heads & Codes --</option>
+            </select>
+          </div>
+
+          <!-- 5. Remarks / Particulars Keyword -->
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:0.8rem; font-weight:600;">📝 Remarks / Details Keyword</label>
+            <input type="text" id="smartRemarks" class="form-control" placeholder="Search Remarks (e.g. Candle Cup, Oil...)" onkeyup="runSmartReport()">
+          </div>
+
+          <!-- 6. Member / Contributor -->
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:0.8rem; font-weight:600;">👤 Member / Contributor</label>
+            <select id="smartMember" class="form-control" onchange="runSmartReport()">
+              <option value="ALL">-- All Members & Parties --</option>
+              <option value="NM">NM - Non Members Only</option>
+            </select>
+          </div>
+
+          <!-- 7. Report Grouping / Layout Mode -->
+          <div class="form-group" style="margin:0;">
+            <label style="font-size:0.8rem; font-weight:600;">📑 Presentation Layout</label>
+            <select id="smartReportMode" class="form-control" onchange="runSmartReport()">
+              <option value="DETAILED" selected>Detailed Transaction Register (Chronological)</option>
+              <option value="MEMBER_SUMMARY">Member-wise Summary (Aggregated by Person)</option>
+              <option value="HEAD_SUMMARY">Account Head-wise Summary (Aggregated by Code)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; padding-top:0.5rem; border-top:1px dashed #cbd5e1;">
+          <div style="font-size:0.8rem; color:#64748b;" id="smartFilterSummary">
+            Showing all matching records in real-time.
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button class="btn btn-outline" style="padding:5px 12px; font-size:0.8rem;" onclick="resetSmartReportFilters()">
+              🔄 Reset Filters
+            </button>
+            <button class="btn btn-primary" style="padding:5px 16px; font-size:0.8rem;" onclick="runSmartReport()">
+              ⚡ Refresh Data
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIVE KPI METRIC CARDS -->
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; margin-bottom:1.25rem;">
+        <div class="card" style="padding:1rem; text-align:center; border-left:4px solid #3b82f6; margin:0;">
+          <div style="font-size:0.75rem; text-transform:uppercase; color:#64748b; font-weight:700;">Matching Entries</div>
+          <div id="smartKpiCount" style="font-size:1.4rem; font-weight:800; color:#1e293b; margin-top:4px;">0</div>
+        </div>
+        <div class="card" style="padding:1rem; text-align:center; border-left:4px solid #10b981; margin:0;">
+          <div style="font-size:0.75rem; text-transform:uppercase; color:#64748b; font-weight:700;">Total Cash (₹)</div>
+          <div id="smartKpiCash" style="font-size:1.4rem; font-weight:800; color:#059669; margin-top:4px;">₹ 0.00</div>
+        </div>
+        <div class="card" style="padding:1rem; text-align:center; border-left:4px solid #8b5cf6; margin:0;">
+          <div style="font-size:0.75rem; text-transform:uppercase; color:#64748b; font-weight:700;">Total Bank / Online (₹)</div>
+          <div id="smartKpiBank" style="font-size:1.4rem; font-weight:800; color:#7c3aed; margin-top:4px;">₹ 0.00</div>
+        </div>
+        <div class="card" style="padding:1rem; text-align:center; border-left:4px solid #f59e0b; margin:0;">
+          <div style="font-size:0.75rem; text-transform:uppercase; color:#64748b; font-weight:700;">Combined Total (₹)</div>
+          <div id="smartKpiTotal" style="font-size:1.4rem; font-weight:800; color:#b45309; margin-top:4px;">₹ 0.00</div>
+        </div>
+      </div>
+
+      <!-- RESULTS DATA TABLE -->
+      <div class="card" style="padding:1rem;">
+        <div class="table-container" style="overflow-x:auto; max-height:72vh;">
+          <table class="data-table" id="smartReportTable" style="width:100%; min-width:850px;">
+            <thead id="smartReportThead">
+              <!-- Rendered via JS -->
+            </thead>
+            <tbody id="smartReportTbody">
+              <!-- Rendered via JS -->
+            </tbody>
+            <tfoot id="smartReportTfoot">
+              <!-- Rendered via JS -->
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- OFFICIAL DEVELOPER FOOTER -->
     <footer class="app-footer" style="background:#0f172a; color:#94a3b8; text-align:center; padding:1.25rem 1rem; margin-top:2.5rem; font-size:0.875rem; border-top:2px solid #1e293b; border-radius:12px;">
       <div style="max-width:1750px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
@@ -1125,6 +1280,6 @@ window.addEventListener("unhandledrejection", function(e) {
   <script src="bulk_pdf.js?v=11.7.2"></script>
   <script src="logo_data.js?v=11.17"></script>
   <script src="data.js?v=3.6"></script>
-  <script src="app.js?v=11.17"></script>
+  <script src="app.js?v=11.18"></script>
 </body>
 </html>

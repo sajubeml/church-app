@@ -555,6 +555,31 @@ async function loadAllData() {
 
     console.log("Loaded all JSON data! Members:", state.members.length, "Individual:", state.individual.length);
 
+    // Auto-enrich Amount Promised (Col F) in state.members if missing
+    try {
+      const fallbackMList = (window.CHURCH_DATA && window.CHURCH_DATA.members) || window.INITIAL_MEMBERS || m || [];
+      if (Array.isArray(state.members) && Array.isArray(fallbackMList)) {
+        const fallbackMap = new Map();
+        fallbackMList.forEach(fm => {
+          const b = getColVal(fm, "B");
+          const f = getColVal(fm, "F");
+          if (b && f) fallbackMap.set(String(b), f);
+        });
+        let enriched = false;
+        state.members.forEach(item => {
+          const b = getColVal(item, "B");
+          const curF = getColVal(item, "F");
+          if (b && (!curF || curF === "-") && fallbackMap.has(String(b))) {
+            setColVal(item, "F", fallbackMap.get(String(b)));
+            enriched = true;
+          }
+        });
+        if (enriched) {
+          localStorage.setItem("CHURCH_MASTER_MEMBERS", JSON.stringify(state.members));
+        }
+      }
+    } catch (e) { console.warn("Member promised auto-enrich warning:", e); }
+
     // 3. Load LocalStorage Overrides (with safety wrappers)
     try {
       const savedMembers = localStorage.getItem("CHURCH_MEMBERS");
@@ -1506,6 +1531,9 @@ function setupNavigation() {
         renderMemberDirectory();
       } else if (paneId === "tabBalanceSheet") {
         renderBalanceSheet();
+      } else if (paneId === "tabSmartReport") {
+        initSmartReportUI();
+        runSmartReport();
       }
     });
   });
@@ -6869,3 +6897,464 @@ window.loadCloudData = async function (isManualRefresh = false) {
     }
   }
 };
+
+// ====================================================
+// 22. SMART REPORT STUDIO (In-App Ad-hoc Statement Generator)
+// ====================================================
+function escapeHtml(str) {
+  if (str === undefined || str === null) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+let smartReportInitialized = false;
+
+function initSmartReportUI() {
+  if (smartReportInitialized) return;
+  smartReportInitialized = true;
+  populateSmartReportDropdowns();
+  setSmartDatePreset('ALL');
+}
+
+function populateSmartReportDropdowns() {
+  const selHead = document.getElementById("smartAccountHead");
+  if (selHead) {
+    const heads = getAllAccountHeads("ALL");
+    heads.sort((a, b) => {
+      const codeA = (a.code || "").toUpperCase();
+      const codeB = (b.code || "").toUpperCase();
+      if (codeA && codeB) return codeA.localeCompare(codeB);
+      if (codeA) return -1;
+      if (codeB) return 1;
+      return (a.name || "").localeCompare(b.name || "");
+    });
+
+    let headOptions = `<option value="ALL">-- All Account Heads & Codes --</option>`;
+    heads.forEach(h => {
+      const codeStr = h.code ? `[${h.code}] ` : "";
+      const catBadge = h.category === "PAYMENT" ? " (Payment)" : "";
+      headOptions += `<option value="${escapeHtml(h.code || h.name)}">${escapeHtml(codeStr + h.name + catBadge)}</option>`;
+    });
+    selHead.innerHTML = headOptions;
+  }
+
+  const selMember = document.getElementById("smartMember");
+  if (selMember) {
+    let memOptions = `<option value="ALL">-- All Members & Parties --</option>
+      <option value="NM">NM - Non Members Only</option>`;
+    
+    if (window.cachedSortedRegNos && window.cachedMemberMap) {
+      window.cachedSortedRegNos.forEach(regNo => {
+        const name = window.cachedMemberMap.get(regNo) || "";
+        memOptions += `<option value="${escapeHtml(regNo)}">Reg #${escapeHtml(regNo)} - ${escapeHtml(name)}</option>`;
+      });
+    }
+    selMember.innerHTML = memOptions;
+  }
+}
+
+function setSmartDatePreset(preset) {
+  const dtFrom = document.getElementById("smartDateFrom");
+  const dtTo = document.getElementById("smartDateTo");
+  if (!dtFrom || !dtTo) return;
+
+  const now = new Date();
+  const formatYMD = (d) => d.toISOString().split("T")[0];
+
+  if (preset === "ALL") {
+    dtFrom.value = "";
+    dtTo.value = "";
+  } else if (preset === "LAST_30") {
+    const past30 = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000));
+    dtFrom.value = formatYMD(past30);
+    dtTo.value = formatYMD(now);
+  } else if (preset === "LAST_60") {
+    const past60 = new Date(now.getTime() - (60 * 24 * 60 * 60 * 1000));
+    dtFrom.value = formatYMD(past60);
+    dtTo.value = formatYMD(now);
+  } else if (preset === "FY") {
+    dtFrom.value = "2026-04-01";
+    dtTo.value = "2027-03-31";
+  }
+  runSmartReport();
+}
+
+function resetSmartReportFilters() {
+  const dtFrom = document.getElementById("smartDateFrom");
+  const dtTo = document.getElementById("smartDateTo");
+  const selFlow = document.getElementById("smartFlowType");
+  const selPay = document.getElementById("smartPayMode");
+  const selHead = document.getElementById("smartAccountHead");
+  const txtRem = document.getElementById("smartRemarks");
+  const selMem = document.getElementById("smartMember");
+  const selMode = document.getElementById("smartReportMode");
+
+  if (dtFrom) dtFrom.value = "";
+  if (dtTo) dtTo.value = "";
+  if (selFlow) selFlow.value = "RECEIPT";
+  if (selPay) selPay.value = "ALL";
+  if (selHead) selHead.value = "ALL";
+  if (txtRem) txtRem.value = "";
+  if (selMem) selMem.value = "ALL";
+  if (selMode) selMode.value = "DETAILED";
+
+  runSmartReport();
+}
+
+function normalizeSmartDate(dStr) {
+  if (!dStr) return "";
+  const s = String(dStr).trim();
+  const partsHyphen = s.split("-");
+  if (partsHyphen.length === 3) {
+    if (partsHyphen[0].length === 4) return s;
+    return `${partsHyphen[2]}-${partsHyphen[1].padStart(2, '0')}-${partsHyphen[0].padStart(2, '0')}`;
+  }
+  const partsSlash = s.split("/");
+  if (partsSlash.length === 3) {
+    if (partsSlash[0].length === 4) return s.replace(/\//g, "-");
+    return `${partsSlash[2]}-${partsSlash[1].padStart(2, '0')}-${partsSlash[0].padStart(2, '0')}`;
+  }
+  return s;
+}
+
+function runSmartReport() {
+  if (!state.cashbook || !state.cashbook.length) {
+    renderSmartReportTable([], "DETAILED");
+    return;
+  }
+
+  const dtFromVal = document.getElementById("smartDateFrom") ? document.getElementById("smartDateFrom").value : "";
+  const dtToVal = document.getElementById("smartDateTo") ? document.getElementById("smartDateTo").value : "";
+  const flowType = document.getElementById("smartFlowType") ? document.getElementById("smartFlowType").value : "RECEIPT";
+  const payMode = document.getElementById("smartPayMode") ? document.getElementById("smartPayMode").value : "ALL";
+  const selHead = document.getElementById("smartAccountHead") ? document.getElementById("smartAccountHead").value : "ALL";
+  const remKeyword = document.getElementById("smartRemarks") ? document.getElementById("smartRemarks").value.toLowerCase().trim() : "";
+  const selMember = document.getElementById("smartMember") ? document.getElementById("smartMember").value : "ALL";
+  const reportMode = document.getElementById("smartReportMode") ? document.getElementById("smartReportMode").value : "DETAILED";
+
+  const allRecords = [];
+
+  state.cashbook.forEach((r, idx) => {
+    // 1. Receipts Side
+    if (flowType === "ALL" || flowType === "RECEIPT") {
+      const rDt = getColVal(r, "A");
+      const rDoc = getColVal(r, "B");
+      const rReg = getColVal(r, "C");
+      const rName = getColVal(r, "D");
+      const rHead = getColVal(r, "E");
+      const rCode = getColVal(r, "F");
+      const rRem = getColVal(r, "G");
+      const cashAmt = parseFloat(String(getColVal(r, "H") || "").replace(/,/g, '')) || 0;
+      const bankAmt = parseFloat(String(getColVal(r, "I") || "").replace(/,/g, '')) || 0;
+      const totalAmt = cashAmt + bankAmt;
+
+      if (rDt || rDoc || totalAmt > 0) {
+        allRecords.push({
+          type: "RECEIPT",
+          date: rDt,
+          isoDate: normalizeSmartDate(rDt),
+          docNo: rDoc,
+          regNo: rReg || "-",
+          name: rName || "-",
+          head: rHead || "-",
+          code: rCode || "-",
+          remarks: rRem || "-",
+          cash: cashAmt,
+          bank: bankAmt,
+          total: totalAmt
+        });
+      }
+    }
+
+    // 2. Payments Side
+    if (flowType === "ALL" || flowType === "PAYMENT") {
+      const pDt = getColVal(r, "K");
+      const pDoc = getColVal(r, "L");
+      const pHead = getColVal(r, "M");
+      const pCode = getColVal(r, "N");
+      const pRem = getColVal(r, "O");
+      const cashAmt = parseFloat(String(getColVal(r, "P") || "").replace(/,/g, '')) || 0;
+      const bankAmt = parseFloat(String(getColVal(r, "Q") || "").replace(/,/g, '')) || 0;
+      const totalAmt = cashAmt + bankAmt;
+
+      if (pDt || pDoc || totalAmt > 0) {
+        allRecords.push({
+          type: "PAYMENT",
+          date: pDt,
+          isoDate: normalizeSmartDate(pDt),
+          docNo: pDoc,
+          regNo: "-",
+          name: pRem || pHead || "-",
+          head: pHead || "-",
+          code: pCode || "-",
+          remarks: pRem || "-",
+          cash: cashAmt,
+          bank: bankAmt,
+          total: totalAmt
+        });
+      }
+    }
+  });
+
+  // Apply Multi-Criteria Filters
+  const filtered = allRecords.filter(item => {
+    if (dtFromVal && item.isoDate && item.isoDate < dtFromVal) return false;
+    if (dtToVal && item.isoDate && item.isoDate > dtToVal) return false;
+
+    if (payMode === "CASH" && item.cash <= 0) return false;
+    if (payMode === "BANK" && item.bank <= 0) return false;
+
+    if (selHead !== "ALL") {
+      const matchCode = item.code.toUpperCase().replace(/\s+/g, '') === selHead.toUpperCase().replace(/\s+/g, '');
+      const matchHead = item.head.toLowerCase() === selHead.toLowerCase();
+      if (!matchCode && !matchHead) return false;
+    }
+
+    if (remKeyword) {
+      const combined = `${item.remarks} ${item.head} ${item.name} ${item.code}`.toLowerCase();
+      if (!combined.includes(remKeyword)) return false;
+    }
+
+    if (selMember !== "ALL") {
+      if (selMember === "NM") {
+        if (item.regNo.toUpperCase() !== "NM") return false;
+      } else {
+        if (item.regNo !== selMember) return false;
+      }
+    }
+
+    return true;
+  });
+
+  // Update Live KPI Cards
+  let totCash = 0, totBank = 0, totGrand = 0;
+  filtered.forEach(item => {
+    totCash += item.cash;
+    totBank += item.bank;
+    totGrand += item.total;
+  });
+
+  const kpiCount = document.getElementById("smartKpiCount");
+  const kpiCash = document.getElementById("smartKpiCash");
+  const kpiBank = document.getElementById("smartKpiBank");
+  const kpiTotal = document.getElementById("smartKpiTotal");
+  const summaryEl = document.getElementById("smartFilterSummary");
+
+  if (kpiCount) kpiCount.textContent = filtered.length.toLocaleString('en-IN');
+  if (kpiCash) kpiCash.textContent = "₹ " + totCash.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (kpiBank) kpiBank.textContent = "₹ " + totBank.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (kpiTotal) kpiTotal.textContent = "₹ " + totGrand.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  if (summaryEl) {
+    let criteriaList = [];
+    if (dtFromVal || dtToVal) criteriaList.push(`Date: ${dtFromVal || 'Start'} to ${dtToVal || 'End'}`);
+    if (flowType !== "ALL") criteriaList.push(`Type: ${flowType}`);
+    if (selHead !== "ALL") criteriaList.push(`Head/Code: ${selHead}`);
+    if (remKeyword) criteriaList.push(`Keyword: "${remKeyword}"`);
+    if (selMember !== "ALL") criteriaList.push(`Member: ${selMember}`);
+    summaryEl.textContent = criteriaList.length ? `Filtered by: ${criteriaList.join(" | ")} (${filtered.length} entries)` : `Showing all ${filtered.length} cashbook entries.`;
+  }
+
+  renderSmartReportTable(filtered, reportMode);
+}
+
+function renderSmartReportTable(records, mode) {
+  const thead = document.getElementById("smartReportThead");
+  const tbody = document.getElementById("smartReportTbody");
+  const tfoot = document.getElementById("smartReportTfoot");
+  if (!thead || !tbody || !tfoot) return;
+
+  tbody.innerHTML = "";
+  thead.innerHTML = "";
+  tfoot.innerHTML = "";
+
+  if (!records.length) {
+    tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; padding:2rem; color:#64748b;">No transactions match the specified filter criteria.</td></tr>`;
+    return;
+  }
+
+  if (mode === "MEMBER_SUMMARY") {
+    // MODE 2: MEMBER-WISE SUMMARY
+    const memberMap = new Map();
+    records.forEach(r => {
+      const key = (r.regNo || "-") + "___" + (r.name || "-");
+      if (!memberMap.has(key)) {
+        memberMap.set(key, { regNo: r.regNo, name: r.name, count: 0, cash: 0, bank: 0, total: 0 });
+      }
+      const m = memberMap.get(key);
+      m.count += 1;
+      m.cash += r.cash;
+      m.bank += r.bank;
+      m.total += r.total;
+    });
+
+    const summaryList = Array.from(memberMap.values());
+    summaryList.sort((a, b) => {
+      const isAnm = a.regNo.toUpperCase() === "NM";
+      const isBnm = b.regNo.toUpperCase() === "NM";
+      if (isAnm && !isBnm) return 1;
+      if (!isAnm && isBnm) return -1;
+      const numA = parseInt(a.regNo, 10);
+      const numB = parseInt(b.regNo, 10);
+      if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+      return a.name.localeCompare(b.name);
+    });
+
+    thead.innerHTML = `<tr>
+      <th style="width:50px; text-align:center;">#</th>
+      <th style="width:90px; text-align:center;">Reg No.</th>
+      <th style="text-align:left;">Member / Contributor Name</th>
+      <th style="width:90px; text-align:center;">Entries</th>
+      <th style="width:130px; text-align:right;">Cash (₹)</th>
+      <th style="width:130px; text-align:right;">Bank / Online (₹)</th>
+      <th style="width:140px; text-align:right;">Total Amount (₹)</th>
+    </tr>`;
+
+    let totCount = 0, totCash = 0, totBank = 0, totTotal = 0;
+    summaryList.forEach((m, idx) => {
+      totCount += m.count;
+      totCash += m.cash;
+      totBank += m.bank;
+      totTotal += m.total;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td style="text-align:center;">${idx + 1}</td>
+        <td style="text-align:center; font-weight:700;">${escapeHtml(m.regNo)}</td>
+        <td style="text-align:left; font-weight:600;">${escapeHtml(m.name)}</td>
+        <td style="text-align:center;">${m.count}</td>
+        <td style="text-align:right;">${m.cash > 0 ? m.cash.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+        <td style="text-align:right;">${m.bank > 0 ? m.bank.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+        <td style="text-align:right; font-weight:700; color:#0f172a;">${m.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tfoot.innerHTML = `<tr style="background:#e2e8f0; font-weight:800;">
+      <td colspan="3" style="text-align:right;">TOTAL (${summaryList.length} Members / Contributors):</td>
+      <td style="text-align:center;">${totCount}</td>
+      <td style="text-align:right;">${totCash.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      <td style="text-align:right;">${totBank.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      <td style="text-align:right; color:#1e3a8a;">₹ ${totTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+    </tr>`;
+
+  } else if (mode === "HEAD_SUMMARY") {
+    // MODE 3: ACCOUNT HEAD / CODE SUMMARY
+    const headMap = new Map();
+    records.forEach(r => {
+      const key = (r.code || "-") + "___" + (r.head || "-");
+      if (!headMap.has(key)) {
+        headMap.set(key, { code: r.code, head: r.head, type: r.type, count: 0, cash: 0, bank: 0, total: 0 });
+      }
+      const h = headMap.get(key);
+      h.count += 1;
+      h.cash += r.cash;
+      h.bank += r.bank;
+      h.total += r.total;
+    });
+
+    const summaryList = Array.from(headMap.values());
+    summaryList.sort((a, b) => (b.total - a.total));
+
+    thead.innerHTML = `<tr>
+      <th style="width:50px; text-align:center;">#</th>
+      <th style="width:110px; text-align:center;">RP Code</th>
+      <th style="text-align:left;">Account Head</th>
+      <th style="width:90px; text-align:center;">Flow</th>
+      <th style="width:80px; text-align:center;">Entries</th>
+      <th style="width:130px; text-align:right;">Cash (₹)</th>
+      <th style="width:130px; text-align:right;">Bank / Online (₹)</th>
+      <th style="width:140px; text-align:right;">Total Amount (₹)</th>
+    </tr>`;
+
+    let totCount = 0, totCash = 0, totBank = 0, totTotal = 0;
+    summaryList.forEach((h, idx) => {
+      totCount += h.count;
+      totCash += h.cash;
+      totBank += h.bank;
+      totTotal += h.total;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td style="text-align:center;">${idx + 1}</td>
+        <td style="text-align:center; font-weight:700; color:#1e3a8a;">${escapeHtml(h.code)}</td>
+        <td style="text-align:left; font-weight:600;">${escapeHtml(h.head)}</td>
+        <td style="text-align:center;"><span style="font-size:0.75rem; padding:2px 6px; border-radius:4px; font-weight:700; ${h.type === 'RECEIPT' ? 'background:#dcfce7; color:#166534;' : 'background:#fee2e2; color:#991b1b;'}">${h.type}</span></td>
+        <td style="text-align:center;">${h.count}</td>
+        <td style="text-align:right;">${h.cash > 0 ? h.cash.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+        <td style="text-align:right;">${h.bank > 0 ? h.bank.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+        <td style="text-align:right; font-weight:700; color:#0f172a;">${h.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tfoot.innerHTML = `<tr style="background:#e2e8f0; font-weight:800;">
+      <td colspan="4" style="text-align:right;">TOTAL (${summaryList.length} Account Heads):</td>
+      <td style="text-align:center;">${totCount}</td>
+      <td style="text-align:right;">${totCash.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      <td style="text-align:right;">${totBank.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      <td style="text-align:right; color:#1e3a8a;">₹ ${totTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+    </tr>`;
+
+  } else {
+    // MODE 1: DETAILED TRANSACTIONS REGISTER (Default)
+    thead.innerHTML = `<tr>
+      <th style="width:45px; text-align:center;">#</th>
+      <th style="width:90px; text-align:center;">Date</th>
+      <th style="width:70px; text-align:center;">Flow</th>
+      <th style="width:75px; text-align:center;">Doc #</th>
+      <th style="width:65px; text-align:center;">Reg No</th>
+      <th style="min-width:140px; text-align:left;">Member / Party Name</th>
+      <th style="min-width:140px; text-align:left;">Account Head</th>
+      <th style="width:85px; text-align:center;">Code</th>
+      <th style="min-width:140px; text-align:left;">Remarks / Details</th>
+      <th style="width:100px; text-align:right;">Cash (₹)</th>
+      <th style="width:100px; text-align:right;">Bank (₹)</th>
+      <th style="width:110px; text-align:right;">Total (₹)</th>
+    </tr>`;
+
+    let totCash = 0, totBank = 0, totTotal = 0;
+    records.forEach((r, idx) => {
+      totCash += r.cash;
+      totBank += r.bank;
+      totTotal += r.total;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td style="text-align:center;">${idx + 1}</td>
+        <td style="text-align:center; font-size:0.85rem;">${escapeHtml(r.date)}</td>
+        <td style="text-align:center;"><span style="font-size:0.75rem; padding:2px 6px; border-radius:4px; font-weight:700; ${r.type === 'RECEIPT' ? 'background:#dcfce7; color:#166534;' : 'background:#fee2e2; color:#991b1b;'}">${r.type === 'RECEIPT' ? 'IN' : 'OUT'}</span></td>
+        <td style="text-align:center; font-weight:600;">${escapeHtml(r.docNo)}</td>
+        <td style="text-align:center; font-weight:700;">${escapeHtml(r.regNo)}</td>
+        <td style="text-align:left; font-weight:600;">${escapeHtml(r.name)}</td>
+        <td style="text-align:left;">${escapeHtml(r.head)}</td>
+        <td style="text-align:center; font-weight:700; color:#1e3a8a;">${escapeHtml(r.code)}</td>
+        <td style="text-align:left; color:#475569;">${escapeHtml(r.remarks)}</td>
+        <td style="text-align:right;">${r.cash > 0 ? r.cash.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+        <td style="text-align:right;">${r.bank > 0 ? r.bank.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+        <td style="text-align:right; font-weight:700; color:#0f172a;">${r.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tfoot.innerHTML = `<tr style="background:#e2e8f0; font-weight:800;">
+      <td colspan="9" style="text-align:right;">GRAND TOTAL (${records.length} Transactions):</td>
+      <td style="text-align:right;">${totCash.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      <td style="text-align:right;">${totBank.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+      <td style="text-align:right; color:#1e3a8a;">₹ ${totTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+    </tr>`;
+  }
+}
+
+function exportSmartReportExcel() {
+  exportTableToExcel('smartReportTable', 'St_Gregorios_Smart_Statement');
+}
+
+function exportSmartReportPDF() {
+  exportTableToPDF('smartReportTable', 'St_Gregorios_Smart_Statement');
+}
+

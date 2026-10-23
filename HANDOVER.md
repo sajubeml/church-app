@@ -1,9 +1,9 @@
 # St. Gregorios Orthodox Syrian Church Accounting Portal
-## Master Handover Document & System Architecture Guide (v11.17)
+## Master Handover Document & System Architecture Guide (v11.18)
 
 **Church:** St. Gregorios Orthodox Syrian Church & Pilgrim Centre, Mysuru  
 **Workspace Root:** `C:\CASHBOOK_APP`  
-**Current Active Version:** **v11.17** (Android `versionCode 80` / Web / Cloud / Offline PC)  
+**Current Active Version:** **v11.18** (Android `versionCode 81` / Web / Cloud / Offline PC)  
 **Date of Release:** October 23, 2026  
 **Git Remote Origin:** `https://github.com/sajubeml/Church_account.git` (Main Codebase Backup)  
 **Git Remote Church-App:** `https://github.com/sajubeml/church-app.git` (GitHub Pages Live Site)  
@@ -18,7 +18,7 @@ The **St. Gregorios Church Accounting Portal** is a cross-platform financial acc
 
 1. **Multi-Target Synchronized Deployment:**
    - **Local Offline PC:** Standalone Windows desktop launcher (`St_Gregorios_Church_Accounting.exe` + `index.html` + `app.js`).
-   - **Android Mobile Application:** Standalone native APK with embedded WebView SQLite/LocalStore (`St_Gregorios_Church_Accounting_v11.17.apk`).
+   - **Android Mobile Application:** Standalone native APK with embedded WebView SQLite/LocalStore (`St_Gregorios_Church_Accounting_v11.18.apk`).
    - **Cloud cPanel Web Portal:** `https://orthodoxchurchmysore.in/accounting/` (Apache/cPanel).
    - **GitHub Pages:** `https://sajubeml.github.io/church-app/`.
    - **Cloud PostgreSQL DB:** Supabase cloud database synchronization (`app_supabase.js`).

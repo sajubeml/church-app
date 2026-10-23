@@ -242,6 +242,11 @@ def check_and_sync_latest_backups():
                 json.dump(backup_data["individual"], f, indent=2)
             print(f"       -> Updated {EXPORT_DIR}/Individual.json")
 
+        if "masterMembers" in backup_data and len(backup_data["masterMembers"]) > 0:
+            with open(os.path.join(EXPORT_DIR, "Members.json"), "w", encoding="utf-8") as f:
+                json.dump(backup_data["masterMembers"], f, indent=2)
+            print(f"       -> Updated {EXPORT_DIR}/Members.json ({len(backup_data['masterMembers'])} records with Amount Promised)")
+
 def read_json_raw(filename):
     path = os.path.join(EXPORT_DIR, filename)
     if os.path.exists(path):
