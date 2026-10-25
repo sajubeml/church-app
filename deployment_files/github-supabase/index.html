@@ -67,11 +67,24 @@ window.addEventListener("unhandledrejection", function(e) {
     <img src="church_logo.png" alt="Logo">
     <h2>Secure Gateway</h2>
     <input type="email" id="login-email" class="login-input" placeholder="Email Address" required>
-    <input type="password" id="login-password" class="login-input" placeholder="Password" required>
+    <input type="password" id="login-password" class="login-input" placeholder="Password" required onkeyup="if(event.key==='Enter') attemptLogin()">
     <button id="login-submit" class="login-btn" onclick="attemptLogin()">Login</button>
     <div id="login-error"></div>
   </div>
 </div>
+<script>
+function attemptLogin() {
+  if (typeof window.attemptLogin === 'function') {
+    return window.attemptLogin();
+  } else {
+    const err = document.getElementById('login-error');
+    if (err) {
+      err.textContent = "Loading security components, please wait a moment...";
+      err.style.display = "block";
+    }
+  }
+}
+</script>
 <div id="main-app-container" style="display: none;">
 
 

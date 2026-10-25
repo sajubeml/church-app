@@ -2,7 +2,7 @@
 const SUPABASE_URL = 'https://djpuxmrjxsrhgfrtppky.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_QjkuMrFMwtc2imGfy0XCdw_37h05VtE';
 
-
+const originalFetch = window.fetch;
 window.SUPABASE_ACCESS_TOKEN = null;
 
 window.attemptLogin = async function () {
@@ -61,7 +61,6 @@ window.attemptLogin = async function () {
 };
 
 
-const originalFetch = window.fetch;
 window.fetch = async function (url, options) {
   if (url && typeof url === 'string' && url.includes('api.php')) {
     try {
@@ -2146,7 +2145,7 @@ function commitCartToLedgers() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'save_transaction', row: newRow })
       });
-    }).then((responses) => {
+    })).then((responses) => {
       let allOk = true;
       responses.forEach(r => { if (r && !r.ok) allOk = false; });
       if (allOk) {
