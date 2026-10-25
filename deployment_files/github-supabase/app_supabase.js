@@ -1949,6 +1949,27 @@ function findIndividualColKey(item) {
   return "E"; // Default to Subscription Column E
 }
 
+function showToast(message, type = "info") {
+  let toast = document.getElementById("appToastNotification");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "appToastNotification";
+    toast.style.cssText = "position:fixed; bottom:24px; right:24px; z-index:999999; padding:12px 20px; border-radius:8px; font-weight:700; font-size:14px; box-shadow:0 6px 20px rgba(0,0,0,0.3); transition:all 0.3s cubic-bezier(0.16,1,0.3,1); pointer-events:none; opacity:0; transform:translateY(12px); font-family:system-ui,-apple-system,sans-serif;";
+    document.body.appendChild(toast);
+  }
+  const bg = type === "success" ? "#10b981" : type === "warning" ? "#f59e0b" : type === "error" ? "#ef4444" : "#0284c7";
+  toast.style.background = bg;
+  toast.style.color = "#ffffff";
+  toast.textContent = message;
+  toast.style.opacity = "1";
+  toast.style.transform = "translateY(0)";
+  clearTimeout(toast._timeout);
+  toast._timeout = setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(12px)";
+  }, 3200);
+}
+
 function commitCartToLedgers() {
   if (state.cart.length === 0) return;
 
@@ -2125,18 +2146,18 @@ function commitCartToLedgers() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'save_transaction', row: newRow })
       });
-    })).then((responses) => {
+    }).then((responses) => {
       let allOk = true;
       responses.forEach(r => { if (r && !r.ok) allOk = false; });
       if (allOk) {
         console.log("Saved to DB!");
-        alert("✅ Transaction successfully synced to Cloud Database!");
+        showToast("✅ Transaction synced to Cloud Database!", "success");
       } else {
-        alert("⚠️ Transaction saved locally, but Cloud server returned an error.");
+        showToast("⚠️ Transaction saved locally (cloud returned error).", "warning");
       }
     }).catch(err => {
-      console.error("[SYNC ERROR] Failed to save to server database:", err);
-      alert("⚠️ Data saved locally but could NOT sync to server database. Please check your network connection and try again.");
+      console.warn("[SYNC ERROR] Failed to save to server database:", err);
+      showToast("💾 Saved locally to memory and browser storage.", "info");
     });
   }
 
@@ -2145,9 +2166,11 @@ function commitCartToLedgers() {
     vInput.value = isReceipt ? state.currentReceiptNo.toString() : state.currentVoucherNo.toString();
   }
 
-  // 5. Reset Cart & Live update all table views (Cash Book, Member Ledgers, Trial Balance, Audit, Admin)
+  // 5. Reset Cart & Live update all table views asynchronously to keep UI 100% responsive
   clearForm();
-  renderAllViews();
+  setTimeout(() => {
+    renderAllViews();
+  }, 40);
 }
 
 // ----------------------------------------------------
@@ -2298,11 +2321,10 @@ function showReceiptModal() {
   }
   document.getElementById("receiptModal").classList.add("active");
 
-  // Auto-save print copy HTML immediately upon generation
-  saveReceiptPrintCopy(docNo, prefix, receiptContent);
-
-  // Auto-save Receipt_XXXX.pdf directly without opening print prompt
-  autoSaveReceiptPdf(docNo, prefix, modalArea || receiptContent);
+  // Asynchronously cache print copy HTML without freezing UI
+  setTimeout(() => {
+    saveReceiptPrintCopy(docNo, prefix, receiptContent);
+  }, 60);
 }
 
 // Automatically generates and saves PDF without opening print prompt
@@ -2652,15 +2674,15 @@ function printReceiptModal() {
   const docNo = rawDocNo.replace(/#/g, "").trim();
   const pdfTitle = getCleanPrintTitle(docNo ? `${prefix}_${docNo}` : `${prefix}_Document`);
 
-  // 1. Ensure all ledger views are updated live
-  renderAllViews();
-
-  // 2. Save print file copy into local Receipts/ folder & localStorage
-  if (modalArea && docNo) {
-    saveReceiptPrintCopy(docNo, prefix, modalArea.innerHTML);
+  // Ensure local Receipts/ folder copy is saved in background if not already cached
+  if (modalArea && docNo && window.__lastSavedReceiptDoc !== `${prefix}_${docNo}`) {
+    window.__lastSavedReceiptDoc = `${prefix}_${docNo}`;
+    setTimeout(() => {
+      saveReceiptPrintCopy(docNo, prefix, modalArea.innerHTML);
+    }, 100);
   }
 
-  // 3. Set main document title for native print filename auto-population
+  // Set main document title for native print filename auto-population
   document.title = pdfTitle;
 
   // 4. On Android WebView, invoke native system print directly
@@ -2897,9 +2919,13 @@ async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
   const key = getCleanPrintTitle(cleanDocNo ? `${prefix}_${cleanDocNo}` : `${prefix}_Document`);
   const fileName = `${key}.html`;
 
-  // 1. Save to Local Storage Map
+  // 1. Save to Local Storage Map (prune oldest entries to prevent memory bloat)
   try {
     const savedMap = JSON.parse(localStorage.getItem("CHURCH_SAVED_RECEIPTS") || "{}");
+    const existingKeys = Object.keys(savedMap);
+    if (existingKeys.length > 50) {
+      existingKeys.slice(0, existingKeys.length - 25).forEach(k => delete savedMap[k]);
+    }
     savedMap[key] = htmlContent;
     savedMap[`${prefix}_#${cleanDocNo}`] = htmlContent;
     localStorage.setItem("CHURCH_SAVED_RECEIPTS", JSON.stringify(savedMap));
@@ -7158,6 +7184,21 @@ function runSmartReport() {
     summaryEl.textContent = criteriaList.length ? `Filtered by: ${criteriaList.join(" | ")} (${filtered.length} entries)` : `Showing all ${filtered.length} cashbook entries.`;
   }
 
+  window.lastSmartReportState = {
+    records: filtered,
+    reportMode,
+    flowType,
+    payMode,
+    selHead,
+    remKeyword,
+    selMember,
+    dtFromVal,
+    dtToVal,
+    totCash,
+    totBank,
+    totGrand
+  };
+
   renderSmartReportTable(filtered, reportMode);
 }
 
@@ -7354,6 +7395,638 @@ function exportSmartReportExcel() {
 }
 
 function exportSmartReportPDF() {
-  exportTableToPDF('smartReportTable', 'St_Gregorios_Smart_Statement');
+  const dtFromVal = document.getElementById("smartDateFrom") ? document.getElementById("smartDateFrom").value : "";
+  const dtToVal = document.getElementById("smartDateTo") ? document.getElementById("smartDateTo").value : "";
+  const flowType = document.getElementById("smartFlowType") ? document.getElementById("smartFlowType").value : "RECEIPT";
+  const payMode = document.getElementById("smartPayMode") ? document.getElementById("smartPayMode").value : "ALL";
+  const selHead = document.getElementById("smartAccountHead") ? document.getElementById("smartAccountHead").value : "ALL";
+  const remKeyword = document.getElementById("smartRemarks") ? document.getElementById("smartRemarks").value.toLowerCase().trim() : "";
+  const selMember = document.getElementById("smartMember") ? document.getElementById("smartMember").value : "ALL";
+  const reportMode = document.getElementById("smartReportMode") ? document.getElementById("smartReportMode").value : "DETAILED";
+
+  let st = window.lastSmartReportState;
+  if (!st || !st.records) {
+    runSmartReport();
+    st = window.lastSmartReportState;
+  }
+  const records = (st && st.records) ? st.records : [];
+  if (!records.length) {
+    alert("No records match the selected filter criteria to generate a PDF/Print report.");
+    return;
+  }
+
+  const d = new Date();
+  const currentDateStr = `${String(d.getDate()).padStart(2, '0')}-${String(d.getMonth() + 1).padStart(2, '0')}-${d.getFullYear()}`;
+  const logoSrc = (typeof window !== 'undefined' && window.CHURCH_LOGO_BASE64) ? window.CHURCH_LOGO_BASE64 : 'church_logo.png';
+
+  let reportHtml = '';
+  let reportDocTitle = 'St_Gregorios_Smart_Report';
+  let defaultOrientation = 'portrait';
+
+  // ----------------------------------------------------
+  // CASE 1: SPECIFIC MEMBER STATEMENT (Executive Card Layout like bulk_pdf.js)
+  // ----------------------------------------------------
+  if (selMember !== "ALL" && selMember !== "NM") {
+    defaultOrientation = 'portrait';
+
+    let memberName = "";
+    if (window.cachedMemberMap && window.cachedMemberMap.has(selMember)) {
+      memberName = window.cachedMemberMap.get(selMember);
+    } else if (records.length > 0 && records[0].name) {
+      memberName = records[0].name;
+    } else if (state.members && state.members.length) {
+      const mMatch = state.members.find(m => String(m.B || "").trim() === String(selMember).trim());
+      if (mMatch) memberName = mMatch.C || "";
+    }
+    if (!memberName) memberName = `Member Reg #${selMember}`;
+
+    let subUpto = "-";
+    if (state.individual && state.individual.length > 4) {
+      for (let i = 4; i < state.individual.length; i++) {
+        const r = state.individual[i];
+        if (String(r.B || "").trim() === String(selMember).trim()) {
+          subUpto = String(r.D || "").trim();
+          break;
+        }
+      }
+    }
+    const cbRem = (typeof getLatestSubscriptionRemark === "function") ? getLatestSubscriptionRemark(selMember) : "";
+    if (!subUpto || subUpto === "-" || subUpto.toLowerCase() === "null") {
+      subUpto = cbRem || "-";
+    }
+
+    const rtNos = Array.from(new Set(records.map(t => t.docNo).filter(Boolean)));
+    const rtStr = rtNos.length > 0 ? rtNos.sort().join(', ') : `STMT-REG-#${selMember}`;
+
+    let memberTotal = 0;
+    let tableRows = '';
+    records.forEach((tx, idx) => {
+      memberTotal += tx.total;
+      tableRows += `
+        <tr style="background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+          <td style="padding: 8px 6px; border: 1px solid #cbd5e0; text-align: center; color: #475569; font-size: 11px;">${idx + 1}</td>
+          <td style="padding: 8px 8px; border: 1px solid #cbd5e0; text-align: center; white-space: nowrap; font-size: 11px;">${escapeHtml(tx.date || '-')}</td>
+          <td style="padding: 8px 8px; border: 1px solid #cbd5e0; text-align: center; font-weight: 700; color: #1e3a8a; font-size: 11px;">${escapeHtml(tx.docNo || '-')}</td>
+          <td style="padding: 8px 10px; border: 1px solid #cbd5e0; text-align: left; font-weight: 600; color: #0f172a; font-size: 11.5px;">${escapeHtml(tx.head)}</td>
+          <td style="padding: 8px 10px; border: 1px solid #cbd5e0; text-align: left; color: #334155; font-size: 11px;">${escapeHtml(tx.remarks || '-')}</td>
+          <td style="padding: 8px 10px; border: 1px solid #cbd5e0; text-align: right; font-weight: 700; white-space: nowrap; color: #0f172a; font-size: 11.5px;">₹ ${tx.total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>
+      `;
+    });
+
+    const totFormatted = memberTotal.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    reportDocTitle = `Member_${memberName.replace(/[^a-zA-Z0-9_-]/g, '_')}_Statement`;
+
+    reportHtml = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #2d3748; line-height: 1.45;">
+        <!-- CHURCH HEADER -->
+        <div style="display: flex; align-items: center; border-bottom: 2.5px solid #1a365d; padding-bottom: 14px; margin-bottom: 18px;">
+          <img src="${logoSrc}" style="width: 62px; height: 62px; margin-right: 16px; border-radius: 50%; object-fit: contain; border: 1.5px solid #1a365d; background: #fff;" onerror="this.style.display='none'">
+          <div style="flex: 1;">
+            <div style="font-size: 17.5px; font-weight: 900; color: #1a365d; text-transform: uppercase; letter-spacing: 0.3px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</div>
+            <div style="font-size: 11px; color: #4a5568; margin-top: 2px;">Government House Road, Nazarbad, Mysuru, Karnataka — 570010 | ESTD : 1954</div>
+            <div style="font-size: 13.5px; font-weight: 800; color: #2b6cb0; margin-top: 4px; letter-spacing: 0.2px;">MEMBER CONTRIBUTION STATEMENT &amp; RECEIPT SUMMARY</div>
+          </div>
+        </div>
+
+        <!-- MEMBER INFO SUMMARY CARD -->
+        <table style="width: 100%; border-collapse: collapse; background: #f8fafc; border: 1.5px solid #cbd5e0; margin-bottom: 20px; font-size: 13px;">
+          <tr>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; width: 22%; font-weight: 700; color: #334155;">Register No:</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; width: 28%; color: #1e40af; font-weight: 800; font-size: 15px;">#${escapeHtml(selMember)}</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; width: 22%; font-weight: 700; color: #334155;">Statement Date:</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; width: 28%; font-weight: 700; color: #0f172a;">${currentDateStr}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-weight: 700; color: #334155;">Member Name:</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-weight: 800; color: #0f172a; font-size: 14px;">${escapeHtml(memberName)}</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-weight: 700; color: #334155;">Rt No. / Ref:</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-weight: 700; color: #0f172a;">${escapeHtml(rtStr)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-weight: 700; color: #334155;">Subscription Upto:</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-weight: 700; color: #1e293b;">${escapeHtml(subUpto)}</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; font-weight: 700; color: #334155;">Total Contributions:</td>
+            <td style="padding: 10px 12px; border: 1px solid #e2e8f0; color: #15803d; font-size: 16px; font-weight: 800;">₹ ${totFormatted}</td>
+          </tr>
+        </table>
+
+        <!-- SECTION TITLE -->
+        <div style="font-size: 13.5px; font-weight: 800; color: #1a365d; margin-bottom: 9px;">Itemized Receipt Transactions &amp; Contributions:</div>
+
+        <!-- TRANSACTIONS TABLE -->
+        <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #1a365d; font-size: 11.5px; margin-bottom: 26px;">
+          <thead>
+            <tr style="background: #1a365d; color: #ffffff;">
+              <th style="padding: 9px 6px; border: 1px solid #334155; width: 40px; text-align: center;">Sl</th>
+              <th style="padding: 9px 8px; border: 1px solid #334155; width: 90px; text-align: center;">Date</th>
+              <th style="padding: 9px 8px; border: 1px solid #334155; width: 80px; text-align: center;">Rt No.</th>
+              <th style="padding: 9px 10px; border: 1px solid #334155; text-align: left;">Accounts Head / Category</th>
+              <th style="padding: 9px 10px; border: 1px solid #334155; text-align: left;">Details / Remarks</th>
+              <th style="padding: 9px 10px; border: 1px solid #334155; width: 130px; text-align: right;">Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${tableRows}
+            <tr style="background: #2b6cb0; color: #ffffff; font-weight: 800; font-size: 13px;">
+              <td colspan="3" style="padding: 9px 10px; border: 1px solid #334155;"></td>
+              <td style="padding: 9px 10px; border: 1px solid #334155;">TOTAL MEMBER CONTRIBUTIONS</td>
+              <td style="padding: 9px 10px; border: 1px solid #334155;"></td>
+              <td style="padding: 9px 10px; border: 1px solid #334155; text-align: right;">₹ ${totFormatted}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- SIGNATURE BLOCK -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 40px; font-size: 12px; color: #334155;">
+          <tr>
+            <td style="width: 33%; vertical-align: bottom;">Date: <b>${currentDateStr}</b></td>
+            <td style="width: 34%; text-align: center; vertical-align: bottom;">Verified By: <b>Trustee / Vicar</b></td>
+            <td style="width: 33%; text-align: right; vertical-align: bottom;"><b>Authorized Signature &amp; Seal</b></td>
+          </tr>
+        </table>
+      </div>
+    `;
+
+  } else {
+    // ----------------------------------------------------
+    // CASE 2: GENERAL REPORT (Multi-Member, Non-Members, or Summaries)
+    // ----------------------------------------------------
+    defaultOrientation = (reportMode === "DETAILED") ? 'landscape' : 'portrait';
+
+    let titleText = 'SMART FINANCIAL TRANSACTION REGISTER';
+    if (reportMode === 'MEMBER_SUMMARY') titleText = 'MEMBER & CONTRIBUTOR SUMMARY STATEMENT';
+    if (reportMode === 'HEAD_SUMMARY') titleText = 'ACCOUNT HEAD & CATEGORY SUMMARY STATEMENT';
+
+    reportDocTitle = `St_Gregorios_${titleText.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+
+    let totCash = st.totCash || 0;
+    let totBank = st.totBank || 0;
+    let totGrand = st.totGrand || 0;
+
+    const periodText = (dtFromVal || dtToVal) ? `${dtFromVal || 'Start'} to ${dtToVal || 'Present'}` : 'Full Financial Year (All Dates)';
+    const headText = selHead !== "ALL" ? selHead : 'All Account Heads';
+    const memberText = selMember === "NM" ? 'Non-Members (NM) Only' : 'All Church Members & Parties';
+
+    let tableTheadHtml = '';
+    let tableTbodyHtml = '';
+    let tableTfootHtml = '';
+
+    if (reportMode === 'MEMBER_SUMMARY') {
+      const memberMap = new Map();
+      records.forEach(r => {
+        const key = (r.regNo || "-") + "___" + (r.name || "-");
+        if (!memberMap.has(key)) {
+          memberMap.set(key, { regNo: r.regNo, name: r.name, count: 0, cash: 0, bank: 0, total: 0 });
+        }
+        const m = memberMap.get(key);
+        m.count += 1;
+        m.cash += r.cash;
+        m.bank += r.bank;
+        m.total += r.total;
+      });
+
+      const summaryList = Array.from(memberMap.values());
+      summaryList.sort((a, b) => {
+        const isAnm = a.regNo.toUpperCase() === "NM";
+        const isBnm = b.regNo.toUpperCase() === "NM";
+        if (isAnm && !isBnm) return 1;
+        if (!isAnm && isBnm) return -1;
+        const numA = parseInt(a.regNo, 10);
+        const numB = parseInt(b.regNo, 10);
+        if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+        return a.name.localeCompare(b.name);
+      });
+
+      tableTheadHtml = `
+        <tr style="background: #1a365d; color: #ffffff;">
+          <th style="width: 45px; text-align: center; padding: 8px 4px; border: 1px solid #334155;">#</th>
+          <th style="width: 85px; text-align: center; padding: 8px 6px; border: 1px solid #334155;">Reg No.</th>
+          <th style="text-align: left; padding: 8px 10px; border: 1px solid #334155;">Member / Contributor Name</th>
+          <th style="width: 80px; text-align: center; padding: 8px 6px; border: 1px solid #334155;">Entries</th>
+          <th style="width: 120px; text-align: right; padding: 8px 8px; border: 1px solid #334155;">Cash (₹)</th>
+          <th style="width: 120px; text-align: right; padding: 8px 8px; border: 1px solid #334155;">Bank / Online (₹)</th>
+          <th style="width: 130px; text-align: right; padding: 8px 8px; border: 1px solid #334155;">Total Amount (₹)</th>
+        </tr>
+      `;
+
+      let sumCount = 0;
+      summaryList.forEach((m, idx) => {
+        sumCount += m.count;
+        tableTbodyHtml += `
+          <tr style="background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+            <td style="text-align: center; padding: 6px 4px; border: 1px solid #cbd5e0; color: #475569;">${idx + 1}</td>
+            <td style="text-align: center; padding: 6px 6px; border: 1px solid #cbd5e0; font-weight: 700; color: #1e3a8a;">${escapeHtml(m.regNo)}</td>
+            <td style="text-align: left; padding: 6px 10px; border: 1px solid #cbd5e0; font-weight: 600; color: #0f172a;">${escapeHtml(m.name)}</td>
+            <td style="text-align: center; padding: 6px 6px; border: 1px solid #cbd5e0;">${m.count}</td>
+            <td style="text-align: right; padding: 6px 8px; border: 1px solid #cbd5e0;">${m.cash > 0 ? m.cash.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+            <td style="text-align: right; padding: 6px 8px; border: 1px solid #cbd5e0;">${m.bank > 0 ? m.bank.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+            <td style="text-align: right; padding: 6px 8px; border: 1px solid #cbd5e0; font-weight: 700; color: #0f172a;">${m.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          </tr>
+        `;
+      });
+
+      tableTfootHtml = `
+        <tr style="background: #e2e8f0; font-weight: 800; border-top: 2px solid #1a365d;">
+          <td colspan="3" style="text-align: right; padding: 8px 10px; border: 1px solid #cbd5e0;">TOTAL (${summaryList.length} Members / Contributors):</td>
+          <td style="text-align: center; padding: 8px 6px; border: 1px solid #cbd5e0;">${sumCount}</td>
+          <td style="text-align: right; padding: 8px 8px; border: 1px solid #cbd5e0;">${totCash.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          <td style="text-align: right; padding: 8px 8px; border: 1px solid #cbd5e0;">${totBank.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          <td style="text-align: right; padding: 8px 8px; border: 1px solid #cbd5e0; color: #1e3a8a;">₹ ${totGrand.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        </tr>
+      `;
+
+    } else if (reportMode === 'HEAD_SUMMARY') {
+      const headMap = new Map();
+      records.forEach(r => {
+        const key = (r.code || "-") + "___" + (r.head || "-");
+        if (!headMap.has(key)) {
+          headMap.set(key, { code: r.code, head: r.head, type: r.type, count: 0, cash: 0, bank: 0, total: 0 });
+        }
+        const h = headMap.get(key);
+        h.count += 1;
+        h.cash += r.cash;
+        h.bank += r.bank;
+        h.total += r.total;
+      });
+
+      const summaryList = Array.from(headMap.values());
+      summaryList.sort((a, b) => (b.total - a.total));
+
+      tableTheadHtml = `
+        <tr style="background: #1a365d; color: #ffffff;">
+          <th style="width: 45px; text-align: center; padding: 8px 4px; border: 1px solid #334155;">#</th>
+          <th style="width: 100px; text-align: center; padding: 8px 6px; border: 1px solid #334155;">RP Code</th>
+          <th style="text-align: left; padding: 8px 10px; border: 1px solid #334155;">Account Head</th>
+          <th style="width: 80px; text-align: center; padding: 8px 6px; border: 1px solid #334155;">Flow</th>
+          <th style="width: 75px; text-align: center; padding: 8px 6px; border: 1px solid #334155;">Entries</th>
+          <th style="width: 120px; text-align: right; padding: 8px 8px; border: 1px solid #334155;">Cash (₹)</th>
+          <th style="width: 120px; text-align: right; padding: 8px 8px; border: 1px solid #334155;">Bank / Online (₹)</th>
+          <th style="width: 130px; text-align: right; padding: 8px 8px; border: 1px solid #334155;">Total Amount (₹)</th>
+        </tr>
+      `;
+
+      let sumCount = 0;
+      summaryList.forEach((h, idx) => {
+        sumCount += h.count;
+        tableTbodyHtml += `
+          <tr style="background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+            <td style="text-align: center; padding: 6px 4px; border: 1px solid #cbd5e0; color: #475569;">${idx + 1}</td>
+            <td style="text-align: center; padding: 6px 6px; border: 1px solid #cbd5e0; font-weight: 700; color: #1e3a8a;">${escapeHtml(h.code)}</td>
+            <td style="text-align: left; padding: 6px 10px; border: 1px solid #cbd5e0; font-weight: 600; color: #0f172a;">${escapeHtml(h.head)}</td>
+            <td style="text-align: center; padding: 6px 6px; border: 1px solid #cbd5e0;"><span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; ${h.type === 'RECEIPT' ? 'background: #dcfce7; color: #166534;' : 'background: #fee2e2; color: #991b1b;'}">${h.type}</span></td>
+            <td style="text-align: center; padding: 6px 6px; border: 1px solid #cbd5e0;">${h.count}</td>
+            <td style="text-align: right; padding: 6px 8px; border: 1px solid #cbd5e0;">${h.cash > 0 ? h.cash.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+            <td style="text-align: right; padding: 6px 8px; border: 1px solid #cbd5e0;">${h.bank > 0 ? h.bank.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+            <td style="text-align: right; padding: 6px 8px; border: 1px solid #cbd5e0; font-weight: 700; color: #0f172a;">${h.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          </tr>
+        `;
+      });
+
+      tableTfootHtml = `
+        <tr style="background: #e2e8f0; font-weight: 800; border-top: 2px solid #1a365d;">
+          <td colspan="4" style="text-align: right; padding: 8px 10px; border: 1px solid #cbd5e0;">TOTAL (${summaryList.length} Account Heads):</td>
+          <td style="text-align: center; padding: 8px 6px; border: 1px solid #cbd5e0;">${sumCount}</td>
+          <td style="text-align: right; padding: 8px 8px; border: 1px solid #cbd5e0;">${totCash.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          <td style="text-align: right; padding: 8px 8px; border: 1px solid #cbd5e0;">${totBank.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          <td style="text-align: right; padding: 8px 8px; border: 1px solid #cbd5e0; color: #1e3a8a;">₹ ${totGrand.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        </tr>
+      `;
+
+    } else {
+      // Detailed Transaction Register
+      tableTheadHtml = `
+        <tr style="background: #1a365d; color: #ffffff;">
+          <th style="width: 35px; text-align: center; padding: 7px 4px; border: 1px solid #334155;">#</th>
+          <th style="width: 80px; text-align: center; padding: 7px 4px; border: 1px solid #334155;">Date</th>
+          <th style="width: 50px; text-align: center; padding: 7px 4px; border: 1px solid #334155;">Flow</th>
+          <th style="width: 65px; text-align: center; padding: 7px 4px; border: 1px solid #334155;">Doc #</th>
+          <th style="width: 55px; text-align: center; padding: 7px 4px; border: 1px solid #334155;">Reg #</th>
+          <th style="text-align: left; padding: 7px 8px; border: 1px solid #334155;">Member / Party Name</th>
+          <th style="text-align: left; padding: 7px 8px; border: 1px solid #334155;">Account Head</th>
+          <th style="width: 75px; text-align: center; padding: 7px 4px; border: 1px solid #334155;">Code</th>
+          <th style="text-align: left; padding: 7px 8px; border: 1px solid #334155;">Remarks / Details</th>
+          <th style="width: 85px; text-align: right; padding: 7px 6px; border: 1px solid #334155;">Cash (₹)</th>
+          <th style="width: 85px; text-align: right; padding: 7px 6px; border: 1px solid #334155;">Bank (₹)</th>
+          <th style="width: 95px; text-align: right; padding: 7px 6px; border: 1px solid #334155;">Total (₹)</th>
+        </tr>
+      `;
+
+      records.forEach((r, idx) => {
+        tableTbodyHtml += `
+          <tr style="background: ${idx % 2 === 0 ? '#ffffff' : '#f8fafc'};">
+            <td style="text-align: center; padding: 5px 3px; border: 1px solid #cbd5e0; color: #475569;">${idx + 1}</td>
+            <td style="text-align: center; padding: 5px 4px; border: 1px solid #cbd5e0; white-space: nowrap;">${escapeHtml(r.date)}</td>
+            <td style="text-align: center; padding: 5px 3px; border: 1px solid #cbd5e0;"><span style="font-size: 9.5px; padding: 1px 4px; border-radius: 3px; font-weight: 700; ${r.type === 'RECEIPT' ? 'background: #dcfce7; color: #166534;' : 'background: #fee2e2; color: #991b1b;'}">${r.type === 'RECEIPT' ? 'IN' : 'OUT'}</span></td>
+            <td style="text-align: center; padding: 5px 4px; border: 1px solid #cbd5e0; font-weight: 600;">${escapeHtml(r.docNo)}</td>
+            <td style="text-align: center; padding: 5px 4px; border: 1px solid #cbd5e0; font-weight: 700; color: #1e3a8a;">${escapeHtml(r.regNo)}</td>
+            <td style="text-align: left; padding: 5px 8px; border: 1px solid #cbd5e0; font-weight: 600; color: #0f172a;">${escapeHtml(r.name)}</td>
+            <td style="text-align: left; padding: 5px 8px; border: 1px solid #cbd5e0;">${escapeHtml(r.head)}</td>
+            <td style="text-align: center; padding: 5px 4px; border: 1px solid #cbd5e0; font-weight: 700; color: #1e3a8a;">${escapeHtml(r.code)}</td>
+            <td style="text-align: left; padding: 5px 8px; border: 1px solid #cbd5e0; color: #475569;">${escapeHtml(r.remarks)}</td>
+            <td style="text-align: right; padding: 5px 6px; border: 1px solid #cbd5e0;">${r.cash > 0 ? r.cash.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+            <td style="text-align: right; padding: 5px 6px; border: 1px solid #cbd5e0;">${r.bank > 0 ? r.bank.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '-'}</td>
+            <td style="text-align: right; padding: 5px 6px; border: 1px solid #cbd5e0; font-weight: 700; color: #0f172a;">${r.total.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          </tr>
+        `;
+      });
+
+      tableTfootHtml = `
+        <tr style="background: #e2e8f0; font-weight: 800; border-top: 2px solid #1a365d;">
+          <td colspan="9" style="text-align: right; padding: 8px 10px; border: 1px solid #cbd5e0;">GRAND TOTAL (${records.length} Transactions):</td>
+          <td style="text-align: right; padding: 8px 6px; border: 1px solid #cbd5e0;">${totCash.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          <td style="text-align: right; padding: 8px 6px; border: 1px solid #cbd5e0;">${totBank.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+          <td style="text-align: right; padding: 8px 6px; border: 1px solid #cbd5e0; color: #1e3a8a;">₹ ${totGrand.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        </tr>
+      `;
+    }
+
+    reportHtml = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #2d3748; line-height: 1.45;">
+        <!-- CHURCH HEADER -->
+        <div style="display: flex; align-items: center; border-bottom: 2.5px solid #1a365d; padding-bottom: 14px; margin-bottom: 18px;">
+          <img src="${logoSrc}" style="width: 58px; height: 58px; margin-right: 16px; border-radius: 50%; object-fit: contain; border: 1.5px solid #1a365d; background: #fff;" onerror="this.style.display='none'">
+          <div style="flex: 1;">
+            <div style="font-size: 16.5px; font-weight: 900; color: #1a365d; text-transform: uppercase; letter-spacing: 0.3px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</div>
+            <div style="font-size: 11px; color: #4a5568; margin-top: 2px;">Government House Road, Nazarbad, Mysuru, Karnataka — 570010 | ESTD : 1954</div>
+            <div style="font-size: 13px; font-weight: 800; color: #2b6cb0; margin-top: 4px; letter-spacing: 0.2px;">${titleText}</div>
+          </div>
+        </div>
+
+        <!-- FILTER & KPI SUMMARY CARD -->
+        <table style="width: 100%; border-collapse: collapse; background: #f8fafc; border: 1.5px solid #cbd5e0; margin-bottom: 20px; font-size: 12px;">
+          <tr>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; width: 16%; font-weight: 700; color: #334155;">Statement Date:</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; width: 34%; font-weight: 700; color: #0f172a;">${currentDateStr}</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; width: 16%; font-weight: 700; color: #334155;">Query Period:</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; width: 34%; font-weight: 700; color: #1e40af;">${escapeHtml(periodText)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-weight: 700; color: #334155;">Head / Code:</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(headText)}</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-weight: 700; color: #334155;">Flow &amp; Mode:</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(flowType)} | ${escapeHtml(payMode)}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-weight: 700; color: #334155;">Member Scope:</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(memberText)}</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; font-weight: 700; color: #334155;">Grand Total:</td>
+            <td style="padding: 8px 10px; border: 1px solid #e2e8f0; color: #15803d; font-size: 14px; font-weight: 800;">₹ ${totGrand.toLocaleString('en-IN', { minimumFractionDigits: 2 })} (${records.length} records)</td>
+          </tr>
+        </table>
+
+        <!-- DATA TABLE -->
+        <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #1a365d; font-size: 11px; margin-bottom: 26px;">
+          <thead>
+            ${tableTheadHtml}
+          </thead>
+          <tbody>
+            ${tableTbodyHtml}
+          </tbody>
+          <tfoot>
+            ${tableTfootHtml}
+          </tfoot>
+        </table>
+
+        <!-- SIGNATURE BLOCK -->
+        <table style="width: 100%; border-collapse: collapse; margin-top: 40px; font-size: 11.5px; color: #334155;">
+          <tr>
+            <td style="width: 33%; vertical-align: bottom;">Date: <b>${currentDateStr}</b></td>
+            <td style="width: 34%; text-align: center; vertical-align: bottom;">Verified By: <b>Trustee / Vicar</b></td>
+            <td style="width: 33%; text-align: right; vertical-align: bottom;"><b>Authorized Signature &amp; Seal</b></td>
+          </tr>
+        </table>
+      </div>
+    `;
+  }
+
+  const maxWidth = (defaultOrientation === 'portrait') ? '840px' : '1140px';
+
+  const fullPrintPageHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${escapeHtml(reportDocTitle)}</title>
+  <style id="smartPrintOrientationStyle">
+    @page { size: A4 ${defaultOrientation}; margin: 8mm 6mm; }
+  </style>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 60px 15px 25px 15px;
+      background: #f1f5f9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    #smartPrintDocumentWrap {
+      max-width: ${maxWidth};
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 24px 28px;
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      transition: max-width 0.2s ease;
+    }
+    @media print {
+      body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+      }
+      .no-print, .print-preview-header {
+        display: none !important;
+      }
+      #smartPrintDocumentWrap {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:2147483647; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5); font-family:system-ui,-apple-system,sans-serif;">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:1.2rem;">📊</span>
+      <span style="font-weight:800; font-size:0.95rem; color:#ffffff;">${escapeHtml(reportDocTitle.replace(/_/g, " "))}</span>
+    </div>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <div style="display:inline-flex; background:#1e293b; border-radius:6px; padding:2px; border:1px solid #334155;">
+        <button id="smartBtnPortrait" onclick="switchSmartReportOrientation('portrait')" style="background:${defaultOrientation === 'portrait' ? '#0284c7' : 'transparent'}; color:#ffffff; border:none; padding:6px 12px; border-radius:4px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;">
+          📄 Portrait
+        </button>
+        <button id="smartBtnLandscape" onclick="switchSmartReportOrientation('landscape')" style="background:${defaultOrientation === 'landscape' ? '#0284c7' : 'transparent'}; color:#ffffff; border:none; padding:6px 12px; border-radius:4px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;">
+          📑 Landscape
+        </button>
+      </div>
+      <button onclick="triggerSmartReportPrint()" style="background:#16a34a; color:#ffffff; border:none; padding:8px 16px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(22,163,74,0.4);">
+        🖨️ Print / Save PDF
+      </button>
+      <button onclick="closeSmartReportPreview()" style="background:#dc2626; color:#ffffff; border:none; padding:8px 18px; border-radius:24px; font-weight:800; cursor:pointer; font-size:0.85rem; box-shadow:0 2px 10px rgba(220,38,38,0.5);">
+        ✖ Close &amp; Return
+      </button>
+    </div>
+  </div>
+
+  <div id="smartPrintDocumentWrap">
+    ${reportHtml}
+  </div>
+
+  <script>
+    function switchSmartReportOrientation(orient) {
+      var styleEl = document.getElementById("smartPrintOrientationStyle");
+      var btnP = document.getElementById("smartBtnPortrait");
+      var btnL = document.getElementById("smartBtnLandscape");
+      var docWrap = document.getElementById("smartPrintDocumentWrap");
+      if (styleEl) {
+        styleEl.innerHTML = "@page { size: A4 " + orient + "; margin: 8mm 6mm; }";
+      }
+      if (btnP && btnL) {
+        btnP.style.background = (orient === "portrait") ? "#0284c7" : "transparent";
+        btnL.style.background = (orient === "landscape") ? "#0284c7" : "transparent";
+      }
+      if (docWrap) {
+        docWrap.style.maxWidth = (orient === "portrait") ? "840px" : "1140px";
+      }
+    }
+    function triggerSmartReportPrint() {
+      if (window.AndroidBridge && window.AndroidBridge.printPage) {
+        window.AndroidBridge.printPage();
+      } else {
+        window.print();
+      }
+    }
+    function closeSmartReportPreview() {
+      if (window.opener) {
+        window.close();
+      } else if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.close();
+      }
+    }
+  <\/script>
+</body>
+</html>`;
+
+  const renderSmartReportOverlay = () => {
+    let overlay = document.getElementById("smartPrintPreviewOverlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "smartPrintPreviewOverlay";
+      document.body.appendChild(overlay);
+    }
+    overlay.style.cssText = "position:fixed; top:0; left:0; right:0; bottom:0; z-index:99999; background:#f1f5f9; overflow:auto; padding:60px 15px 25px 15px;";
+    overlay.innerHTML = `
+      <style id="smartPrintOrientationStyle">
+        @page { size: A4 ${defaultOrientation}; margin: 8mm 6mm; }
+        @media print {
+          body > *:not(#smartPrintPreviewOverlay) { display: none !important; }
+          #smartPrintPreviewOverlay {
+            position: static !important;
+            overflow: visible !important;
+            height: auto !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+          }
+          #smartPrintPreviewOverlay, #smartPrintPreviewOverlay * { visibility: visible !important; }
+          .print-preview-header { display: none !important; }
+          #smartPrintDocumentWrap {
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+          }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+        }
+      </style>
+      <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:2147483647; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5); font-family:system-ui,-apple-system,sans-serif;">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.2rem;">📊</span>
+          <span style="font-weight:800; font-size:0.95rem; color:#ffffff;">${escapeHtml(reportDocTitle.replace(/_/g, " "))}</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <div style="display:inline-flex; background:#1e293b; border-radius:6px; padding:2px; border:1px solid #334155;">
+            <button id="smartBtnPortrait" onclick="window.switchSmartReportOrientation('portrait')" style="background:${defaultOrientation === 'portrait' ? '#0284c7' : 'transparent'}; color:#ffffff; border:none; padding:6px 12px; border-radius:4px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;">
+              📄 Portrait
+            </button>
+            <button id="smartBtnLandscape" onclick="window.switchSmartReportOrientation('landscape')" style="background:${defaultOrientation === 'landscape' ? '#0284c7' : 'transparent'}; color:#ffffff; border:none; padding:6px 12px; border-radius:4px; font-weight:700; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; gap:5px;">
+              📑 Landscape
+            </button>
+          </div>
+          <button onclick="window.triggerSmartReportPrint()" style="background:#16a34a; color:#ffffff; border:none; padding:8px 16px; border-radius:6px; font-weight:700; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; gap:6px; box-shadow:0 2px 8px rgba(22,163,74,0.4);">
+            🖨️ Print / Save PDF
+          </button>
+          <button onclick="window.closeSmartReportPreview()" style="background:#dc2626; color:#ffffff; border:none; padding:8px 18px; border-radius:24px; font-weight:800; cursor:pointer; font-size:0.85rem; box-shadow:0 2px 10px rgba(220,38,38,0.5);">
+            ✖ Close &amp; Return
+          </button>
+        </div>
+      </div>
+      <div id="smartPrintDocumentWrap" style="max-width:${maxWidth}; margin:0 auto; background:#ffffff; padding:24px 28px; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.08); transition:max-width 0.2s ease;">
+        ${reportHtml}
+      </div>
+    `;
+
+    window.switchSmartReportOrientation = function(orient) {
+      const styleEl = document.getElementById("smartPrintOrientationStyle");
+      const btnP = document.getElementById("smartBtnPortrait");
+      const btnL = document.getElementById("smartBtnLandscape");
+      const docWrap = document.getElementById("smartPrintDocumentWrap");
+      if (styleEl) {
+        styleEl.innerHTML = `@page { size: A4 ${orient}; margin: 8mm 6mm; }`;
+      }
+      if (btnP && btnL) {
+        btnP.style.background = (orient === 'portrait') ? '#0284c7' : 'transparent';
+        btnL.style.background = (orient === 'landscape') ? '#0284c7' : 'transparent';
+      }
+      if (docWrap) {
+        docWrap.style.maxWidth = (orient === 'portrait') ? '840px' : '1140px';
+      }
+    };
+    window.triggerSmartReportPrint = function() {
+      if (window.AndroidBridge && window.AndroidBridge.printPage) {
+        window.AndroidBridge.printPage();
+      } else {
+        window.print();
+      }
+    };
+    window.closeSmartReportPreview = function() {
+      const el = document.getElementById("smartPrintPreviewOverlay");
+      if (el) el.remove();
+      document.body.classList.remove("printing-mode");
+    };
+
+    document.body.classList.add("printing-mode");
+    if (window.AndroidBridge) {
+      setTimeout(() => {
+        window.triggerSmartReportPrint();
+      }, 350);
+    }
+  };
+
+  if (window.AndroidBridge) {
+    renderSmartReportOverlay();
+    return;
+  }
+
+  const printWin = window.open("", "_blank", "width=1200,height=850");
+  if (!printWin) {
+    renderSmartReportOverlay();
+    return;
+  }
+
+  printWin.document.open();
+  printWin.document.write(fullPrintPageHtml);
+  printWin.document.close();
 }
 
