@@ -292,7 +292,7 @@ window.addEventListener("unhandledrejection", function(e) {
         <div class="card-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
           <div>
             <span style="font-size:1.05rem; font-weight:700;">👥 Individual Member Accounts & Ledgers</span>
-            <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:2px;">All Parish Member Contributions & Grand Totals</span>
+            <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:2px;">All Parish Member Contributions & Grand Totals | <span id="indivHeadingPreview" style="color:#0369a1; font-weight:700;">Individual Account for the Period 01-04-2026 to 30-11-2026</span></span>
           </div>
           <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
             <span id="indivSummaryBadge" class="header-badge" style="background:#e0f2fe; color:#0369a1; font-weight:700; font-size:0.85rem; padding:6px 14px; border:1px solid #bae6fd;">
@@ -333,6 +333,23 @@ window.addEventListener("unhandledrejection", function(e) {
               <option value="V_desc">Passion Week (Highest First)</option>
               <option value="AH_desc">Auction Dues (Highest First)</option>
             </select>
+          </div>
+
+          <!-- HEADING DATE / DATE RANGE OPTION -->
+          <div style="display:flex; align-items:center; gap:0.4rem; background:#ffffff; padding:2px 8px; border:1px solid #cbd5e1; border-radius:6px; flex-wrap:wrap;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); white-space:nowrap;">📅 Report Heading:</span>
+            <select id="cmbIndivHeadingMode" class="form-control" style="font-size:0.825rem; padding:4px 8px; border:none; background:transparent; font-weight:600; cursor:pointer;" onchange="handleIndivHeadingModeChange()">
+              <option value="range_monthend" selected>Period: 01-04-2026 to Month End</option>
+              <option value="range_today">Period: 01-04-2026 to Today</option>
+              <option value="upto_monthend">Updated Upto Month End</option>
+              <option value="upto_today">Updated Upto Today</option>
+              <option value="custom">Custom Date Range...</option>
+            </select>
+            <div id="indivHeadingCustomDates" style="display:none; align-items:center; gap:0.3rem;">
+              <input type="date" id="txtIndivHeadingFrom" value="2026-04-01" class="form-control" style="font-size:0.775rem; padding:2px 6px; width:auto; border:1px solid #cbd5e1; border-radius:4px;" title="From Date" onchange="updateIndivHeadingPreview()">
+              <span style="font-size:0.75rem; color:#64748b;">to</span>
+              <input type="date" id="txtIndivHeadingTo" class="form-control" style="font-size:0.775rem; padding:2px 6px; width:auto; border:1px solid #cbd5e1; border-radius:4px;" title="To Date" onchange="updateIndivHeadingPreview()">
+            </div>
           </div>
         </div>
 
@@ -1240,8 +1257,8 @@ window.addEventListener("unhandledrejection", function(e) {
   <script src="html2pdf.bundle.min.js"></script>
   <script src="jszip.min.js"></script>
   <script src="bulk_pdf.js?v=11.7.2"></script>
-  <script src="logo_data.js?v=11.20"></script>
+  <script src="logo_data.js?v=11.23"></script>
   <script src="data.js?v=3.6"></script>
-  <script src="app.js?v=11.20"></script>
+  <script src="app.js?v=11.23"></script>
 </body>
 </html>

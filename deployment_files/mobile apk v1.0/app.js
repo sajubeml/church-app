@@ -3215,6 +3215,102 @@ function setupIndividualViewListeners() {
       renderIndividualLedgers();
     });
   }
+
+  initIndivHeadingControls();
+}
+
+// ----------------------------------------------------
+// INDIVIDUAL ACCOUNT REPORT HEADING CONFIGURATION
+// ----------------------------------------------------
+function getIndividualAccountHeading() {
+  const pad = (n) => (n < 10 ? '0' + n : n);
+  const formatDateDMY = (dStr) => {
+    if (!dStr) return "";
+    const parts = dStr.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dStr;
+  };
+
+  const modeEl = document.getElementById("cmbIndivHeadingMode");
+  const fromEl = document.getElementById("txtIndivHeadingFrom");
+  const toEl = document.getElementById("txtIndivHeadingTo");
+
+  const mode = modeEl ? modeEl.value : "range_monthend";
+
+  const dateToday = new Date();
+  const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+  const endOfMonthDMY = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
+  const todayDMY = pad(dateToday.getDate()) + '-' + pad(dateToday.getMonth() + 1) + '-' + dateToday.getFullYear();
+  const fyStartDMY = "01-04-2026";
+
+  if (mode === "range_monthend") {
+    return `Individual Account for the Period ${fyStartDMY} to ${endOfMonthDMY}`;
+  } else if (mode === "range_today") {
+    return `Individual Account for the Period ${fyStartDMY} to ${todayDMY}`;
+  } else if (mode === "upto_monthend") {
+    return `Individual Account updated upto ${endOfMonthDMY}`;
+  } else if (mode === "upto_today") {
+    return `Individual Account updated upto ${todayDMY}`;
+  } else if (mode === "custom") {
+    const fromVal = fromEl && fromEl.value ? formatDateDMY(fromEl.value) : fyStartDMY;
+    const toVal = toEl && toEl.value ? formatDateDMY(toEl.value) : endOfMonthDMY;
+    return `Individual Account for the Period ${fromVal} to ${toVal}`;
+  }
+
+  return `Individual Account for the Period ${fyStartDMY} to ${endOfMonthDMY}`;
+}
+
+window.getIndividualAccountHeading = getIndividualAccountHeading;
+
+window.handleIndivHeadingModeChange = function() {
+  const modeEl = document.getElementById("cmbIndivHeadingMode");
+  const customDatesDiv = document.getElementById("indivHeadingCustomDates");
+  const mode = modeEl ? modeEl.value : "range_monthend";
+  
+  if (customDatesDiv) {
+    customDatesDiv.style.display = (mode === "custom") ? "inline-flex" : "none";
+  }
+
+  try {
+    localStorage.setItem("CHURCH_INDIV_HEADING_MODE", mode);
+  } catch(e) {}
+
+  window.updateIndivHeadingPreview();
+};
+
+window.updateIndivHeadingPreview = function() {
+  const previewEl = document.getElementById("indivHeadingPreview");
+  if (previewEl) {
+    previewEl.textContent = getIndividualAccountHeading();
+  }
+};
+
+function initIndivHeadingControls() {
+  const modeEl = document.getElementById("cmbIndivHeadingMode");
+  const fromEl = document.getElementById("txtIndivHeadingFrom");
+  const toEl = document.getElementById("txtIndivHeadingTo");
+  
+  const pad = (n) => (n < 10 ? '0' + n : n);
+  const dateToday = new Date();
+  const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+
+  if (fromEl && !fromEl.value) {
+    fromEl.value = "2026-04-01";
+  }
+  if (toEl && !toEl.value) {
+    toEl.value = `${endOfMonth.getFullYear()}-${pad(endOfMonth.getMonth() + 1)}-${pad(endOfMonth.getDate())}`;
+  }
+
+  try {
+    const savedMode = localStorage.getItem("CHURCH_INDIV_HEADING_MODE");
+    if (savedMode && modeEl) {
+      modeEl.value = savedMode;
+    }
+  } catch(e) {}
+
+  window.handleIndivHeadingModeChange();
 }
 
 function handleIndivHeaderClick(colKey) {
@@ -3333,6 +3429,10 @@ function renderIndividualLedgers() {
   const tbody = document.getElementById("indivTbody");
   const tfoot = document.getElementById("indivTfoot");
   if (!tbody || !thead || !tfoot) return;
+
+  if (typeof updateIndivHeadingPreview === "function") {
+    updateIndivHeadingPreview();
+  }
 
   if (tableEl) {
     tableEl.className = `data-table indiv-table density-${state.columnDensity || 'compact'}`;
@@ -4278,10 +4378,17 @@ function exportTableToExcel(tableId, filename) {
     const nameStr = filename || "St_Gregorios_Accounting_Export";
     const sheetTitle = nameStr.replace(/_/g, " ");
 
+    const dateToday = new Date();
+    const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    const formattedDate = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
+
+    const indivHeadingLine = typeof getIndividualAccountHeading === 'function' ? getIndividualAccountHeading() : `Individual Account updated upto ${formattedDate}`;
+
     const churchHeaderRows = tableId === "indivTable" ? [
       ["ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"],
       ["Government House Road, Nazarbad, Mysuru, Karnataka 570 010"],
-      ["Individual Account updated upto 31-07-2026"],
+      [indivHeadingLine],
       []
     ] : [
       ["ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"],
@@ -4466,22 +4573,30 @@ function exportTableToPDF(tableId, filename) {
     const headerTitle = cleanTitle.replace(/_/g, " ");
     const nowStr = new Date().toLocaleString("en-IN");
 
+    const dateToday = new Date();
+    const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+    const pad = (n) => (n < 10 ? '0' + n : n);
+    const formattedDate = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
+
     // Prepend Church Header inside <thead> so it repeats on EVERY page in PDF print
     const thead = cleanTable.querySelector("thead");
     if (thead) {
       const isIndiv = (tableId === "indivTable");
-      const titleLine3 = isIndiv ? "Individual Account updated upto 31-07-2026" : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
+      const indivHeadingLine = typeof getIndividualAccountHeading === "function" 
+        ? getIndividualAccountHeading() 
+        : `Individual Account updated upto ${formattedDate}`;
+      const titleLine3 = isIndiv ? indivHeadingLine : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
 
       const totalCols = 99; // Force full span across all actual columns
 
       const headerBlockHtml = `
         <tr class="pdf-repeat-header">
-          <th colspan="${totalCols}" style="text-align:center; border:none; background:#ffffff; padding:10px 0 15px 0; font-family:'Segoe UI',Arial,sans-serif;">
+          <th colspan="${totalCols}" style="text-align:center; border:none; background:#ffffff; padding:4px 0 6px 0; font-family:'Segoe UI',Arial,sans-serif;">
             <div style="text-align:center; width:100%; margin:0 auto;">
-              <img src="church_logo.png" alt="Church Logo" style="display:block; margin:0 auto 6px auto; height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; object-fit:contain; background:#fff;">
-              <div style="font-size:16px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.5px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</div>
-              <div style="font-size:11px; font-weight:600; color:#475569; margin-top:3px;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</div>
-              <div style="font-size:12px; font-weight:700; color:#0f172a; margin-top:6px; padding-top:6px; border-top:1.5px solid #cbd5e1; display:inline-block;">${titleLine3}</div>
+              <img src="church_logo.png" alt="Church Logo" style="display:block; margin:0 auto 3px auto; height:36px; width:36px; border-radius:50%; border:1.5px solid #1e293b; object-fit:contain; background:#fff;">
+              <div style="font-size:13px; font-weight:900; color:#0f172a; text-transform:uppercase; letter-spacing:0.4px;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</div>
+              <div style="font-size:9px; font-weight:600; color:#475569; margin-top:2px;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</div>
+              <div style="font-size:10px; font-weight:800; color:#0f172a; margin-top:3px; padding-top:3px; display:inline-block;">${titleLine3}</div>
             </div>
           </th>
         </tr>
@@ -4507,10 +4622,51 @@ function exportTableToPDF(tableId, filename) {
         <style>
           @media print {
             body > *:not(#printPreviewOverlay) { display: none !important; }
-            #printPreviewOverlay { position: static !important; overflow: visible !important; height: auto !important; padding: 0 !important; zoom: 0.55; }
+            /* zoom applied here — Chrome uses this BEFORE calculating page breaks */
+            #printPreviewOverlay {
+              position: static !important;
+              overflow: visible !important;
+              height: auto !important;
+              padding: 0 !important;
+              zoom: 0.62;
+            }
             #printPreviewOverlay, #printPreviewOverlay * { visibility: visible !important; }
             .print-preview-header { display: none !important; }
-            @page { size: A4 landscape; margin: 5mm; }
+            @page { size: A4 landscape; margin: 4mm 5mm; }
+
+            /* FORCE BROWSER TO PRINT BACKGROUND COLORS */
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+
+            table {
+              border-collapse: collapse !important;
+              width: 100% !important;
+              table-layout: fixed !important;
+              font-family: Arial, sans-serif !important;
+              border: 1px solid #000 !important;
+              font-size: 8px !important;
+            }
+            table th, table td { white-space: normal !important; word-wrap: break-word !important; overflow: hidden; }
+            table th:nth-child(1), table td:nth-child(1),
+            table th:nth-child(2), table td:nth-child(2),
+            table th:nth-child(3), table td:nth-child(3),
+            table th:nth-child(4), table td:nth-child(4) {
+              white-space: nowrap !important;
+            }
+            table th { background-color: #e6f0ed !important; color: #000 !important; font-weight: bold !important; font-size: 8px !important; border: 1px solid #666 !important; padding: 1px 2px !important; text-align: center !important; line-height: 1.15 !important; }
+            table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
+              background-color: #fff2cc !important;
+            }
+            table td { font-size: 8px !important; border: 1px dotted #888 !important; padding: 1px 2px !important; color: #000 !important; line-height: 1.15 !important; }
+            table tr:last-child td { font-weight: bold !important; background-color: #e2e8f0 !important; border: 1px solid #000 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
+            /* Compact church header row */
+            table tr.pdf-repeat-header th { padding: 2px 0 4px 0 !important; }
+            table tr.pdf-repeat-header th img { height: 28px !important; width: 28px !important; margin-bottom: 2px !important; }
+            table tr.pdf-repeat-header th div:nth-child(2) { font-size: 9px !important; }
+            table tr.pdf-repeat-header th div:nth-child(3) { font-size: 7px !important; margin-top: 1px !important; }
+            table tr.pdf-repeat-header th div:nth-child(4) { font-size: 8px !important; margin-top: 2px !important; }
           }
         </style>
         <div class="print-preview-header no-print" style="position:fixed; top:0; left:0; right:0; z-index:100000; background:#0f172a; color:#ffffff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 4px 14px rgba(0,0,0,0.5);">
@@ -4551,12 +4707,22 @@ function exportTableToPDF(tableId, filename) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=5.0, user-scalable=yes">
         <title>${cleanTitle}</title>
         <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 50px 15px 15px 15px; color: #0f172a; background: #ffffff; margin: 0; }
-          table { width: 100%; border-collapse: collapse; font-size: 9.5px; margin-top: 5px; }
-          th, td { border: 1px solid #94a3b8; padding: 4px 6px; text-align: left; }
-          th { background-color: #f1f5f9; color: #0f172a; font-weight: bold; }
+          body { font-family: 'Times New Roman', Times, serif; padding: 50px 15px 15px 15px; color: #000; background: #ffffff; margin: 0; }
+          table { width: 100%; border-collapse: collapse !important; font-size: 11px; margin-top: 5px; border: 1px solid #000 !important; font-family: 'Times New Roman', Times, serif !important; }
+          table th, table td { white-space: normal !important; word-wrap: break-word !important; }
+          table th:nth-child(1), table td:nth-child(1),
+          table th:nth-child(2), table td:nth-child(2),
+          table th:nth-child(3), table td:nth-child(3),
+          table th:nth-child(4), table td:nth-child(4) {
+            white-space: nowrap !important;
+          }
+          th, td { border: 1px dotted #888 !important; padding: 3px 4px !important; color: #000 !important; }
+          th { background-color: #e6f0ed !important; font-weight: bold !important; font-size: 11px !important; text-align: center !important; border: 1px solid #666 !important; }
+          table th:nth-child(4), table th:nth-child(5), table th:nth-child(6), table th:nth-child(7), table th:nth-child(8), table th:nth-child(9), table th:nth-child(10) {
+            background-color: #fff2cc !important;
+          }
+          tr:last-child td { font-weight: bold !important; border: 1px solid #000 !important; border-top: 1.5px solid #000 !important; border-bottom: 1.5px solid #000 !important; }
           .text-right { text-align: right; white-space: nowrap; }
-          tfoot tr { background-color: #e2e8f0; font-weight: bold; }
           code { font-family: monospace; font-size: 9.5px; }
           
           /* Force header repeating on every printed page */
@@ -4568,6 +4734,13 @@ function exportTableToPDF(tableId, filename) {
             .no-print, .print-preview-header { display: none !important; }
             body { padding: 0 !important; margin: 0 !important; zoom: 0.55; }
             @page { size: A4 landscape; margin: 5mm; }
+            
+            /* FORCE BROWSER TO PRINT BACKGROUND COLORS */
+            * {
+              -webkit-print-color-adjust: exact !important;
+              print-color-adjust: exact !important;
+            }
+            
             table { page-break-inside: auto; margin: 0 auto; }
             tr { page-break-inside: avoid; page-break-after: auto; }
             thead { display: table-header-group !important; }

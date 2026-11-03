@@ -3387,6 +3387,102 @@ function setupIndividualViewListeners() {
       renderIndividualLedgers();
     });
   }
+
+  initIndivHeadingControls();
+}
+
+// ----------------------------------------------------
+// INDIVIDUAL ACCOUNT REPORT HEADING CONFIGURATION
+// ----------------------------------------------------
+function getIndividualAccountHeading() {
+  const pad = (n) => (n < 10 ? '0' + n : n);
+  const formatDateDMY = (dStr) => {
+    if (!dStr) return "";
+    const parts = dStr.split('-');
+    if (parts.length === 3) {
+      return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dStr;
+  };
+
+  const modeEl = document.getElementById("cmbIndivHeadingMode");
+  const fromEl = document.getElementById("txtIndivHeadingFrom");
+  const toEl = document.getElementById("txtIndivHeadingTo");
+
+  const mode = modeEl ? modeEl.value : "range_monthend";
+
+  const dateToday = new Date();
+  const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+  const endOfMonthDMY = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
+  const todayDMY = pad(dateToday.getDate()) + '-' + pad(dateToday.getMonth() + 1) + '-' + dateToday.getFullYear();
+  const fyStartDMY = "01-04-2026";
+
+  if (mode === "range_monthend") {
+    return `Individual Account for the Period ${fyStartDMY} to ${endOfMonthDMY}`;
+  } else if (mode === "range_today") {
+    return `Individual Account for the Period ${fyStartDMY} to ${todayDMY}`;
+  } else if (mode === "upto_monthend") {
+    return `Individual Account updated upto ${endOfMonthDMY}`;
+  } else if (mode === "upto_today") {
+    return `Individual Account updated upto ${todayDMY}`;
+  } else if (mode === "custom") {
+    const fromVal = fromEl && fromEl.value ? formatDateDMY(fromEl.value) : fyStartDMY;
+    const toVal = toEl && toEl.value ? formatDateDMY(toEl.value) : endOfMonthDMY;
+    return `Individual Account for the Period ${fromVal} to ${toVal}`;
+  }
+
+  return `Individual Account for the Period ${fyStartDMY} to ${endOfMonthDMY}`;
+}
+
+window.getIndividualAccountHeading = getIndividualAccountHeading;
+
+window.handleIndivHeadingModeChange = function() {
+  const modeEl = document.getElementById("cmbIndivHeadingMode");
+  const customDatesDiv = document.getElementById("indivHeadingCustomDates");
+  const mode = modeEl ? modeEl.value : "range_monthend";
+  
+  if (customDatesDiv) {
+    customDatesDiv.style.display = (mode === "custom") ? "inline-flex" : "none";
+  }
+
+  try {
+    localStorage.setItem("CHURCH_INDIV_HEADING_MODE", mode);
+  } catch(e) {}
+
+  window.updateIndivHeadingPreview();
+};
+
+window.updateIndivHeadingPreview = function() {
+  const previewEl = document.getElementById("indivHeadingPreview");
+  if (previewEl) {
+    previewEl.textContent = getIndividualAccountHeading();
+  }
+};
+
+function initIndivHeadingControls() {
+  const modeEl = document.getElementById("cmbIndivHeadingMode");
+  const fromEl = document.getElementById("txtIndivHeadingFrom");
+  const toEl = document.getElementById("txtIndivHeadingTo");
+  
+  const pad = (n) => (n < 10 ? '0' + n : n);
+  const dateToday = new Date();
+  const endOfMonth = new Date(dateToday.getFullYear(), dateToday.getMonth() + 1, 0);
+
+  if (fromEl && !fromEl.value) {
+    fromEl.value = "2026-04-01";
+  }
+  if (toEl && !toEl.value) {
+    toEl.value = `${endOfMonth.getFullYear()}-${pad(endOfMonth.getMonth() + 1)}-${pad(endOfMonth.getDate())}`;
+  }
+
+  try {
+    const savedMode = localStorage.getItem("CHURCH_INDIV_HEADING_MODE");
+    if (savedMode && modeEl) {
+      modeEl.value = savedMode;
+    }
+  } catch(e) {}
+
+  window.handleIndivHeadingModeChange();
 }
 
 function handleIndivHeaderClick(colKey) {
@@ -3504,6 +3600,10 @@ function renderIndividualLedgers() {
   const tbody = document.getElementById("indivTbody");
   const tfoot = document.getElementById("indivTfoot");
   if (!tbody || !thead || !tfoot) return;
+
+  if (typeof updateIndivHeadingPreview === "function") {
+    updateIndivHeadingPreview();
+  }
 
   if (tableEl) {
     tableEl.className = `data-table indiv-table density-${state.columnDensity || 'compact'}`;
@@ -4469,10 +4569,12 @@ function exportTableToExcel(tableId, filename) {
     const pad = (n) => (n < 10 ? '0' + n : n);
     const formattedDate = pad(endOfMonth.getDate()) + '-' + pad(endOfMonth.getMonth() + 1) + '-' + endOfMonth.getFullYear();
 
+    const indivHeadingLine = typeof getIndividualAccountHeading === 'function' ? getIndividualAccountHeading() : `Individual Account updated upto ${formattedDate}`;
+
     const churchHeaderRows = tableId === "indivTable" ? [
       ["ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"],
       ["Government House Road, Nazarbad, Mysuru, Karnataka 570 010"],
-      [`Individual Account updated upto ${formattedDate}`],
+      [indivHeadingLine],
       []
     ] : [
       ["ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE"],
@@ -4666,7 +4768,10 @@ function exportTableToPDF(tableId, filename) {
     const thead = cleanTable.querySelector("thead");
     if (thead) {
       const isIndiv = (tableId === "indivTable");
-      const titleLine3 = isIndiv ? `Individual Account updated upto ${formattedDate}` : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
+      const indivHeadingLine = typeof getIndividualAccountHeading === "function" 
+        ? getIndividualAccountHeading() 
+        : `Individual Account updated upto ${formattedDate}`;
+      const titleLine3 = isIndiv ? indivHeadingLine : `Financial Accounting Portal FY 2026-2027 | ${headerTitle}`;
 
       const totalCols = 99; // Force full span across all actual columns
 

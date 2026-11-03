@@ -2065,6 +2065,7 @@ window.INITIAL_INDIVIDUAL = [
     "N": "",
     "V": "",
     "Y": "",
+    "AH": "",
     "AK": "",
     "AM": ""
   },
@@ -2171,6 +2172,7 @@ window.INITIAL_INDIVIDUAL = [
     "C": "Sinoy Kuriakose",
     "D": "apr26 to Aug26",
     "E": "",
+    "F": "",
     "M": "",
     "N": "",
     "V": "",

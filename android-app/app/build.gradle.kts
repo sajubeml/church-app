@@ -11,8 +11,8 @@ android {
         applicationId = "com.stgregorios.churchaccounting"
         minSdk = 24
         targetSdk = 36
-        versionCode = 85
-        versionName = "11.22"
+        versionCode = 86
+        versionName = "11.23"
         resValue("string", "app_name", "St Gregorios Church Accounting")
     }
 
