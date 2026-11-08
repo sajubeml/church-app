@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupFormEventListeners();
   setupCashbookViewListeners();
   setupIndividualViewListeners();
-  renderAllViews();
+  setTimeout(() => renderAllViews(), 40);
 });
 
 function verifyLicenseGuard() {
@@ -2106,7 +2106,7 @@ function commitCartToLedgers() {
 
   // 5. Reset Cart & Live update all table views (Cash Book, Member Ledgers, Trial Balance, Audit, Admin)
   clearForm();
-  renderAllViews();
+  setTimeout(() => renderAllViews(), 40);
 }
 
 // ----------------------------------------------------
@@ -2581,7 +2581,7 @@ function printReceiptModal() {
   const pdfTitle = getCleanPrintTitle(docNo ? `${prefix}_${docNo}` : `${prefix}_Document`);
 
   // 1. Ensure all ledger views are updated live
-  renderAllViews();
+  setTimeout(() => renderAllViews(), 40);
 
   // 2. Save print file copy into local Receipts/ folder & localStorage
   if (modalArea && docNo) {
@@ -5392,7 +5392,7 @@ function saveCashbookEntryChanges() {
     });
   }
 
-  renderAllViews();
+  setTimeout(() => renderAllViews(), 40);
   if (state.isAdminUnlocked) renderAdminTxnsTable();
   closeEditCashbookModal();
 }
@@ -5444,7 +5444,7 @@ function confirmDeleteCashbookEntry(payload) {
       });
     }
 
-    renderAllViews();
+    setTimeout(() => renderAllViews(), 40);
     if (state.isAdminUnlocked) renderAdminTxnsTable();
   }
 }
@@ -6350,7 +6350,7 @@ function processBackupRestoreData(jsonText) {
 
       setTimeout(() => {
         loadAllData();
-        renderAllViews();
+        setTimeout(() => renderAllViews(), 40);
         alert("✅ Backup restored successfully! All data updated and synced to database.");
       }, 500);
     }

@@ -2108,6 +2108,8 @@ function commitCartToLedgers() {
     });
     console.log("Saved to Native Android SQLite!");
   } else {
+    // Optimistically notify user that sync is starting
+    showToast('🔄 Syncing transaction to cloud…', 'info');
     Promise.all(state.cart.map(item => {
       const isCash = item.paymentType === "Cash";
       const payload = isReceipt ? {
@@ -2328,6 +2330,9 @@ function showReceiptModal() {
       modalArea.dataset.prefix = prefix;
       modalArea.dataset.docno = docNo;
       document.getElementById('receiptModal').classList.add('active');
+      // Enable print button immediately after modal is ready
+      const printBtn = document.getElementById('btnPrint');
+      if (printBtn) printBtn.disabled = false;
     });
   }
   // Clean up the temporary element
