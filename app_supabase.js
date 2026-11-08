@@ -2312,13 +2312,26 @@ function showReceiptModal() {
     </div>
   `;
 
-  const modalArea = document.getElementById("receiptModalArea");
+  // Build receipt content off‑screen to avoid blocking the main thread
+  const hiddenWrapper = document.createElement('div');
+  hiddenWrapper.style.position = 'fixed';
+  hiddenWrapper.style.left = '-9999px'; // keep out of view
+  hiddenWrapper.innerHTML = receiptContent;
+  // Force layout pass
+  hiddenWrapper.offsetHeight;
+
+  const modalArea = document.getElementById('receiptModalArea');
   if (modalArea) {
-    modalArea.innerHTML = receiptContent;
-    modalArea.dataset.prefix = prefix;
-    modalArea.dataset.docno = docNo;
+    // Insert prepared HTML in a micro‑task so the UI can repaint first
+    requestAnimationFrame(() => {
+      modalArea.innerHTML = hiddenWrapper.innerHTML;
+      modalArea.dataset.prefix = prefix;
+      modalArea.dataset.docno = docNo;
+      document.getElementById('receiptModal').classList.add('active');
+    });
   }
-  document.getElementById("receiptModal").classList.add("active");
+  // Clean up the temporary element
+  hiddenWrapper.remove();
 
   // Asynchronously cache print copy HTML without freezing UI
   setTimeout(() => {
