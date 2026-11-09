@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupFormEventListeners();
   setupCashbookViewListeners();
   setupIndividualViewListeners();
-  setTimeout(() => renderAllViews(), 40);
+  setTimeout(() => renderAllViews(true), 40);
 });
 
 function verifyLicenseGuard() {
@@ -1463,12 +1463,34 @@ function setupNavigation() {
       const targetPane = document.getElementById(paneId);
       if (targetPane) targetPane.classList.add("active");
 
-      if (paneId === "tabAdmin") {
+      if (paneId === "tabCashbook") {
+        if (state._dirtyCashbook !== false) {
+          renderCashbook();
+          state._dirtyCashbook = false;
+        }
+      } else if (paneId === "tabMembers") {
+        if (state._dirtyMembers !== false) {
+          renderIndividualLedgers();
+          state._dirtyMembers = false;
+        }
+      } else if (paneId === "tabAdmin") {
         renderAdminTab();
+        state._dirtyAdmin = false;
       } else if (paneId === "tabMemberDirectory") {
         renderMemberDirectory();
       } else if (paneId === "tabBalanceSheet") {
-        renderBalanceSheet();
+        if (state._dirtyBalanceSheet !== false) {
+          renderTrialBalance();
+          renderBalanceSheet();
+          state._dirtyBalanceSheet = false;
+        } else {
+          renderBalanceSheet();
+        }
+      } else if (paneId === "tabAudit") {
+        if (state._dirtyAudit !== false) {
+          renderAudit();
+          state._dirtyAudit = false;
+        }
       } else if (paneId === "tabSmartReport") {
         initSmartReportUI();
         runSmartReport();
@@ -2046,57 +2068,58 @@ function commitCartToLedgers() {
       window.AndroidBridge.saveTransaction(JSON.stringify(payload), isReceipt);
     });
     console.log("Saved to Native Android SQLite!");
-  } else {
-    Promise.all(state.cart.map(item => {
-      const isCash = item.paymentType === "Cash";
-      const payload = isReceipt ? {
-        date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
-        receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
-        receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
-      } : {
-        payment_date: dateStr, payment_voucher_no: docNo,
-        payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
-        payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
-      };
+  } else if (window.location.protocol !== 'file:') {
+    const cartItems = [...state.cart];
+    setTimeout(() => {
+      Promise.all(cartItems.map(item => {
+        const isCash = item.paymentType === "Cash";
+        const payload = isReceipt ? {
+          date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
+          receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
+          receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
+        } : {
+          payment_date: dateStr, payment_voucher_no: docNo,
+          payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
+          payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+        };
 
-      const newRow = {
-        A: dateStr,
-        B: isReceipt ? docNo : "",
-        C: isReceipt ? regNo : "",
-        D: isReceipt ? memberName : "",
-        E: isReceipt ? item.particulars : "",
-        F: isReceipt ? item.code : "",
-        G: isReceipt ? item.details : "",
-        H: isReceipt && isCash ? item.amount : "",
-        I: isReceipt && !isCash ? item.amount : "",
-        K: !isReceipt ? dateStr : "",
-        L: !isReceipt ? docNo : "",
-        M: !isReceipt ? item.particulars : "",
-        N: !isReceipt ? item.code : "",
-        O: !isReceipt ? item.details : "",
-        P: !isReceipt && isCash ? item.amount : "",
-        Q: !isReceipt && !isCash ? item.amount : ""
-      };
+        const newRow = {
+          A: dateStr,
+          B: isReceipt ? docNo : "",
+          C: isReceipt ? regNo : "",
+          D: isReceipt ? memberName : "",
+          E: isReceipt ? item.particulars : "",
+          F: isReceipt ? item.code : "",
+          G: isReceipt ? item.details : "",
+          H: isReceipt && isCash ? item.amount : "",
+          I: isReceipt && !isCash ? item.amount : "",
+          K: !isReceipt ? dateStr : "",
+          L: !isReceipt ? docNo : "",
+          M: !isReceipt ? item.particulars : "",
+          N: !isReceipt ? item.code : "",
+          O: !isReceipt ? item.details : "",
+          P: !isReceipt && isCash ? item.amount : "",
+          Q: !isReceipt && !isCash ? item.amount : ""
+        };
 
-      return fetch('./api.php?_t=' + Date.now(), {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save_transaction', row: newRow })
+        return fetch('./api.php?_t=' + Date.now(), {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'save_transaction', row: newRow })
+        });
+      })).then((responses) => {
+        let allOk = true;
+        responses.forEach(r => { if (r && !r.ok) allOk = false; });
+        if (allOk) {
+          console.log("Saved to DB!");
+        } else {
+          console.warn("Backend sync returned error status");
+        }
+      }).catch(err => {
+        console.warn("[SYNC INFO] Local offline mode active:", err.message);
       });
-    })).then((responses) => {
-      let allOk = true;
-      responses.forEach(r => { if (r && !r.ok) allOk = false; });
-      if (allOk) {
-        console.log("Saved to DB!");
-        alert("✅ Transaction successfully synced to Cloud Database!");
-      } else {
-        alert("⚠️ Transaction saved locally, but Cloud server returned an error.");
-      }
-    }).catch(err => {
-      console.error("[SYNC ERROR] Failed to save to server database:", err);
-      alert("⚠️ Data saved locally but could NOT sync to server database. Please check your network connection and try again.");
-    });
+    }, 10);
   }
 
   const vInput = document.getElementById("txtVoucherNo");
@@ -2256,6 +2279,8 @@ function showReceiptModal() {
     modalArea.dataset.docno = docNo;
   }
   document.getElementById("receiptModal").classList.add("active");
+  const printBtn = document.getElementById("btnPrint");
+  if (printBtn) printBtn.disabled = false;
 
   // Asynchronously cache print copy HTML without freezing UI
   setTimeout(() => {
@@ -2843,9 +2868,18 @@ async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
 </body>
 </html>`;
 
+  if (window.location.protocol === 'file:') {
+    if (typeof callback === 'function') callback(null);
+    return;
+  }
+
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timeoutId = controller ? setTimeout(() => controller.abort(), 1200) : null;
+
   fetch('/api/save_print', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    signal: controller ? controller.signal : undefined,
     body: JSON.stringify({
       filename: fileName,
       content: fullHtml
@@ -2853,24 +2887,63 @@ async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
   })
     .then(r => r.json())
     .then(res => {
+      if (timeoutId) clearTimeout(timeoutId);
       if (typeof callback === 'function') callback(res);
     })
     .catch(() => {
+      if (timeoutId) clearTimeout(timeoutId);
       if (typeof callback === 'function') callback(null);
     });
 }
 
 // ----------------------------------------------------
-// 6. RENDER ALL DATA VIEWS
+// 6. RENDER ALL DATA VIEWS (Optimized with Lazy Tab Rendering)
 // ----------------------------------------------------
-function renderAllViews() {
-  renderCashbook();
-  renderIndividualLedgers();
-  renderTrialBalance();
-  renderBalanceSheet();
-  renderAudit();
-  if (state.isAdminUnlocked) {
+function renderAllViews(forceAll = false) {
+  if (forceAll) {
+    renderCashbook();
+    renderIndividualLedgers();
+    renderTrialBalance();
+    renderBalanceSheet();
+    renderAudit();
+    if (state.isAdminUnlocked) {
+      renderAdminTab();
+    }
+    state._dirtyCashbook = false;
+    state._dirtyMembers = false;
+    state._dirtyBalanceSheet = false;
+    state._dirtyAudit = false;
+    state._dirtyAdmin = false;
+    return;
+  }
+
+  // Mark other tabs dirty so they re-calculate on-demand when clicked
+  state._dirtyCashbook = true;
+  state._dirtyMembers = true;
+  state._dirtyBalanceSheet = true;
+  state._dirtyAudit = true;
+  state._dirtyAdmin = true;
+
+  // Determine current active tab
+  const activeTab = document.querySelector(".nav-tab.active");
+  const activePaneId = activeTab ? activeTab.dataset.tab : "tabVoucher";
+
+  if (activePaneId === "tabCashbook") {
+    renderCashbook();
+    state._dirtyCashbook = false;
+  } else if (activePaneId === "tabMembers") {
+    renderIndividualLedgers();
+    state._dirtyMembers = false;
+  } else if (activePaneId === "tabBalanceSheet") {
+    renderTrialBalance();
+    renderBalanceSheet();
+    state._dirtyBalanceSheet = false;
+  } else if (activePaneId === "tabAudit") {
+    renderAudit();
+    state._dirtyAudit = false;
+  } else if (activePaneId === "tabAdmin" && state.isAdminUnlocked) {
     renderAdminTab();
+    state._dirtyAdmin = false;
   }
 }
 
@@ -5434,7 +5507,7 @@ function confirmDeleteCashbookEntry(payload) {
     localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
 
     // Sync deletion to server database
-    if (!window.AndroidBridge) {
+    if (!window.AndroidBridge && window.location.protocol !== 'file:') {
       fetch('/api/bulk_import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -5776,6 +5849,8 @@ function reprintTxnDocument(type, docNo, index) {
     if (htmlContent) {
       if (modalArea) modalArea.innerHTML = htmlContent;
       document.getElementById("receiptModal").classList.add("active");
+  const printBtn = document.getElementById("btnPrint");
+  if (printBtn) printBtn.disabled = false;
       document.title = pdfTitle;
       return;
     }
@@ -5928,6 +6003,8 @@ function reprintTxnDocument(type, docNo, index) {
 
   if (modalArea) modalArea.innerHTML = cardHtml;
   document.getElementById("receiptModal").classList.add("active");
+  const printBtn = document.getElementById("btnPrint");
+  if (printBtn) printBtn.disabled = false;
   document.title = pdfTitle;
 }
 
@@ -6350,7 +6427,7 @@ function processBackupRestoreData(jsonText) {
 
       setTimeout(() => {
         loadAllData();
-        setTimeout(() => renderAllViews(), 40);
+        setTimeout(() => renderAllViews(true), 40);
         alert("✅ Backup restored successfully! All data updated and synced to database.");
       }, 500);
     }

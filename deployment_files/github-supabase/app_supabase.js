@@ -105,14 +105,40 @@ window.fetch = async function (url, options) {
         }
         if (window.state && window.state.cashbook) {
           body.row.id = insertObj.id;
-          window.state.cashbook.push(body.row);
+          const lastRow = window.state.cashbook[window.state.cashbook.length - 1];
+          if (lastRow && !lastRow.id && (lastRow.B === body.row.B || lastRow.L === body.row.L)) {
+            lastRow.id = insertObj.id;
+          }
           if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-          if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
         }
         return new Response(JSON.stringify({ success: true }));
       }
 
-      if (body.action === 'get_app_state') {
+      if (body.action === 'delete_transaction') {
+        const rowId = body.id;
+        const colB = body.col_B;
+        const colL = body.col_L;
+        let filterQuery = '';
+        if (rowId) {
+          filterQuery = `id=eq.${encodeURIComponent(rowId)}`;
+        } else if (colB) {
+          filterQuery = `col_B=eq.${encodeURIComponent(colB)}`;
+        } else if (colL) {
+          filterQuery = `col_L=eq.${encodeURIComponent(colL)}`;
+        }
+
+        if (filterQuery) {
+          const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?${filterQuery}`, {
+            method: 'DELETE',
+            headers: {
+              'apikey': SUPABASE_ANON_KEY,
+              'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
+            }
+          });
+          return new Response(JSON.stringify({ success: res.ok }));
+        }
+        return new Response(JSON.stringify({ success: false, message: 'No ID or Doc No provided' }));
+      }
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?select=*`, {
           headers: {
             'apikey': SUPABASE_ANON_KEY,
@@ -183,12 +209,6 @@ window.fetch = async function (url, options) {
           body: JSON.stringify(updates)
         });
         if (!res.ok) throw new Error("Failed to save app state: " + res.status);
-        if (window.state && window.state.cashbook) {
-          body.row.id = insertObj.id;
-          window.state.cashbook.push(body.row);
-          if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-          if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
-        }
         return new Response(JSON.stringify({ success: true }));
       }
 
@@ -232,12 +252,6 @@ window.fetch = async function (url, options) {
           }
         }
 
-        if (window.state && window.state.cashbook) {
-          body.row.id = insertObj.id;
-          window.state.cashbook.push(body.row);
-          if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-          if (typeof window.loadCloudData === 'function') setTimeout(() => window.loadCloudData(false), 500);
-        }
         return new Response(JSON.stringify({ success: true }));
       }
 
@@ -453,7 +467,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   setupFormEventListeners();
   setupCashbookViewListeners();
   setupIndividualViewListeners();
-  renderAllViews();
+  renderAllViews(true);
 });
 
 function verifyLicenseGuard() {
@@ -1524,12 +1538,34 @@ function setupNavigation() {
       const targetPane = document.getElementById(paneId);
       if (targetPane) targetPane.classList.add("active");
 
-      if (paneId === "tabAdmin") {
+      if (paneId === "tabCashbook") {
+        if (state._dirtyCashbook !== false) {
+          renderCashbook();
+          state._dirtyCashbook = false;
+        }
+      } else if (paneId === "tabMembers") {
+        if (state._dirtyMembers !== false) {
+          renderIndividualLedgers();
+          state._dirtyMembers = false;
+        }
+      } else if (paneId === "tabAdmin") {
         renderAdminTab();
+        state._dirtyAdmin = false;
       } else if (paneId === "tabMemberDirectory") {
         renderMemberDirectory();
       } else if (paneId === "tabBalanceSheet") {
-        renderBalanceSheet();
+        if (state._dirtyBalanceSheet !== false) {
+          renderTrialBalance();
+          renderBalanceSheet();
+          state._dirtyBalanceSheet = false;
+        } else {
+          renderBalanceSheet();
+        }
+      } else if (paneId === "tabAudit") {
+        if (state._dirtyAudit !== false) {
+          renderAudit();
+          state._dirtyAudit = false;
+        }
       } else if (paneId === "tabSmartReport") {
         initSmartReportUI();
         runSmartReport();
@@ -2108,44 +2144,48 @@ function commitCartToLedgers() {
     });
     console.log("Saved to Native Android SQLite!");
   } else {
-    Promise.all(state.cart.map(item => {
-      const isCash = item.paymentType === "Cash";
-      const payload = isReceipt ? {
-        date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
-        receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
-        receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
-      } : {
-        payment_date: dateStr, payment_voucher_no: docNo,
-        payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
-        payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
-      };
+    // Optimistically notify user that sync is starting in the background
+    showToast('🔄 Syncing transaction to cloud…', 'info');
+    const cartItems = [...state.cart];
+    setTimeout(() => {
+      Promise.all(cartItems.map(item => {
+        const isCash = item.paymentType === "Cash";
+        const payload = isReceipt ? {
+          date: dateStr, receipt_no: docNo, reg_no: regNo, name_of_hof: memberName,
+          receipt_acct_head: item.particulars, receipt_code: item.code, receipt_details: item.details,
+          receipt_cash: isCash ? item.amount : 0, receipt_bank: isCash ? 0 : item.amount
+        } : {
+          payment_date: dateStr, payment_voucher_no: docNo,
+          payment_acct_head: item.particulars, payment_code: item.code, payment_details: item.details,
+          payment_cash: isCash ? item.amount : 0, payment_bank: isCash ? 0 : item.amount
+        };
 
-      const newRow = {
-        A: dateStr,
-        B: isReceipt ? docNo : "",
-        C: isReceipt ? regNo : "",
-        D: isReceipt ? memberName : "",
-        E: isReceipt ? item.particulars : "",
-        F: isReceipt ? item.code : "",
-        G: isReceipt ? item.details : "",
-        H: isReceipt && isCash ? item.amount : "",
-        I: isReceipt && !isCash ? item.amount : "",
-        K: !isReceipt ? dateStr : "",
-        L: !isReceipt ? docNo : "",
-        M: !isReceipt ? item.particulars : "",
-        N: !isReceipt ? item.code : "",
-        O: !isReceipt ? item.details : "",
-        P: !isReceipt && isCash ? item.amount : "",
-        Q: !isReceipt && !isCash ? item.amount : ""
-      };
+        const newRow = {
+          A: dateStr,
+          B: isReceipt ? docNo : "",
+          C: isReceipt ? regNo : "",
+          D: isReceipt ? memberName : "",
+          E: isReceipt ? item.particulars : "",
+          F: isReceipt ? item.code : "",
+          G: isReceipt ? item.details : "",
+          H: isReceipt && isCash ? item.amount : "",
+          I: isReceipt && !isCash ? item.amount : "",
+          K: !isReceipt ? dateStr : "",
+          L: !isReceipt ? docNo : "",
+          M: !isReceipt ? item.particulars : "",
+          N: !isReceipt ? item.code : "",
+          O: !isReceipt ? item.details : "",
+          P: !isReceipt && isCash ? item.amount : "",
+          Q: !isReceipt && !isCash ? item.amount : ""
+        };
 
-      return fetch('./api.php?_t=' + Date.now(), {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'save_transaction', row: newRow })
-      });
-    })).then((responses) => {
+        return fetch('./api.php?_t=' + Date.now(), {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'save_transaction', row: newRow })
+        });
+      })).then((responses) => {
       let allOk = true;
       responses.forEach(r => { if (r && !r.ok) allOk = false; });
       if (allOk) {
@@ -2158,6 +2198,7 @@ function commitCartToLedgers() {
       console.warn("[SYNC ERROR] Failed to save to server database:", err);
       showToast("💾 Saved locally to memory and browser storage.", "info");
     });
+    }, 10);
   }
 
   const vInput = document.getElementById("txtVoucherNo");
@@ -2312,13 +2353,17 @@ function showReceiptModal() {
     </div>
   `;
 
-  const modalArea = document.getElementById("receiptModalArea");
+  // Insert receipt HTML and activate modal immediately (0ms delay)
+  const modalArea = document.getElementById('receiptModalArea');
   if (modalArea) {
     modalArea.innerHTML = receiptContent;
     modalArea.dataset.prefix = prefix;
     modalArea.dataset.docno = docNo;
   }
-  document.getElementById("receiptModal").classList.add("active");
+  const receiptModal = document.getElementById('receiptModal');
+  if (receiptModal) receiptModal.classList.add('active');
+  const printBtn = document.getElementById('btnPrint');
+  if (printBtn) printBtn.disabled = false;
 
   // Asynchronously cache print copy HTML without freezing UI
   setTimeout(() => {
@@ -3033,16 +3078,53 @@ async function saveReceiptPrintCopy(docNo, prefix, htmlContent, callback) {
 }
 
 // ----------------------------------------------------
-// 6. RENDER ALL DATA VIEWS
+// 6. RENDER ALL DATA VIEWS (Optimized with Lazy Tab Rendering)
 // ----------------------------------------------------
-function renderAllViews() {
-  renderCashbook();
-  renderIndividualLedgers();
-  renderTrialBalance();
-  renderBalanceSheet();
-  renderAudit();
-  if (state.isAdminUnlocked) {
+function renderAllViews(forceAll = false) {
+  if (forceAll) {
+    renderCashbook();
+    renderIndividualLedgers();
+    renderTrialBalance();
+    renderBalanceSheet();
+    renderAudit();
+    if (state.isAdminUnlocked) {
+      renderAdminTab();
+    }
+    state._dirtyCashbook = false;
+    state._dirtyMembers = false;
+    state._dirtyBalanceSheet = false;
+    state._dirtyAudit = false;
+    state._dirtyAdmin = false;
+    return;
+  }
+
+  // Mark other tabs dirty so they re-calculate on-demand when clicked
+  state._dirtyCashbook = true;
+  state._dirtyMembers = true;
+  state._dirtyBalanceSheet = true;
+  state._dirtyAudit = true;
+  state._dirtyAdmin = true;
+
+  // Determine current active tab
+  const activeTab = document.querySelector(".nav-tab.active");
+  const activePaneId = activeTab ? activeTab.dataset.tab : "tabVoucher";
+
+  if (activePaneId === "tabCashbook") {
+    renderCashbook();
+    state._dirtyCashbook = false;
+  } else if (activePaneId === "tabMembers") {
+    renderIndividualLedgers();
+    state._dirtyMembers = false;
+  } else if (activePaneId === "tabBalanceSheet") {
+    renderTrialBalance();
+    renderBalanceSheet();
+    state._dirtyBalanceSheet = false;
+  } else if (activePaneId === "tabAudit") {
+    renderAudit();
+    state._dirtyAudit = false;
+  } else if (activePaneId === "tabAdmin" && state.isAdminUnlocked) {
     renderAdminTab();
+    state._dirtyAdmin = false;
   }
 }
 
@@ -5643,6 +5725,11 @@ function confirmDeleteCashbookEntry(payload) {
       localStorage.setItem("CHURCH_MEMBERS", JSON.stringify(state.individual));
     }
 
+    const targetRow = state.cashbook[index];
+    const targetId = targetRow ? targetRow.id : null;
+    const colB = targetRow ? getColVal(targetRow, "B") : "";
+    const colL = targetRow ? getColVal(targetRow, "L") : "";
+
     state.cashbook.splice(index, 1);
     localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
 
@@ -5658,13 +5745,21 @@ function confirmDeleteCashbookEntry(payload) {
           console.error("[SYNC ERROR] Failed to sync cashbook deletion to server:", err);
         });
       } else {
+        const deletePayload = targetId
+          ? { action: 'delete_transaction', id: targetId }
+          : { action: 'delete_transaction', col_B: colB, col_L: colL };
+
         fetch('./api.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'import_cashbook', rows: state.cashbook })
+          body: JSON.stringify(deletePayload)
         }).then(r => r.json()).then(r => {
-          if (r.success) console.log("Cashbook deletion synced to cloud MySQL!");
-          else console.error("Cloud MySQL sync failed:", r.message);
+          if (r.success) {
+            console.log("Transaction deleted from cloud Supabase!");
+            showToast("✅ Transaction deleted from cloud database!", "success");
+          } else {
+            console.warn("Cloud single delete unconfirmed:", r.message);
+          }
         }).catch(err => console.error("[SYNC ERROR] Failed to sync cashbook deletion to cloud server:", err));
       }
     }
