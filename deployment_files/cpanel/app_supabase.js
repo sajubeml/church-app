@@ -1454,22 +1454,34 @@ function calculateNextNumbers() {
   let maxR = 4000;
   let maxV = 0;
   state.cashbook.forEach(row => {
-    const rVal = getColVal(row, "B");
-    const vVal = getColVal(row, "L");
-    if (rVal && !isNaN(parseInt(rVal))) {
-      const r = parseInt(rVal);
-      if (r > maxR) maxR = r;
+    const rRaw = getColVal(row, "B");
+    const vRaw = getColVal(row, "L");
+    if (rRaw && !rRaw.toUpperCase().startsWith("VR")) {
+      const cleanR = rRaw.replace(/\D/g, "");
+      if (cleanR) {
+        const r = parseInt(cleanR, 10);
+        if (r > maxR) maxR = r;
+      }
     }
-    if (vVal && !isNaN(parseInt(vVal))) {
-      const v = parseInt(vVal);
-      if (v > maxV) maxV = v;
+    if (vRaw) {
+      const cleanV = vRaw.replace(/\D/g, "");
+      if (cleanV) {
+        const v = parseInt(cleanV, 10);
+        if (v > maxV) maxV = v;
+      }
     }
   });
   state.currentReceiptNo = maxR + 1;
   state.currentVoucherNo = maxV + 1;
 
+  localStorage.setItem("CHURCH_RECEIPT_NO", state.currentReceiptNo.toString());
+  localStorage.setItem("CHURCH_VOUCHER_NO", state.currentVoucherNo.toString());
+
   updateDocTypeView();
-  document.getElementById("txtDate").valueAsDate = new Date();
+  const dateInput = document.getElementById("txtDate");
+  if (dateInput && !dateInput.value) {
+    dateInput.valueAsDate = new Date();
+  }
 }
 
 // Populate Member Dropdown from ALL worksheets (Individual, Members, Auction)
@@ -1540,7 +1552,9 @@ function setupNavigation() {
       const targetPane = document.getElementById(paneId);
       if (targetPane) targetPane.classList.add("active");
 
-      if (paneId === "tabCashbook") {
+      if (paneId === "tabVoucher") {
+        updateDocTypeView();
+      } else if (paneId === "tabCashbook") {
         if (state._dirtyCashbook !== false) {
           renderCashbook();
           state._dirtyCashbook = false;
@@ -5766,6 +5780,11 @@ function confirmDeleteCashbookEntry(payload) {
       }
     }
 
+    calculateNextNumbers();
+    localStorage.setItem("CHURCH_RECEIPT_NO", state.currentReceiptNo.toString());
+    localStorage.setItem("CHURCH_VOUCHER_NO", state.currentVoucherNo.toString());
+    updateDocTypeView();
+
     renderAllViews();
     if (state.isAdminUnlocked) renderAdminTxnsTable();
   }
@@ -7093,6 +7112,9 @@ window.syncAppStateToCloud = function () {
 
 window.loadCloudData = async function (isManualRefresh = false) {
   console.log("Loading cashbook from cloud database...");
+  if (isManualRefresh && typeof showToast === 'function') {
+    showToast("🔄 Syncing data to/from cloud database...", "info");
+  }
   try {
     const response = await fetch('./api.php?_t=' + Date.now(), {
       method: 'POST',
@@ -7102,24 +7124,36 @@ window.loadCloudData = async function (isManualRefresh = false) {
     const result = await response.json();
     if (result.success && result.data) {
       state.cashbook = result.data;
+      localStorage.setItem("CHURCH_CASHBOOK", JSON.stringify(state.cashbook));
       calculateNextNumbers();
-      renderAllViews();
+      updateDocTypeView();
+      renderAllViews(true);
       console.log("Cloud cashbook loaded successfully!");
       if (isManualRefresh) {
-        alert("✅ Cloud Sync Successful! The application will now hard refresh to ensure all data is fully up to date.");
-        window.location.reload(true);
+        const isReceipt = document.getElementById("optDocReceipt")?.checked;
+        const currentDoc = isReceipt ? state.currentReceiptNo : state.currentVoucherNo;
+        if (typeof showToast === 'function') {
+          showToast(`✅ Cloud data synchronized! Next ${isReceipt ? 'Receipt' : 'Voucher'} #: ${currentDoc}`, "success");
+        } else {
+          alert(`✅ Cloud data synchronized! Next ${isReceipt ? 'Receipt' : 'Voucher'} #: ${currentDoc}`);
+        }
       }
     } else {
       console.log("No cloud cashbook data yet (or empty).");
       if (isManualRefresh) {
-        alert("✅ Cloud Sync Successful! No records found. The application will now hard refresh.");
-        window.location.reload(true);
+        if (typeof showToast === 'function') {
+          showToast("ℹ️ Cloud database checked (no new records).", "info");
+        }
       }
     }
   } catch (e) {
     console.warn("Cloud fetch skipped (api.php not available):", e.message);
     if (isManualRefresh) {
-      alert("❌ Cloud Sync Failed! Please check your connection.");
+      if (typeof showToast === 'function') {
+        showToast("❌ Cloud Sync Failed! Please check your network connection.", "warning");
+      } else {
+        alert("❌ Cloud Sync Failed! Please check your connection.");
+      }
     }
   }
 };

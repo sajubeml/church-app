@@ -1377,22 +1377,34 @@ function calculateNextNumbers() {
   let maxR = 4000;
   let maxV = 0;
   state.cashbook.forEach(row => {
-    const rVal = getColVal(row, "B");
-    const vVal = getColVal(row, "L");
-    if (rVal && !isNaN(parseInt(rVal))) {
-      const r = parseInt(rVal);
-      if (r > maxR) maxR = r;
+    const rRaw = getColVal(row, "B");
+    const vRaw = getColVal(row, "L");
+    if (rRaw && !rRaw.toUpperCase().startsWith("VR")) {
+      const cleanR = rRaw.replace(/\D/g, "");
+      if (cleanR) {
+        const r = parseInt(cleanR, 10);
+        if (r > maxR) maxR = r;
+      }
     }
-    if (vVal && !isNaN(parseInt(vVal))) {
-      const v = parseInt(vVal);
-      if (v > maxV) maxV = v;
+    if (vRaw) {
+      const cleanV = vRaw.replace(/\D/g, "");
+      if (cleanV) {
+        const v = parseInt(cleanV, 10);
+        if (v > maxV) maxV = v;
+      }
     }
   });
   state.currentReceiptNo = maxR + 1;
   state.currentVoucherNo = maxV + 1;
 
+  localStorage.setItem("CHURCH_RECEIPT_NO", state.currentReceiptNo.toString());
+  localStorage.setItem("CHURCH_VOUCHER_NO", state.currentVoucherNo.toString());
+
   updateDocTypeView();
-  document.getElementById("txtDate").valueAsDate = new Date();
+  const dateInput = document.getElementById("txtDate");
+  if (dateInput && !dateInput.value) {
+    dateInput.valueAsDate = new Date();
+  }
 }
 
 // Populate Member Dropdown from ALL worksheets (Individual, Members, Auction)
@@ -1463,7 +1475,9 @@ function setupNavigation() {
       const targetPane = document.getElementById(paneId);
       if (targetPane) targetPane.classList.add("active");
 
-      if (paneId === "tabCashbook") {
+      if (paneId === "tabVoucher") {
+        updateDocTypeView();
+      } else if (paneId === "tabCashbook") {
         if (state._dirtyCashbook !== false) {
           renderCashbook();
           state._dirtyCashbook = false;
