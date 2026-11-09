@@ -139,6 +139,8 @@ window.fetch = async function (url, options) {
         }
         return new Response(JSON.stringify({ success: false, message: 'No ID or Doc No provided' }));
       }
+
+      if (body.action === 'get_app_state') {
         const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?select=*`, {
           headers: {
             'apikey': SUPABASE_ANON_KEY,
