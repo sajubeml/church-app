@@ -6596,7 +6596,6 @@ function reprintTxnDocument(type, docNo, index) {
       </div>
     </div>
   `;
-  `;
 
   if (modalArea) modalArea.innerHTML = cardHtml;
   document.getElementById("receiptModal").classList.add("active");

@@ -2411,7 +2411,6 @@ function showReceiptModal() {
       </div>
     </div>
   `;
-  `;
 
   const modalArea = document.getElementById("receiptModalArea");
   if (modalArea) {
@@ -6035,7 +6034,6 @@ function reprintTxnDocument(type, docNo, index) {
     else if (totalBank > 0 && totalCash > 0) reprintPayMode = "CASH+BANK";
     else reprintPayMode = "CASH";
   }
-  const modeRowHtml = `<tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${reprintPayMode}</span></td><td style="text-align:right;"></td></tr>`;
 
   let grandTotal = 0;
   let itemsRowsHtml = "";

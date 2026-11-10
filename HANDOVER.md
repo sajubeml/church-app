@@ -1,19 +1,28 @@
 # St. Gregorios Orthodox Syrian Church Accounting Portal
-## Master Handover Document — Current Version: v11.27
+## Master Handover Document — Current Version: v11.28
 
 **Church:** St. Gregorios Orthodox Syrian Church & Pilgrim Centre, Mysuru  
 **Workspace Root:** `C:\CASHBOOK_APP`  
-**Current Active Version:** **v11.27** (Android `versionCode 90` / Web / Cloud / Offline PC)  
+**Current Active Version:** **v11.28** (Android `versionCode 91` / Web / Cloud / Offline PC)  
 **Date of Release:** November 10, 2026  
 **Git Remote Origin:** `https://github.com/sajubeml/Church_account.git` (Main Codebase Backup)  
 **Git Remote Church-App:** `https://github.com/sajubeml/church-app.git` (GitHub Pages Live Site)  
 **Live GitHub Pages Site:** `https://sajubeml.github.io/church-app/`  
 **Live cPanel Web URL:** `https://orthodoxchurchmysore.in/accounting/`  
-**Fallback Git Tag:** `v11.26` (Allows 100% instant restoration if needed: `git checkout v11.26`)  
+**Fallback Git Tag:** `v11.27` (Allows 100% instant restoration if needed: `git checkout v11.27`)  
 
 ---
 
-## 1. Release Highlights (v11.27) — Dynamic Multi-Item Receipt Density Auto-Scaling for A5 Paper Printing
+## 1. Release Highlights (v11.28) — Syntax Error Resolution & AST Integrity Verification
+
+### A. Resolution of Unexpected Identifier 'Account' (Line 6617)
+- **Problem Resolved:** A duplicate template literal closing delimiter (`  `;`) in `app_supabase.js` caused lines 6600–6616 to be parsed as a string, and line 6617 threw `Uncaught SyntaxError: Unexpected identifier 'Account'`.
+- **Solution:** Removed the duplicate delimiter in `app_supabase.js` and duplicate `modeRowHtml` in `app.js`.
+- **Rigorous Verification:** Both `app_supabase.js` and `app.js` were compiled through a headless Chromium engine via Playwright with 100% pass rate (0 errors).
+
+---
+
+## 2. Release Highlights (v11.27) — Dynamic Multi-Item Receipt Density Auto-Scaling for A5 Paper Printing
 
 ### A. Perfect Fit on A5 Paper (Strictly 2 Sheets: Original + Copy)
 - **Problem Resolved:** In receipts with numerous line items (e.g., 9–13+ particulars like Receipt #4576 which had 12 items plus subtitle details), the total content height exceeded 215mm. Since A5 paper height is 210mm (with 198mm printable area between 6mm margins), the receipt card spilled over onto a 2nd page per copy, turning a 2-page printout (Original + Copy) into a messy 3 or 4 sheets of paper (as seen in user report `media_1794303545961_9b2c3128.jpg`).
