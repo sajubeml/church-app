@@ -2428,6 +2428,131 @@ function commitCartToLedgers() {
 // ----------------------------------------------------
 // 5. DUAL SIDE-BY-SIDE PRINTABLE RECEIPT MODAL
 // ----------------------------------------------------
+function getReceiptDensitySettings(items) {
+  let effectiveCount = 0;
+  if (Array.isArray(items)) {
+    items.forEach(item => {
+      effectiveCount += 1;
+      const details = item.details || (item.G || item.O) || "";
+      if (typeof details === 'string' && details.trim().length > 0) {
+        effectiveCount += 0.55;
+      }
+    });
+  } else if (typeof items === 'number') {
+    effectiveCount = items;
+  }
+
+  if (effectiveCount <= 5.5) {
+    // Normal density (1 to 5 simple items)
+    return {
+      densityClass: 'dense-normal',
+      logoSize: 38,
+      titleSize: 12.5,
+      subtitleSize: 9.5,
+      docTitleSize: 11,
+      headerPaddingBottom: 4,
+      headerMarginBottom: 5,
+      metaFontSize: 11,
+      metaMarginBottom: 4,
+      tableFontSize: 11,
+      tablePadding: '4px 6px',
+      detailsFontSize: 10,
+      detailsMarginTop: 3,
+      totalBarPadding: '5px 8px',
+      totalFontSize: 13,
+      wordsFontSize: 10,
+      sigHeight: 32,
+      sigWidth: 110,
+      sigFontSize: 10.5,
+      footerFontSize: 8.5,
+      footerPaddingTop: 3,
+      footerMarginTop: 3,
+      cardPadding: '4mm 6mm'
+    };
+  } else if (effectiveCount <= 8.5) {
+    // Medium density (6 to 8 items)
+    return {
+      densityClass: 'dense-medium',
+      logoSize: 30,
+      titleSize: 11.5,
+      subtitleSize: 8.5,
+      docTitleSize: 10,
+      headerPaddingBottom: 3,
+      headerMarginBottom: 4,
+      metaFontSize: 10,
+      metaMarginBottom: 3,
+      tableFontSize: 10,
+      tablePadding: '2.5px 5px',
+      detailsFontSize: 9,
+      detailsMarginTop: 2,
+      totalBarPadding: '4px 6px',
+      totalFontSize: 12,
+      wordsFontSize: 9,
+      sigHeight: 26,
+      sigWidth: 95,
+      sigFontSize: 9.5,
+      footerFontSize: 8,
+      footerPaddingTop: 2,
+      footerMarginTop: 2,
+      cardPadding: '3.5mm 5.5mm'
+    };
+  } else if (effectiveCount <= 13.5) {
+    // Compact density (9 to 13 items — e.g. 12 items with subtitles)
+    return {
+      densityClass: 'dense-compact',
+      logoSize: 24,
+      titleSize: 10,
+      subtitleSize: 8,
+      docTitleSize: 9.5,
+      headerPaddingBottom: 2,
+      headerMarginBottom: 3,
+      metaFontSize: 9,
+      metaMarginBottom: 2,
+      tableFontSize: 8.5,
+      tablePadding: '2px 4px',
+      detailsFontSize: 7.5,
+      detailsMarginTop: 1,
+      totalBarPadding: '3px 6px',
+      totalFontSize: 11,
+      wordsFontSize: 8,
+      sigHeight: 20,
+      sigWidth: 80,
+      sigFontSize: 8.5,
+      footerFontSize: 7.5,
+      footerPaddingTop: 2,
+      footerMarginTop: 2,
+      cardPadding: '2.5mm 5mm'
+    };
+  } else {
+    // Ultra compact density (14+ items)
+    return {
+      densityClass: 'dense-ultra',
+      logoSize: 20,
+      titleSize: 9,
+      subtitleSize: 7.5,
+      docTitleSize: 8.5,
+      headerPaddingBottom: 1,
+      headerMarginBottom: 2,
+      metaFontSize: 8,
+      metaMarginBottom: 1,
+      tableFontSize: 8,
+      tablePadding: '1.2px 3px',
+      detailsFontSize: 7,
+      detailsMarginTop: 0.5,
+      totalBarPadding: '2px 5px',
+      totalFontSize: 10,
+      wordsFontSize: 7.5,
+      sigHeight: 18,
+      sigWidth: 70,
+      sigFontSize: 8,
+      footerFontSize: 7,
+      footerPaddingTop: 1,
+      footerMarginTop: 1,
+      cardPadding: '2mm 4mm'
+    };
+  }
+}
+
 function showReceiptModal() {
   if (state.cart.length === 0) {
     alert("Please add at least one item to the cart!");
@@ -2461,21 +2586,22 @@ function showReceiptModal() {
     paymentMode = isCashOpt ? "Cash" : "Bank";
   }
 
+  const density = getReceiptDensitySettings(state.cart);
   let grandTotal = 0;
   let itemRowsHtml = "";
 
   state.cart.forEach((item, idx) => {
     grandTotal += item.amount;
     const detailsText = item.details ? String(item.details).trim() : '';
-    const detailsHtml = detailsText ? `<div style="font-size:10.5px; color:#475569; font-style:italic; margin-top:3px; padding-top:2px; border-top:1px dashed #cbd5e1;"><strong>Details:</strong> ${detailsText}</div>` : '';
+    const detailsHtml = detailsText ? `<div class="receipt-item-details" style="font-size:${density.detailsFontSize}px; color:#475569; font-style:italic; margin-top:${density.detailsMarginTop}px; padding-top:${density.detailsMarginTop}px; border-top:1px dashed #cbd5e1; line-height:1.2;"><strong>Details:</strong> ${detailsText}</div>` : '';
     itemRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:top; padding:4px 6px; border:1px solid #cbd5e1; white-space:nowrap;">${idx + 1}</td>
-        <td style="padding:4px 6px; border:1px solid #cbd5e1; vertical-align:top;">
+        <td style="text-align:center; vertical-align:top; padding:${density.tablePadding}; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.2;">${idx + 1}</td>
+        <td style="padding:${density.tablePadding}; border:1px solid #cbd5e1; vertical-align:top; line-height:1.2;">
           <div style="font-weight:700; color:#0f172a;">${item.particulars} (${item.code})</div>
           ${detailsHtml}
         </td>
-        <td style="text-align:right; vertical-align:top; padding:4px 6px; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap;">₹ ${item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        <td style="text-align:right; vertical-align:top; padding:${density.tablePadding}; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.2;">₹ ${item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
       </tr>
     `;
   });
@@ -2492,73 +2618,73 @@ function showReceiptModal() {
   const receiptContent = `
     <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:0; width:100%; margin:0; padding:0;">
       <!-- ORIGINAL -->
-      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:4mm 6mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm;">
-        <span style="position:absolute; right:10px; top:10px; background:#10b981; color:#fff; font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:4px;">ORIGINAL</span>
-        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:4px; margin-bottom:6px;">
-          <img src="church_logo.png" alt="Church Logo" style="height:40px; width:40px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:12.5px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
-          <p style="margin:1px 0; font-size:9.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
-          <p style="font-weight:bold; font-size:11px; color:#1e293b; margin-top:2px;">${docTitle}</p>
+      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm; overflow:hidden;">
+        <span style="position:absolute; right:10px; top:10px; background:#10b981; color:#fff; font-size:${density.footerFontSize}px; font-weight:bold; padding:2px 7px; border-radius:4px;">ORIGINAL</span>
+        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:${density.headerPaddingBottom}px; margin-bottom:${density.headerMarginBottom}px;">
+          <img src="church_logo.png" alt="Church Logo" class="receipt-church-logo" style="height:${density.logoSize}px; width:${density.logoSize}px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
+          <h3 class="receipt-title-church" style="margin:0; font-size:${density.titleSize}px; color:#0f172a; font-weight:800; text-transform:uppercase; line-height:1.15;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
+          <p class="receipt-subtitle" style="margin:1px 0; font-size:${density.subtitleSize}px; color:#475569; line-height:1.15;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
+          <p class="receipt-doc-title" style="font-weight:bold; font-size:${density.docTitleSize}px; color:#1e293b; margin-top:1px;">${docTitle}</p>
         </div>
-        <table style="width:100%; font-size:11px; margin-bottom:4px;">
+        <table class="receipt-meta-table" style="width:100%; font-size:${density.metaFontSize}px; margin-bottom:${density.metaMarginBottom}px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
-          <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
+          <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:${density.metaFontSize}px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:4px;">
+        <table class="receipt-items-table" style="width:100%; border-collapse:collapse; font-size:${density.tableFontSize}px; margin-bottom:${density.metaMarginBottom}px;">
           <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Amount</th></tr>
+            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:6px 10px; border-radius:4px; margin-top:4px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
-          <div style="font-size:10px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
-          <div style="font-size:13px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+        <div class="receipt-total-bar" style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:${density.totalBarPadding}; border-radius:4px; margin-top:2px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
+          <div class="total-words" style="font-size:${density.wordsFontSize}px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word; line-height:1.15;">(${totalWords})</div>
+          <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
         <div style="flex:1;"></div>
-        <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
-          <div style="text-align:center; min-width:130px;">
-            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" alt="Signature" style="height:34px; max-width:120px; object-fit:contain; display:block; margin:0 auto 2px auto;">
-            <div style="border-top:1px solid #1e293b; padding-top:2px;">Vicar / Trustee</div>
+        <div class="receipt-sign-block" style="display:flex; justify-content:flex-end; font-size:${density.sigFontSize}px; font-weight:bold; color:#1e293b; margin-top:2px;">
+          <div style="text-align:center; min-width:${density.sigWidth}px;">
+            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" class="receipt-signature-img" alt="Signature" style="height:${density.sigHeight}px; max-width:${density.sigWidth}px; object-fit:contain; display:block; margin:0 auto 2px auto;">
+            <div style="border-top:1px solid #1e293b; padding-top:1px;">Vicar / Trustee</div>
           </div>
         </div>
-        <div style="text-align:center; font-size:8.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:4px; margin-top:3px; font-weight:600; font-style:italic;">
+        <div class="receipt-footer-note" style="text-align:center; font-size:${density.footerFontSize}px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:${density.footerPaddingTop}px; margin-top:${density.footerMarginTop}px; font-weight:600; font-style:italic;">
           &#x2713; Computer Generated Document &mdash; Digitally Signed &amp; Authenticated
         </div>
       </div>
 
       <!-- DUPLICATE COPY -->
-      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:4mm 6mm; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm;">
-        <span style="position:absolute; right:10px; top:10px; background:#f59e0b; color:#fff; font-size:9.5px; font-weight:bold; padding:2px 7px; border-radius:4px;">COPY</span>
-        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:4px; margin-bottom:6px;">
-          <img src="church_logo.png" alt="Church Logo" style="height:40px; width:40px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:12.5px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
-          <p style="margin:1px 0; font-size:9.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
-          <p style="font-weight:bold; font-size:11px; color:#1e293b; margin-top:2px;">${docTitle} (OFFICE COPY)</p>
+      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm; overflow:hidden;">
+        <span style="position:absolute; right:10px; top:10px; background:#f59e0b; color:#fff; font-size:${density.footerFontSize}px; font-weight:bold; padding:2px 7px; border-radius:4px;">COPY</span>
+        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:${density.headerPaddingBottom}px; margin-bottom:${density.headerMarginBottom}px;">
+          <img src="church_logo.png" alt="Church Logo" class="receipt-church-logo" style="height:${density.logoSize}px; width:${density.logoSize}px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
+          <h3 class="receipt-title-church" style="margin:0; font-size:${density.titleSize}px; color:#0f172a; font-weight:800; text-transform:uppercase; line-height:1.15;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
+          <p class="receipt-subtitle" style="margin:1px 0; font-size:${density.subtitleSize}px; color:#475569; line-height:1.15;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
+          <p class="receipt-doc-title" style="font-weight:bold; font-size:${density.docTitleSize}px; color:#1e293b; margin-top:1px;">${docTitle} (OFFICE COPY)</p>
         </div>
-        <table style="width:100%; font-size:11px; margin-bottom:4px;">
+        <table class="receipt-meta-table" style="width:100%; font-size:${density.metaFontSize}px; margin-bottom:${density.metaMarginBottom}px;">
           <tr><td><strong>${numLabel}:</strong> #${docNo}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
-          <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
+          <tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:${density.metaFontSize}px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${paymentMode.toUpperCase()}</span></td><td style="text-align:right;"></td></tr>
         </table>
-        <table style="width:100%; border-collapse:collapse; font-size:11px; margin-bottom:4px;">
+        <table class="receipt-items-table" style="width:100%; border-collapse:collapse; font-size:${density.tableFontSize}px; margin-bottom:${density.metaMarginBottom}px;">
           <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:4px 6px; text-align:right;">Amount</th></tr>
+            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>${itemRowsHtml}</tbody>
         </table>
-        <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:6px 10px; border-radius:4px; margin-top:4px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
-          <div style="font-size:10px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word;">(${totalWords})</div>
-          <div style="font-size:13px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+        <div class="receipt-total-bar" style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:${density.totalBarPadding}; border-radius:4px; margin-top:2px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
+          <div class="total-words" style="font-size:${density.wordsFontSize}px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word; line-height:1.15;">(${totalWords})</div>
+          <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
         <div style="flex:1;"></div>
-        <div style="display:flex; justify-content:flex-end; font-size:10.5px; font-weight:bold; color:#1e293b; margin-top:4px;">
-          <div style="text-align:center; min-width:130px;">
-            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" alt="Signature" style="height:34px; max-width:120px; object-fit:contain; display:block; margin:0 auto 2px auto;">
-            <div style="border-top:1px solid #1e293b; padding-top:2px;">Vicar / Trustee</div>
+        <div class="receipt-sign-block" style="display:flex; justify-content:flex-end; font-size:${density.sigFontSize}px; font-weight:bold; color:#1e293b; margin-top:2px;">
+          <div style="text-align:center; min-width:${density.sigWidth}px;">
+            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" class="receipt-signature-img" alt="Signature" style="height:${density.sigHeight}px; max-width:${density.sigWidth}px; object-fit:contain; display:block; margin:0 auto 2px auto;">
+            <div style="border-top:1px solid #1e293b; padding-top:1px;">Vicar / Trustee</div>
           </div>
         </div>
-        <div style="text-align:center; font-size:8.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:4px; margin-top:3px; font-weight:600; font-style:italic;">
+        <div class="receipt-footer-note" style="text-align:center; font-size:${density.footerFontSize}px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:${density.footerPaddingTop}px; margin-top:${density.footerMarginTop}px; font-weight:600; font-style:italic;">
           &#x2713; Computer Generated Document &mdash; Digitally Signed &amp; Authenticated
         </div>
       </div>
@@ -2984,15 +3110,19 @@ function printReceiptModal() {
             box-sizing: border-box !important;
             border: 2px solid #0f172a !important;
             border-radius: 8px !important;
-            padding: 4mm 6mm !important;
+            padding: 3.5mm 5.5mm;
             margin: 0 0 0 0 !important;
             page-break-after: always !important;
             break-after: page !important;
+            overflow: hidden !important;
           }
           .receipt-card:last-child {
             page-break-after: avoid !important;
             break-after: avoid !important;
           }
+          .receipt-card.dense-medium { padding: 3mm 5mm !important; }
+          .receipt-card.dense-compact { padding: 2.5mm 5mm !important; }
+          .receipt-card.dense-ultra { padding: 2mm 4mm !important; }
         }
         .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; }
         .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }
@@ -3026,7 +3156,7 @@ function printReceiptModal() {
           } else if (fmt === 'a5-landscape') {
             el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 landscape; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 126mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           } else {
-            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 172mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: avoid !important; break-after: avoid !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
+            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 172mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 3.5mm 5.5mm; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; overflow: hidden !important; } .receipt-card:last-child { page-break-after: avoid !important; break-after: avoid !important; } .receipt-card.dense-medium { padding: 3mm 5mm !important; } .receipt-card.dense-compact { padding: 2.5mm 5mm !important; } .receipt-card.dense-ultra { padding: 2mm 4mm !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           }
         }
       <\/script>
@@ -6352,17 +6482,19 @@ function reprintTxnDocument(type, docNo, index) {
     else if (totalBank > 0 && totalCash > 0) reprintPayMode = "CASH+BANK";
     else reprintPayMode = "CASH";
   }
-  const modeRowHtml = `<tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:10.5px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${reprintPayMode}</span></td><td style="text-align:right;"></td></tr>`;
-
   let grandTotal = 0;
   let itemsRowsHtml = "";
+  const density = getReceiptDensitySettings(matchingRows.map(r => ({
+    details: isReceipt ? getColVal(r, "G") : getColVal(r, "O")
+  })));
+  const modeRowHtml = `<tr><td><strong>Mode:</strong> <span style="display:inline-block; padding:1px 6px; font-size:${density.metaFontSize}px; font-weight:bold; border-radius:3px; background:#e2e8f0; color:#0f172a; border:1px solid #cbd5e1;">${reprintPayMode}</span></td><td style="text-align:right;"></td></tr>`;
 
   matchingRows.forEach((r, itemIdx) => {
     const head = isReceipt ? getColVal(r, "E") : getColVal(r, "M");
     const code = isReceipt ? getColVal(r, "F") : getColVal(r, "N");
     const details = isReceipt ? getColVal(r, "G") : getColVal(r, "O");
     const detailsText = details ? String(details).trim() : "";
-    const detailsHtml = detailsText ? `<div style="font-size:10.5px; color:#475569; font-style:italic; margin-top:3px; padding-top:2px; border-top:1px dashed #cbd5e1;"><strong>Details:</strong> ${detailsText}</div>` : "";
+    const detailsHtml = detailsText ? `<div class="receipt-item-details" style="font-size:${density.detailsFontSize}px; color:#475569; font-style:italic; margin-top:${density.detailsMarginTop}px; padding-top:${density.detailsMarginTop}px; border-top:1px dashed #cbd5e1; line-height:1.2;"><strong>Details:</strong> ${detailsText}</div>` : "";
     const cashAmt = parseFloat(String(isReceipt ? getColVal(r, "H") : getColVal(r, "P")).replace(/,/g, '')) || 0;
     const bankAmt = parseFloat(String(isReceipt ? getColVal(r, "I") : getColVal(r, "Q")).replace(/,/g, '')) || 0;
     const itemTotal = cashAmt + bankAmt;
@@ -6370,12 +6502,12 @@ function reprintTxnDocument(type, docNo, index) {
 
     itemsRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:top; padding:6px; border:1px solid #cbd5e1; white-space:nowrap;">${itemIdx + 1}</td>
-        <td style="padding:6px; border:1px solid #cbd5e1; vertical-align:top;">
+        <td style="text-align:center; vertical-align:top; padding:${density.tablePadding}; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.2;">${itemIdx + 1}</td>
+        <td style="padding:${density.tablePadding}; border:1px solid #cbd5e1; vertical-align:top; line-height:1.2;">
           <div style="font-weight:700; color:#0f172a;">${head} ${code ? '(' + code + ')' : ''}</div>
           ${detailsHtml}
         </td>
-        <td style="text-align:right; vertical-align:top; padding:6px; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap;">₹ ${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        <td style="text-align:right; vertical-align:top; padding:${density.tablePadding}; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.2;">₹ ${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
       </tr>
     `;
   });
@@ -6386,81 +6518,84 @@ function reprintTxnDocument(type, docNo, index) {
   const formattedDateStr = formatDateDDMMYYYY(dateStr);
 
   const cardHtml = `
-    <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:25px; max-width:540px; margin:0 auto;">
+    <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:0; width:100%; margin:0; padding:0;">
       <!-- ORIGINAL -->
-      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; position:relative; box-sizing:border-box;">
-        <span style="position:absolute; right:12px; top:12px; background:#10b981; color:#fff; font-size:10px; font-weight:bold; padding:2px 8px; border-radius:4px;">ORIGINAL</span>
-        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:8px; margin-bottom:12px;">
-          <img src="church_logo.png" alt="Church Logo" style="height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:4px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:14px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</h3>
-          <p style="margin:2px 0; font-size:10.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
-          <p style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:4px;">${docTitle}</p>
+      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm; overflow:hidden;">
+        <span style="position:absolute; right:10px; top:10px; background:#10b981; color:#fff; font-size:${density.footerFontSize}px; font-weight:bold; padding:2px 7px; border-radius:4px;">ORIGINAL</span>
+        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:${density.headerPaddingBottom}px; margin-bottom:${density.headerMarginBottom}px;">
+          <img src="church_logo.png" alt="Church Logo" class="receipt-church-logo" style="height:${density.logoSize}px; width:${density.logoSize}px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
+          <h3 class="receipt-title-church" style="margin:0; font-size:${density.titleSize}px; color:#0f172a; font-weight:800; text-transform:uppercase; line-height:1.15;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
+          <p class="receipt-subtitle" style="margin:1px 0; font-size:${density.subtitleSize}px; color:#475569; line-height:1.15;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
+          <p class="receipt-doc-title" style="font-weight:bold; font-size:${density.docTitleSize}px; color:#1e293b; margin-top:1px;">${docTitle}</p>
         </div>
-        <table style="width:100%; margin-bottom:10px; font-size:12px;">
+        <table class="receipt-meta-table" style="width:100%; font-size:${density.metaFontSize}px; margin-bottom:${density.metaMarginBottom}px;">
           <tr><td><strong>${numLabel}:</strong> #${cleanDocNo || '-'}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
           ${modeRowHtml}
         </table>
-        <table style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px;">
+        <table class="receipt-items-table" style="width:100%; border-collapse:collapse; font-size:${density.tableFontSize}px; margin-bottom:${density.metaMarginBottom}px;">
           <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:right;">Amount</th></tr>
+            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>
             ${itemsRowsHtml}
           </tbody>
         </table>
-        <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-size:12px; font-weight:bold; margin-bottom:15px;">
-          <div>Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-          <div style="font-size:11px; font-weight:normal; font-style:italic; margin-top:2px;">(${totalWords})</div>
+        <div class="receipt-total-bar" style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:${density.totalBarPadding}; border-radius:4px; margin-top:2px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
+          <div class="total-words" style="font-size:${density.wordsFontSize}px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word; line-height:1.15;">(${totalWords})</div>
+          <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-bottom:8px;">
-          <div style="text-align:center; min-width:130px;">
-            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" alt="Signature" style="height:34px; max-width:120px; object-fit:contain; display:block; margin:0 auto 2px auto;">
-            <div style="border-top:1px solid #1e293b; padding-top:2px;">Vicar / Trustee</div>
+        <div style="flex:1;"></div>
+        <div class="receipt-sign-block" style="display:flex; justify-content:flex-end; font-size:${density.sigFontSize}px; font-weight:bold; color:#1e293b; margin-top:2px;">
+          <div style="text-align:center; min-width:${density.sigWidth}px;">
+            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" class="receipt-signature-img" alt="Signature" style="height:${density.sigHeight}px; max-width:${density.sigWidth}px; object-fit:contain; display:block; margin:0 auto 2px auto;">
+            <div style="border-top:1px solid #1e293b; padding-top:1px;">Vicar / Trustee</div>
           </div>
         </div>
-        <div style="text-align:center; font-size:9.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:6px; font-weight:600; font-style:italic;">
-          ✓ Computer Generated Document — Digitally Signed & Authenticated
+        <div class="receipt-footer-note" style="text-align:center; font-size:${density.footerFontSize}px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:${density.footerPaddingTop}px; margin-top:${density.footerMarginTop}px; font-weight:600; font-style:italic;">
+          &#x2713; Computer Generated Document &mdash; Digitally Signed &amp; Authenticated
         </div>
       </div>
 
       <!-- DUPLICATE COPY -->
-      <div class="receipt-card" style="border:2px solid #1e293b; border-radius:8px; padding:15px; background:#fff; position:relative; box-sizing:border-box;">
-        <span style="position:absolute; right:12px; top:12px; background:#f59e0b; color:#fff; font-size:10px; font-weight:bold; padding:2px 8px; border-radius:4px;">COPY</span>
-        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:8px; margin-bottom:12px;">
-          <img src="church_logo.png" alt="Church Logo" style="height:54px; width:54px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:4px; object-fit:contain; background:#fff;">
-          <h3 style="margin:0; font-size:14px; color:#0f172a; font-weight:800; text-transform:uppercase;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH & PILGRIM CENTRE</h3>
-          <p style="margin:2px 0; font-size:10.5px; color:#475569;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
-          <p style="font-weight:bold; font-size:12px; color:#1e293b; margin-top:4px;">${docTitle} (OFFICE COPY)</p>
+      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm; overflow:hidden;">
+        <span style="position:absolute; right:10px; top:10px; background:#f59e0b; color:#fff; font-size:${density.footerFontSize}px; font-weight:bold; padding:2px 7px; border-radius:4px;">COPY</span>
+        <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:${density.headerPaddingBottom}px; margin-bottom:${density.headerMarginBottom}px;">
+          <img src="church_logo.png" alt="Church Logo" class="receipt-church-logo" style="height:${density.logoSize}px; width:${density.logoSize}px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
+          <h3 class="receipt-title-church" style="margin:0; font-size:${density.titleSize}px; color:#0f172a; font-weight:800; text-transform:uppercase; line-height:1.15;">ST. GREGORIOS ORTHODOX SYRIAN CHURCH &amp; PILGRIM CENTRE</h3>
+          <p class="receipt-subtitle" style="margin:1px 0; font-size:${density.subtitleSize}px; color:#475569; line-height:1.15;">Government House Road, Nazarbad, Mysuru, Karnataka 570 010 | ESTD : 1954</p>
+          <p class="receipt-doc-title" style="font-weight:bold; font-size:${density.docTitleSize}px; color:#1e293b; margin-top:1px;">${docTitle} (OFFICE COPY)</p>
         </div>
-        <table style="width:100%; margin-bottom:10px; font-size:12px;">
+        <table class="receipt-meta-table" style="width:100%; font-size:${density.metaFontSize}px; margin-bottom:${density.metaMarginBottom}px;">
           <tr><td><strong>${numLabel}:</strong> #${cleanDocNo || '-'}</td><td style="text-align:right;"><strong>Date:</strong> ${formattedDateStr}</td></tr>
           <tr><td><strong>Register No:</strong> ${regNo || 'N/A'}</td><td style="text-align:right;"><strong>Member:</strong> <strong>${memberName}</strong></td></tr>
           ${modeRowHtml}
         </table>
-        <table style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:12px;">
+        <table class="receipt-items-table" style="width:100%; border-collapse:collapse; font-size:${density.tableFontSize}px; margin-bottom:${density.metaMarginBottom}px;">
           <thead>
-            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:6px; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:6px; text-align:right;">Amount</th></tr>
+            <tr style="background:#f8fafc;"><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:center;">#</th><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:left;">Particulars</th><th style="border:1px solid #cbd5e1; padding:${density.tablePadding}; text-align:right;">Amount</th></tr>
           </thead>
           <tbody>
             ${itemsRowsHtml}
           </tbody>
         </table>
-        <div style="background:#f1f5f9; padding:8px; border-radius:4px; font-size:12px; font-weight:bold; margin-bottom:15px;">
-          <div>Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
-          <div style="font-size:11px; font-weight:normal; font-style:italic; margin-top:2px;">(${totalWords})</div>
+        <div class="receipt-total-bar" style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:${density.totalBarPadding}; border-radius:4px; margin-top:2px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
+          <div class="total-words" style="font-size:${density.wordsFontSize}px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word; line-height:1.15;">(${totalWords})</div>
+          <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="display:flex; justify-content:flex-end; font-size:11px; font-weight:bold; color:#1e293b; margin-bottom:8px;">
-          <div style="text-align:center; min-width:130px;">
-            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" alt="Signature" style="height:34px; max-width:120px; object-fit:contain; display:block; margin:0 auto 2px auto;">
-            <div style="border-top:1px solid #1e293b; padding-top:2px;">Vicar / Trustee</div>
+        <div style="flex:1;"></div>
+        <div class="receipt-sign-block" style="display:flex; justify-content:flex-end; font-size:${density.sigFontSize}px; font-weight:bold; color:#1e293b; margin-top:2px;">
+          <div style="text-align:center; min-width:${density.sigWidth}px;">
+            <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" class="receipt-signature-img" alt="Signature" style="height:${density.sigHeight}px; max-width:${density.sigWidth}px; object-fit:contain; display:block; margin:0 auto 2px auto;">
+            <div style="border-top:1px solid #1e293b; padding-top:1px;">Vicar / Trustee</div>
           </div>
         </div>
-        <div style="text-align:center; font-size:9.5px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:6px; font-weight:600; font-style:italic;">
-          ✓ Computer Generated Document — Digitally Signed & Authenticated
+        <div class="receipt-footer-note" style="text-align:center; font-size:${density.footerFontSize}px; color:#475569; border-top:1px dashed #cbd5e1; padding-top:${density.footerPaddingTop}px; margin-top:${density.footerMarginTop}px; font-weight:600; font-style:italic;">
+          &#x2713; Computer Generated Document &mdash; Digitally Signed &amp; Authenticated
         </div>
       </div>
     </div>
+  `;
   `;
 
   if (modalArea) modalArea.innerHTML = cardHtml;

@@ -618,15 +618,72 @@ body {
     box-sizing: border-box !important;
     border: 2px solid #0f172a !important;
     border-radius: 8px !important;
-    padding: 4mm 6mm !important;
+    padding: 3.5mm 5.5mm;
     margin: 0 !important;
     page-break-after: always !important;
     break-after: page !important;
+    overflow: hidden !important;
   }
   .receipt-card:last-child {
     page-break-after: avoid !important;
     break-after: avoid !important;
   }
+
+  /* Receipt Dynamic Density Scaling for Multi-Item Receipts on A5 Paper */
+  .receipt-card.dense-medium {
+    padding: 3mm 5mm !important;
+  }
+  .receipt-card.dense-medium .receipt-church-logo { height: 30px !important; width: 30px !important; }
+  .receipt-card.dense-medium .receipt-title-church { font-size: 11.5px !important; }
+  .receipt-card.dense-medium .receipt-subtitle { font-size: 8.5px !important; }
+  .receipt-card.dense-medium .receipt-doc-title { font-size: 10px !important; }
+  .receipt-card.dense-medium .receipt-meta-table { font-size: 10px !important; margin-bottom: 3px !important; }
+  .receipt-card.dense-medium .receipt-items-table { font-size: 10px !important; margin-bottom: 3px !important; }
+  .receipt-card.dense-medium .receipt-items-table th,
+  .receipt-card.dense-medium .receipt-items-table td { padding: 2.5px 5px !important; }
+  .receipt-card.dense-medium .receipt-item-details { font-size: 9px !important; margin-top: 2px !important; }
+  .receipt-card.dense-medium .receipt-total-bar { padding: 4px 6px !important; }
+  .receipt-card.dense-medium .receipt-total-bar .total-amount { font-size: 12px !important; }
+  .receipt-card.dense-medium .receipt-total-bar .total-words { font-size: 9px !important; }
+  .receipt-card.dense-medium .receipt-signature-img { height: 26px !important; max-width: 95px !important; }
+
+  .receipt-card.dense-compact {
+    padding: 2.5mm 5mm !important;
+  }
+  .receipt-card.dense-compact .receipt-church-logo { height: 24px !important; width: 24px !important; margin-bottom: 1px !important; }
+  .receipt-card.dense-compact .receipt-title-church { font-size: 10px !important; }
+  .receipt-card.dense-compact .receipt-subtitle { font-size: 8px !important; }
+  .receipt-card.dense-compact .receipt-doc-title { font-size: 9.5px !important; margin-top: 1px !important; }
+  .receipt-card.dense-compact .receipt-meta-table { font-size: 9px !important; margin-bottom: 2px !important; }
+  .receipt-card.dense-compact .receipt-items-table { font-size: 8.5px !important; margin-bottom: 2px !important; }
+  .receipt-card.dense-compact .receipt-items-table th,
+  .receipt-card.dense-compact .receipt-items-table td { padding: 2px 4px !important; line-height: 1.2 !important; }
+  .receipt-card.dense-compact .receipt-item-details { font-size: 7.5px !important; margin-top: 1px !important; padding-top: 1px !important; }
+  .receipt-card.dense-compact .receipt-total-bar { padding: 3px 6px !important; margin-top: 2px !important; }
+  .receipt-card.dense-compact .receipt-total-bar .total-amount { font-size: 11px !important; }
+  .receipt-card.dense-compact .receipt-total-bar .total-words { font-size: 8px !important; }
+  .receipt-card.dense-compact .receipt-signature-img { height: 20px !important; max-width: 80px !important; }
+  .receipt-card.dense-compact .receipt-sign-block { font-size: 8.5px !important; }
+  .receipt-card.dense-compact .receipt-footer-note { font-size: 7.5px !important; padding-top: 2px !important; margin-top: 2px !important; }
+
+  .receipt-card.dense-ultra {
+    padding: 2mm 4mm !important;
+  }
+  .receipt-card.dense-ultra .receipt-church-logo { height: 20px !important; width: 20px !important; margin-bottom: 1px !important; }
+  .receipt-card.dense-ultra .receipt-title-church { font-size: 9px !important; }
+  .receipt-card.dense-ultra .receipt-subtitle { font-size: 7.5px !important; }
+  .receipt-card.dense-ultra .receipt-doc-title { font-size: 8.5px !important; margin-top: 1px !important; }
+  .receipt-card.dense-ultra .receipt-meta-table { font-size: 8px !important; margin-bottom: 1px !important; }
+  .receipt-card.dense-ultra .receipt-items-table { font-size: 8px !important; margin-bottom: 1px !important; }
+  .receipt-card.dense-ultra .receipt-items-table th,
+  .receipt-card.dense-ultra .receipt-items-table td { padding: 1.2px 3px !important; line-height: 1.15 !important; }
+  .receipt-card.dense-ultra .receipt-item-details { font-size: 7px !important; margin-top: 0.5px !important; padding-top: 0.5px !important; }
+  .receipt-card.dense-ultra .receipt-total-bar { padding: 2px 5px !important; margin-top: 1px !important; }
+  .receipt-card.dense-ultra .receipt-total-bar .total-amount { font-size: 10px !important; }
+  .receipt-card.dense-ultra .receipt-total-bar .total-words { font-size: 7.5px !important; }
+  .receipt-card.dense-ultra .receipt-signature-img { height: 18px !important; max-width: 70px !important; }
+  .receipt-card.dense-ultra .receipt-sign-block { font-size: 8px !important; }
+  .receipt-card.dense-ultra .receipt-footer-note { font-size: 7px !important; padding-top: 1px !important; margin-top: 1px !important; }
 
   .modal-header, .no-print { display: none !important; }
 }
