@@ -1,19 +1,31 @@
 # St. Gregorios Orthodox Syrian Church Accounting Portal
-## Master Handover Document — Current Version: v11.28
+## Master Handover Document — Current Version: v11.29
 
 **Church:** St. Gregorios Orthodox Syrian Church & Pilgrim Centre, Mysuru  
 **Workspace Root:** `C:\CASHBOOK_APP`  
-**Current Active Version:** **v11.28** (Android `versionCode 91` / Web / Cloud / Offline PC)  
+**Current Active Version:** **v11.29** (Android `versionCode 92` / Web / Cloud / Offline PC)  
 **Date of Release:** November 10, 2026  
 **Git Remote Origin:** `https://github.com/sajubeml/Church_account.git` (Main Codebase Backup)  
 **Git Remote Church-App:** `https://github.com/sajubeml/church-app.git` (GitHub Pages Live Site)  
 **Live GitHub Pages Site:** `https://sajubeml.github.io/church-app/`  
 **Live cPanel Web URL:** `https://orthodoxchurchmysore.in/accounting/`  
-**Fallback Git Tag:** `v11.27` (Allows 100% instant restoration if needed: `git checkout v11.27`)  
+**Fallback Git Tag:** `v11.28` (Allows 100% instant restoration if needed: `git checkout v11.28`)  
 
 ---
 
-## 1. Release Highlights (v11.28) — Syntax Error Resolution & AST Integrity Verification
+## 1. Release Highlights (v11.29) — Balanced Proportional Fit & Inline Text Wrapping on A5 Paper
+
+### A. Elimination of Bottom Void & Restoration of Legible Fonts
+- **Problem Resolved:** Earlier density scaling shrank 12-item receipts to 8.5px with 2px padding, leaving a large ~60mm empty space inside the card and substantial empty paper at the bottom.
+- **Solution:** 
+  1. Remarks/details are wrapped inline with particular names: `Particular (Code) — Remarks`, saving ~30mm of stacked sub-block height.
+  2. Font size restored to a crisp, comfortable **11px** (table padding 4.5px 6px, total bar 12.5px, logo 34px).
+  3. Card height optimized to **182mm**, achieving **94.3% vertical coverage** of A5 paper with zero empty bottom space.
+  4. Guarantees strictly **2 sheets of paper** (Page 1 = Original, Page 2 = Office Copy) with zero spillover.
+
+---
+
+## 2. Release Highlights (v11.28) — Syntax Error Resolution & AST Integrity Verification
 
 ### A. Resolution of Unexpected Identifier 'Account' (Line 6617)
 - **Problem Resolved:** A duplicate template literal closing delimiter (`  `;`) in `app_supabase.js` caused lines 6600–6616 to be parsed as a string, and line 6617 threw `Uncaught SyntaxError: Unexpected identifier 'Account'`.

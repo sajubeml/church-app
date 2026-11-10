@@ -2150,21 +2150,15 @@ function commitCartToLedgers() {
 // 5. DUAL SIDE-BY-SIDE PRINTABLE RECEIPT MODAL
 // ----------------------------------------------------
 function getReceiptDensitySettings(items) {
-  let effectiveCount = 0;
+  let count = 0;
   if (Array.isArray(items)) {
-    items.forEach(item => {
-      effectiveCount += 1;
-      const details = item.details || (item.G || item.O) || "";
-      if (typeof details === 'string' && details.trim().length > 0) {
-        effectiveCount += 0.55;
-      }
-    });
+    count = items.length;
   } else if (typeof items === 'number') {
-    effectiveCount = items;
+    count = items;
   }
 
-  if (effectiveCount <= 5.5) {
-    // Normal density (1 to 5 simple items)
+  if (count <= 7) {
+    // Normal density (1 to 7 items — spacious, clear)
     return {
       densityClass: 'dense-normal',
       logoSize: 38,
@@ -2174,102 +2168,102 @@ function getReceiptDensitySettings(items) {
       headerPaddingBottom: 4,
       headerMarginBottom: 5,
       metaFontSize: 11,
-      metaMarginBottom: 4,
-      tableFontSize: 11,
-      tablePadding: '4px 6px',
-      detailsFontSize: 10,
-      detailsMarginTop: 3,
-      totalBarPadding: '5px 8px',
+      metaMarginBottom: 5,
+      tableFontSize: 11.5,
+      tablePadding: '5px 7px',
+      detailsFontSize: 10.5,
+      detailsMarginTop: 2,
+      totalBarPadding: '6px 9px',
       totalFontSize: 13,
       wordsFontSize: 10,
       sigHeight: 32,
       sigWidth: 110,
-      sigFontSize: 10.5,
+      sigFontSize: 11,
       footerFontSize: 8.5,
-      footerPaddingTop: 3,
-      footerMarginTop: 3,
+      footerPaddingTop: 4,
+      footerMarginTop: 4,
       cardPadding: '4mm 6mm'
     };
-  } else if (effectiveCount <= 8.5) {
-    // Medium density (6 to 8 items)
+  } else if (count <= 13) {
+    // Balanced medium density (8 to 13 items — e.g. 12-item receipt fills A5 paper cleanly without bottom void)
     return {
       densityClass: 'dense-medium',
-      logoSize: 30,
-      titleSize: 11.5,
-      subtitleSize: 8.5,
-      docTitleSize: 10,
+      logoSize: 34,
+      titleSize: 12,
+      subtitleSize: 9,
+      docTitleSize: 11,
       headerPaddingBottom: 3,
       headerMarginBottom: 4,
+      metaFontSize: 11,
+      metaMarginBottom: 4,
+      tableFontSize: 11,
+      tablePadding: '4.5px 6px',
+      detailsFontSize: 10,
+      detailsMarginTop: 2,
+      totalBarPadding: '5px 8px',
+      totalFontSize: 12.5,
+      wordsFontSize: 10,
+      sigHeight: 28,
+      sigWidth: 100,
+      sigFontSize: 10.5,
+      footerFontSize: 8.5,
+      footerPaddingTop: 4,
+      footerMarginTop: 4,
+      cardPadding: '3.5mm 5.5mm'
+    };
+  } else if (count <= 17) {
+    // Compact density (14 to 17 items)
+    return {
+      densityClass: 'dense-compact',
+      logoSize: 28,
+      titleSize: 11,
+      subtitleSize: 8.5,
+      docTitleSize: 10,
+      headerPaddingBottom: 2,
+      headerMarginBottom: 3,
       metaFontSize: 10,
       metaMarginBottom: 3,
       tableFontSize: 10,
-      tablePadding: '2.5px 5px',
+      tablePadding: '3px 5px',
       detailsFontSize: 9,
-      detailsMarginTop: 2,
+      detailsMarginTop: 1,
       totalBarPadding: '4px 6px',
-      totalFontSize: 12,
+      totalFontSize: 11.5,
       wordsFontSize: 9,
-      sigHeight: 26,
-      sigWidth: 95,
+      sigHeight: 24,
+      sigWidth: 90,
       sigFontSize: 9.5,
       footerFontSize: 8,
-      footerPaddingTop: 2,
-      footerMarginTop: 2,
-      cardPadding: '3.5mm 5.5mm'
+      footerPaddingTop: 3,
+      footerMarginTop: 3,
+      cardPadding: '3mm 5mm'
     };
-  } else if (effectiveCount <= 13.5) {
-    // Compact density (9 to 13 items — e.g. 12 items with subtitles)
+  } else {
+    // Ultra density (18+ items)
     return {
-      densityClass: 'dense-compact',
-      logoSize: 24,
+      densityClass: 'dense-ultra',
+      logoSize: 22,
       titleSize: 10,
       subtitleSize: 8,
-      docTitleSize: 9.5,
-      headerPaddingBottom: 2,
-      headerMarginBottom: 3,
+      docTitleSize: 9,
+      headerPaddingBottom: 1,
+      headerMarginBottom: 2,
       metaFontSize: 9,
       metaMarginBottom: 2,
-      tableFontSize: 8.5,
+      tableFontSize: 9,
       tablePadding: '2px 4px',
-      detailsFontSize: 7.5,
-      detailsMarginTop: 1,
-      totalBarPadding: '3px 6px',
-      totalFontSize: 11,
+      detailsFontSize: 8,
+      detailsMarginTop: 0.5,
+      totalBarPadding: '3px 5px',
+      totalFontSize: 10.5,
       wordsFontSize: 8,
       sigHeight: 20,
-      sigWidth: 80,
+      sigWidth: 75,
       sigFontSize: 8.5,
       footerFontSize: 7.5,
       footerPaddingTop: 2,
       footerMarginTop: 2,
-      cardPadding: '2.5mm 5mm'
-    };
-  } else {
-    // Ultra compact density (14+ items)
-    return {
-      densityClass: 'dense-ultra',
-      logoSize: 20,
-      titleSize: 9,
-      subtitleSize: 7.5,
-      docTitleSize: 8.5,
-      headerPaddingBottom: 1,
-      headerMarginBottom: 2,
-      metaFontSize: 8,
-      metaMarginBottom: 1,
-      tableFontSize: 8,
-      tablePadding: '1.2px 3px',
-      detailsFontSize: 7,
-      detailsMarginTop: 0.5,
-      totalBarPadding: '2px 5px',
-      totalFontSize: 10,
-      wordsFontSize: 7.5,
-      sigHeight: 18,
-      sigWidth: 70,
-      sigFontSize: 8,
-      footerFontSize: 7,
-      footerPaddingTop: 1,
-      footerMarginTop: 1,
-      cardPadding: '2mm 4mm'
+      cardPadding: '2.5mm 4.5mm'
     };
   }
 }
@@ -2314,15 +2308,14 @@ function showReceiptModal() {
   state.cart.forEach((item, idx) => {
     grandTotal += item.amount;
     const detailsText = item.details ? String(item.details).trim() : '';
-    const detailsHtml = detailsText ? `<div class="receipt-item-details" style="font-size:${density.detailsFontSize}px; color:#475569; font-style:italic; margin-top:${density.detailsMarginTop}px; padding-top:${density.detailsMarginTop}px; border-top:1px dashed #cbd5e1; line-height:1.2;"><strong>Details:</strong> ${detailsText}</div>` : '';
+    const detailsHtml = detailsText ? `<span class="receipt-item-details" style="display:inline; font-size:${density.detailsFontSize}px; color:#475569; font-style:italic; font-weight:normal; margin-left:4px;">&mdash; <em>${detailsText}</em></span>` : '';
     itemRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:top; padding:${density.tablePadding}; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.2;">${idx + 1}</td>
-        <td style="padding:${density.tablePadding}; border:1px solid #cbd5e1; vertical-align:top; line-height:1.2;">
-          <div style="font-weight:700; color:#0f172a;">${item.particulars} (${item.code})</div>
-          ${detailsHtml}
+        <td style="text-align:center; vertical-align:top; padding:${density.tablePadding}; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.25; font-weight:bold;">${idx + 1}</td>
+        <td style="padding:${density.tablePadding}; border:1px solid #cbd5e1; vertical-align:top; line-height:1.25;">
+          <div style="font-weight:700; color:#0f172a; word-wrap:break-word;">${item.particulars} <span style="font-weight:600; color:#475569;">(${item.code})</span>${detailsHtml}</div>
         </td>
-        <td style="text-align:right; vertical-align:top; padding:${density.tablePadding}; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.2;">₹ ${item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        <td style="text-align:right; vertical-align:top; padding:${density.tablePadding}; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.25;">₹ ${item.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
       </tr>
     `;
   });
@@ -2339,7 +2332,7 @@ function showReceiptModal() {
   const receiptContent = `
     <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:0; width:100%; margin:0; padding:0;">
       <!-- ORIGINAL -->
-      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm; overflow:hidden;">
+      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; height:182mm; overflow:hidden;">
         <span style="position:absolute; right:10px; top:10px; background:#10b981; color:#fff; font-size:${density.footerFontSize}px; font-weight:bold; padding:2px 7px; border-radius:4px;">ORIGINAL</span>
         <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:${density.headerPaddingBottom}px; margin-bottom:${density.headerMarginBottom}px;">
           <img src="church_logo.png" alt="Church Logo" class="receipt-church-logo" style="height:${density.logoSize}px; width:${density.logoSize}px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
@@ -2362,7 +2355,7 @@ function showReceiptModal() {
           <div class="total-words" style="font-size:${density.wordsFontSize}px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word; line-height:1.15;">(${totalWords})</div>
           <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="flex:1;"></div>
+        <div style="flex:1; min-height:4px;"></div>
         <div class="receipt-sign-block" style="display:flex; justify-content:flex-end; font-size:${density.sigFontSize}px; font-weight:bold; color:#1e293b; margin-top:2px;">
           <div style="text-align:center; min-width:${density.sigWidth}px;">
             <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" class="receipt-signature-img" alt="Signature" style="height:${density.sigHeight}px; max-width:${density.sigWidth}px; object-fit:contain; display:block; margin:0 auto 2px auto;">
@@ -2375,7 +2368,7 @@ function showReceiptModal() {
       </div>
 
       <!-- DUPLICATE COPY -->
-      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm; overflow:hidden;">
+      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; height:182mm; overflow:hidden;">
         <span style="position:absolute; right:10px; top:10px; background:#f59e0b; color:#fff; font-size:${density.footerFontSize}px; font-weight:bold; padding:2px 7px; border-radius:4px;">COPY</span>
         <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:${density.headerPaddingBottom}px; margin-bottom:${density.headerMarginBottom}px;">
           <img src="church_logo.png" alt="Church Logo" class="receipt-church-logo" style="height:${density.logoSize}px; width:${density.logoSize}px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
@@ -2396,9 +2389,9 @@ function showReceiptModal() {
         </table>
         <div class="receipt-total-bar" style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-end; background:#f1f5f9; padding:${density.totalBarPadding}; border-radius:4px; margin-top:2px; width:100%; box-sizing:border-box; flex-wrap:nowrap;">
           <div class="total-words" style="font-size:${density.wordsFontSize}px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word; line-height:1.15;">(${totalWords})</div>
-          <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
+          <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: ₹ ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="flex:1;"></div>
+        <div style="flex:1; min-height:4px;"></div>
         <div class="receipt-sign-block" style="display:flex; justify-content:flex-end; font-size:${density.sigFontSize}px; font-weight:bold; color:#1e293b; margin-top:2px;">
           <div style="text-align:center; min-width:${density.sigWidth}px;">
             <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" class="receipt-signature-img" alt="Signature" style="height:${density.sigHeight}px; max-width:${density.sigWidth}px; object-fit:contain; display:block; margin:0 auto 2px auto;">
@@ -2795,11 +2788,11 @@ function printReceiptModal() {
             justify-content: space-between !important;
             width: 100% !important;
             max-width: 100% !important;
-            height: 172mm !important;
+            height: 182mm !important;
             box-sizing: border-box !important;
             border: 2px solid #0f172a !important;
             border-radius: 8px !important;
-            padding: 3.5mm 5.5mm;
+            padding: 4mm 6mm;
             margin: 0 0 0 0 !important;
             page-break-after: always !important;
             break-after: page !important;
@@ -2809,9 +2802,9 @@ function printReceiptModal() {
             page-break-after: avoid !important;
             break-after: avoid !important;
           }
-          .receipt-card.dense-medium { padding: 3mm 5mm !important; }
-          .receipt-card.dense-compact { padding: 2.5mm 5mm !important; }
-          .receipt-card.dense-ultra { padding: 2mm 4mm !important; }
+          .receipt-card.dense-medium { padding: 3.5mm 5.5mm !important; }
+          .receipt-card.dense-compact { padding: 3mm 5mm !important; }
+          .receipt-card.dense-ultra { padding: 2.5mm 4.5mm !important; }
         }
         .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; }
         .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }
@@ -2845,7 +2838,7 @@ function printReceiptModal() {
           } else if (fmt === 'a5-landscape') {
             el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 landscape; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 126mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm !important; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; } .receipt-card:last-child { page-break-after: auto !important; break-after: auto !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 780px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           } else {
-            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 172mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 3.5mm 5.5mm; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; overflow: hidden !important; } .receipt-card:last-child { page-break-after: avoid !important; break-after: avoid !important; } .receipt-card.dense-medium { padding: 3mm 5mm !important; } .receipt-card.dense-compact { padding: 2.5mm 5mm !important; } .receipt-card.dense-ultra { padding: 2mm 4mm !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
+            el.innerHTML = '@media print { .no-print, .print-preview-header { display: none !important; } @page { size: A5 portrait; margin: 6mm; } html, body { padding: 0 !important; margin: 0 !important; background: #fff !important; width: 100% !important; } .dual-receipt-container { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; } .dual-receipt-container::after { display: none !important; } .receipt-card { display: flex !important; flex-direction: column !important; justify-content: space-between !important; width: 100% !important; max-width: 100% !important; height: 182mm !important; box-sizing: border-box !important; border: 2px solid #0f172a !important; border-radius: 8px !important; padding: 4mm 6mm; margin: 0 0 0 0 !important; page-break-after: always !important; break-after: page !important; overflow: hidden !important; } .receipt-card:last-child { page-break-after: avoid !important; break-after: avoid !important; } .receipt-card.dense-medium { padding: 3.5mm 5.5mm !important; } .receipt-card.dense-compact { padding: 3mm 5mm !important; } .receipt-card.dense-ultra { padding: 2.5mm 4.5mm !important; } } .dual-receipt-container { display: block !important; width: 100% !important; max-width: 620px; margin: 0 auto; } .receipt-card { width: 100% !important; max-width: 100% !important; margin-bottom: 25px !important; }';
           }
         }
       <\/script>
@@ -6047,7 +6040,7 @@ function reprintTxnDocument(type, docNo, index) {
     const code = isReceipt ? getColVal(r, "F") : getColVal(r, "N");
     const details = isReceipt ? getColVal(r, "G") : getColVal(r, "O");
     const detailsText = details ? String(details).trim() : "";
-    const detailsHtml = detailsText ? `<div class="receipt-item-details" style="font-size:${density.detailsFontSize}px; color:#475569; font-style:italic; margin-top:${density.detailsMarginTop}px; padding-top:${density.detailsMarginTop}px; border-top:1px dashed #cbd5e1; line-height:1.2;"><strong>Details:</strong> ${detailsText}</div>` : "";
+    const detailsHtml = detailsText ? `<span class="receipt-item-details" style="display:inline; font-size:${density.detailsFontSize}px; color:#475569; font-style:italic; font-weight:normal; margin-left:4px;">&mdash; <em>${detailsText}</em></span>` : "";
     const cashAmt = parseFloat(String(isReceipt ? getColVal(r, "H") : getColVal(r, "P")).replace(/,/g, '')) || 0;
     const bankAmt = parseFloat(String(isReceipt ? getColVal(r, "I") : getColVal(r, "Q")).replace(/,/g, '')) || 0;
     const itemTotal = cashAmt + bankAmt;
@@ -6055,12 +6048,11 @@ function reprintTxnDocument(type, docNo, index) {
 
     itemsRowsHtml += `
       <tr>
-        <td style="text-align:center; vertical-align:top; padding:${density.tablePadding}; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.2;">${itemIdx + 1}</td>
-        <td style="padding:${density.tablePadding}; border:1px solid #cbd5e1; vertical-align:top; line-height:1.2;">
-          <div style="font-weight:700; color:#0f172a;">${head} ${code ? '(' + code + ')' : ''}</div>
-          ${detailsHtml}
+        <td style="text-align:center; vertical-align:top; padding:${density.tablePadding}; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.25; font-weight:bold;">${itemIdx + 1}</td>
+        <td style="padding:${density.tablePadding}; border:1px solid #cbd5e1; vertical-align:top; line-height:1.25;">
+          <div style="font-weight:700; color:#0f172a; word-wrap:break-word;">${head} ${code ? '<span style="font-weight:600; color:#475569;">(' + code + ')</span>' : ''}${detailsHtml}</div>
         </td>
-        <td style="text-align:right; vertical-align:top; padding:${density.tablePadding}; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.2;">₹ ${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+        <td style="text-align:right; vertical-align:top; padding:${density.tablePadding}; font-weight:700; border:1px solid #cbd5e1; white-space:nowrap; line-height:1.25;">₹ ${itemTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
       </tr>
     `;
   });
@@ -6073,7 +6065,7 @@ function reprintTxnDocument(type, docNo, index) {
   const cardHtml = `
     <div class="dual-receipt-container" style="display:flex; flex-direction:column; gap:0; width:100%; margin:0; padding:0;">
       <!-- ORIGINAL -->
-      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm; overflow:hidden;">
+      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; height:182mm; overflow:hidden;">
         <span style="position:absolute; right:10px; top:10px; background:#10b981; color:#fff; font-size:${density.footerFontSize}px; font-weight:bold; padding:2px 7px; border-radius:4px;">ORIGINAL</span>
         <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:${density.headerPaddingBottom}px; margin-bottom:${density.headerMarginBottom}px;">
           <img src="church_logo.png" alt="Church Logo" class="receipt-church-logo" style="height:${density.logoSize}px; width:${density.logoSize}px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
@@ -6098,7 +6090,7 @@ function reprintTxnDocument(type, docNo, index) {
           <div class="total-words" style="font-size:${density.wordsFontSize}px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word; line-height:1.15;">(${totalWords})</div>
           <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="flex:1;"></div>
+        <div style="flex:1; min-height:4px;"></div>
         <div class="receipt-sign-block" style="display:flex; justify-content:flex-end; font-size:${density.sigFontSize}px; font-weight:bold; color:#1e293b; margin-top:2px;">
           <div style="text-align:center; min-width:${density.sigWidth}px;">
             <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" class="receipt-signature-img" alt="Signature" style="height:${density.sigHeight}px; max-width:${density.sigWidth}px; object-fit:contain; display:block; margin:0 auto 2px auto;">
@@ -6111,7 +6103,7 @@ function reprintTxnDocument(type, docNo, index) {
       </div>
 
       <!-- DUPLICATE COPY -->
-      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; height:172mm; overflow:hidden;">
+      <div class="receipt-card ${density.densityClass}" style="border:2px solid #1e293b; border-radius:8px; padding:${density.cardPadding}; background:#fff; position:relative; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between; height:182mm; overflow:hidden;">
         <span style="position:absolute; right:10px; top:10px; background:#f59e0b; color:#fff; font-size:${density.footerFontSize}px; font-weight:bold; padding:2px 7px; border-radius:4px;">COPY</span>
         <div style="text-align:center; border-bottom:2px solid #1e293b; padding-bottom:${density.headerPaddingBottom}px; margin-bottom:${density.headerMarginBottom}px;">
           <img src="church_logo.png" alt="Church Logo" class="receipt-church-logo" style="height:${density.logoSize}px; width:${density.logoSize}px; border-radius:50%; border:1.5px solid #1e293b; margin-bottom:2px; object-fit:contain; background:#fff;">
@@ -6136,7 +6128,7 @@ function reprintTxnDocument(type, docNo, index) {
           <div class="total-words" style="font-size:${density.wordsFontSize}px; font-weight:normal; font-style:italic; color:#475569; max-width:65%; text-align:left; word-wrap:break-word; line-height:1.15;">(${totalWords})</div>
           <div class="total-amount" style="font-size:${density.totalFontSize}px; font-weight:900; color:#0f172a; text-align:right; white-space:nowrap;">Total: &#x20b9; ${grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</div>
         </div>
-        <div style="flex:1;"></div>
+        <div style="flex:1; min-height:4px;"></div>
         <div class="receipt-sign-block" style="display:flex; justify-content:flex-end; font-size:${density.sigFontSize}px; font-weight:bold; color:#1e293b; margin-top:2px;">
           <div style="text-align:center; min-width:${density.sigWidth}px;">
             <img src="${(typeof window !== 'undefined' && window.CHURCH_SIGNATURE_BASE64) ? window.CHURCH_SIGNATURE_BASE64 : 'signature.png'}" class="receipt-signature-img" alt="Signature" style="height:${density.sigHeight}px; max-width:${density.sigWidth}px; object-fit:contain; display:block; margin:0 auto 2px auto;">
