@@ -1,25 +1,214 @@
 
 const SUPABASE_URL = 'https://djpuxmrjxsrhgfrtppky.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_QjkuMrFMwtc2imGfy0XCdw_37h05VtE';
+const SESSION_STORAGE_KEY = 'CHURCH_SUPABASE_SESSION';
 
 const originalFetch = window.fetch;
 window.SUPABASE_ACCESS_TOKEN = null;
 
+// Persistent Session Management
+function getStoredSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    if (session && session.access_token) return session;
+  } catch (e) {
+    console.error("Error reading stored session:", e);
+  }
+  return null;
+}
+
+function saveSession(data, email) {
+  try {
+    const expiresAt = Date.now() + ((data.expires_in || 3600) * 1000);
+    const sessionObj = {
+      access_token: data.access_token,
+      refresh_token: data.refresh_token,
+      expires_at: expiresAt,
+      email: email || (data.user && data.user.email) || ''
+    };
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(sessionObj));
+    if (sessionObj.email) {
+      localStorage.setItem('CHURCH_SUPABASE_LAST_EMAIL', sessionObj.email);
+    }
+    window.SUPABASE_ACCESS_TOKEN = data.access_token;
+    return sessionObj;
+  } catch (e) {
+    console.error("Error saving session:", e);
+  }
+}
+
+function clearSession() {
+  try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+  } catch (e) {}
+  window.SUPABASE_ACCESS_TOKEN = null;
+}
+
+function hideLoginOverlay() {
+  const overlay = document.getElementById('login-overlay');
+  if (overlay) overlay.style.display = 'none';
+  const mainApp = document.getElementById('main-app-container');
+  if (mainApp) mainApp.style.display = 'block';
+}
+
+function showLoginOverlay(message) {
+  const overlay = document.getElementById('login-overlay');
+  if (overlay) overlay.style.display = 'flex';
+  const mainApp = document.getElementById('main-app-container');
+  if (mainApp) mainApp.style.display = 'none';
+  const errorDiv = document.getElementById('login-error');
+  if (errorDiv) {
+    if (message) {
+      errorDiv.textContent = message;
+      errorDiv.style.display = "block";
+    } else {
+      errorDiv.style.display = "none";
+    }
+  }
+  const btn = document.getElementById('login-submit');
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = "Login";
+  }
+  try {
+    const lastEmail = localStorage.getItem('CHURCH_SUPABASE_LAST_EMAIL');
+    const emailInput = document.getElementById('login-email');
+    if (lastEmail && emailInput && !emailInput.value) {
+      emailInput.value = lastEmail;
+    }
+  } catch (e) {}
+}
+
+let isRefreshingToken = false;
+let refreshPromise = null;
+
+window.refreshSupabaseToken = async function () {
+  const session = getStoredSession();
+  if (!session || !session.refresh_token) {
+    return null;
+  }
+
+  if (isRefreshingToken && refreshPromise) {
+    return refreshPromise;
+  }
+
+  isRefreshingToken = true;
+  refreshPromise = (async () => {
+    try {
+      console.log("Refreshing Supabase session silently in background...");
+      const res = await originalFetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ refresh_token: session.refresh_token })
+      });
+
+      if (!res.ok) {
+        console.warn("Token refresh failed with status:", res.status);
+        if (res.status === 400 || res.status === 401) {
+          clearSession();
+          showLoginOverlay("Your session has expired. Please log in again.");
+        }
+        return null;
+      }
+
+      const freshData = await res.json();
+      if (freshData && freshData.access_token) {
+        saveSession(freshData, session.email);
+        console.log("Supabase token refreshed successfully. Next expiry in", freshData.expires_in, "seconds.");
+        return freshData.access_token;
+      }
+      return null;
+    } catch (err) {
+      console.warn("Network error during silent token refresh:", err.message);
+      return null;
+    } finally {
+      isRefreshingToken = false;
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+};
+
+window.checkExistingSession = async function () {
+  const session = getStoredSession();
+  if (!session || !session.access_token) {
+    showLoginOverlay();
+    return false;
+  }
+
+  window.SUPABASE_ACCESS_TOKEN = session.access_token;
+  hideLoginOverlay();
+
+  // If token is expiring within 5 minutes or already expired, refresh silently in background
+  const isExpiringSoon = session.expires_at ? (Date.now() > session.expires_at - 300000) : false;
+  if (isExpiringSoon && session.refresh_token) {
+    window.refreshSupabaseToken().catch(e => console.warn("Initial refresh error:", e));
+  }
+  return true;
+};
+
+// Periodic keepalive check (every 10 minutes)
+setInterval(async () => {
+  const session = getStoredSession();
+  if (session && session.refresh_token) {
+    if (!session.expires_at || Date.now() > session.expires_at - (15 * 60 * 1000)) {
+      console.log("Keepalive: Token expiring within 15 mins, refreshing...");
+      await window.refreshSupabaseToken();
+    }
+  }
+}, 10 * 60 * 1000);
+
+// Reactivate when user switches back to tab or device wakes up
+async function onUserReturnToApp() {
+  const session = getStoredSession();
+  if (!session) return;
+  if (!session.expires_at || Date.now() > session.expires_at - (5 * 60 * 1000)) {
+    console.log("Tab reactivated: Checking/refreshing Supabase session...");
+    await window.refreshSupabaseToken();
+  }
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') onUserReturnToApp();
+});
+window.addEventListener('focus', onUserReturnToApp);
+
+window.logoutSupabase = function () {
+  if (!confirm("Are you sure you want to log out from your church accounting session?")) {
+    return;
+  }
+  clearSession();
+  showLoginOverlay("Logged out successfully.");
+  const pwd = document.getElementById('login-password');
+  if (pwd) pwd.value = '';
+};
+
 window.attemptLogin = async function () {
-  const email = document.getElementById('login-email').value;
-  const password = document.getElementById('login-password').value;
+  const emailInput = document.getElementById('login-email');
+  const passwordInput = document.getElementById('login-password');
+  const email = emailInput ? emailInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
   const errorDiv = document.getElementById('login-error');
   const btn = document.getElementById('login-submit');
 
   if (!email || !password) {
-    errorDiv.textContent = "Please enter email and password.";
-    errorDiv.style.display = "block";
+    if (errorDiv) {
+      errorDiv.textContent = "Please enter email and password.";
+      errorDiv.style.display = "block";
+    }
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = "Authenticating...";
-  errorDiv.style.display = "none";
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Authenticating...";
+  }
+  if (errorDiv) errorDiv.style.display = "none";
 
   try {
     const res = await originalFetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
@@ -37,12 +226,11 @@ window.attemptLogin = async function () {
       throw new Error(data.error_description || data.msg || "Authentication failed");
     }
 
-    // Success! Save token
-    window.SUPABASE_ACCESS_TOKEN = data.access_token;
+    // Success! Save persistent session
+    saveSession(data, email);
 
     // Hide overlay and show app
-    document.getElementById('login-overlay').style.display = 'none';
-    document.getElementById('main-app-container').style.display = 'block';
+    hideLoginOverlay();
 
     // Trigger data reload now that we have the secure token!
     if (typeof loadAllData === 'function') {
@@ -53,214 +241,219 @@ window.attemptLogin = async function () {
     }
 
   } catch (err) {
-    errorDiv.textContent = err.message;
-    errorDiv.style.display = "block";
-    btn.disabled = false;
-    btn.textContent = "Login";
+    if (errorDiv) {
+      errorDiv.textContent = err.message;
+      errorDiv.style.display = "block";
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Login";
+    }
   }
 };
 
+// Authenticated fetch wrapper that retries once on 401
+async function fetchWithAuth(url, options) {
+  options = options || {};
+  options.headers = options.headers || {};
+  options.headers['apikey'] = SUPABASE_ANON_KEY;
+  if (window.SUPABASE_ACCESS_TOKEN) {
+    options.headers['Authorization'] = 'Bearer ' + window.SUPABASE_ACCESS_TOKEN;
+  } else {
+    options.headers['Authorization'] = 'Bearer ' + SUPABASE_ANON_KEY;
+  }
+
+  let res = await originalFetch(url, options);
+
+  if (res.status === 401 && !options._retried) {
+    console.warn("Supabase returned 401 Unauthorized. Attempting silent token refresh...");
+    const newToken = await window.refreshSupabaseToken();
+    if (newToken) {
+      options._retried = true;
+      options.headers['Authorization'] = 'Bearer ' + newToken;
+      res = await originalFetch(url, options);
+    } else {
+      showLoginOverlay("Session expired. Please log in again.");
+    }
+  }
+
+  return res;
+}
 
 window.fetch = async function (url, options) {
-  if (url && typeof url === 'string' && url.includes('api.php')) {
-    try {
-      const body = JSON.parse(options.body);
+  if (url && typeof url === 'string') {
+    if (url.includes('api.php')) {
+      try {
+        const body = JSON.parse(options.body);
 
-      if (body.action === 'save_transaction') {
-        const row = body.row;
-        const insertObj = {};
-        const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
-        cols.forEach(c => {
-          insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
-        });
-
-        // Ultimate maxId calculator with global state to prevent double-click duplicate keys
-        // ULTIMATE TEST: Use Date.now() for ID. If this throws a duplicate key, 
-        // it means the primary key is NOT on the ID column, but on Receipt No (col_B)!
-        // Robust ID generation: Unix timestamp in seconds + random salt.
-        // E.g., 1724063000. Fits easily within PostgreSQL int4 limit (2.1 billion)
-        // and guarantees uniqueness across all devices without needing cloud sync!
-        let safeId = Math.floor(Date.now() / 1000);
-        if (window._lastInsertedId && safeId <= window._lastInsertedId) {
-          safeId = window._lastInsertedId + 1; // Prevent rapid-fire collisions
-        }
-        insertObj.id = safeId;
-        window._lastInsertedId = safeId;
-
-
-        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify(insertObj)
-        });
-
-        if (!res.ok) {
-          const errText = await res.text();
-          throw new Error("Failed to save transaction: " + res.status + " " + errText);
-        }
-        if (window.state && window.state.cashbook) {
-          body.row.id = insertObj.id;
-          const lastRow = window.state.cashbook[window.state.cashbook.length - 1];
-          if (lastRow && !lastRow.id && (lastRow.B === body.row.B || lastRow.L === body.row.L)) {
-            lastRow.id = insertObj.id;
-          }
-          if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
-        }
-        return new Response(JSON.stringify({ success: true }));
-      }
-
-      if (body.action === 'delete_transaction') {
-        const rowId = body.id;
-        const colB = body.col_B;
-        const colL = body.col_L;
-        let filterQuery = '';
-        if (rowId) {
-          filterQuery = `id=eq.${encodeURIComponent(rowId)}`;
-        } else if (colB) {
-          filterQuery = `col_B=eq.${encodeURIComponent(colB)}`;
-        } else if (colL) {
-          filterQuery = `col_L=eq.${encodeURIComponent(colL)}`;
-        }
-
-        if (filterQuery) {
-          const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?${filterQuery}`, {
-            method: 'DELETE',
-            headers: {
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-            }
-          });
-          return new Response(JSON.stringify({ success: res.ok }));
-        }
-        return new Response(JSON.stringify({ success: false, message: 'No ID or Doc No provided' }));
-      }
-
-      if (body.action === 'get_app_state') {
-        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?select=*`, {
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-          }
-        });
-        if (!res.ok) throw new Error("App state fetch failed: " + res.status);
-        const data = await res.json();
-
-        const stateMap = {};
-        data.forEach(row => {
-          try {
-            stateMap[row.key_name] = typeof row.json_data === 'string' ? JSON.parse(row.json_data || '[]') : row.json_data;
-          } catch (e) { }
-        });
-        return new Response(JSON.stringify({ success: true, data: stateMap }));
-      }
-
-      if (body.action === 'get_cashbook') {
-        let allData = [];
-        let offset = 0;
-        const limit = 1000;
-        let hasMore = true;
-
-        while (hasMore) {
-          const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?select=*&order=id.asc&offset=${offset}&limit=${limit}`, {
-            headers: {
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-            }
-          });
-          if (!res.ok) throw new Error("Cashbook fetch failed: " + res.status);
-          const chunk = await res.json();
-          allData = allData.concat(chunk);
-          if (chunk.length < limit) {
-            hasMore = false;
-          } else {
-            offset += limit;
-          }
-        }
-        const data = allData;
-
-        const mappedRows = data.map(row => {
-          const mapped = {};
-          if (row.id) mapped.id = row.id;
-          const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
-          cols.forEach(c => {
-            if (row['col_' + c] !== undefined && row['col_' + c] !== null && row['col_' + c] !== 'NULL') mapped[c] = row['col_' + c];
-          });
-          return mapped;
-        });
-        return new Response(JSON.stringify({ success: true, data: mappedRows }));
-      }
-
-      if (body.action === 'save_app_state') {
-        const updates = [];
-        for (let key in body.state_data) {
-          updates.push({ key_name: key, json_data: body.state_data[key] });
-        }
-        const res = await originalFetch(`${SUPABASE_URL}/rest/v1/app_state?on_conflict=key_name`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-            'Content-Type': 'application/json',
-            'Prefer': 'resolution=merge-duplicates'
-          },
-          body: JSON.stringify(updates)
-        });
-        if (!res.ok) throw new Error("Failed to save app state: " + res.status);
-        return new Response(JSON.stringify({ success: true }));
-      }
-
-      if (body.action === 'import_cashbook') {
-        const rows = body.rows;
-
-        // 1. Delete all existing rows
-        await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook?id=gt.0`, {
-          method: 'DELETE',
-          headers: {
-            'apikey': SUPABASE_ANON_KEY,
-            'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY
-          }
-        });
-
-        // 2. Prepare new rows for bulk insert with EXACTLY matching schema structure
-        const insertArr = rows.map((row, idx) => {
-          const insertObj = { id: (idx + 1) };
+        if (body.action === 'save_transaction') {
+          const row = body.row;
+          const insertObj = {};
           const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
           cols.forEach(c => {
             insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
           });
-          return insertObj;
-        });
 
-        // 3. Insert in batches
-        for (let i = 0; i < insertArr.length; i += 500) {
-          const batch = insertArr.slice(i, i + 500);
-          const res = await originalFetch(`${SUPABASE_URL}/rest/v1/cashbook`, {
+          // Unique timestamp ID calculation
+          let safeId = Math.floor(Date.now() / 1000);
+          if (window._lastInsertedId && safeId <= window._lastInsertedId) {
+            safeId = window._lastInsertedId + 1; // Prevent rapid-fire collisions
+          }
+          insertObj.id = safeId;
+          window._lastInsertedId = safeId;
+
+          const res = await fetchWithAuth(`${SUPABASE_URL}/rest/v1/cashbook`, {
             method: 'POST',
             headers: {
-              'apikey': SUPABASE_ANON_KEY,
-              'Authorization': window.SUPABASE_ACCESS_TOKEN ? 'Bearer ' + window.SUPABASE_ACCESS_TOKEN : 'Bearer ' + SUPABASE_ANON_KEY,
-              'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
             },
-            body: JSON.stringify(batch)
+            body: JSON.stringify(insertObj)
           });
+
           if (!res.ok) {
             const errText = await res.text();
-            throw new Error("Batch insert failed: " + res.status + " " + errText);
+            throw new Error("Failed to save transaction: " + res.status + " " + errText);
           }
+          if (window.state && window.state.cashbook) {
+            body.row.id = insertObj.id;
+            const lastRow = window.state.cashbook[window.state.cashbook.length - 1];
+            if (lastRow && !lastRow.id && (lastRow.B === body.row.B || lastRow.L === body.row.L)) {
+              lastRow.id = insertObj.id;
+            }
+            if (typeof calculateNextNumbers === 'function') calculateNextNumbers();
+          }
+          return new Response(JSON.stringify({ success: true }));
         }
 
-        return new Response(JSON.stringify({ success: true }));
-      }
+        if (body.action === 'delete_transaction') {
+          const rowId = body.id;
+          const colB = body.col_B;
+          const colL = body.col_L;
+          let filterQuery = '';
+          if (rowId) {
+            filterQuery = `id=eq.${encodeURIComponent(rowId)}`;
+          } else if (colB) {
+            filterQuery = `col_B=eq.${encodeURIComponent(colB)}`;
+          } else if (colL) {
+            filterQuery = `col_L=eq.${encodeURIComponent(colL)}`;
+          }
 
-    } catch (err) {
-      console.error('Supabase Mock Fetch Error:', err);
-      alert("Database Save Error:\n" + err.message);
-      return new Response(JSON.stringify({ success: false, message: err.message }));
+          if (filterQuery) {
+            const res = await fetchWithAuth(`${SUPABASE_URL}/rest/v1/cashbook?${filterQuery}`, {
+              method: 'DELETE'
+            });
+            return new Response(JSON.stringify({ success: res.ok }));
+          }
+          return new Response(JSON.stringify({ success: false, message: 'No ID or Doc No provided' }));
+        }
+
+        if (body.action === 'get_app_state') {
+          const res = await fetchWithAuth(`${SUPABASE_URL}/rest/v1/app_state?select=*`);
+          if (!res.ok) throw new Error("App state fetch failed: " + res.status);
+          const data = await res.json();
+
+          const stateMap = {};
+          data.forEach(row => {
+            try {
+              stateMap[row.key_name] = typeof row.json_data === 'string' ? JSON.parse(row.json_data || '[]') : row.json_data;
+            } catch (e) { }
+          });
+          return new Response(JSON.stringify({ success: true, data: stateMap }));
+        }
+
+        if (body.action === 'get_cashbook') {
+          let allData = [];
+          let offset = 0;
+          const limit = 1000;
+          let hasMore = true;
+
+          while (hasMore) {
+            const res = await fetchWithAuth(`${SUPABASE_URL}/rest/v1/cashbook?select=*&order=id.asc&offset=${offset}&limit=${limit}`);
+            if (!res.ok) throw new Error("Cashbook fetch failed: " + res.status);
+            const chunk = await res.json();
+            allData = allData.concat(chunk);
+            if (chunk.length < limit) {
+              hasMore = false;
+            } else {
+              offset += limit;
+            }
+          }
+          const data = allData;
+
+          const mappedRows = data.map(row => {
+            const mapped = {};
+            if (row.id) mapped.id = row.id;
+            const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+            cols.forEach(c => {
+              if (row['col_' + c] !== undefined && row['col_' + c] !== null && row['col_' + c] !== 'NULL') mapped[c] = row['col_' + c];
+            });
+            return mapped;
+          });
+          return new Response(JSON.stringify({ success: true, data: mappedRows }));
+        }
+
+        if (body.action === 'save_app_state') {
+          const updates = [];
+          for (let key in body.state_data) {
+            updates.push({ key_name: key, json_data: body.state_data[key] });
+          }
+          const res = await fetchWithAuth(`${SUPABASE_URL}/rest/v1/app_state?on_conflict=key_name`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates'
+            },
+            body: JSON.stringify(updates)
+          });
+          if (!res.ok) throw new Error("Failed to save app state: " + res.status);
+          return new Response(JSON.stringify({ success: true }));
+        }
+
+        if (body.action === 'import_cashbook') {
+          const rows = body.rows;
+
+          // 1. Delete all existing rows
+          await fetchWithAuth(`${SUPABASE_URL}/rest/v1/cashbook?id=gt.0`, {
+            method: 'DELETE'
+          });
+
+          // 2. Prepare new rows for bulk insert with EXACTLY matching schema structure
+          const insertArr = rows.map((row, idx) => {
+            const insertObj = { id: (idx + 1) };
+            const cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+            cols.forEach(c => {
+              insertObj['col_' + c] = (row[c] !== undefined && row[c] !== null) ? String(row[c]) : null;
+            });
+            return insertObj;
+          });
+
+          // 3. Insert in batches
+          for (let i = 0; i < insertArr.length; i += 500) {
+            const batch = insertArr.slice(i, i + 500);
+            const res = await fetchWithAuth(`${SUPABASE_URL}/rest/v1/cashbook`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(batch)
+            });
+            if (!res.ok) {
+              const errText = await res.text();
+              throw new Error("Batch insert failed: " + res.status + " " + errText);
+            }
+          }
+
+          return new Response(JSON.stringify({ success: true }));
+        }
+
+      } catch (err) {
+        console.error('Supabase Mock Fetch Error:', err);
+        alert("Database Save Error:\n" + err.message);
+        return new Response(JSON.stringify({ success: false, message: err.message }));
+      }
+    } else if (url.includes(SUPABASE_URL) && !url.includes('/auth/v1/token')) {
+      return fetchWithAuth(url, options);
     }
   }
 
@@ -463,6 +656,9 @@ function numberToIndianWords(amount) {
 // ----------------------------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
   if (!verifyLicenseGuard()) return;
+  if (window.checkExistingSession) {
+    await window.checkExistingSession();
+  }
   await loadAllData();
   try { if (window.loadCloudData) await window.loadCloudData(); } catch (e) { console.warn("Cloud sync skipped"); }
   setupNavigation();

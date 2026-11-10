@@ -80,7 +80,10 @@ window.addEventListener("unhandledrejection", function(e) {
           </div>
 
           <div class="form-group">
-            <label id="lblNum">Receipt No.</label>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <label id="lblNum" style="margin:0;">Receipt No.</label>
+              <button type="button" class="btn btn-outline" onclick="calculateNextNumbers(); if(typeof showToast==='function') showToast('🔄 Receipt sequence refreshed!', 'info');" style="padding:1px 6px; font-size:0.75rem; border-radius:4px; font-weight:700; cursor:pointer;" title="Recalculate next receipt number">🔄 Refresh</button>
+            </div>
             <input type="text" id="txtVoucherNo" class="form-control" readonly style="background:#f1f5f9; font-weight:700; color:var(--accent-color);">
           </div>
 
@@ -1257,8 +1260,8 @@ window.addEventListener("unhandledrejection", function(e) {
   <script src="html2pdf.bundle.min.js"></script>
   <script src="jszip.min.js"></script>
   <script src="bulk_pdf.js?v=11.7.2"></script>
-  <script src="logo_data.js?v=11.25"></script>
+  <script src="logo_data.js?v=11.26"></script>
   <script src="data.js?v=3.6"></script>
-  <script src="app.js?v=11.25"></script>
+  <script src="app.js?v=11.26"></script>
 </body>
 </html>
